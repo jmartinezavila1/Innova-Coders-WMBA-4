@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\WMBA-4.props" />
+</Project>
