@@ -1,0 +1,8 @@
+﻿Add-Migration -Context ApplicationDbContext -OutputDir Data\Migrations Initial
+Update-Database -Context ApplicationDbContext
+
+Add-Migration -Context WMBA_4_Context -o Data\WMBAMigrations Initial
+Update-Database -Context WMBA_4_Context
+
+Remeber to add...
+            ExtraMigration.Steps(migrationBuilder);
