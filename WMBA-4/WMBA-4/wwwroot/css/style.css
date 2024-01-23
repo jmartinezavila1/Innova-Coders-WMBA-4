@@ -1,0 +1,10 @@
+﻿.logo{
+    width: 100px;
+}
+
+/*font color*/
+.ft-black {
+   color: var(--ft-black);
+}
+
+/*font size*/
