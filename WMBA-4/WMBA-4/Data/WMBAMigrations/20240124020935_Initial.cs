@@ -17,7 +17,7 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    CityName = table.Column<string>(type: "TEXT", nullable: true)
+                    CityName = table.Column<string>(type: "TEXT", maxLength: 300, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -30,7 +30,7 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Description = table.Column<string>(type: "TEXT", nullable: true)
+                    Description = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -43,8 +43,8 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    PositionCode = table.Column<string>(type: "TEXT", nullable: true),
-                    PositionName = table.Column<string>(type: "TEXT", nullable: true)
+                    PositionCode = table.Column<string>(type: "TEXT", maxLength: 2, nullable: false),
+                    PositionName = table.Column<string>(type: "TEXT", maxLength: 50, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -57,8 +57,8 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    SeasonCode = table.Column<string>(type: "TEXT", nullable: true),
-                    SeasonName = table.Column<string>(type: "TEXT", nullable: true)
+                    SeasonCode = table.Column<string>(type: "TEXT", maxLength: 5, nullable: true),
+                    SeasonName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,9 +71,9 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    FirstName = table.Column<string>(type: "TEXT", nullable: true),
-                    LastName = table.Column<string>(type: "TEXT", nullable: true),
-                    email = table.Column<string>(type: "TEXT", nullable: true)
+                    FirstName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    LastName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    Email = table.Column<string>(type: "TEXT", maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -86,8 +86,8 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LeagueName = table.Column<string>(type: "TEXT", nullable: true),
-                    EstablishYear = table.Column<int>(type: "INTEGER", nullable: false),
+                    LeagueName = table.Column<string>(type: "TEXT", maxLength: 100, nullable: false),
+                    EstablishYear = table.Column<int>(type: "INTEGER", maxLength: 4, nullable: false),
                     CityID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -107,7 +107,7 @@ namespace WMBA_4.Data.WMBAMigrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    LocationName = table.Column<string>(type: "TEXT", nullable: true),
+                    LocationName = table.Column<string>(type: "TEXT", maxLength: 150, nullable: false),
                     CityID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>

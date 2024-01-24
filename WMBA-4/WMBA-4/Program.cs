@@ -45,4 +45,7 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+//Seed Sata
+WMBA4Initializer.Seed(app);
+
 app.Run();

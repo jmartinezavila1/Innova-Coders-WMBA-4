@@ -32,7 +32,7 @@ namespace WMBA_4.Models
         public int Singles { get; set; }
 
         [Display(Name = "2 Base Hit /2B")]
-        public int Doubles{ get; set; }
+        public int Doubles { get; set; }
 
         [Display(Name = "3 Base Hit /3B")]
         public int Triples { get; set; }
@@ -58,9 +58,11 @@ namespace WMBA_4.Models
         [Display(Name = "At Bat")]
         public int AB { get; set; }
 
+        [Display(Name = "Game")]
         public int GameID { get; set; }
         public Game Game { get; set; }
 
+        [Display(Name = "Player")]
         public int PlayerID { get; set; }
         public Player Player { get; set; }
 

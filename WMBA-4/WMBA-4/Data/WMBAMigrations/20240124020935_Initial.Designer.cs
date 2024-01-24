@@ -11,7 +11,7 @@ using WMBA_4.Data;
 namespace WMBA_4.Data.WMBAMigrations
 {
     [DbContext(typeof(WMBA_4_Context))]
-    [Migration("20240122231401_Initial")]
+    [Migration("20240124020935_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -27,6 +27,8 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasMaxLength(300)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -141,6 +143,8 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -158,9 +162,12 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("EstablishYear")
+                        .HasMaxLength(4)
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("LeagueName")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -180,6 +187,8 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("LocationName")
+                        .IsRequired()
+                        .HasMaxLength(150)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -230,9 +239,13 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("PositionCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("PositionName")
+                        .IsRequired()
+                        .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -325,9 +338,12 @@ namespace WMBA_4.Data.WMBAMigrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("SeasonCode")
+                        .HasMaxLength(5)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("SeasonName")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
@@ -344,13 +360,18 @@ namespace WMBA_4.Data.WMBAMigrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("email")
+                        .IsRequired()
+                        .HasMaxLength(100)
                         .HasColumnType("TEXT");
 
                     b.HasKey("ID");
