@@ -4,44 +4,61 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<style>
+    h1 {
+        text-align: center !important;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Coach_Name)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Division)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Coach_Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Division.DivisionName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
+    .team-card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .team-name {
+        font-size: 18px; /* Adjust the font size as needed */
+    }
+
+    .controls {
+        font-size: 16px; /* Adjust the font size as needed */
+    }
+
+    .header-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+</style>
+
+<div class="header-container">
+    <h1>Teams</h1>
+    <div class="create-new">
+        <a asp-action="Create" class="btn btn-sm btn-success" role="button" style="background-color: #4CBB17; color: #fff;">
+            Create New
+        </a>
+    </div>
+</div>
+
+@foreach (var item in Model)
+{
+    <div class="team-card">
+        <span class="team-name">@Html.DisplayFor(modelItem => item.Name)</span>
+
+        <div class="controls">
+            <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
+               role="button" data-bs-toggle="tooltip" title="Edit @ViewData["ControllerFriendlyName"]">
+                Edit
+            </a>
+            <a asp-action="Delete" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
+               role="button" data-bs-toggle="tooltip" title="Delete @ViewData["ControllerFriendlyName"]">
+                Delete
+            </a>
+            <a asp-action="Details" asp-route-id="@item.ID" role="button" style="color: #007BFF;">
+                &gt;
+            </a>
+        </div>
+    </div>
 }
-    </tbody>
-</table>

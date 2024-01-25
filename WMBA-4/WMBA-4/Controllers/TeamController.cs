@@ -26,6 +26,7 @@ namespace WMBA_4.Controllers
             return View(await wMBA_4_Context.ToListAsync());
         }
 
+
         // GET: Team/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -36,14 +37,45 @@ namespace WMBA_4.Controllers
 
             var team = await _context.Teams
                 .Include(t => t.Division)
+                .Include(t => t.TeamGames)
+                    .ThenInclude(tg => tg.Game)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (team == null)
             {
                 return NotFound();
             }
 
+            // Create a dictionary to store visitor team names for each game
+            var visitorTeams = new Dictionary<int, string>();
+
+            foreach (var teamGame in team.TeamGames)
+            {
+                if (teamGame.IsVisitorTeam)
+                {
+                    // If it's a visitor team, get the visitor team's name
+                    var visitorTeam = await _context.TeamGame
+                        .Where(tg => tg.GameID == teamGame.GameID && tg.IsHomeTeam)
+                        .Select(tg => tg.Team.Name)
+                        .FirstOrDefaultAsync();
+
+                    visitorTeams[teamGame.GameID] = visitorTeam ?? "Unknown Team";
+                }
+                else if (teamGame.IsHomeTeam)
+                {
+                    // If it's a home team, get the home team's name
+                    var homeTeam = teamGame.Team.Name;
+
+                    visitorTeams[teamGame.GameID] = homeTeam ?? "Unknown Team";
+                }
+            }
+
+            ViewBag.VisitorTeams = visitorTeams;
+
             return View(team);
         }
+
+
 
         // GET: Team/Create
         public IActionResult Create()
@@ -155,14 +187,16 @@ namespace WMBA_4.Controllers
             {
                 _context.Teams.Remove(team);
             }
-            
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         private bool TeamExists(int id)
         {
-          return _context.Teams.Any(e => e.ID == id);
+            return _context.Teams.Any(e => e.ID == id);
         }
+
     }
+
 }
