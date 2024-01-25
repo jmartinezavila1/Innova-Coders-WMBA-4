@@ -10,23 +10,23 @@ using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
-    public class DivisionsController : Controller
+    public class DivisionController : Controller
     {
         private readonly WMBA_4_Context _context;
 
-        public DivisionsController(WMBA_4_Context context)
+        public DivisionController(WMBA_4_Context context)
         {
             _context = context;
         }
 
-        // GET: Divisions
+        // GET: Division
         public async Task<IActionResult> Index()
         {
             var wMBA_4_Context = _context.Divisions.Include(d => d.League);
             return View(await wMBA_4_Context.ToListAsync());
         }
 
-        // GET: Divisions/Details/5
+        // GET: Division/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null || _context.Divisions == null)
@@ -45,14 +45,14 @@ namespace WMBA_4.Controllers
             return View(division);
         }
 
-        // GET: Divisions/Create
+        // GET: Division/Create
         public IActionResult Create()
         {
             ViewData["LeagueID"] = new SelectList(_context.Leagues, "ID", "LeagueName");
             return View();
         }
 
-        // POST: Divisions/Create
+        // POST: Division/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -69,7 +69,7 @@ namespace WMBA_4.Controllers
             return View(division);
         }
 
-        // GET: Divisions/Edit/5
+        // GET: Division/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null || _context.Divisions == null)
@@ -86,7 +86,7 @@ namespace WMBA_4.Controllers
             return View(division);
         }
 
-        // POST: Divisions/Edit/5
+        // POST: Division/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -122,7 +122,7 @@ namespace WMBA_4.Controllers
             return View(division);
         }
 
-        // GET: Divisions/Delete/5
+        // GET: Division/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null || _context.Divisions == null)
@@ -141,7 +141,7 @@ namespace WMBA_4.Controllers
             return View(division);
         }
 
-        // POST: Divisions/Delete/5
+        // POST: Division/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

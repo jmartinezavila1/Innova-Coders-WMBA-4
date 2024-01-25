@@ -4,11 +4,18 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Game Assignments</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">New Match</a>
 </p>
+
+<form asp-action="Index">
+    <label for="seasonName">Season:</label>
+    <input type="text" id="seasonName" name="seasonName" />
+    <input type="submit" value="Filter" />
+</form>
+
 <table class="table">
     <thead>
         <tr>
@@ -18,9 +25,9 @@
             <th>
                 @Html.DisplayNameFor(model => model.Date)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.score)
-            </th>
+           @*  <th>
+                @Html.DisplayNameFor(model => model.TeamGames.First().score)
+            </th> *@
             <th>
                 @Html.DisplayNameFor(model => model.Location)
             </th>
@@ -34,35 +41,62 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-                <td>
-                    @foreach (var t in item.TeamGames)
+@* @foreach (var item in Model) {
+        <tr> *@
+           @*  @{
+                var teamList = item.TeamGames.ToList();
+            } *@
+            @* <td>
+                @for (int i = 0; i < teamList.Count; i++)
+                {
+                    @teamList[i].Team.Name
+                    if (i < teamList.Count - 1)
                     {
-                        @t.Team.Name <br />
+                        <text> Vs </text>
                     }
-                </td>
+                    <br />
+                }
+            </td> *@        
+            
+        @foreach (var item2 in Model)
+        {
+        <tr>
+                @{
+                    var teamGamesList = item2.TeamGames.ToList();
+                }
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                    @foreach (var teamGame in teamGamesList)
+                    {
+                        @: @teamGame.Team.Name: @teamGame.score <br />
+                    }
+            </td>
+            <!-- Rest of the cells -->
+            <td>
+                    @item2.Date.ToString("MMMM dd yyyy")
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.score)
+                    @Html.DisplayFor(modelItem => item2.Location.LocationName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Location.LocationName)
+                    @Html.DisplayFor(modelItem => item2.Season.SeasonName)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Season.SeasonName)
+                    @Html.DisplayFor(modelItem => item2.GameType.Description)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.GameType.Description)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
+                <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item2.ID">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item2.ID">Delete</a>
             </td>
         </tr>
+        }
+
+           
+                @* <td> Other way to display date
+            @item.Date.ToString("dd/MM/yyyy")
+            </td> *@               
+            
+       @*  </tr> *@
 }
     </tbody>
 </table>

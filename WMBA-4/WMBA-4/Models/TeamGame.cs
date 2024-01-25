@@ -11,6 +11,9 @@ namespace WMBA_4.Models
         [Display(Name = "Is Visitor Team")]
         public bool IsVisitorTeam { get; set; }
 
+        [Display(Name = "Score")]
+        public int score { get; set; }
+
         [Display(Name = "Team")]
         public int TeamID { get; set; }
 
