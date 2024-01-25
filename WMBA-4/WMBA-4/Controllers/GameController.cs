@@ -20,13 +20,19 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string seasonName)
         {
-            var games = _context.Games
-                .Include(g => g.GameType)
-                .Include(g => g.Location)
-                .Include(g => g.Season)
-                .Include(t=>t.TeamGames).ThenInclude(t=>t.Team);
+            IQueryable<Game> games = _context.Games
+        .Include(g => g.GameType)
+        .Include(g => g.Location)
+        .Include(g => g.Season)
+        .Include(t => t.TeamGames).ThenInclude(t => t.Team);
+
+            if (!string.IsNullOrEmpty(seasonName))
+            {
+                games = games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
+            }
+
             return View(await games.ToListAsync());
         }
 

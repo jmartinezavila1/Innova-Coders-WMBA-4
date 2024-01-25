@@ -9,6 +9,13 @@
 <p>
     <a asp-action="Create">New Match</a>
 </p>
+
+<form asp-action="Index">
+    <label for="seasonName">Season:</label>
+    <input type="text" id="seasonName" name="seasonName" />
+    <input type="submit" value="Filter" />
+</form>
+
 <table class="table">
     <thead>
         <tr>
