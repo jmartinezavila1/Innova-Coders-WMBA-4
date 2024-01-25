@@ -4,56 +4,70 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="p-in-flex">
+    <div class="f-in-flex">
+        <h1>Players</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.MemberID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.JerseyNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Team)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.MemberID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.JerseyNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Team.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+        @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+        {
+            <button type="submit" class="btn-add btn-text text-no-deco">Add Player</button>
+        }
+
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.MemberID)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FullName)
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.Team)
+                </th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.MemberID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.FullName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Team.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID" style="text-decoration: none;">
+                            <span class="material-symbols-outlined">
+                                edit
+                            </span>
+                        </a>
+                        @* <a href="#" onclick="openModal('@Url.Action("Details", "Player", new { id = item.ID })')" style="text-decoration: none;">
+                    <span class="material-symbols-outlined">
+                    description
+                    </span>
+                    </a> *@
+                        <a asp-action="Details" asp-route-id="@item.ID" style="text-decoration: none;">
+                            <span class="material-symbols-outlined">
+                                description
+                            </span>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.ID" style="text-decoration: none;">
+                            <span class="material-symbols-outlined">
+                                delete
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+

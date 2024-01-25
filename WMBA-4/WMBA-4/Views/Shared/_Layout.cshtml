@@ -5,110 +5,97 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WMBA_4</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/WMBA_4.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Navigation.css" asp-append-version="true" />
+    <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
-<body>
-    <header>
-        <!-- Top Section -->
-        <div id="topSection" class="text-white text-center d-flex">
-            <button class="p-3 bg-dark-subtle border border-0"><span>pre</span></button>
-            <ul>
-                <li class="">
-                    <span>Game 1</span>
-                </li>
-            </ul>
-            <button class="p-3 bg-dark-subtle border border-0"><span>next</span></button>
-            <button class="p-3 bg-dark-subtle border border-0"><span>All Games</span></button>
-        </div>
+<body class="sb-nav-fixed">
+    <!-- Top Section -->
 
-        <!-- Navbar -->
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
-            <div class="container-fluid">
-              
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                    <img src="~/images/WMBA.png" alt="WBMA logo" class="logo" />
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Divisions</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Players</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Lineup</a>
-                        </li>
-                    </ul>
-                    <partial name="_LoginPartial" />
-                </div>
-            </div>
-        </nav>
-
-        <div class="container-fluid">
-            <div class="row ">
-
-                <!-- Side Navbar -->
-                <nav id="sidebar" class="col-md-2 bg-kelly">
-                    <div class="sidebar-sticky">
-                        <ul class="nav flex-column" >
-                            <li class="nav-item" >
-                                <a class="nav-link ft-black active"  href="#">
-                                    Record Game
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link ft-black" href="#">
-                                    Season
-                                </a>
-                            </li><li class="nav-item">
-                                <a class="nav-link ft-black" href="#">
-                                    Team
-                                </a>
-                            </li><li class="nav-item">
-                                <a class="nav-link ft-black" href="#">
-                                    Help
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
-                </nav>
-
-                <!-- Main Content Area -->
-                <div role="main" class="col-md-10 ml-sm-auto">
-                    @RenderBody()
-                </div>
-            </div>
-        </div>
-@*          *@
-    </header>
-    <div class="container">
-        <main role="main">
-            @RenderBody()
-        </main>
+    <div id="topSection" class="text-white text-center d-flex">
+        <button class="p-3 bg-dark-subtle border border-0"><span>pre</span></button>
+        <ul>
+            <li class="">
+                <span>Game 1</span>
+            </li>
+        </ul>
+        <button class="p-3 bg-dark-subtle border border-0"><span>next</span></button>
+        <button class="p-3 bg-dark-subtle border border-0"><span>All Games</span></button>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2024 - WMBA_4 - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+
+
+    <nav class="sb-topnav navbar navbar-expand header-height navbar-dark bg-white">
+        <!-- Logo-->
+        <a class="navbar-brand ps-3" href="#">
+            <img src="~/images/WMBA.png" alt="WBMA logo" class="logo" />
+        </a>
+        <!-- Sidebar Toggle-->
+        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
+        <!-- Navbar Search-->
+        <div class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+            <div class="input-group">
+                <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch" />
+                <button class="btn bg-kelly" id="btnNavbarSearch" type="button"><i class="fas fa-search ft-white"></i></button>
+            </div>
         </div>
-    </footer>
+        <!-- Navbar-->
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #4CBB17;"><i class="fas fa-user fa-fw ft-kelly"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                    <partial name="_LoginPartial" />
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    
+
+    <!-- Side Bar -->
+    <div id="layoutSidenav">
+        <div id="layoutSidenav_nav">
+            <nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+                <div class="sb-sidenav-menu">
+                    <div class="nav">
+                        <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" asp-area="" asp-controller="Division" asp-action="Index">Divisions</a>
+                        <a class="nav-link" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
+                        <a class="nav-link" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
+                        <a class="nav-link" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
+                        <a class="nav-link" asp-area="" asp-controller="Lineup" asp-action="Index">Lineup</a>
+                    </div>
+                </div>
+                <div class="sb-sidenav-footer">
+                    <div class="small">Logged in as:</div>
+                    Start Bootstrap
+                </div>
+            </nav>
+        </div>
+
+        <!-- main -->
+        <div id="layoutSidenav_content">
+            <main>
+                <div class="container-fluid px-4">
+                    @RenderBody();
+                </div>
+            </main>
+            <footer class="py-4 bg-light mt-auto">
+                <div class="container-fluid px-4">
+                    <div class="d-flex align-items-center justify-content-between small">
+                        <div class="text-muted">Copyright &copy; Your Website 2023</div>
+                        <div>
+                            <a href="#">Privacy Policy</a>
+                            &middot;
+                            <a href="#">Terms &amp; Conditions</a>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+    </div>
+    <!-- Scripts -->
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

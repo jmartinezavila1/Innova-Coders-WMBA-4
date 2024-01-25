@@ -1,10 +1,151 @@
-﻿.logo{
-    width: 100px;
+﻿
+/*Please here just add for all styles */
+
+/*/////////////////////////////////////////font//////////////////////////////////////////*/
+@import url("https://p.typekit.net/p.css?s=1&k=igy8ywi&ht=tk&f=32897.32904&a=39545793&app=typekit&e=css");
+
+@font-face {
+    font-family: "proxima-soft";
+    src: url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: 400;
+    font-stretch: normal;
 }
 
-/*font color*/
+@font-face {
+    font-family: "proxima-soft";
+    src: url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
+    font-display: auto;
+    font-style: normal;
+    font-weight: 700;
+    font-stretch: normal;
+}
+
+.tk-proxima-soft {
+    font-family: "proxima-soft",sans-serif;
+}
+
+/*//////////////////////////////////////////////root//////////////////////////////////////////////*/
+:root {
+    /*////background colors////*/
+    --bg-kelly: #4CBB17;
+    --bg-light-kelly: #5EC22E;
+    --bg-white: #FFFFFF;
+
+    /*////font colors////*/
+    --ft-black: #000000;
+    --ft-gray: #3E3E3E;
+    --ft-white: #ffffff;
+    --ft-kelly: #4CBB17;
+
+    /*////font sizes////*/
+    /*px*/
+    --ft-l: 25px;
+    --ft-m: 20px;
+    --ft-s: 15px;
+
+    /*////rem size////*/
+    --ft-r-l: 2rem;
+    --ft-r-m: 1.8rem;
+    --ft-r-s: 1.5rem;
+}
+
+/*/////////////////////////////background color/////////////////////////////////////*/
+.bg-kelly{
+    background-color: var(--bg-kelly);
+}
+
+.bg-white{
+    background-color: var(--bg-white);
+}
+
+/*/////////////////////////////font color/////////////////////////////////////////*/
 .ft-black {
    color: var(--ft-black);
 }
+.ft-white{
+    color: var(--ft-white);
+}
+.ft-kelly {
+    color: var(--ft-kelly);
+}
 
-/*font size*/
+/*/////////////////////////////////font decoration///////////////////////////////////*/
+.no-list-decor{
+    list-style: none;
+}
+
+/*/////////////////////////////////classes-flex//////////////////////////////////////*/
+.p-in-flex {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.f-in-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+/*//////////////////////////////////classes///////////////////////////////////////////*/
+
+.logo {
+    width: 100px;
+}
+
+.btn-shadow {
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+}
+
+.btn-add{
+    padding: 15px 35px;
+    border: none;
+    background-color: var(--bg-kelly);
+    border-radius: 30px;
+}
+
+.btn-add:hover{
+    cursor: pointer;
+    background-color: var(--bg-light-kelly) ;
+}
+
+.btn-text {
+    color: var(--ft-white);
+}
+
+.material-symbols-outlined{
+    color: var(--ft-gray) ;
+}
+
+.material-symbols-outlined:hover {
+    color: var(--ft-kelly);
+}
+
+.text-no-deco {
+    text-decoration: none;
+}
+
+.side-bar-grid {
+    display: grid;
+    grid-template-columns: repeat(1, 1fr); 
+    gap: 10px;
+}
+
+.side-bar-grid-item {
+    padding: 20px; 
+    text-align: center;
+}
+
+.side-bar {
+    background-color: var(--bg-kelly);
+    overflow: auto;
+    min-height: 100vh;
+}
+
+.header-height{
+    height: 100px;
+}
+
+/*///////////////////////////////////////////////ids///////////////////////////////////////////*/
