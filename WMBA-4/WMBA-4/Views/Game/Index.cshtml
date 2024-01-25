@@ -4,10 +4,10 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Game Assignments</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">New Match</a>
 </p>
 <table class="table">
     <thead>
@@ -36,15 +36,26 @@
     <tbody>
 @foreach (var item in Model) {
         <tr>
-                <td>
-                    @foreach (var t in item.TeamGames)
-                    {
-                        @t.Team.Name <br />
-                    }
-                </td>
+            @{
+                var teamList = item.TeamGames.ToList();
+            }
             <td>
-                @Html.DisplayFor(modelItem => item.Date)
+                @for (int i = 0; i < teamList.Count; i++)
+                {
+                    @teamList[i].Team.Name
+                    if (i < teamList.Count - 1)
+                    {
+                        <text> Vs </text>
+                    }
+                    <br />
+                }
+            </td>           
+            <td>
+                @item.Date.ToString("MMMM dd yyyy")
             </td>
+                @* <td> Other way to display date
+            @item.Date.ToString("dd/MM/yyyy")
+            </td> *@
             <td>
                 @Html.DisplayFor(modelItem => item.score)
             </td>
