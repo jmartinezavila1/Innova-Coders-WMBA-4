@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using WMBA_4.Models;
 
 
@@ -13,6 +14,10 @@ namespace WMBA_4.Data
 
             try
             {
+                //We can use this to delete the database and start fresh.
+                //context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                //context.Database.Migrate();
 
                 //Cities 
                 if (!context.Cities.Any())
