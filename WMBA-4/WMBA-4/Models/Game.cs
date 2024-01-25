@@ -11,10 +11,6 @@ namespace WMBA_4.Models
         [DataType(DataType.DateTime)]
         public DateTime Date { get; set; }
 
-        [Display(Name = "Score")]
-        public int score  { get; set; }
-
-
         [Display(Name = "Location")]
         public int LocationID { get; set; }
 
