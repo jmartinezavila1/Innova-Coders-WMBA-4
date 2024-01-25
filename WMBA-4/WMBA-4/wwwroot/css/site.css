@@ -1,45 +1,3 @@
-/*font*/
-@import url("https://p.typekit.net/p.css?s=1&k=igy8ywi&ht=tk&f=32897.32904&a=39545793&app=typekit&e=css");
-
-@font-face {
-    font-family: "proxima-soft";
-    src: url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
-    font-display: auto;
-    font-style: normal;
-    font-weight: 400;
-    font-stretch: normal;
-}
-
-@font-face {
-    font-family: "proxima-soft";
-    src: url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
-    font-display: auto;
-    font-style: normal;
-    font-weight: 700;
-    font-stretch: normal;
-}
-
-.tk-proxima-soft {
-    font-family: "proxima-soft",sans-serif;
-}
-
-/*root*/
-:root {
-    /*background colors*/
-    --bg-kelly: #4CBB17;
-    /*font colors*/
-    --ft-black: #000000;
-    --ft-white: #ffffff;
-    /*font sizes*/
-    /*px*/
-    --ft-l: 25px;
-    --ft-m: 20px;
-    --ft-s: 15px;
-    /*rem*/
-    --ft-r-l: 2rem;
-    --ft-r-m: 1.8rem;
-    --ft-r-s: 1.5rem;
-}
 
 /*cement style*/
 html {
@@ -70,6 +28,6 @@ body {
   margin-bottom: 60px;
 }
 
-.bg-kelly{
+.bg-kelly {
     background-color: var(--bg-kelly);
 }
