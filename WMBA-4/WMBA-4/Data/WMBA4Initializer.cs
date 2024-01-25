@@ -66,17 +66,20 @@ namespace WMBA_4.Data
                 {
                     var divisions = new List<Division>
                     {
-                        new Division { ID = 1, DivisionName = "AL East", LeagueID = 1 },
-                        new Division { ID = 2, DivisionName = "AL Central", LeagueID = 1 },
-                        new Division { ID = 3, DivisionName = "AL West", LeagueID = 1 },
-                        new Division { ID = 4, DivisionName = "NL East", LeagueID = 2 },
-                        new Division { ID = 5, DivisionName = "NL Central", LeagueID = 2 },
-
+                        new Division { ID = 1, DivisionName = "4U - BIRTH YEARS 2020 (BLASTBALL)", LeagueID = 3 },
+                        new Division { ID = 2, DivisionName = "5U - BIRTH YEARS 2019 (T-BALL)", LeagueID = 3 },
+                        new Division { ID = 3, DivisionName = "7U - BIRTH YEARS 2017-18 (COACH PITCH)", LeagueID = 3 },
+                        new Division { ID = 4, DivisionName = "9U - BIRTH YEARS 2015-16", LeagueID = 3 },
+                        new Division { ID = 5, DivisionName = "11U - BIRTH YEARS 2013-14", LeagueID = 3 },
+                        new Division { ID = 6, DivisionName = "13U - BIRTH YEARS 2011-12", LeagueID = 3 },
+                        new Division { ID = 7, DivisionName = "15U - BIRTH YEARS 2009-10", LeagueID = 3 },
+                        new Division { ID = 8, DivisionName = "18U - BIRTH YEARS 2006-08", LeagueID = 3 },
                     };
 
                     context.Divisions.AddRange(divisions);
                     context.SaveChanges();
                 }
+
 
                 // Teams 
                 if (!context.Teams.Any())
