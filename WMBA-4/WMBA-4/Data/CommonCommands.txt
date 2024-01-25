@@ -8,3 +8,5 @@ Update-Database -Context WMBA_4_Context
 
 Remeber to add...
             ExtraMigration.Steps(migrationBuilder);
+
+edward
