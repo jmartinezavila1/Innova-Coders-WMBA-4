@@ -32,19 +32,18 @@
     --bg-kelly: #4CBB17;
     --bg-light-kelly: #5EC22E;
     --bg-white: #FFFFFF;
+    --bg-light-grey: #E4E4E4;
 
     /*////font colors////*/
     --ft-black: #000000;
     --ft-gray: #3E3E3E;
     --ft-white: #ffffff;
     --ft-kelly: #4CBB17;
-
     /*////font sizes////*/
     /*px*/
     --ft-l: 25px;
     --ft-m: 20px;
     --ft-s: 15px;
-
     /*////rem size////*/
     --ft-r-l: 2rem;
     --ft-r-m: 1.8rem;
@@ -58,6 +57,10 @@
 
 .bg-white{
     background-color: var(--bg-white);
+}
+
+.bg-light-grey {
+    background-color: var(--bg-light-grey);
 }
 
 /*/////////////////////////////font color/////////////////////////////////////////*/
@@ -92,21 +95,21 @@
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 
 .logo {
-    width: 100px;
+    width: 150px;
 }
 
 .btn-shadow {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-.btn-add{
-    padding: 15px 35px;
+.btn-kelly{
+    padding: 12px 35px;
     border: none;
     background-color: var(--bg-kelly);
     border-radius: 30px;
 }
 
-.btn-add:hover{
+.btn-kelly:hover{
     cursor: pointer;
     background-color: var(--bg-light-kelly) ;
 }
