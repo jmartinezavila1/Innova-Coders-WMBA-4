@@ -28,53 +28,46 @@ namespace WMBA_4.Controllers
 
 
         // GET: Team/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public IActionResult Details(int id)
         {
-            if (id == null || _context.Teams == null)
-            {
-                return NotFound();
-            }
-
-            var team = await _context.Teams
+            var team = _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamGames)
                     .ThenInclude(tg => tg.Game)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                        .ThenInclude(g => g.TeamGames)
+                            .ThenInclude(tg => tg.Team)
+                .FirstOrDefault(t => t.ID == id);
 
             if (team == null)
             {
                 return NotFound();
             }
 
-            // Create a dictionary to store visitor team names for each game
-            var visitorTeams = new Dictionary<int, string>();
+
+            var opponentTeams = new Dictionary<int, string>();
 
             foreach (var teamGame in team.TeamGames)
             {
-                if (teamGame.IsVisitorTeam)
+                if (teamGame.IsHomeTeam)
                 {
-                    // If it's a visitor team, get the visitor team's name
-                    var visitorTeam = await _context.TeamGame
-                        .Where(tg => tg.GameID == teamGame.GameID && tg.IsHomeTeam)
-                        .Select(tg => tg.Team.Name)
-                        .FirstOrDefaultAsync();
+                    var opponentTeam = teamGame.Game.TeamGames
+                        .FirstOrDefault(tg => tg.IsVisitorTeam)?.Team.Name;
 
-                    visitorTeams[teamGame.GameID] = visitorTeam ?? "Unknown Team";
+                    opponentTeams[teamGame.GameID] = opponentTeam ?? "Unknown Team";
                 }
-                else if (teamGame.IsHomeTeam)
+                else if (teamGame.IsVisitorTeam)
                 {
-                    // If it's a home team, get the home team's name
-                    var homeTeam = teamGame.Team.Name;
+                    var opponentTeam = teamGame.Game.TeamGames
+                        .FirstOrDefault(tg => tg.IsHomeTeam)?.Team.Name;
 
-                    visitorTeams[teamGame.GameID] = homeTeam ?? "Unknown Team";
+                    opponentTeams[teamGame.GameID] = opponentTeam ?? "Unknown Team";
                 }
             }
 
-            ViewBag.VisitorTeams = visitorTeams;
+            ViewBag.OpponentTeams = opponentTeams;
 
             return View(team);
         }
-
 
 
         // GET: Team/Create

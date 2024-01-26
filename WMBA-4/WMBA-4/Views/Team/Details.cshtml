@@ -11,26 +11,23 @@
 </p>
 
 <div>
-
     <hr />
     <ul>
             @foreach (var teamGame in Model.TeamGames)
             {
+                var homeTeamName = teamGame.Game.TeamGames.FirstOrDefault(tg => tg.IsHomeTeam)?.Team.Name;
+                var visitorTeamName = teamGame.Game.TeamGames.FirstOrDefault(tg => tg.IsVisitorTeam)?.Team.Name;
 
             <li>
-                <strong>Home Team:</strong> @(teamGame.Team.Name) |
-                <strong>Visitor Team:</strong> @(ViewBag.VisitorTeams[teamGame.GameID]) |
-                <strong>Game Date:</strong> @teamGame.Game.Date |
-                <strong>Location:</strong> @teamGame.Game.LocationID |
-                <strong>Season:</strong> @teamGame.Game.SeasonID |
-                <strong>Game Type:</strong> @teamGame.Game.GameType
+                    @(homeTeamName ?? "Unknown Team")
+                <strong>VS</strong> @(visitorTeamName ?? "Unknown Team") |
+                <strong>Game Date:</strong> @teamGame.Game.Date
             </li>
-
             }
+
     </ul>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
-
