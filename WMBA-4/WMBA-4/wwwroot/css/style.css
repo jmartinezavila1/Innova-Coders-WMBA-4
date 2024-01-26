@@ -192,5 +192,9 @@ div > .nav-hover:hover {
     
 }
 
+.rotate-icon {
+    transition: transform 0.5s ease-in-out;
+}
+}
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
