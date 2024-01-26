@@ -26,17 +26,17 @@
     font-family: "proxima-soft",sans-serif;
 }
 
-/*//////////////////////////////////////////////root//////////////////////////////////////////////*/
+/*//////////////////////////////////////////////roo#A4A4A4t//////////////////////////////////////////////*/
 :root {
     /*////background colors////*/
     --bg-kelly: #4CBB17;
     --bg-light-kelly: #5EC22E;
     --bg-white: #FFFFFF;
     --bg-light-grey: #E4E4E4;
-
+    --bg-dark-blue: #23314E;
     /*////font colors////*/
     --ft-black: #000000;
-    --ft-gray: #3E3E3E;
+    --ft-light-gray: #A4A4A4;
     --ft-white: #ffffff;
     --ft-kelly: #4CBB17;
     /*////font sizes////*/
@@ -48,6 +48,8 @@
     --ft-r-l: 2rem;
     --ft-r-m: 1.8rem;
     --ft-r-s: 1.5rem;
+    /*/////heights/////*/
+    --h100: 100px;
 }
 
 /*/////////////////////////////background color/////////////////////////////////////*/
@@ -63,6 +65,7 @@
     background-color: var(--bg-light-grey);
 }
 
+
 /*/////////////////////////////font color/////////////////////////////////////////*/
 .ft-black {
    color: var(--ft-black);
@@ -74,10 +77,31 @@
     color: var(--ft-kelly);
 }
 
+.ft-light-gery {
+    color: var(--ft-light-gray);
+}
+
+/*/////////////////////////////border color/////////////////////////////////////*/
+.border-kelly{
+    border: 0.8px solid var(--bg-kelly);    
+}
+
+
 /*/////////////////////////////////font decoration///////////////////////////////////*/
 .no-list-decor{
     list-style: none;
 }
+
+.t-center{
+    text-align: center;
+}
+
+/*//////////////////////////////////padding//////////////////////////////////////////*/
+.px-6 {
+    padding-left: 7rem !important;
+    padding-right: 7rem !important;
+}
+
 
 /*/////////////////////////////////classes-flex//////////////////////////////////////*/
 .p-in-flex {
@@ -95,7 +119,7 @@
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 
 .logo {
-    width: 150px;
+    width: 160px;
 }
 
 .btn-shadow {
@@ -151,4 +175,22 @@
     height: 100px;
 }
 
-/*///////////////////////////////////////////////ids///////////////////////////////////////////*/
+.nav-text{
+    color: var(--ft-black);
+    font-size: 18px;
+}
+
+div > .nav-hover:hover {
+    background-color: var(--bg-dark-blue);
+    color: var(--ft-white);
+}
+
+.btn-toggle {
+    position: absolute;
+    top: 100px;
+    left: 225px;
+    
+}
+
+
+/*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
