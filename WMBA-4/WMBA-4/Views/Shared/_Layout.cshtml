@@ -13,16 +13,31 @@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-light-grey">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-light-grey d-flex justify-content-between">
         <!-- Navbar Brand-->
         <a class="navbar-brand ps-3" href="#">
             <img src="~/images/WMBA.png" alt="WBMA logo" class="logo" />
         </a>
-        <!-- Sidebar Toggle-->
-        @* <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button> *@
-        <!-- Go to Create Team-->
-        <div class=" d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0 btn-kelly">
-            <a class="nav-link" asp-area="" asp-controller="Team" asp-action="Create">Go to Add Team</a>
+        <!-- Nave Quick Buttons-->
+        <div class="nav-quick-button">
+            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
+            {
+                <div class="px-2">
+                    <button type="submit" class="btn-kelly btn-text text-no-deco">Import File</button>
+                </div>
+            } 
+            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
+            {
+                <div class="px-2">
+                    <button type="submit" class="btn-kelly btn-text text-no-deco">Go to Team</button>
+                </div>
+            } 
+            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
+            {
+                <div class="px-2">
+                    <button type="submit" class="btn-kelly btn-text text-no-deco">Scorekeeper</button>
+                </div>
+            }
         </div>
         <!-- Navbar-->
         <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
@@ -48,9 +63,9 @@
                     </div>
                 </div>
             </nav>
-            <div class="btn-toggle border border-start-0 angle">
-                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!" onclick="rotateIcon()">
-                    <i id="slideInAndOut" class="fa-solid fa-angles-right rotate-icon"></i>
+            <div class="btn-toggle border border-start-0 angle rounded-end-circle">
+                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 " id="sidebarToggle" href="#!" onclick="rotateIcon()">
+                    <i id="slideInAndOut" class="fa-solid fa-angles-left rotate-icon"></i>
                 </button> 
             </div>
         </div>
