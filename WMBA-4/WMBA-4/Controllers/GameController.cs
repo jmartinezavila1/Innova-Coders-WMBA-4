@@ -64,10 +64,11 @@ namespace WMBA_4.Controllers
             return View(game);
         }
 
+
         // this is for LineUp
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Details(string[] selectedOptions,int? id,int team,Game game)
+        public async Task<IActionResult> Save(string[] selectedOptions,int? id,int team,Game game)
         {
             // Obtener el juego para actualizar
             var GameToUpdate = await _context.Games
@@ -82,8 +83,8 @@ namespace WMBA_4.Controllers
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
            
             await _context.SaveChangesAsync();
-            PopulatePlayersAssignedTeam(game, team);
-            return View(game);
+           
+            return RedirectToAction("Details", new { id = id,team=team });
         }
 
         // GET: Game/Create
