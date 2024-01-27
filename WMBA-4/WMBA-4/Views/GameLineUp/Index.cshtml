@@ -33,8 +33,18 @@
     </div>
 </div>
 <p>
-    <a asp-action="Create">Create New</a>
 
+
+   @{
+    // Obtener una lista única de TeamID
+    var uniqueTeamIDs = Model.Select(x => x.TeamID).Distinct().ToList();
+
+    // Seleccionar el primer TeamID (puedes ajustar esto según tus necesidades)
+    var firstTeamID = uniqueTeamIDs.FirstOrDefault();
+}
+
+<a asp-action="Create" asp-route-id="@firstTeamID">Create New</a>
+    
 </p>
 <table class="table">
     <thead>
