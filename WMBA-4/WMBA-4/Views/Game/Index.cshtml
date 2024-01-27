@@ -65,9 +65,18 @@
                     var teamGamesList = item2.TeamGames.ToList();
                 }
             <td>
+                    @{
+                        int? firstTeamId = null; // Variable para almacenar el ID del primer equipo
+                    }
+
                     @foreach (var teamGame in teamGamesList)
                     {
-                        @: @teamGame.Team.Name: @teamGame.score <br />
+                        if (firstTeamId == null)
+                        {
+                            firstTeamId = teamGame.Team.ID; // Almacena el ID del primer equipo
+                        }
+
+                        @: @teamGame.Team.Name: @teamGame.score VS <br />
                     }
             </td>
             <!-- Rest of the cells -->
@@ -84,8 +93,8 @@
                     @Html.DisplayFor(modelItem => item2.GameType.Description)
             </td>
             <td>
-                <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item2.ID">Details</a> |
+                    <a asp-action="Details" asp-route-id="@item2.ID" asp-route-team="@firstTeamId">LineUp</a> |
+                <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |              
                 <a asp-action="Delete" asp-route-id="@item2.ID">Delete</a>
             </td>
         </tr>
