@@ -180,19 +180,8 @@ namespace WMBA_4.Data
                 {
                     var seasons = new List<Season>
                     {
-                        new Season { ID = 1, SeasonCode = "W2022", SeasonName = "Winter 2022" },
-                        new Season { ID = 2, SeasonCode = "S2022", SeasonName = "Spring 2022" },
-                        new Season { ID = 3, SeasonCode = "U2022", SeasonName = "Summer 2022" },
-                        new Season { ID = 4, SeasonCode = "F2022", SeasonName = "Fall 2022" },
-                        new Season { ID = 5, SeasonCode = "W2023", SeasonName = "Winter 2023" },
-                        new Season { ID = 6, SeasonCode = "S2023", SeasonName = "Spring 2023" },
-                        new Season { ID = 7, SeasonCode = "U2023", SeasonName = "Summer 2023" },
-                        new Season { ID = 8, SeasonCode = "F2023", SeasonName = "Fall 2023" },
-                        new Season { ID = 9, SeasonCode = "W2024", SeasonName = "Winter 2024" },
-                        new Season { ID = 10, SeasonCode = "S2024", SeasonName = "Spring 2024" },
-                        new Season { ID = 11, SeasonCode = "U2024", SeasonName = "Summer 2024" },
-                        new Season { ID = 12, SeasonCode = "F2024", SeasonName = "Fall 2024" }
-
+                        new Season { ID = 1, SeasonCode = "2023", SeasonName = "Summer 2023" },
+   
                     };
 
                     context.Seasons.AddRange(seasons);
@@ -260,11 +249,11 @@ namespace WMBA_4.Data
 
 
                         // Games for 2023
-                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 2, GameTypeID = 2 },
-                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 2, GameTypeID = 2 },
-                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 2, GameTypeID = 1 },
-                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 2, GameTypeID = 1 },
-                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 2, GameTypeID = 2 }
+                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 1, GameTypeID = 2 }
 
 
                     };
