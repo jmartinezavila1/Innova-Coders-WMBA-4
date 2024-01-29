@@ -9,4 +9,8 @@ Update-Database -Context WMBA_4_Context
 Remeber to add...
             ExtraMigration.Steps(migrationBuilder);
 
-edward
+
+For Execell import files
+Please install it in Nuget Package console
+
+Install-Package EPPlus -v 4.5.3.3
