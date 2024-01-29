@@ -1,0 +1,30 @@
+﻿@model IEnumerable<WMBA_4.Models.Player>
+
+
+<h1> @ViewBag.TeamName</h1>
+<h2>List of Players</h2>
+
+<div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Player name/Jersey #</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
+                <tr>
+                    <td>@player.FullName</td>
+                    
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</div>
+<div>
+    <a asp-action="details" asp-route-id="1">Back to List</a>
+</div>

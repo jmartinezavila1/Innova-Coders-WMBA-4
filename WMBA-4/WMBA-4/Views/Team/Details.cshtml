@@ -6,7 +6,7 @@
 </p>
 <p>
     <a asp-controller="Game" asp-action="Create" class="btn btn-primary" style="background-color: #4CBB17; color: #fff;">Schedule Game</a>
-    <a asp-action="GameLineUp" asp-route-teamId="@Model.ID" class="btn btn-info" style="background-color: #4CBB17; color: #fff;">View Team Players</a>
+    <a asp-controller="Team" asp-action="TeamPlayer" asp-route-teamId="@Model.ID" class="btn btn-info" style="background-color: #4CBB17; color: #fff;">View Team Players</a>
 </p>
 
 <div>
