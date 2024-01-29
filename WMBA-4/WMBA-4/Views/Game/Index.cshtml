@@ -4,11 +4,16 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Game Assignments</h1>
 
-<p>
-    <a asp-action="Create">New Match</a>
-</p>
+<div class="f-in-flex">
+    <h1>Game Assignments</h1>
+
+    @using (Html.BeginForm("Create", "Game", FormMethod.Get))
+    {
+        <button type="submit" class="btn-kelly btn-text text-no-deco">Create Match</button>
+    }
+
+</div>
 
 <form asp-action="Index">
     <label for="seasonName">Season:</label>
@@ -40,46 +45,29 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
-@* @foreach (var item in Model) {
-        <tr> *@
-           @*  @{
-                var teamList = item.TeamGames.ToList();
-            } *@
-            @* <td>
-                @for (int i = 0; i < teamList.Count; i++)
-                {
-                    @teamList[i].Team.Name
-                    if (i < teamList.Count - 1)
-                    {
-                        <text> Vs </text>
-                    }
-                    <br />
-                }
-            </td> *@        
-            
+    <tbody>            
         @foreach (var item2 in Model)
         {
         <tr>
-                @{
-                    var teamGamesList = item2.TeamGames.ToList();
-                }
+            @{
+                var teamGamesList = item2.TeamGames.ToList();
+            }
             <td>
                     @{
-                        int? firstTeamId = null; // Variable para almacenar el ID del primer equipo
+                        int? firstTeamId = null; // Variable to store First Team ID 
                     }
 
                     @foreach (var teamGame in teamGamesList)
                     {
                         if (firstTeamId == null)
                         {
-                            firstTeamId = teamGame.Team.ID; // Almacena el ID del primer equipo
+                            firstTeamId = teamGame.Team.ID; // Store First Team ID 
                         }
 
                         @: @teamGame.Team.Name: @teamGame.score VS <br />
                     }
             </td>
-            <!-- Rest of the cells -->
+            
             <td>
                     @item2.Date.ToString("MMMM dd yyyy")
             </td>
@@ -99,13 +87,5 @@
             </td>
         </tr>
         }
-
-           
-                @* <td> Other way to display date
-            @item.Date.ToString("dd/MM/yyyy")
-            </td> *@               
-            
-       @*  </tr> *@
-}
     </tbody>
 </table>
