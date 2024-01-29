@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/Navigation.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/media.css" asp-append-version="true" />
-
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
 <body class="sb-nav-fixed">
@@ -20,12 +20,13 @@
         </a>
         <!-- Nave Quick Buttons-->
         <div class="nav-quick-button">
-            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
-            {
-                <div class="px-2">
-                    <button type="submit" class="btn-kelly btn-text text-no-deco">Import File</button>
-                </div>
-            } 
+            @Html.ActionLink("Cargar Archivo", "InsertFromExcel", "ImportTeam1")
+            <div class="px-2">
+                    <button type="submit" onclick="llamarVistaParcial();" id="importTeamButton" class="btn-kelly btn-text text-no-deco">Import File</button>
+            </div>
+            
+            
+
             @using (Html.BeginForm("Index", "Team", FormMethod.Get))
             {
                 <div class="px-2">
@@ -58,8 +59,7 @@
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Divisions</a>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Lineup" asp-action="Index">Lineup</a>
+                        
                     </div>
                 </div>
             </nav>
@@ -93,7 +93,7 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/sidenav.js" asp-append-version="true"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+   
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)

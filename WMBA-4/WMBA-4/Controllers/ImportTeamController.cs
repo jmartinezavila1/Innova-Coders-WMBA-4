@@ -152,7 +152,8 @@ namespace WMBA_4.Controllers
 
             //Note that we are assuming that you are using the Preferred Approach to Lookup Values
             //And the custom LookupsController
-            return PartialView("_ImportTeam");
+
+            return View();
         }
     }
 
