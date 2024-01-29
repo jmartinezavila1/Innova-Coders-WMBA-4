@@ -87,13 +87,13 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game/Create
-        public IActionResult Create()
+        public IActionResult Create(int id)
         {
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
-          
+            ViewBag.TeamID = id;
 
             return View();
         }
@@ -134,7 +134,7 @@ namespace WMBA_4.Controllers
 
                 };
                 //_context.TeamGames.Add(teamGame);
-
+                
 
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));

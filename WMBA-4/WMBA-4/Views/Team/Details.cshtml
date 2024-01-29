@@ -5,7 +5,7 @@
     Division: @Model.Division.DivisionName | Coach: @Model.Coach_Name | City: Welland
 </p>
 <p>
-    <a asp-controller="Game" asp-action="Create" class="btn btn-primary" style="background-color: #4CBB17; color: #fff;">Schedule Game</a>
+    <a asp-controller="Game" asp-action="Create" asp-route-id="@Model.ID"  class="btn btn-primary" style="background-color: #4CBB17; color: #fff;">Schedule Game</a>
     <a asp-controller="Team" asp-action="TeamPlayer" asp-route-teamId="@Model.ID" class="btn btn-info" style="background-color: #4CBB17; color: #fff;">View Team Players</a>
 </p>
 
