@@ -20,11 +20,75 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Player
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? TeamID,
+            string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
-            return View(await wMBA_4_Context.ToListAsync());
+
+            var players = from p in _context.Players.Include(p => p.Team).AsNoTracking() select p;
+
+            //sorting sortoption array
+            string[] sortOptions = new[] { "Player", "Team" };
+
+            //filter
+            if (TeamID.HasValue)
+            {
+                players = players.Where(p => p.TeamID == TeamID);
+            }
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                players = players.Where(p => p.LastName.ToUpper().Contains(SearchString.ToUpper())
+                                       || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
+            }
+
+            //sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+            if (sortField == "Player")
+            {
+                if (sortDirection == "asc")
+                {
+                    players = players
+                        .OrderBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
+                }
+                else
+                {
+                    players = players
+                        .OrderByDescending(p => p.FirstName)
+                        .ThenByDescending(p => p.LastName);
+                }
+            }
+            else if (sortField == "Team")
+            {
+                if (sortDirection == "asc")
+                {
+                    players = players
+                        .OrderBy(p => p.Team);
+                }
+                else
+                {
+                    players = players
+                        .OrderByDescending(p => p.Team);
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+
+            return View(await players.ToListAsync());
         }
+
 
         // GET: Player/Details/5
         public async Task<IActionResult> Details(int? id)
