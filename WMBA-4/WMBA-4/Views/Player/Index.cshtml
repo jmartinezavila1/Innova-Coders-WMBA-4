@@ -12,62 +12,106 @@
         {
             <button type="submit" class="btn-kelly btn-text text-no-deco">Add Player</button>
         }
-
     </div>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.MemberID)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.FullName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.Team)
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
+    <form asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <div class="form-horizontal">
+            <div class="d-flex">
+                <button class="btn mb-2 btn-outline-dark @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                    Filter/Search @ViewData["numberFilters"]
+                </button>
+            </div>
+            <br />
+            <div class="collapse" id="collapseFilter">
+                <div class="card card-body bg-light">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label class="control-label">Search Player Name:</label>
+                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="control-label">Select Team:</label>
+                            @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control" })
+                        </div>
+                        <div class="form-group col-md-4 align-self-end">
+                            <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                            <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="table giro-table table-bordered">
+            <thead>
                 <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.MemberID)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.FullName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Team.Name)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID" style="text-decoration: none;">
-                            <span class="material-symbols-outlined">
-                                edit
-                            </span>
-                        </a>
-                        @* <a href="#" onclick="openModal('@Url.Action("Details", "Player", new { id = item.ID })')" style="text-decoration: none;">
-                    <span class="material-symbols-outlined">
-                    description
-                    </span>
-                    </a> *@
-                        <a asp-action="Details" asp-route-id="@item.ID" style="text-decoration: none;">
-                            <span class="material-symbols-outlined">
-                                description
-                            </span>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.ID" style="text-decoration: none;">
-                            <span class="material-symbols-outlined">
-                                delete
-                            </span>
-                        </a>
-                    </td>
+                    <th>
+                        Member ID
+                        @* <input type="submit" value="Member ID" class="btn btn-toolbar text-break" /> *@
+                    </th>
+                    <th>
+                        Player
+                        @* <input type="submit" name="actionButton" value="Player" class="btn btn-link" /> *@
+                        @* @Html.DisplayNameFor(model => model.FullName) *@
+                    </th>
+                    <th>
+                        Team
+                        @* <input type="submit" name="actionButton" value="Team" class="btn btn-link" /> *@
+                        @* @Html.DisplayNameFor(model => model.Team) *@
+                    </th>
+                    <th>
+                        Operation
+                        @* <input type="submit" value="Operation" class="btn btn-toolbar" /> *@
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.MemberID)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.FullName)
+                        </td>
+                        <td>
+                            <div>
+                                <div>
+                                    @Html.DisplayFor(modelItem => item.Team.Name)
+
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <a asp-action="Edit" asp-route-id="@item.ID">
+                                <span class="material-symbols-outlined ft-light-grey px-1">
+                                    edit
+                                </span>
+                            </a>
+                            @* <a href="#" onclick="openModal('@Url.Action("Details", "Player", new { id = item.ID })')" style="text-decoration: none;">
+                        <span class="material-symbols-outlined">
+                        description
+                        </span>
+                        </a> *@
+                            <a asp-action="Details" asp-route-id="@item.ID">
+                                <span class="material-symbols-outlined ft-light-grey px-1">
+                                    visibility
+                                </span>
+                            </a>
+                            <a asp-action="Delete" asp-route-id="@item.ID">
+                                <span class="material-symbols-outlined ft-light-grey px-1">
+                                    delete
+                                </span>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </form>
 </div>
 
+<script>
+
+</script>

@@ -4,58 +4,32 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WMBA_4</title>
+    @* bootstrap *@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/Navigation.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/layoutStyle.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/media.css" asp-append-version="true" />
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 </head>
+
 <body class="sb-nav-fixed">
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-light-grey d-flex justify-content-between">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3" href="#">
-            <img src="~/images/WMBA.png" alt="WBMA logo" class="logo" />
-        </a>
-        <!-- Nave Quick Buttons-->
-        <div class="nav-quick-button">
-            @Html.ActionLink("Cargar Archivo", "InsertFromExcel", "ImportTeam1")
-            <div class="px-2">
-                    <button type="submit" onclick="llamarVistaParcial();" id="importTeamButton" class="btn-kelly btn-text text-no-deco">Import File</button>
-            </div>
-            
-            
 
-            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
-            {
-                <div class="px-2">
-                    <button type="submit" class="btn-kelly btn-text text-no-deco">Go to Team</button>
-                </div>
-            } 
-            @using (Html.BeginForm("Index", "Team", FormMethod.Get))
-            {
-                <div class="px-2">
-                    <button type="submit" class="btn-kelly btn-text text-no-deco">Scorekeeper</button>
-                </div>
-            }
         </div>
-        <!-- Navbar-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="color: #4CBB17;"><i class="fas fa-user fa-fw ft-kelly"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                    <partial name="_LoginPartial" />
-                </ul>
-            </li>
-        </ul>
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion bg-kelly" id="sidenavAccordion">
                 <div class="sb-sidenav-menu">
                     <div class="nav nav-text">
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a>Home</a>
+                        <div class="sb-sidenav-menu-heading">Quick Access</div>
+                        <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Upload File</a>
+                        <a class="nav-link nav-hover" asp-area="" asp-controller="Lineup" asp-action="Index">Scorekeeper</a>
+                        <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Season Games</a>
+                        <div class="sb-sidenav-menu-heading">User Access</div>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Divisions</a>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
@@ -63,11 +37,6 @@
                     </div>
                 </div>
             </nav>
-            <div class="btn-toggle border border-start-0 angle rounded-end-circle">
-                <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0 " id="sidebarToggle" href="#!" onclick="rotateIcon()">
-                    <i id="slideInAndOut" class="fa-solid fa-angles-left rotate-icon"></i>
-                </button> 
-            </div>
         </div>
         <div id="layoutSidenav_content">
             <main>
@@ -79,9 +48,10 @@
                 <div class="container-fluid px-4">
                     <div class="d-flex align-items-center justify-content-between small">
                         <div>
-                            <h6 class="t-center ft-light-gery">Welland Minor Baseball Association Inc. © 2024</h6>
-                            <p class="ft-light-gery">
-                                Welland Minor Baseball Association Inc. has been serving the youth of Welland and the surrounding communities since 1969. We are the largest not-for-profit youth baseball organization in Welland.
+                            <h6 class="text-center ft-grey">Welland Minor Baseball Association Inc. © 2024</h6>
+                            <p class="text-center ft-grey">
+                                Welland Minor Baseball Association Inc. has been serving the youth of Welland and the surrounding communities since 1969.
+                                We are the largest not-for-profit youth baseball organization in Welland.
                             </p>
                         </div>
                     </div>
