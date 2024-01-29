@@ -29,11 +29,10 @@ namespace WMBA_4.Controllers
         .Include(g => g.Season)
         .Include(t => t.TeamGames).ThenInclude(t => t.Team);
 
-         
 
             if (!string.IsNullOrEmpty(seasonName))
             {
-                games = games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
+                games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
             }
            
             return View(await games.ToListAsync());
@@ -93,6 +92,9 @@ namespace WMBA_4.Controllers
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
+            ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
+          
+
             return View();
         }
 
@@ -101,17 +103,47 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game)
+        public async Task<IActionResult> Create([Bind("ID,Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game)
         {
+            //Game
             if (ModelState.IsValid)
             {
+                //Game
                 _context.Add(game);
+
+                //TeamGame (team1)
+                var teamGame1 = new TeamGame
+                {
+                    IsHomeTeam=true,
+                    IsVisitorTeam=false,
+                    score=0, //score=game.TeamGames.score,
+                    TeamID = game.TeamGames.FirstOrDefault().TeamID,
+                    GameID = game.ID
+                };
+                //_context.TeamGames.Add(teamGame);
+
+
+                //TeamGame (team2)
+                var teamGame2 = new TeamGame
+                {
+                    IsHomeTeam = false,
+                    IsVisitorTeam = true,
+                    score = 10, //score=game.TeamGames.score,
+                    TeamID = game.TeamGames.FirstOrDefault().TeamID,
+                    GameID = game.ID
+
+                };
+                //_context.TeamGames.Add(teamGame);
+
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
+            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
             return View(game);
         }
 
