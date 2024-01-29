@@ -180,19 +180,8 @@ namespace WMBA_4.Data
                 {
                     var seasons = new List<Season>
                     {
-                        new Season { ID = 1, SeasonCode = "W2022", SeasonName = "Winter 2022" },
-                        new Season { ID = 2, SeasonCode = "S2022", SeasonName = "Spring 2022" },
-                        new Season { ID = 3, SeasonCode = "U2022", SeasonName = "Summer 2022" },
-                        new Season { ID = 4, SeasonCode = "F2022", SeasonName = "Fall 2022" },
-                        new Season { ID = 5, SeasonCode = "W2023", SeasonName = "Winter 2023" },
-                        new Season { ID = 6, SeasonCode = "S2023", SeasonName = "Spring 2023" },
-                        new Season { ID = 7, SeasonCode = "U2023", SeasonName = "Summer 2023" },
-                        new Season { ID = 8, SeasonCode = "F2023", SeasonName = "Fall 2023" },
-                        new Season { ID = 9, SeasonCode = "W2024", SeasonName = "Winter 2024" },
-                        new Season { ID = 10, SeasonCode = "S2024", SeasonName = "Spring 2024" },
-                        new Season { ID = 11, SeasonCode = "U2024", SeasonName = "Summer 2024" },
-                        new Season { ID = 12, SeasonCode = "F2024", SeasonName = "Fall 2024" }
-
+                        new Season { ID = 1, SeasonCode = "2023", SeasonName = "Summer 2023" },
+   
                     };
 
                     context.Seasons.AddRange(seasons);
@@ -251,20 +240,20 @@ namespace WMBA_4.Data
                 {
                     var games = new List<Game>
                     {
-                         // Games for 2022
-                        new Game { ID = 1, Date = new DateTime(2022, 1, 1), score = 5, LocationID = 1, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 2, Date = new DateTime(2022, 2, 1), score = 7, LocationID = 2, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 3, Date = new DateTime(2022, 3, 1), score = 3, LocationID = 3, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 4, Date = new DateTime(2022, 4, 1), score = 8, LocationID = 4, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 5, Date = new DateTime(2022, 5, 1), score = 6, LocationID = 5, SeasonID = 1, GameTypeID = 1 },
+                         // Games for 2022_
+                        new Game { ID = 1, Date = new DateTime(2022, 1, 1), LocationID = 1, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 2, Date = new DateTime(2022, 2, 1), LocationID = 2, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 3, Date = new DateTime(2022, 3, 1), LocationID = 3, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 4, Date = new DateTime(2022, 4, 1), LocationID = 4, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 5, Date = new DateTime(2022, 5, 1), LocationID = 5, SeasonID = 1, GameTypeID = 1 },
 
 
                         // Games for 2023
-                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), score = 6, LocationID = 6, SeasonID = 2, GameTypeID = 2 },
-                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), score = 8, LocationID = 7, SeasonID = 2, GameTypeID = 2 },
-                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), score = 4, LocationID = 8, SeasonID = 2, GameTypeID = 1 },
-                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), score = 9, LocationID = 9, SeasonID = 2, GameTypeID = 1 },
-                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), score = 7, LocationID = 10, SeasonID = 2, GameTypeID = 2 }
+                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 1, GameTypeID = 2 },
+                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 1, GameTypeID = 2 }
 
 
                     };
@@ -279,26 +268,26 @@ namespace WMBA_4.Data
                 {
                     var teamGames = new List<TeamGame>
                     {
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 1, GameID = 1 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 2, GameID = 1 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 3, GameID = 2 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 4, GameID = 2 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 5, GameID = 3 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 6, GameID = 3 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 7, GameID = 4 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 8, GameID = 4 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 9, GameID = 5 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 10, GameID = 5 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 11, GameID = 6 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 12, GameID = 6 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 13, GameID = 7 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 14, GameID = 7 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 15, GameID = 8 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 16, GameID = 8 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 17, GameID = 9 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 18, GameID = 9 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, TeamID = 19, GameID = 10 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, TeamID = 20, GameID = 10 }
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 1, GameID = 1 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 2, GameID = 1 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 3, GameID = 2 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 4, GameID = 2 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 5, GameID = 3 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 6, GameID = 3 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 7, GameID = 4 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 8, GameID = 4 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 9, GameID = 5 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 10, GameID = 5 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 11, GameID = 6 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 12, GameID = 6 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 13, GameID = 7 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 14, GameID = 7 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 15, GameID = 8 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 16, GameID = 8 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 17, GameID = 9 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 18, GameID = 9 },
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 19, GameID = 10 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 20, GameID = 10 }
                     };
 
                     context.TeamGame.AddRange(teamGames);

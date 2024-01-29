@@ -54,11 +54,13 @@ namespace WMBA_4.Controllers
         }
 
         // GET: GameLineUp/Create
-        public IActionResult Create()
+        public IActionResult Create(int team)
         {
+            
             ViewData["GameID"] = new SelectList(_context.Games, "ID", "ID");
             ViewData["PlayerID"] = new SelectList(_context.Players, "ID", "FirstName");
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+           
             return View();
         }
 
@@ -69,15 +71,18 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,BattingOrder,GameID,PlayerID,TeamID")] GameLineUp gameLineUp)
         {
+
             if (ModelState.IsValid)
             {
                 _context.Add(gameLineUp);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            var gameL = new GameLineUp();
             ViewData["GameID"] = new SelectList(_context.Games, "ID", "ID", gameLineUp.GameID);
             ViewData["PlayerID"] = new SelectList(_context.Players, "ID", "FirstName", gameLineUp.PlayerID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", gameLineUp.TeamID);
+            
             return View(gameLineUp);
         }
 
@@ -105,7 +110,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,BattingOrder,GameID,PlayerID,TeamID")] GameLineUp gameLineUp)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,BattingOrder,GameID,PlayerID,TeamID")] GameLineUp gameLineUp, string[] selectedOptions, int team)
         {
             if (id != gameLineUp.ID)
             {
@@ -132,9 +137,11 @@ namespace WMBA_4.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+           
             ViewData["GameID"] = new SelectList(_context.Games, "ID", "ID", gameLineUp.GameID);
             ViewData["PlayerID"] = new SelectList(_context.Players, "ID", "FirstName", gameLineUp.PlayerID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", gameLineUp.TeamID);
+            
             return View(gameLineUp);
         }
 
@@ -178,56 +185,7 @@ namespace WMBA_4.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private void PopulatePlayersAssignedTeam(Game game,int team)
-        {
-
-            var allOptions = _context.Players
-                .Where(m => m.TeamID == team);
-            var currentOptionIDs = new HashSet<int>(game.GameLineUps.Select(b => b.GameID));
-            var checkBoxes = new List<CheckOptionVM>();
-            foreach (var option in allOptions)
-            {
-                checkBoxes.Add(new CheckOptionVM
-                {
-                    ID = option.ID,
-                    DisplayText = option.FullName,
-                    Assigned = currentOptionIDs.Contains(option.ID)
-                });
-            }
-            ViewData["ConditionOptions"] = checkBoxes;
-        }
-
-        private void UpdatePatientConditions(string[] selectedOptions, GameLineUp GameLineUpToUpdate)
-        {
-            //if (selectedOptions == null)
-            //{
-            //    GameLineUpToUpdate.GameLineUps = new List<GameLineUp>();
-            //    return;
-            //}
-
-            //var selectedOptionsHS = new HashSet<string>(selectedOptions);
-            //var patientOptionsHS = new HashSet<int>
-            //    (GameLineUpToUpdate..Select(c => c.ConditionID));//IDs of the currently selected conditions
-            //foreach (var option in _context.Conditions)
-            //{
-            //    if (selectedOptionsHS.Contains(option.ID.ToString())) //It is checked
-            //    {
-            //        if (!patientOptionsHS.Contains(option.ID))  //but not currently in the history
-            //        {
-            //            patientToUpdate.PatientConditions.Add(new PatientCondition { PatientID = patientToUpdate.ID, ConditionID = option.ID });
-            //        }
-            //    }
-            //    else
-            //    {
-            //        //Checkbox Not checked
-            //        if (patientOptionsHS.Contains(option.ID)) //but it is currently in the history - so remove it
-            //        {
-            //            PatientCondition conditionToRemove = patientToUpdate.PatientConditions.SingleOrDefault(c => c.ConditionID == option.ID);
-            //            _context.Remove(conditionToRemove);
-            //        }
-            //    }
-            //}
-        }
+        
         private bool GameLineUpExists(int id)
         {
           return _context.GameLineUps.Any(e => e.ID == id);

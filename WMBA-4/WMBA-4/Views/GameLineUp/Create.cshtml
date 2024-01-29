@@ -10,26 +10,32 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="BattingOrder" class="control-label"></label>
-                <input asp-for="BattingOrder" class="form-control" />
-                <span asp-validation-for="BattingOrder" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="GameID" class="control-label"></label>
-                <select asp-for="GameID" class ="form-control" asp-items="ViewBag.GameID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="PlayerID" class="control-label"></label>
-                <select asp-for="PlayerID" class ="form-control" asp-items="ViewBag.PlayerID"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="TeamID" class="control-label"></label>
-                <select asp-for="TeamID" class ="form-control" asp-items="ViewBag.TeamID"></select>
-            </div>
-            <div class="form-group">
+           
+              <div class="form-group">
+
+                <div>                                         
+                            @{
+                               
+                                List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
+                                foreach (var checkbox in checkboxes)
+                                {
+                               
+                                      
+                                        <input type="checkbox"
+                                               name="selectedOptions"
+                                               value="@checkbox.ID"
+                                               @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
+                                        @checkbox.DisplayText @:&nbsp;&nbsp;<br>
+                                  
+                                }
+                            
+                            }
+                        
+                    </div>
+                </div>
+                 <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
         </form>
