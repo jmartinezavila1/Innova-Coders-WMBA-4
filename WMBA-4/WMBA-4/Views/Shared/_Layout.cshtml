@@ -67,7 +67,7 @@
                     <div class="nav nav-text">
                         <a>Home</a>
                         <div class="sb-sidenav-menu-heading">Quick Access</div>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Upload File</a>
+                        <a id="ImportView" class="nav-link nav-hover">Import Players</a>                       
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Lineup" asp-action="Index">Scorekeeper</a>
                         <div class="sb-sidenav-menu-heading">User Access</div>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
@@ -103,7 +103,13 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="~/js/sidenav.js" asp-append-version="true"></script>
-   
+    <script>
+        $(document).ready(function () {
+            $("#ImportView").click(function () {
+                window.location.href = '@Url.Action("GoToImportPlayers", "Team")';
+            });
+        });
+    </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
     @await RenderSectionAsync("Scripts", required: false)
