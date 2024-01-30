@@ -51,5 +51,5 @@
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to List</a>
 </div>

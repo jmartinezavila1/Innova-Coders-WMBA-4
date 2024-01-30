@@ -60,6 +60,7 @@ namespace WMBA_4.Controllers
             }
 
             PopulatePlayersAssignedTeam(game,team);
+            ViewBag.TeamID = team;
 
             return View(game);
         }
@@ -148,7 +149,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+         public async Task<IActionResult> Edit(int? id, int team)
         {
             if (id == null || _context.Games == null)
             {
@@ -164,6 +165,7 @@ namespace WMBA_4.Controllers
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
+            ViewBag.TeamID = team;
             return View(game);
         }
 
@@ -172,7 +174,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game, int team)
         {
             if (id != game.ID)
             {
@@ -202,12 +204,12 @@ namespace WMBA_4.Controllers
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
-            
+            ViewBag.TeamID = team;
             return View(game);
         }
 
         // GET: Game/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, int team)
         {
             if (id == null || _context.Games == null)
             {
@@ -225,7 +227,7 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-
+            ViewBag.TeamID = team;
             return View(game);
         }
 

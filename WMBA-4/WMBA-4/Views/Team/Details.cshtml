@@ -32,8 +32,8 @@
                     <td>
                         <div>
 
-                            <a asp-controller="Game" asp-action="Edit" asp-route-id="@teamGame.Game.ID">Edit</a>
-                            <a asp-controller="Game" asp-action="Delete" asp-route-id="@teamGame.Game.ID">Delete</a>|
+                            <a asp-controller="Game" asp-action="Edit" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">Edit</a>|
+                            <a asp-controller="Game" asp-action="Delete" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">Delete</a>|
                             <a asp-controller="Game" asp-action="Details" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">LineUp</a>
                         </div>
                     </td>
