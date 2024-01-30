@@ -4,41 +4,67 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Division</h1>
+<div class="p-in-flex">
+    <div class="f-in-flex">
+        <h1>Division</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-sm btn-success" role="button" style="background-color: #4CBB17; color: #fff;">
-        Create New
-    </a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.DivisionName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.League)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+        @using (Html.BeginForm("Create", "Division", FormMethod.Get))
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.DivisionName)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.League.LeagueName)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.ID">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.ID">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.ID">Delete</a>
-                </td>
-            </tr>
+            <button type="submit" class="btn-kelly btn-text text-no-deco">Create New</button>
         }
-    </tbody>
-</table>
+    </div>
+    <table class="table giro-table table-bordered">
+        <thead>
+            <tr>
+                <th>
+                    Division Name
+                    @* <input type="submit" value="DivisionName" class="btn btn-toolbar text-break" /> *@
+                </th>
+                <th>
+                    League
+                    @* <input type="submit" name="actionButton" value="League" class="btn btn-link" /> *@
+                    @* Html.DisplayNameFor(model => model.League) *@
+                </th>
+                <th>
+                    Operation
+                    @* <input type="submit" value="Operation" class="btn btn-toolbar" /> *@
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.DivisionName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.League.LeagueName)
+                    </td>
+                    <td>
+                        <a asp-action="Edit" asp-route-id="@item.ID">
+                            <span class="material-symbols-outlined ft-light-grey px-1">
+                                edit
+                            </span>
+                        </a>
+                        @* <a href="#" onclick="openModal('@Url.Action("Details", "Player", new { id = item.ID })')" style="text-decoration: none;">
+                    <span class="material-symbols-outlined">
+                    description
+                    </span>
+                    </a> *@
+                        <a asp-action="Details" asp-route-id="@item.ID">
+                            <span class="material-symbols-outlined ft-light-grey px-1">
+                                visibility
+                            </span>
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.ID">
+                            <span class="material-symbols-outlined ft-light-grey px-1">
+                                delete
+                            </span>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
