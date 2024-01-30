@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create">
+        <form asp-action="Create" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -18,20 +18,12 @@
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label for="Team1">Team 1</label>
-                <select id="Team1" class="form-control" asp-items="ViewBag.Teams"></select>
-            </div>
+                <label for="Team1">Home Team</label>
+                <select id="Team1" name="Team1" class="form-control" asp-items="ViewBag.Teams"></select>
+            </div>            
             <div class="form-group">
-                <label for="Team1Score">Team 1 Score</label>
-                <input id="Team1Score" type="number" class="form-control" />
-            </div>
-            <div class="form-group">
-                <label for="Team2">Team 2</label>
-                <select id="Team2" class="form-control" asp-items="ViewBag.Teams"></select>
-            </div>
-            <div class="form-group">
-                <label for="Team2Score">Team 2 Score</label>
-                <input id="Team2Score" type="number" class="form-control" />
+                <label for="Team2">Visitor Team</label>
+                <select id="Team2" name="Team2" class="form-control" asp-items="ViewBag.Teams"></select>
             </div>
             <div class="form-group">
                 <label asp-for="LocationID" class="control-label"></label>

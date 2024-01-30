@@ -224,10 +224,13 @@ namespace WMBA_4.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
+        public ActionResult GoToImportPlayers()
+        {
+            return View("ImportTeam"); 
+        }
 
         [HttpPost]
-        public async Task<IActionResult> InsertFromExcel(IFormFile theExcel)
+        public async Task<IActionResult> ImportTeam(IFormFile theExcel)
         {
             string feedBack = string.Empty;
             if (theExcel != null)
@@ -251,10 +254,7 @@ namespace WMBA_4.Controllers
                         if (workSheet.Cells[1, 2].Text == "First Name" &&
                             workSheet.Cells[1, 3].Text == "Last Name" &&
                             workSheet.Cells[1, 4].Text == "Member ID" &&
-                            workSheet.Cells[1, 8].Text == "Team" &&
-                            workSheet.Cells[1, 9].Text == "DivisionID" &&
-                            workSheet.Cells[1, 10].Text == "TeamName" &&
-                            workSheet.Cells[1, 11].Text == "SeasonName")
+                            workSheet.Cells[1, 8].Text == "Team")
 
                         {
                             int successCount = 0;
@@ -265,36 +265,12 @@ namespace WMBA_4.Controllers
                                 Player p = new Player();
                                 try
                                 {
-                                    // Insertar Season si no existe
-                                    string seasonCode = workSheet.Cells[row, 11].Text;
-                                    Season season = _context.Seasons.FirstOrDefault(s => s.SeasonCode == seasonCode);
-                                    if (season == null)
-                                    {
-                                        season = new Season { SeasonCode = seasonCode, SeasonName = "Summer " + seasonCode };
-                                        _context.Seasons.Add(season);
-                                        _context.SaveChanges();
-                                    }
-
-
-                                    // Insertar Team asociado a la Season
-                                    string teamName = workSheet.Cells[row, 10].Text;
-                                    int division = workSheet.Cells[row, 9].GetValue<int>(); ;
-                                    Team team = new Team
-                                    {
-                                        Name = teamName,
-                                        DivisionID = division  // Asociar al ID de la División
-                                    };
-                                    _context.Teams.Add(team);
-                                    _context.SaveChanges();
-
-                                    // Insertar Player con ID de Team correspondiente
-
 
                                     // Row by row...
                                     p.FirstName = workSheet.Cells[row, 2].Text;
                                     p.LastName = workSheet.Cells[row, 3].Text;
                                     p.MemberID = workSheet.Cells[row, 4].Text;
-                                    p.TeamID = team.ID;  // Asociar al ID del Team
+                                    p.TeamID = workSheet.Cells[row, 8].GetValue<int>(); // Asociar al ID del Team
                                     _context.Players.Add(p);
                                     _context.SaveChanges();
                                     successCount++;

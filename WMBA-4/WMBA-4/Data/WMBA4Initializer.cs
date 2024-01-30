@@ -15,7 +15,7 @@ namespace WMBA_4.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                //context.Database.EnsureDeleted();
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
                 //context.Database.Migrate();
 
@@ -100,12 +100,13 @@ namespace WMBA_4.Data
                         new Team { ID = 12, Name = "Victoria HarbourCats", Coach_Name = "Brian McRae", DivisionID = 3 },
                         new Team { ID = 13, Name = "Saskatoon Yellow Jackets", Coach_Name = "No Manager",DivisionID = 4 },
                         new Team { ID = 14, Name = "Calgary Mavericks", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 15, Name = "Edmonton Prospects", Coach_Name = "Orv Franchuk", DivisionID = 2 },
-                        new Team { ID = 16, Name = "Toronto Maple Leafs", Coach_Name = "No Manager", DivisionID = 3 },
-                        new Team { ID = 17, Name = "Montreal Royals", Coach_Name = "No Manager", DivisionID = 4 },
-                        new Team { ID = 18, Name = "Vancouver Mounties", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 19, Name = "Quebec Bulldogs", Coach_Name = "No Manager", DivisionID = 2 },
-                        new Team { ID = 20, Name = "Winnipeg Whips", Coach_Name = "No Manager", DivisionID = 3 }
+                        new Team { ID = 15, Name = "13U Bananas", Coach_Name = "Orv Franchuk", DivisionID = 6 },
+                        new Team { ID = 16, Name = "13U Iron Birds", Coach_Name = "No Manager", DivisionID = 6 },
+                        new Team { ID = 17, Name = "13U Whitecaps", Coach_Name = "No Manager", DivisionID = 6 },
+                        new Team { ID = 18, Name = "15U Bisons", Coach_Name = "No Manager", DivisionID = 7 },
+                        new Team { ID = 19, Name = "15U Dragons", Coach_Name = "No Manager", DivisionID = 7 },
+                        new Team { ID = 20, Name = "15U Trash Pandas", Coach_Name = "No Manager", DivisionID = 7 },
+                        
                     };
 
                     context.Teams.AddRange(teams);
@@ -181,6 +182,7 @@ namespace WMBA_4.Data
                     var seasons = new List<Season>
                     {
                         new Season { ID = 1, SeasonCode = "2023", SeasonName = "Summer 2023" },
+                         
    
                     };
 

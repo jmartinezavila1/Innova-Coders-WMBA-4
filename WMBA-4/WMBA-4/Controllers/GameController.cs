@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.ViewModels;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WMBA_4.Controllers
 {
@@ -89,13 +90,14 @@ namespace WMBA_4.Controllers
         // GET: Game/Create
         public IActionResult Create(int id)
         {
+            Game game = new Game();
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
             ViewBag.TeamID = id;
 
-            return View();
+            return View(game);
         }
 
         // POST: Game/Create
@@ -103,24 +105,23 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game,int Team1,int Team2)
         {
             //Game
             if (ModelState.IsValid)
             {
                 //Game
-                _context.Add(game);
+                //_context.Add(game);
 
                 //TeamGame (team1)
                 var teamGame1 = new TeamGame
                 {
                     IsHomeTeam=true,
                     IsVisitorTeam=false,
-                    score=0, //score=game.TeamGames.score,
-                    TeamID = game.TeamGames.FirstOrDefault().TeamID,
+                    TeamID = Team1,
                     GameID = game.ID
                 };
-                //_context.TeamGames.Add(teamGame);
+                game.TeamGames.Add(teamGame1);
 
 
                 //TeamGame (team2)
@@ -128,23 +129,22 @@ namespace WMBA_4.Controllers
                 {
                     IsHomeTeam = false,
                     IsVisitorTeam = true,
-                    score = 10, //score=game.TeamGames.score,
-                    TeamID = game.TeamGames.FirstOrDefault().TeamID,
+                    TeamID = Team2,
                     GameID = game.ID
 
                 };
-                //_context.TeamGames.Add(teamGame);
-                
+                game.TeamGames.Add(teamGame2);
 
+                _context.Add(game);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                //return RedirectToAction(nameof(Index));
             }
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
-            return View(game);
+            return RedirectToAction("Details", "Team", new { id = Team1 });
         }
 
         // GET: Game/Edit/5
