@@ -1,0 +1,138 @@
+﻿@model WMBA_4.Models.ScorePlayer
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>ScorePlayer</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.InningNumber)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.InningNumber)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.H)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.H)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.RBI)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.RBI)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.R)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.R)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.StrikeOut)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.StrikeOut)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.GroundOut)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.GroundOut)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PopOut)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PopOut)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Flyout)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Flyout)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Singles)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Singles)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Doubles)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Doubles)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Triples)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Triples)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.HR)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HR)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.BB)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.BB)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.HBP)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.HBP)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SB)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SB)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.SAC)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.SAC)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.PA)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.PA)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.AB)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.AB)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Game)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Game.ID)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Player)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Player.FirstName)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
