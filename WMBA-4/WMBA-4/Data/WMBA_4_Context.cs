@@ -19,6 +19,7 @@ namespace WMBA_4.Data
 
         public DbSet<GameLineUpPosition> GameLineUpPositions { get; set; }
 
+        public DbSet<GameType> GameTypes { get; set; }
 
         public DbSet<Club> Clubs { get; set; }
 
@@ -43,8 +44,14 @@ namespace WMBA_4.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
-
+            ///Prevent Cascade Delete from Game to GameType
+            //so we are prevented from deleting a GameTpe with
+            //Games assigned
+            modelBuilder.Entity<GameType>()
+                .HasMany<Game>(gt => gt.Games)
+                .WithOne(t => t.GameType)
+                .HasForeignKey(t => t.GameTypeID)
+                .OnDelete(DeleteBehavior.Restrict);
 
             ///Prevent Cascade Delete from Game to Seasons
             //so we are prevented from deleting a Seasons with

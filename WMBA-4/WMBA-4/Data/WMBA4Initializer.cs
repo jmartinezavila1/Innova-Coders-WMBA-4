@@ -186,6 +186,18 @@ namespace WMBA_4.Data
                     context.SaveChanges();
                 }
 
+                // GameTypes 
+                if (!context.GameTypes.Any())
+                {
+                    var gameTypes = new List<GameType>
+                    {
+                        new GameType { ID = 1, Description = "Regular Season" },
+                        new GameType { ID = 2, Description = "Playoff" }
+                    };
+
+                    context.GameTypes.AddRange(gameTypes);
+                    context.SaveChanges();
+                }
 
                 // Locations 
                 if (!context.Locations.Any())
