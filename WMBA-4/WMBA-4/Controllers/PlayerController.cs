@@ -31,7 +31,7 @@ namespace WMBA_4.Controllers
                                     .AsNoTracking() select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "Team" };
+            string[] sortOptions = new[] { "Player/Jersey", "Team" };
 
             //filter
             if (TeamID.HasValue)
@@ -56,7 +56,7 @@ namespace WMBA_4.Controllers
                     sortField = actionButton;//Sort by the button clicked
                 }
             }
-            if (sortField == "Player")
+            if (sortField == "Player/Jersey")
             {
                 if (sortDirection == "asc")
                 {
