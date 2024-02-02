@@ -23,7 +23,12 @@ namespace WMBA_4.Models
         public int SeasonID { get; set; }
 
         public Season Season { get; set; }
-     
+
+
+        [Display(Name = "GameType")]
+        public int GameTypeID { get; set; }
+        public GameType GameType { get; set; }
+
 
         public ICollection<TeamGame> TeamGames { get; set; } = new HashSet<TeamGame>();
 
