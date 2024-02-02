@@ -10,7 +10,7 @@ namespace WMBA_4.Models
         [Required(ErrorMessage = "You must enter the City name.")]
         [StringLength(300, ErrorMessage = "City cannot be more than 300 characters long.")]
         public string CityName { get; set; }
-        public ICollection<League> Leagues { get; set; } = new HashSet<League>();
+        public ICollection<Club> Clubs { get; set; } = new HashSet<Club>();
         public ICollection<Location> Locations { get; set; } = new HashSet<Location>();
     }
 }

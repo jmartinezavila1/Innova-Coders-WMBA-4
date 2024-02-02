@@ -22,7 +22,7 @@ namespace WMBA_4.Controllers
         // GET: Division
         public async Task<IActionResult> Index()
         {
-            var wMBA_4_Context = _context.Divisions.Include(d => d.League);
+            var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
             return View(await wMBA_4_Context.ToListAsync());
         }
 
@@ -35,7 +35,7 @@ namespace WMBA_4.Controllers
             }
 
             var division = await _context.Divisions
-                .Include(d => d.League)
+                .Include(d => d.Club)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (division == null)
             {
@@ -48,7 +48,7 @@ namespace WMBA_4.Controllers
         // GET: Division/Create
         public IActionResult Create()
         {
-            ViewData["LeagueID"] = new SelectList(_context.Leagues, "ID", "LeagueName");
+            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName");
             return View();
         }
 
@@ -57,7 +57,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,DivisionName,LeagueID")] Division division)
+        public async Task<IActionResult> Create([Bind("ID,DivisionName,ClubID")] Division division)
         {
             if (ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace WMBA_4.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LeagueID"] = new SelectList(_context.Leagues, "ID", "LeagueName", division.LeagueID);
+            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
         }
 
@@ -82,7 +82,7 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            ViewData["LeagueID"] = new SelectList(_context.Leagues, "ID", "LeagueName", division.LeagueID);
+            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
         }
 
@@ -91,7 +91,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,DivisionName,LeagueID")] Division division)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,DivisionName,ClubID")] Division division)
         {
             if (id != division.ID)
             {
@@ -118,7 +118,7 @@ namespace WMBA_4.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["LeagueID"] = new SelectList(_context.Leagues, "ID", "LeagueName", division.LeagueID);
+            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
         }
 
@@ -131,7 +131,7 @@ namespace WMBA_4.Controllers
             }
 
             var division = await _context.Divisions
-                .Include(d => d.League)
+                .Include(d => d.Club)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (division == null)
             {
@@ -153,7 +153,9 @@ namespace WMBA_4.Controllers
             var division = await _context.Divisions.FindAsync(id);
             if (division != null)
             {
-                _context.Divisions.Remove(division);
+                division.Status = false;
+                _context.Divisions.Update(division);
+                
             }
             
             await _context.SaveChangesAsync();

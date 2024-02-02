@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -25,7 +26,6 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> Index(string seasonName)
         {
             IQueryable<Game> games = _context.Games
-        .Include(g => g.GameType)
         .Include(g => g.Location)
         .Include(g => g.Season)
         .Include(t => t.TeamGames).ThenInclude(t => t.Team);
@@ -48,7 +48,6 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
-                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
@@ -71,16 +70,16 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Save(string[] selectedOptions,int? id,int team,Game game)
         {
-            // Obtener el juego para actualizar
+            // get the game to update
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
 
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
-            // Actualizar la alineación del juego
+            // Update thhe lineUp of the game
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
            
             await _context.SaveChangesAsync();
@@ -92,7 +91,7 @@ namespace WMBA_4.Controllers
         public IActionResult Create(int id)
         {
             Game game = new Game();
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
@@ -141,7 +140,7 @@ namespace WMBA_4.Controllers
                 //return RedirectToAction(nameof(Index));
             }
 
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
@@ -162,7 +161,7 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
            
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewBag.TeamID = team;
@@ -201,7 +200,7 @@ namespace WMBA_4.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
+            
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewBag.TeamID = team;
@@ -217,7 +216,6 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
-                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames).ThenInclude(t => t.Team)
@@ -241,14 +239,15 @@ namespace WMBA_4.Controllers
                 return Problem("Entity set 'WMBA_4_Context.Games'  is null.");
             }
             var game = await _context.Games
-                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames).ThenInclude(t => t.Team)
                 .FirstOrDefaultAsync(m=>m.ID==id);
             if (game != null)
             {
-                _context.Games.Remove(game);
+                game.Status = false;
+                _context.Games.Update(game);
+             
             }
             
             await _context.SaveChangesAsync();

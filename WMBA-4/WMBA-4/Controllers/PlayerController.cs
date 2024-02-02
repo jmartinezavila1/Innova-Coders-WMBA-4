@@ -25,7 +25,10 @@ namespace WMBA_4.Controllers
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
 
-            var players = from p in _context.Players.Include(p => p.Team).AsNoTracking() select p;
+            var players = from p in _context.Players
+                                    .Include(p => p.Team).ThenInclude(d=>d.Division)
+                                    .Where(s=>s.Status==true)
+                                    .AsNoTracking() select p;
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Player", "Team" };
@@ -99,7 +102,7 @@ namespace WMBA_4.Controllers
             }
 
             var player = await _context.Players
-                .Include(p => p.Team)
+                .Include(p => p.Team).ThenInclude(d=>d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (player == null)
             {
@@ -121,7 +124,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,MemberID,FirstName,LastName,JerseyNumber,TeamID")] Player player)
+        public async Task<IActionResult> Create([Bind("ID,MemberID,FirstName,LastName,JerseyNumber,Status,TeamID")] Player player)
         {
             if (ModelState.IsValid)
             {
@@ -155,7 +158,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,MemberID,FirstName,LastName,JerseyNumber,TeamID")] Player player)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,MemberID,FirstName,LastName,JerseyNumber,Status,TeamID")] Player player)
         {
             if (id != player.ID)
             {
@@ -217,7 +220,10 @@ namespace WMBA_4.Controllers
             var player = await _context.Players.FindAsync(id);
             if (player != null)
             {
-                _context.Players.Remove(player);
+                player.Status = false;
+                player.Team = null;
+                _context.Players.Update(player);
+               
             }
             
             await _context.SaveChangesAsync();
