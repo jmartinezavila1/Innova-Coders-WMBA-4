@@ -45,10 +45,7 @@
         <table class="table giro-table table-bordered">
             <thead>
                 <tr>
-                    <th>
-                        Member ID
-                        @* <input type="submit" value="Member ID" class="btn btn-toolbar text-break" /> *@
-                    </th>
+                    
                     <th>
                         Player
                         @* <input type="submit" name="actionButton" value="Player" class="btn btn-link" /> *@
@@ -60,6 +57,11 @@
                         @* @Html.DisplayNameFor(model => model.Team) *@
                     </th>
                     <th>
+                        Division
+                        @* <input type="submit" name="actionButton" value="Division" class="btn btn-link" /> *@
+                        @* @Html.DisplayNameFor(model => model.Team.Division.DivisionName) *@
+                    </th>
+                    <th>
                         Operation
                         @* <input type="submit" value="Operation" class="btn btn-toolbar" /> *@
                     </th>
@@ -69,9 +71,7 @@
                 @foreach (var item in Model)
                 {
                     <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.MemberID)
-                        </td>
+                        
                         <td>
                             @Html.DisplayFor(modelItem => item.FullName)
                         </td>
@@ -82,6 +82,9 @@
 
                                 </div>
                             </div>
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Team.Division.DivisionName)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">

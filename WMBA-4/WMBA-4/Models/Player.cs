@@ -33,7 +33,7 @@ namespace WMBA_4.Models
         public string FirstName { get; set; }
 
 
-        [Display(Name = "First Name")]
+        [Display(Name = "Last Name")]
         [Required(ErrorMessage = "You cannot leave the last name blank.")]
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; }
@@ -42,6 +42,9 @@ namespace WMBA_4.Models
         [Display(Name = "Jersey Number")]
         [Range(1, 100, ErrorMessage = "Please enter a number between 1 and 100.")]
         public string JerseyNumber { get; set; }
+
+        [Display(Name = "Status")]
+        public bool Status { get; set; } = true;
 
         [Display(Name = "Team")]
         public int TeamID { get; set; }
