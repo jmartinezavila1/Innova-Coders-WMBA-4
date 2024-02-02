@@ -26,9 +26,10 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> Index(string seasonName)
         {
             IQueryable<Game> games = _context.Games
-        .Include(g => g.Location)
-        .Include(g => g.Season)
-        .Include(t => t.TeamGames).ThenInclude(t => t.Team);
+            .Include(g => g.GameType)
+            .Include(g => g.Location)
+            .Include(g => g.Season)
+            .Include(t => t.TeamGames).ThenInclude(t => t.Team);
 
 
             if (!string.IsNullOrEmpty(seasonName))
@@ -48,6 +49,7 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
+                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
@@ -75,7 +77,7 @@ namespace WMBA_4.Controllers
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
 
-            
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
@@ -91,7 +93,8 @@ namespace WMBA_4.Controllers
         public IActionResult Create(int id)
         {
             Game game = new Game();
-            
+
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
@@ -140,7 +143,7 @@ namespace WMBA_4.Controllers
                 //return RedirectToAction(nameof(Index));
             }
 
-            
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
@@ -160,8 +163,8 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-           
-            
+
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewBag.TeamID = team;
@@ -200,7 +203,7 @@ namespace WMBA_4.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewBag.TeamID = team;
@@ -216,6 +219,7 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
+                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames).ThenInclude(t => t.Team)
@@ -239,6 +243,7 @@ namespace WMBA_4.Controllers
                 return Problem("Entity set 'WMBA_4_Context.Games'  is null.");
             }
             var game = await _context.Games
+                .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames).ThenInclude(t => t.Team)

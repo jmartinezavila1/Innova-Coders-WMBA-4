@@ -83,26 +83,12 @@ namespace WMBA_4.Data
                 {
                     var teams = new List<Team>
                     {
-                        new Team { ID = 1, Name = "Toronto Blue Jays", Coach_Name = "Charlie Montoyo", DivisionID = 1},
-                        new Team { ID = 2, Name = "Montreal Expos", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 3, Name = "Vancouver Canadians", Coach_Name = "John Schneider", DivisionID = 2 },
-                        new Team { ID = 4, Name = "Calgary Cannons", Coach_Name = "No Manager", DivisionID = 3 },
-                        new Team { ID = 5, Name = "Edmonton Trappers", Coach_Name = "No Manager", DivisionID = 4 },
-                        new Team { ID = 6, Name = "Ottawa Lynx", Coach_Name = "No Manager" , DivisionID = 1},
-                        new Team { ID = 7, Name = "Winnipeg Goldeyes", Coach_Name = "Rick Forney" , DivisionID = 2},
-                        new Team { ID = 8, Name = "Quebec Capitales", Coach_Name = "Patrick Scalabrini", DivisionID = 3 },
-                        new Team { ID = 9, Name = "Hamilton Thunderbirds", Coach_Name = "No Manager", DivisionID = 4},
-                        new Team { ID = 10, Name = "Halifax Hurricanes", Coach_Name = "No Manager" , DivisionID = 1},
-                        new Team { ID = 11, Name = "London Majors", Coach_Name = "No Manager", DivisionID = 2 },
-                        new Team { ID = 12, Name = "Victoria HarbourCats", Coach_Name = "Brian McRae", DivisionID = 3 },
-                        new Team { ID = 13, Name = "Saskatoon Yellow Jackets", Coach_Name = "No Manager",DivisionID = 4 },
-                        new Team { ID = 14, Name = "Calgary Mavericks", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 15, Name = "13U Bananas", Coach_Name = "Orv Franchuk", DivisionID = 5 },
-                        new Team { ID = 16, Name = "13U Iron Birds", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 17, Name = "13U Whitecaps", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 18, Name = "15U Bisons", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 19, Name = "15U Dragons", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 20, Name = "15U Trash Pandas", Coach_Name = "No Manager", DivisionID = 2 },
+                        new Team { ID = 15, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 5 },
+                        new Team { ID = 16, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 17, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 18, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 19, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 1 },
+                        new Team { ID = 20, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 2 },
                         
                     };
 
