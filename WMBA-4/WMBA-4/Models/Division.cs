@@ -12,10 +12,13 @@ namespace WMBA_4.Models
         [StringLength(100, ErrorMessage = "Division name can not be more than 100 characters long.")]
         public string DivisionName { get; set; }
 
-        [Display(Name = "League")]
-        public int LeagueID { get; set; }
+        [Display(Name = "Status")]
+        public bool Status { get; set; } = true;
 
-        public League League { get; set; }
+        [Display(Name = "Club")]
+        public int ClubID { get; set; }
+
+        public Club Club { get; set; }
 
         public ICollection<Team> Teams { get; set; } = new HashSet<Team>();
     }

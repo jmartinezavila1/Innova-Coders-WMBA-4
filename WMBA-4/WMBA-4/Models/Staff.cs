@@ -20,6 +20,8 @@ namespace WMBA_4.Models
         [DataType(DataType.EmailAddress)]
         public string Email { get; set; }
 
+        [Display(Name = "Status")]
+        public bool Status { get; set; } = true;
         public ICollection<TeamStaff> TeamStaff { get; set; } = new HashSet<TeamStaff>();
     }
 }

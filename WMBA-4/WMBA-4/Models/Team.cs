@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using NuGet.Protocol.Core.Types;
+using System.ComponentModel.DataAnnotations;
 using System.Numerics;
 
 namespace WMBA_4.Models
@@ -14,6 +15,9 @@ namespace WMBA_4.Models
 
         [Display(Name = "Coach Name")]
         public string Coach_Name { get; set; }
+
+        [Display(Name = "Status")]
+        public bool Status { get; set; } = true;
 
         [Display(Name = "Division")]
         public int DivisionID { get; set; }

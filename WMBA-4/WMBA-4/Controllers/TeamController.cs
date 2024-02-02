@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,7 +24,9 @@ namespace WMBA_4.Controllers
         // GET: Team
         public async Task<IActionResult> Index()
         {
-            var wMBA_4_Context = _context.Teams.Include(t => t.Division);
+            var wMBA_4_Context = _context.Teams
+                .Include(t => t.Division)
+                .Where(s=>s.Status==true);
             return View(await wMBA_4_Context.ToListAsync());
         }
 
@@ -215,9 +218,24 @@ namespace WMBA_4.Controllers
                 return Problem("Entity set 'WMBA_4_Context.Teams'  is null.");
             }
             var team = await _context.Teams.FindAsync(id);
+
+      
+
             if (team != null)
             {
-                _context.Teams.Remove(team);
+                // Verify if the team has games scheduled
+                bool hasScheduledGames = _context.TeamGame
+                    .Any(tg => tg.TeamID == id && tg.Game.Date >= DateTime.Today);
+
+                if (hasScheduledGames)
+                {
+                    //Display an error message indicating that the team has games scheduled
+                    ModelState.AddModelError(string.Empty, "You cannot delete the team because it has scheduled games for today or later.");
+                    return View(nameof(Delete), team);
+                }
+                team.Status = false;
+                _context.Teams.Update(team);
+                
             }
 
             await _context.SaveChangesAsync();

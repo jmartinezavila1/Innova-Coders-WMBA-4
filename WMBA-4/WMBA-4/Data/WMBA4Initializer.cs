@@ -16,9 +16,9 @@ namespace WMBA_4.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                //context.Database.Migrate();
+                //context.Database.EnsureDeleted();
+                //context.Database.EnsureCreated();
+                context.Database.Migrate();
                 //To randomly generate data
                 Random random = new Random();
 
@@ -47,20 +47,17 @@ namespace WMBA_4.Data
                 }
 
 
-                // Leagues 
-                if (!context.Leagues.Any())
+                // Club
+                if (!context.Clubs.Any())
                 {
-                    var leagues = new List<League>
+                    var clubs = new List<Club>
                     {
-                        new League { ID = 1, LeagueName = "American League", CityID = 1, EstablishYear = 1901 },
-                        new League { ID = 2, LeagueName = "National League", CityID = 2, EstablishYear = 1876 },
-                        new League { ID = 3, LeagueName = "Canadian Baseball League", CityID = 13, EstablishYear = 1985 },
-                        new League { ID = 4, LeagueName = "Mexican Baseball League", CityID = 4, EstablishYear = 1925 },
-                        new League { ID = 5, LeagueName = "Japanese Baseball League", CityID = 10, EstablishYear = 1936 }
+                        new Club { ID = 1, ClubName = "Welland Minor Baseball Association", CityID = 1 },
+                     
 
                     };
 
-                    context.Leagues.AddRange(leagues);
+                    context.Clubs.AddRange(clubs);
                     context.SaveChanges();
                 }
 
@@ -68,15 +65,12 @@ namespace WMBA_4.Data
                 if (!context.Divisions.Any())
                 {
                     var divisions = new List<Division>
-                    {
-                        new Division { ID = 1, DivisionName = "4U - BIRTH YEARS 2020 (BLASTBALL)", LeagueID = 3 },
-                        new Division { ID = 2, DivisionName = "5U - BIRTH YEARS 2019 (T-BALL)", LeagueID = 3 },
-                        new Division { ID = 3, DivisionName = "7U - BIRTH YEARS 2017-18 (COACH PITCH)", LeagueID = 3 },
-                        new Division { ID = 4, DivisionName = "9U - BIRTH YEARS 2015-16", LeagueID = 3 },
-                        new Division { ID = 5, DivisionName = "11U - BIRTH YEARS 2013-14", LeagueID = 3 },
-                        new Division { ID = 6, DivisionName = "13U - BIRTH YEARS 2011-12", LeagueID = 3 },
-                        new Division { ID = 7, DivisionName = "15U - BIRTH YEARS 2009-10", LeagueID = 3 },
-                        new Division { ID = 8, DivisionName = "18U - BIRTH YEARS 2006-08", LeagueID = 3 },
+                    {                   
+                        new Division { ID = 1, DivisionName = "9U",ClubID = 1},
+                        new Division { ID = 2, DivisionName = "11U",ClubID = 1},
+                        new Division { ID = 3, DivisionName = "13U",ClubID = 1},
+                        new Division { ID = 4, DivisionName = "15U",ClubID = 1},
+                        new Division { ID = 5, DivisionName = "18U",ClubID = 1},
                     };
 
                     context.Divisions.AddRange(divisions);
@@ -103,12 +97,12 @@ namespace WMBA_4.Data
                         new Team { ID = 12, Name = "Victoria HarbourCats", Coach_Name = "Brian McRae", DivisionID = 3 },
                         new Team { ID = 13, Name = "Saskatoon Yellow Jackets", Coach_Name = "No Manager",DivisionID = 4 },
                         new Team { ID = 14, Name = "Calgary Mavericks", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 15, Name = "13U Bananas", Coach_Name = "Orv Franchuk", DivisionID = 6 },
-                        new Team { ID = 16, Name = "13U Iron Birds", Coach_Name = "No Manager", DivisionID = 6 },
-                        new Team { ID = 17, Name = "13U Whitecaps", Coach_Name = "No Manager", DivisionID = 6 },
-                        new Team { ID = 18, Name = "15U Bisons", Coach_Name = "No Manager", DivisionID = 7 },
-                        new Team { ID = 19, Name = "15U Dragons", Coach_Name = "No Manager", DivisionID = 7 },
-                        new Team { ID = 20, Name = "15U Trash Pandas", Coach_Name = "No Manager", DivisionID = 7 },
+                        new Team { ID = 15, Name = "13U Bananas", Coach_Name = "Orv Franchuk", DivisionID = 5 },
+                        new Team { ID = 16, Name = "13U Iron Birds", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 17, Name = "13U Whitecaps", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 18, Name = "15U Bisons", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 19, Name = "15U Dragons", Coach_Name = "No Manager", DivisionID = 1 },
+                        new Team { ID = 20, Name = "15U Trash Pandas", Coach_Name = "No Manager", DivisionID = 2 },
                         
                     };
 
@@ -193,28 +187,6 @@ namespace WMBA_4.Data
                 }
 
 
-                // GameTypes 
-                if (!context.GameTypes.Any())
-                {
-                    var gameTypes = new List<GameType>
-                    {
-                        new GameType { ID = 1, Description = "Regular Season" },
-                        new GameType { ID = 2, Description = "Playoff" },
-                        new GameType { ID = 3, Description = "Championship Game" },
-                        new GameType { ID = 4, Description = "Preseason Exhibition" },
-                        new GameType { ID = 5, Description = "Intercollegiate Tournament" },
-                        new GameType { ID = 6, Description = "Varsity League" },
-                        new GameType { ID = 7, Description = "Invitational Cup" },
-                        new GameType { ID = 8, Description = "Friendly Match" },
-                        new GameType { ID = 9, Description = "Regional Championship" },
-                        new GameType { ID = 10, Description = "National Finals" }
-                    };
-
-                    context.GameTypes.AddRange(gameTypes);
-                    context.SaveChanges();
-                }
-
-
                 // Locations 
                 if (!context.Locations.Any())
                 {
@@ -245,19 +217,19 @@ namespace WMBA_4.Data
                     var games = new List<Game>
                     {
                          // Games for 2022_
-                        new Game { ID = 1, Date = new DateTime(2022, 1, 1), LocationID = 1, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 2, Date = new DateTime(2022, 2, 1), LocationID = 2, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 3, Date = new DateTime(2022, 3, 1), LocationID = 3, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 4, Date = new DateTime(2022, 4, 1), LocationID = 4, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 5, Date = new DateTime(2022, 5, 1), LocationID = 5, SeasonID = 1, GameTypeID = 1 },
+                        new Game { ID = 1, Date = new DateTime(2022, 1, 1), LocationID = 1, SeasonID = 1},
+                        new Game { ID = 2, Date = new DateTime(2022, 2, 1), LocationID = 2, SeasonID = 1},
+                        new Game { ID = 3, Date = new DateTime(2022, 3, 1), LocationID = 3, SeasonID = 1},
+                        new Game { ID = 4, Date = new DateTime(2022, 4, 1), LocationID = 4, SeasonID = 1},
+                        new Game { ID = 5, Date = new DateTime(2022, 5, 1), LocationID = 5, SeasonID = 1},
 
 
                         // Games for 2023
-                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 1, GameTypeID = 2 },
-                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 1, GameTypeID = 1 },
-                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 1, GameTypeID = 2 }
+                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 1},
+                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 1},
+                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 1},
+                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 1},
+                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 1}
 
 
                     };
@@ -338,6 +310,7 @@ namespace WMBA_4.Data
                         new Player { ID = 10, TeamID = 1, MemberID = "M010", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
                         new Player { ID = 11, TeamID = 1, MemberID = "M011", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
                         new Player { ID = 12, TeamID = 1, MemberID = "M012", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
+                       
                         new Player { ID = 13, TeamID = 2, MemberID = "M013", FirstName = "Ethan", LastName = "Harris", JerseyNumber = "9" },
                         new Player { ID = 14, TeamID = 2, MemberID = "M014", FirstName = "Chloe", LastName = "Martin", JerseyNumber = "18" },
                         new Player { ID = 15, TeamID = 2, MemberID = "M015", FirstName = "Benjamin", LastName = "Clark", JerseyNumber = "6" },
@@ -350,6 +323,7 @@ namespace WMBA_4.Data
                         new Player { ID = 22, TeamID = 2, MemberID = "M022", FirstName = "Zoe", LastName = "Cooper", JerseyNumber = "21" },
                         new Player { ID = 23, TeamID = 2, MemberID = "M023", FirstName = "Elijah", LastName = "Perry", JerseyNumber = "2" },
                         new Player { ID = 24, TeamID = 2, MemberID = "M024", FirstName = "Mia", LastName = "Fisher", JerseyNumber = "16" },
+                       
                         new Player { ID = 25, TeamID = 3, MemberID = "M025", FirstName = "Caleb", LastName = "Reed", JerseyNumber = "13" },
                         new Player { ID = 26, TeamID = 3, MemberID = "M026", FirstName = "Avery", LastName = "Murphy", JerseyNumber = "29" },
                         new Player { ID = 27, TeamID = 3, MemberID = "M027", FirstName = "Gabriel", LastName = "Bell", JerseyNumber = "24" },
@@ -360,42 +334,18 @@ namespace WMBA_4.Data
                         new Player { ID = 32, TeamID = 3, MemberID = "M032", FirstName = "Aria", LastName = "Hill", JerseyNumber = "8" },
                         new Player { ID = 33, TeamID = 3, MemberID = "M033", FirstName = "Lincoln", LastName = "Wright", JerseyNumber = "14" },
                         new Player { ID = 34, TeamID = 3, MemberID = "M034", FirstName = "Ella", LastName = "Barnes", JerseyNumber = "19" },
+                       
                         new Player { ID = 35, TeamID = 4, MemberID = "M035", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "10" },
                         new Player { ID = 36, TeamID = 4, MemberID = "M036", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "28" },
                         new Player { ID = 37, TeamID = 4, MemberID = "M037", FirstName = "Landon", LastName = "Powell", JerseyNumber = "6" },
                         new Player { ID = 38, TeamID = 4, MemberID = "M038", FirstName = "Piper", LastName = "Watson", JerseyNumber = "23" },
                         new Player { ID = 39, TeamID = 4, MemberID = "M039", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "9" },
                         new Player { ID = 40, TeamID = 4, MemberID = "M040", FirstName = "Aaliyah", LastName = "Fletcher", JerseyNumber = "20" },
-                        new Player { ID = 41, TeamID = 4, MemberID = "M041", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "10" },
-                        new Player { ID = 42, TeamID = 4, MemberID = "M042", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "28" },
-                        new Player { ID = 43, TeamID = 4, MemberID = "M043", FirstName = "Landon", LastName = "Powell", JerseyNumber = "6" },
-                        new Player { ID = 44, TeamID = 4, MemberID = "M044", FirstName = "Piper", LastName = "Watson", JerseyNumber = "23" },
-                        new Player { ID = 45, TeamID = 4, MemberID = "M045", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "9" },
-                        new Player { ID = 46, TeamID = 4, MemberID = "M046", FirstName = "Aaliyah", LastName = "Fletcher", JerseyNumber = "20" },
-                        new Player { ID = 47, TeamID = 5, MemberID = "M047", FirstName = "John", LastName = "Doe", JerseyNumber = "10" },
-                        new Player { ID = 48, TeamID = 5, MemberID = "M048", FirstName = "Jane", LastName = "Smith", JerseyNumber = "22" },
-                        new Player { ID = 49, TeamID = 5, MemberID = "M049", FirstName = "Michael", LastName = "Johnson", JerseyNumber = "5" },
-                        new Player { ID = 50, TeamID = 5, MemberID = "M050", FirstName = "Emily", LastName = "Williams", JerseyNumber = "15" },
-                        new Player { ID = 51, TeamID = 5, MemberID = "M051", FirstName = "David", LastName = "Brown", JerseyNumber = "7" },
-                        new Player { ID = 52, TeamID = 5, MemberID = "M052", FirstName = "Olivia", LastName = "Jones", JerseyNumber = "33" },
-                        new Player { ID = 53, TeamID = 5, MemberID = "M053", FirstName = "Andrew", LastName = "Miller", JerseyNumber = "19" },
-                        new Player { ID = 54, TeamID = 5, MemberID = "M054", FirstName = "Sophia", LastName = "Davis", JerseyNumber = "8" },
-                        new Player { ID = 55, TeamID = 5, MemberID = "M055", FirstName = "William", LastName = "Taylor", JerseyNumber = "3" },
-                        new Player { ID = 56, TeamID = 5, MemberID = "M056", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
-                        new Player { ID = 57, TeamID = 5, MemberID = "M057", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
-                        new Player { ID = 58, TeamID = 5, MemberID = "M058", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
-                        new Player { ID = 59, TeamID = 6, MemberID = "M059", FirstName = "John", LastName = "Doe", JerseyNumber = "10" },
-                        new Player { ID = 60, TeamID = 6, MemberID = "M060", FirstName = "Jane", LastName = "Smith", JerseyNumber = "22" },
-                        new Player { ID = 61, TeamID = 6, MemberID = "M061", FirstName = "Michael", LastName = "Johnson", JerseyNumber = "5" },
-                        new Player { ID = 62, TeamID = 6, MemberID = "M062", FirstName = "Emily", LastName = "Williams", JerseyNumber = "15" },
-                        new Player { ID = 63, TeamID = 6, MemberID = "M063", FirstName = "David", LastName = "Brown", JerseyNumber = "7" },
-                        new Player { ID = 64, TeamID = 6, MemberID = "M064", FirstName = "Olivia", LastName = "Jones", JerseyNumber = "33" },
-                        new Player { ID = 65, TeamID = 6, MemberID = "M065", FirstName = "Andrew", LastName = "Miller", JerseyNumber = "19" },
-                        new Player { ID = 66, TeamID = 6, MemberID = "M066", FirstName = "Sophia", LastName = "Davis", JerseyNumber = "8" },
-                        new Player { ID = 67, TeamID = 6, MemberID = "M067", FirstName = "William", LastName = "Taylor", JerseyNumber = "3" },
-                        new Player { ID = 68, TeamID = 6, MemberID = "M068", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
-                        new Player { ID = 69, TeamID = 6, MemberID = "M069", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
-                        new Player { ID = 70, TeamID = 6, MemberID = "M070", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
+                        new Player { ID = 41, TeamID = 4, MemberID = "M041", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "11" },
+                        new Player { ID = 42, TeamID = 4, MemberID = "M042", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "26" },
+                        new Player { ID = 43, TeamID = 4, MemberID = "M043", FirstName = "Landon", LastName = "Powell", JerseyNumber = "2" },
+                        new Player { ID = 44, TeamID = 4, MemberID = "M044", FirstName = "Piper", LastName = "Watson", JerseyNumber = "1" },
+                        new Player { ID = 45, TeamID = 4, MemberID = "M045", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "4" },
 
                     };
 

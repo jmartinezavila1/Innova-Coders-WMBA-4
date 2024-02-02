@@ -19,9 +19,8 @@ namespace WMBA_4.Data
 
         public DbSet<GameLineUpPosition> GameLineUpPositions { get; set; }
 
-        public DbSet<GameType> GameTypes { get; set; }
 
-        public DbSet<League> Leagues { get; set; }
+        public DbSet<Club> Clubs { get; set; }
 
         public DbSet<Location> Locations { get; set; }
 
@@ -44,14 +43,7 @@ namespace WMBA_4.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ///Prevent Cascade Delete from Game to GameType
-            //so we are prevented from deleting a GameTpe with
-            //Games assigned
-            modelBuilder.Entity<GameType>()
-                .HasMany<Game>(gt => gt.Games)
-                .WithOne(t => t.GameType)
-                .HasForeignKey(t => t.GameTypeID)
-                .OnDelete(DeleteBehavior.Restrict);
+            
 
 
             ///Prevent Cascade Delete from Game to Seasons
@@ -87,7 +79,7 @@ namespace WMBA_4.Data
             //so we are prevented from deleting a City with
             //League assigned
             modelBuilder.Entity<City>()
-                .HasMany<League>(gt => gt.Leagues)
+                .HasMany<Club>(gt => gt.Clubs)
                 .WithOne(t => t.City)
                 .HasForeignKey(t => t.CityID)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -96,10 +88,10 @@ namespace WMBA_4.Data
             ///Prevent Cascade Delete from Divisions to League
             //so we are prevented from deleting a League with
             //Division assigned
-            modelBuilder.Entity<League>()
+            modelBuilder.Entity<Club>()
                 .HasMany<Division>(gt => gt.Divisions)
-                .WithOne(t => t.League)
-                .HasForeignKey(t => t.LeagueID)
+                .WithOne(t => t.Club)
+                .HasForeignKey(t => t.ClubID)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //Many to Many Intersection
@@ -163,6 +155,11 @@ namespace WMBA_4.Data
             .HasIndex(t => t.Name)
             .IsUnique();
 
+            //Add a unique index to Jersey Name 
+            modelBuilder.Entity<Player>()
+            .HasIndex(p => new { p.JerseyNumber, p.TeamID })
+            .IsUnique();
+
             //Add a unique index to Seasons code
             modelBuilder.Entity<Season>()
             .HasIndex(s => s.SeasonCode)
@@ -176,6 +173,11 @@ namespace WMBA_4.Data
             //Add a unique index to Positions
             modelBuilder.Entity<Position>()
             .HasIndex(p => p.PositionName)
+            .IsUnique();
+
+            //Add a unique index to MemberID
+            modelBuilder.Entity<Player>()
+            .HasIndex(p => p.MemberID)
             .IsUnique();
 
             //Many to Many Intersection

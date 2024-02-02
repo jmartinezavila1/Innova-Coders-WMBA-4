@@ -39,9 +39,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Season)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.GameType)
-            </th>
+            
             <th></th>
         </tr>
     </thead>
@@ -77,9 +75,7 @@
             <td>
                     @Html.DisplayFor(modelItem => item2.Season.SeasonName)
             </td>
-            <td>
-                    @Html.DisplayFor(modelItem => item2.GameType.Description)
-            </td>
+           
             <td>
                     <a asp-action="Details" asp-route-id="@item2.ID" asp-route-team="@firstTeamId">LineUp</a> |
                 <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |              
