@@ -1,6 +1,7 @@
 ﻿<br />
+<div class="text-danger">@Html.Raw(TempData["Feedback"])</div>
 <div class="card mb-sm-3" style="min-width: 18rem;">
-    <h4 class="card-header" id="Team">Import Players</h4>
+    <h4 class="card-header" id="Team">Import Teams</h4>
     <div class="card-body">
         <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
             <div class="row">
@@ -13,7 +14,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <input type="submit" value="Upload Data" class="btn btn-primary" />
+                        <input type="submit" value="Upload Data" class="btn-kelly btn-text text-no-deco" />
                     </div>
                 </div>
                 <div class="col-md-7">

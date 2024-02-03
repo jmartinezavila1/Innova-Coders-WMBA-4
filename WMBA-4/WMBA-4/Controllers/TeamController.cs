@@ -26,7 +26,7 @@ namespace WMBA_4.Controllers
         {
             var wMBA_4_Context = _context.Teams
                 .Include(t => t.Division)
-                .Where(s=>s.Status==true);
+                .Where(s => s.Status == true);
             return View(await wMBA_4_Context.ToListAsync());
         }
 
@@ -131,7 +131,7 @@ namespace WMBA_4.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
-            
+
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View(team);
         }
@@ -219,7 +219,7 @@ namespace WMBA_4.Controllers
             }
             var team = await _context.Teams.FindAsync(id);
 
-      
+
 
             if (team != null)
             {
@@ -235,7 +235,7 @@ namespace WMBA_4.Controllers
                 }
                 team.Status = false;
                 _context.Teams.Update(team);
-                
+
             }
 
             await _context.SaveChangesAsync();
@@ -244,7 +244,7 @@ namespace WMBA_4.Controllers
 
         public ActionResult GoToImportPlayers()
         {
-            return View("ImportTeam"); 
+            return View("ImportTeam");
         }
 
         [HttpPost]
@@ -260,79 +260,151 @@ namespace WMBA_4.Controllers
                     if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet") || mimeType.Contains("csv"))
                     {
                         ExcelPackage excel;
-                        using (var memoryStream = new MemoryStream())
-                        {
-                            await theExcel.CopyToAsync(memoryStream);
-                            excel = new ExcelPackage(memoryStream);
-                        }
-                        var workSheet = excel.Workbook.Worksheets[0];
-                        var start = workSheet.Dimension.Start;
-                        var end = workSheet.Dimension.End;
+                        try {
+                            using (var memoryStream = new MemoryStream())
+                            {
+                                await theExcel.CopyToAsync(memoryStream);
+                                excel = new ExcelPackage(memoryStream);
+                            }
+                            var workSheet = excel.Workbook.Worksheets[0];
+                            var start = workSheet.Dimension.Start;
+                            var end = workSheet.Dimension.End;
 
-                        if (workSheet.Cells[1, 2].Text == "First Name" &&
-                            workSheet.Cells[1, 3].Text == "Last Name" &&
-                            workSheet.Cells[1, 4].Text == "Member ID" &&
-                            workSheet.Cells[1, 8].Text == "Team")
-
-                        {
-                            int successCount = 0;
-                            int errorCount = 0;
-                            for (int row = start.Row + 1; row <= end.Row; row++)
+                            if (workSheet.Cells[1, 2].Text == "First Name" &&
+                                workSheet.Cells[1, 3].Text == "Last Name" &&
+                                workSheet.Cells[1, 4].Text == "Member ID" &&
+                                workSheet.Cells[1, 6].Text == "Division" &&
+                                workSheet.Cells[1, 7].Text == "Club" &&
+                                workSheet.Cells[1, 8].Text == "Team")
 
                             {
-                                Player p = new Player();
-                                try
-                                {
+                                int successCount = 0;
+                                int errorCount = 0;
 
-                                    // Row by row...
-                                    p.FirstName = workSheet.Cells[row, 2].Text;
-                                    p.LastName = workSheet.Cells[row, 3].Text;
-                                    p.MemberID = workSheet.Cells[row, 4].Text;
-                                    p.TeamID = workSheet.Cells[row, 8].GetValue<int>(); // Asociar al ID del Team
-                                    _context.Players.Add(p);
-                                    _context.SaveChanges();
-                                    successCount++;
-                                }
-                                catch (DbUpdateException dex)
+                                using (var transaction = _context.Database.BeginTransaction())
                                 {
-                                    errorCount++;
-                                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                                    try
                                     {
-                                        feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected as a duplicate."
-                                                + "<br />";
+                                        for (int row = start.Row + 1; row <= end.Row; row++)
+
+                                        {
+                                            Player p = new Player();
+                                            try
+                                            {
+
+                                                // Row by row...
+                                                p.FirstName = workSheet.Cells[row, 2].Text;
+                                                p.LastName = workSheet.Cells[row, 3].Text;
+                                                p.MemberID = workSheet.Cells[row, 4].Text;
+                                                Team t = new Team();
+
+                                                //For Divisions
+                                                string DivisonName = workSheet.Cells[row, 6].Text; 
+                                                Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
+                                                if (existingDiv == null)
+                                                {
+                                                   
+                                                    Division newDivision = newDivision = new Division { DivisionName = DivisonName };
+                                                    _context.Divisions.Add(newDivision);
+                                                    _context.SaveChanges();
+
+                                                   
+                                                    t.DivisionID = newDivision.ID;
+                                                }
+                                                else
+                                                {
+                                                    
+
+                                                    t.DivisionID = existingDiv.ID;
+                                                }
+
+
+                                                //For Teams
+                                                
+                                                string teamNameFirst = workSheet.Cells[row, 8].Text;
+                                                string teamName = teamNameFirst.Substring(5 - 1);
+                                                Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
+                                                if (existingTeam == null)
+                                                {
+                                                    
+                                                    Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
+                                                    _context.Teams.Add(newTeam);
+                                                    _context.SaveChanges();
+
+                                                   
+                                                    p.TeamID = newTeam.ID;
+                                                }
+                                                else
+                                                {
+                                                   
+                                                    p.TeamID = existingTeam.ID;
+                                                }
+
+                                                _context.Players.Add(p);
+                                                _context.SaveChanges();
+                                                successCount++;
+
+                                            }
+                                            catch (DbUpdateException dex)
+                                            {
+                                                errorCount++;
+                                                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                                                {
+                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected as a duplicate."
+                                                            + "<br />";
+                                                }
+                                                else
+                                                {
+                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused an error."
+                                                            + "<br />";
+                                                }
+                                                
+
+                                            }
+                                            catch (Exception ex)
+                                            {
+                                                errorCount++;
+                                                if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                                                {
+                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected because the Team name is duplicated."
+                                                            + "<br />";
+                                                }
+                                                else
+                                                {
+                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused and error."
+                                                            + "<br />";
+                                                }
+
+                                            }
+                                        }
+                                        foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
+                                        {
+                                            entry.State = EntityState.Detached;
+                                        }
+                                        transaction.Commit();
+                                        feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
+                                            " Records with " + successCount.ToString() + " inserted and " +
+                                            errorCount.ToString() + " rejected";
                                     }
-                                    else
+                                    catch (Exception)
                                     {
-                                        feedBack += "Error: Record " + p.FirstName + p.LastName + " caused an error."
-                                                + "<br />";
-                                    }
-                                    //Here is the trick to using SaveChanges in a loop.  You must remove the 
-                                    //offending object from the cue or it will keep raising the same error.
-                                    _context.Remove(p);
-                                }
-                                catch (Exception ex)
-                                {
-                                    errorCount++;
-                                    if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                    {
-                                        feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected because the Team name is duplicated."
-                                                + "<br />";
-                                    }
-                                    else
-                                    {
-                                        feedBack += "Error: Record " + p.FirstName + p.LastName + " caused and error."
-                                                + "<br />";
+                                        transaction.Rollback();
+                                        throw; 
                                     }
                                 }
                             }
-                            feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
-                                " Records with " + successCount.ToString() + " inserted and " +
-                                errorCount.ToString() + " rejected";
+                            else
+                            {
+                                feedBack = "Error: You may have selected the wrong file to upload.<br /> Remember, you must have the headings 'First Name','Last Name','Member ID','Season','Division' and 'Team' in the first two cells of the first row.";
+                            }
                         }
-                        else
+                        catch
                         {
-                            feedBack = "Error: You may have selected the wrong file to upload.<br /> Remember, you must have the headings 'First Name','Last Name','Member ID','Season','Division' and 'Team' in the first two cells of the first row.";
+                           
+                            feedBack = "Invalid Excel file. Please save your CSV document as Excel file and try again.";
+                            
                         }
+
                     }
                     else
                     {
@@ -343,6 +415,7 @@ namespace WMBA_4.Controllers
                 {
                     feedBack = "Error:  file appears to be empty";
                 }
+
             }
             else
             {
@@ -351,9 +424,7 @@ namespace WMBA_4.Controllers
 
             TempData["Feedback"] = feedBack + "<br /><br />";
 
-            //Note that we are assuming that you are using the Preferred Approach to Lookup Values
-            //And the custom LookupsController
-
+         
             return View();
         }
 
