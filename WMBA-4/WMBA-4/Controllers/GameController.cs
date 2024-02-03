@@ -29,15 +29,17 @@ namespace WMBA_4.Controllers
             .Include(g => g.GameType)
             .Include(g => g.Location)
             .Include(g => g.Season)
-            .Include(t => t.TeamGames).ThenInclude(t => t.Team);
-
+            .Include(t => t.TeamGames)
+                .ThenInclude(t => t.Team)
+                    .ThenInclude(d=> d.Division);
 
             if (!string.IsNullOrEmpty(seasonName))
             {
                 games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
             }
-           
-            return View(await games.ToListAsync());
+
+            //return View(await games.ToListAsync());
+            return View(games);
         }
 
         // GET: Game/Details/5
@@ -53,7 +55,8 @@ namespace WMBA_4.Controllers
                 .Include(g => g.Location)
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
-                .ThenInclude(t => t.Team)
+                    .ThenInclude(t => t.Team)
+                        .ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (game == null)
             {
@@ -147,7 +150,9 @@ namespace WMBA_4.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
-            return RedirectToAction("Details", "Team", new { id = Team1 });
+
+            //return RedirectToAction("Details", "Team", new { id = Team1 });
+            return View(game);
         }
 
         // GET: Game/Edit/5
@@ -222,7 +227,9 @@ namespace WMBA_4.Controllers
                 .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
-                .Include(t => t.TeamGames).ThenInclude(t => t.Team)
+                .Include(t => t.TeamGames)
+                    .ThenInclude(t => t.Team)
+                    .ThenInclude(d => d.Division)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (game == null)
@@ -240,13 +247,15 @@ namespace WMBA_4.Controllers
         {
             if (_context.Games == null)
             {
-                return Problem("Entity set 'WMBA_4_Context.Games'  is null.");
+                return Problem("Entity set 'WMBA_4_Context.Games' is null.");
             }
             var game = await _context.Games
                 .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
-                .Include(t => t.TeamGames).ThenInclude(t => t.Team)
+                .Include(t => t.TeamGames)
+                    .ThenInclude(t => t.Team)
+                    .ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m=>m.ID==id);
             if (game != null)
             {
