@@ -6,46 +6,51 @@
 
 <h1>Delete</h1>
 
-<h3>Are you sure you want to delete @Model.FirstName @Model.LastName?</h3>
+<h3 class="text-red">Are you sure you want to delete <span class="text-bold">@Model.FirstName @Model.LastName</span> ?</h3>
 <div>
-    <h4>Player</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.MemberID)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.MemberID)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FirstName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.LastName)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.LastName)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.JerseyNumber)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.JerseyNumber)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Team.Division.DivisionName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Team.Division.DivisionName)
+        </dd>
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Team)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Team.Name)
         </dd>
     </dl>
-    
+
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
+        <a asp-action="Index">Back to Player List</a>
     </form>
 </div>

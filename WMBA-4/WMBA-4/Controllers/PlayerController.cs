@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WMBA_4.CustomControllers;
@@ -27,12 +23,13 @@ namespace WMBA_4.Controllers
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
 
             var players = from p in _context.Players
-                                    .Include(p => p.Team).ThenInclude(d=>d.Division)
-                                    .Where(s=>s.Status==true)
-                                    .AsNoTracking() select p;
+                                    .Include(p => p.Team).ThenInclude(d => d.Division)
+                                    .Where(s => s.Status == true)
+                                    .AsNoTracking()
+                          select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player/Jersey", "Team" };
+            string[] sortOptions = new[] { "Player", "Division", "Team" };
 
             //filter
             if (TeamID.HasValue)
@@ -57,7 +54,7 @@ namespace WMBA_4.Controllers
                     sortField = actionButton;//Sort by the button clicked
                 }
             }
-            if (sortField == "Player/Jersey")
+            if (sortField == "Player")
             {
                 if (sortDirection == "asc")
                 {
@@ -72,7 +69,20 @@ namespace WMBA_4.Controllers
                         .ThenByDescending(p => p.LastName);
                 }
             }
-            else if (sortField == "Team")
+            else if (sortField == "Division")
+            {
+                if (sortDirection == "asc")
+                {
+                    players = players
+                        .OrderBy(p => p.Team.Division);
+                }
+                else
+                {
+                    players = players
+                        .OrderByDescending(p => p.Team.Division);
+                }
+            }
+            else
             {
                 if (sortDirection == "asc")
                 {
@@ -103,7 +113,7 @@ namespace WMBA_4.Controllers
             }
 
             var player = await _context.Players
-                .Include(p => p.Team).ThenInclude(d=>d.Division)
+                .Include(p => p.Team).ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (player == null)
             {
@@ -134,6 +144,8 @@ namespace WMBA_4.Controllers
                 return RedirectToAction(nameof(Index));
             }
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", player.TeamID);
+            ViewData["Team.Division.DivisionName"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
+
             return View(player);
         }
 
@@ -145,12 +157,16 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            var player = await _context.Players.FindAsync(id);
+            var player = await _context.Players
+                .Include(p => p.Team).ThenInclude(d => d.Division)
+                .FirstOrDefaultAsync(m => m.ID == id);
+
             if (player == null)
             {
                 return NotFound();
             }
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", player.TeamID);
+            ViewData["Team.DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
             return View(player);
         }
 
@@ -199,7 +215,7 @@ namespace WMBA_4.Controllers
             }
 
             var player = await _context.Players
-                .Include(p => p.Team)
+                .Include(p => p.Team).ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (player == null)
             {
@@ -224,16 +240,16 @@ namespace WMBA_4.Controllers
                 player.Status = false;
                 player.Team = null;
                 _context.Players.Update(player);
-               
+
             }
-            
+
             await _context.SaveChangesAsync();
-            return Redirect(ViewData["returnURL"].ToString());
+            return RedirectToAction(nameof(Index));
         }
 
         private bool PlayerExists(int id)
         {
-          return _context.Players.Any(e => e.ID == id);
+            return _context.Players.Any(e => e.ID == id);
         }
     }
 }

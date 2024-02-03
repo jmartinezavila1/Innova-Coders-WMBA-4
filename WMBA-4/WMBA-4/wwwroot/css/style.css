@@ -30,10 +30,13 @@
 :root {
     /*////background colors////*/
     --bg-hover-kelly: rgba(76, 187, 23, 0.2);
+    --bg-hover-grey: rgb(232, 232, 232, 0.5);
     --bg-kelly: #4CBB17; /* rgb(76, 187, 23)*/
     --bg-light-kelly: #5EC22E;
     --bg-white: #FFFFFF;
+    --bg-light-black: #2B2B2B;
     --bg-grey: #E4E4E3;
+    --bg-dark-grey: #464646;
     --bg-light-grey: #E4E4E4;
     --bg-light-grey2: #DADADA;
     --bg-dark-blue: #23314E;
@@ -42,7 +45,7 @@
     --ft-grey: #7C7C7C;
     --ft-light-grey: #E4E4E4;
     --ft-light-grey2: #DADADA;
-    --ft-white: #ffffff;
+    --ft-white: #FCFAFA;
     --ft-kelly: #4CBB17;
     --ft-dark-blue: #23314E;
     /*////font sizes////*/
@@ -59,11 +62,11 @@
 }
 
 /*/////////////////////////////background color/////////////////////////////////////*/
-.bg-kelly{
+.bg-kelly {
     background-color: var(--bg-kelly);
 }
 
-.bg-white{
+.bg-white {
     background-color: var(--bg-white);
 }
 
@@ -71,28 +74,42 @@
     background-color: var(--bg-light-grey);
 }
 
+.bg-sidenav {
+    background-color: var(--bg-light-black);
+}
 
 
 /*/////////////////////////////font color/////////////////////////////////////////*/
 .ft-black {
-   color: var(--ft-black);
+    color: var(--ft-black);
 }
-.ft-white{
+
+.ft-white {
     color: var(--ft-white);
 }
+
 .ft-kelly {
     color: var(--ft-kelly);
 }
+
 .ft-grey {
     color: var(--ft-grey);
 }
+
 .ft-light-grey {
     color: var(--ft-light-grey);
 }
 
+.text-red {
+    color: red;
+}
+
+.text-bold {
+    font-weight: bold;
+}
 /*/////////////////////////////border color/////////////////////////////////////*/
-.border-kelly{
-    border: 0.8px solid var(--bg-kelly);    
+.border-kelly {
+    border: 0.8px solid var(--bg-kelly);
 }
 
 /*/////////////////////////////border shapes/////////////////////////////////////*/
@@ -111,7 +128,8 @@
     padding-left: 15rem !important;
     padding-right: 15rem !important;
 }
-.py-6{
+
+.py-6 {
     padding-top: 6rem !important;
     padding-bottom: 3rem !important;
 }
@@ -122,6 +140,7 @@
         padding-right: 10rem !important;
     }
 }
+
 @media (max-width: 1241px) {
     .px-6 {
         padding-left: 5rem !important;
@@ -151,34 +170,38 @@
 }
 /*//////////////////////////////////table//////////////////////////////////////////*/
 
-.text-column{
+.text-column {
     font-weight: bold;
     text-decoration: none;
     padding: 0;
-    border:none;
+    border: none;
     background: none;
+    text-align: center;
 }
+
 tbody > tr:hover {
-    background-color: var(--bg-hover-kelly);
+    background-color: var(--bg-hover-grey);
 }
 
 .giro-table {
     border-collapse: separate;
     border-spacing: 0 10px;
+    text-align: center;
 }
 
     .giro-table > thead > tr,
     .giro-table > tbody > tr > td {
         vertical-align: middle;
     }
-.giro-table thead {
-    background-color: var(--bg-grey);
-} 
 
-.giro-table > thead > tr > * {
-    padding-top: 15px;
-    padding-bottom: 15px;
-}
+    .giro-table thead {
+        background-color: var(--bg-grey);
+    }
+
+    .giro-table > thead > tr > * {
+        padding-top: 15px;
+        padding-bottom: 15px;
+    }
 
 .table-bordered > :not(caption) > * > * {
     border-width: 0 !important;
@@ -194,7 +217,6 @@ th:first-child {
 td:last-child,
 th:last-child {
     border-right: 1px solid var(--bg-light-grey) !important;
-
 }
 
 .giro-table th:first-child,
@@ -204,7 +226,7 @@ th:last-child {
     padding-left: 1rem; /*table left side padding*/
 }
 
-@media (max-width: 390px){
+@media (max-width: 390px) {
     .giro-table th:first-child,
     .giro-table td:first-child {
         padding-left: 1rem; /*table left side padding*/
@@ -221,16 +243,33 @@ th:last-child {
     .giro-table td:last-child {
         display: flex;
         flex-direction: column;
-        text-align:center;
+        text-align: center;
     }
 }
-    
-    /*/////////////////////////////////classes-flex//////////////////////////////////////*/
-    .p-in-flex {
-        display: flex;
-        justify-content: center;
-        flex-direction: column;
-    }
+
+/*/////////////////////////////////sidebar//////////////////////////////////////*/
+
+.custom-menu {
+    display: inline-block;
+    position: absolute;
+    top: 120px;
+    right: 0;
+    margin-right: -50px;
+    transition: .3s;
+}
+
+#sidenavAccordion > .custom-menu > .btn-custom-menu {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 2px solid black;
+}
+/*/////////////////////////////////classes-flex//////////////////////////////////////*/
+.p-in-flex {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+}
 
 .f-in-flex {
     display: flex;
@@ -243,7 +282,7 @@ th:last-child {
 
 .logo {
     width: 10rem;
-    margin-left: 30px;
+    margin-left: 45px;
 }
 
 .btn-shadow {
@@ -251,23 +290,23 @@ th:last-child {
 }
 
 .btn-kelly {
-    padding: 0.6rem 2rem;
+    padding: 0.5rem 0.9rem;
     border: none;
     background-color: var(--bg-kelly);
     border-radius: 10px;
 }
 
-.btn-kelly:hover{
-    cursor: pointer;
-    background-color: var(--bg-dark-blue) ;
-}
+    .btn-kelly:hover {
+        cursor: pointer;
+        background-color: var(--bg-dark-blue);
+    }
 
 .btn-text {
     color: var(--ft-white);
 }
 
-.material-symbols-outlined{
-    color: var(--ft-kelly) ;
+.material-symbols-outlined {
+    color: var(--ft-kelly);
 }
 
     .material-symbols-outlined:hover {
@@ -280,12 +319,12 @@ th:last-child {
 
 .side-bar-grid {
     display: grid;
-    grid-template-columns: repeat(1, 1fr); 
+    grid-template-columns: repeat(1, 1fr);
     gap: 10px;
 }
 
 .side-bar-grid-item {
-    padding: 20px; 
+    padding: 20px;
     text-align: center;
 }
 
@@ -295,17 +334,17 @@ th:last-child {
     min-height: 100vh;
 }
 
-.header-height{
+.header-height {
     height: 100px;
 }
 
-.nav-text{
+.nav-text {
     color: var(--ft-black);
     font-size: 18px;
 }
 
 div > .nav-hover:hover {
-    background-color: var(--bg-dark-blue);
+    background-color: var(--bg-dark-grey);
     color: var(--ft-white);
 }
 
@@ -313,15 +352,22 @@ div > .nav-hover:hover {
     position: absolute;
     top: 130px;
     left: 225px;
-    
 }
 
 .rotate-icon {
     transition: transform 0.5s ease-in-out;
 }
 
-.nav-quick-button{
+.nav-quick-button {
     display: flex;
 }
+
+@media (min-width: 768px) {
+    .logo {
+        margin-left: 60px
+    }
+}
+
+
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/

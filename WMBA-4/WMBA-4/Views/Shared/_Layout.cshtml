@@ -4,6 +4,9 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WMBA_4</title>
+    @* favicon *@
+    <link rel="icon" href="~/WMBA-icon-36x36.png" type="image/x-icon" />
+    <link rel="shortcut icon" href="~/WMBA-icon-36x36.png" type="image/x-icon" />
     @* bootstrap *@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/style.css" asp-append-version="true" />
@@ -21,9 +24,8 @@
     <nav class="sb-topnav navbar navbar-expand navbar-dark bg-light-grey d-flex justify-content-between">
         <!-- Navbar Brand-->
         <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
-        @* <a class="navbar-brand ps-3" href="index.html"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a> *@
         <!-- Sidebar Toggle-->
-        <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly"></i></button>
+        @* <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly"></i></button> *@
         <!-- Navbar Search-->
         <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
             @* <div class="input-group">
@@ -63,18 +65,20 @@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion bg-kelly" id="sidenavAccordion">
+            <nav class="sb-sidenav accordion bg-sidenav" id="sidenavAccordion">
+                <div class="custom-menu">
+                    <button class="border border-0 me-4 me-lg-0 bg-transparent" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly fs-4"></i></button>
+                </div>
                 <div class="sb-sidenav-menu">
                     <div class="nav nav-text">
                         <a>Home</a>
                         <div class="sb-sidenav-menu-heading">Quick Access</div>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Players</a>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Create">Schedule Game</a>
+                        <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Teams</a>
                         @* <a class="nav-link nav-hover" asp-area="" asp-controller="Lineup" asp-action="Index">Scorekeeper</a> *@
                         <div class="sb-sidenav-menu-heading">User Access</div>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
-                        <a class="nav-link nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Divisions</a>
                         <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
+                        <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
                     </div>
                 </div>
             </nav>
