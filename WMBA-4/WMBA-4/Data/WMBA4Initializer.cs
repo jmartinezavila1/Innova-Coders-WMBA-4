@@ -17,8 +17,8 @@ namespace WMBA_4.Data
             {
                 //We can use this to delete the database and start fresh.
                 //context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
-                context.Database.Migrate();
+                context.Database.EnsureCreated();
+                //context.Database.Migrate();
                 //To randomly generate data
                 Random random = new Random();
 
@@ -52,7 +52,7 @@ namespace WMBA_4.Data
                 {
                     var clubs = new List<Club>
                     {
-                        new Club { ID = 1, ClubName = "Welland Minor Baseball Association", CityID = 1 },
+                        new Club { ID = 1, ClubName = "Welland Minor Baseball Association", Status=true, CityID = 1 },
                      
 
                     };
@@ -83,12 +83,12 @@ namespace WMBA_4.Data
                 {
                     var teams = new List<Team>
                     {
-                        new Team { ID = 15, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 5 },
-                        new Team { ID = 16, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 17, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 18, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 19, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 20, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 2 },
+                        new Team { ID = 1, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 5 },
+                        new Team { ID = 2, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 3, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 4, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 5, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 1 },
+                        new Team { ID = 6, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 2 }
                         
                     };
 
@@ -139,20 +139,20 @@ namespace WMBA_4.Data
                         new TeamStaff { TeamID = 4, StaffID = 4 },
                         new TeamStaff { TeamID = 5, StaffID = 5 },
                         new TeamStaff { TeamID = 6, StaffID = 6 },
-                        new TeamStaff { TeamID = 7, StaffID = 7 },
-                        new TeamStaff { TeamID = 8, StaffID = 8 },
-                        new TeamStaff { TeamID = 9, StaffID = 9 },
-                        new TeamStaff { TeamID = 10, StaffID = 10 },
-                        new TeamStaff { TeamID = 11, StaffID = 11 },
-                        new TeamStaff { TeamID = 12, StaffID = 12 },
-                        new TeamStaff { TeamID = 13, StaffID = 13 },
-                        new TeamStaff { TeamID = 14, StaffID = 14 },
-                        new TeamStaff { TeamID = 15, StaffID = 15 },
-                        new TeamStaff { TeamID = 16, StaffID = 16 },
-                        new TeamStaff { TeamID = 17, StaffID = 17 },
-                        new TeamStaff { TeamID = 18, StaffID = 18 },
-                        new TeamStaff { TeamID = 19, StaffID = 19 },
-                        new TeamStaff { TeamID = 20, StaffID = 20 }
+                        new TeamStaff { TeamID = 1, StaffID = 7 },
+                        new TeamStaff { TeamID = 2, StaffID = 8 },
+                        new TeamStaff { TeamID = 1, StaffID = 9 },
+                        new TeamStaff { TeamID = 2, StaffID = 10 },
+                        new TeamStaff { TeamID = 3, StaffID = 11 },
+                        new TeamStaff { TeamID = 4, StaffID = 12 },
+                        new TeamStaff { TeamID = 5, StaffID = 13 },
+                        new TeamStaff { TeamID = 6, StaffID = 14 },
+                        new TeamStaff { TeamID = 1, StaffID = 15 },
+                        new TeamStaff { TeamID = 2, StaffID = 16 },
+                        new TeamStaff { TeamID = 1, StaffID = 17 },
+                        new TeamStaff { TeamID = 1, StaffID = 18 },
+                        new TeamStaff { TeamID = 1, StaffID = 19 },
+                        new TeamStaff { TeamID = 2, StaffID = 20 }
                     };
 
                     context.TeamStaff.AddRange(teamStaff);
@@ -164,7 +164,7 @@ namespace WMBA_4.Data
                 {
                     var seasons = new List<Season>
                     {
-                        new Season { ID = 1, SeasonCode = "2023", SeasonName = "Summer 2023" },
+                        new Season { ID = 1, SeasonCode = "2024", SeasonName = "Winter 2024" },
 
                     };
 
@@ -207,29 +207,46 @@ namespace WMBA_4.Data
                     context.SaveChanges();
                 }
 
+                // Positions
+                if (!context.Positions.Any())
+                {
+                    var positions = new List<Position>
+                    {
+                        new Position { ID = 1, PositionCode = "P", PositionName = "Pitcher" },
+                        new Position { ID = 2, PositionCode = "C", PositionName = "Catcher" },
+                        new Position { ID = 3, PositionCode = "1B", PositionName = "First Base" },
+                        new Position { ID = 4, PositionCode = "2B", PositionName = "Second Base" },
+                        new Position { ID = 5, PositionCode = "SS", PositionName = "Shortstop" },
+                        new Position { ID = 6, PositionCode = "3B", PositionName = "Third Base" },
+                        new Position { ID = 7, PositionCode = "LF", PositionName = "Left Field" },
+                        new Position { ID = 8, PositionCode = "CF", PositionName = "Center Field" },
+                        new Position { ID = 9, PositionCode = "RF", PositionName = "Right Field" },
+                        new Position { ID = 10, PositionCode = "DH", PositionName = "Designated Hitter" }
 
+                    };
+
+                    context.Positions.AddRange(positions);
+                    context.SaveChanges();
+                }
 
                 // Games 
                 if (!context.Games.Any())
                 {
                     var games = new List<Game>
                     {
-                         // Games for 2022_
-                        new Game { ID = 1, Date = new DateTime(2022, 1, 1), LocationID = 1, SeasonID = 1},
-                        new Game { ID = 2, Date = new DateTime(2022, 2, 1), LocationID = 2, SeasonID = 1},
-                        new Game { ID = 3, Date = new DateTime(2022, 3, 1), LocationID = 3, SeasonID = 1},
-                        new Game { ID = 4, Date = new DateTime(2022, 4, 1), LocationID = 4, SeasonID = 1},
-                        new Game { ID = 5, Date = new DateTime(2022, 5, 1), LocationID = 5, SeasonID = 1},
-
+                        // Games for 2022
+                        new Game { ID = 1, Date = new DateTime(2022, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 2, Date = new DateTime(2022, 2, 15), Status=true, LocationID = 2, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 3, Date = new DateTime(2022, 3, 15), Status=true, LocationID = 3, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 4, Date = new DateTime(2022, 4, 15), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 5, Date = new DateTime(2022, 5, 15), Status=true, LocationID = 5, SeasonID = 1, GameTypeID=1},
 
                         // Games for 2023
-                        new Game { ID = 6, Date = new DateTime(2023, 1, 1), LocationID = 6, SeasonID = 1},
-                        new Game { ID = 7, Date = new DateTime(2023, 2, 1), LocationID = 7, SeasonID = 1},
-                        new Game { ID = 8, Date = new DateTime(2023, 3, 1), LocationID = 8, SeasonID = 1},
-                        new Game { ID = 9, Date = new DateTime(2023, 4, 1), LocationID = 9, SeasonID = 1},
-                        new Game { ID = 10, Date = new DateTime(2023, 5, 1), LocationID = 10, SeasonID = 1}
-
-
+                        new Game { ID = 6, Date = new DateTime(2023, 6, 10), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 7, Date = new DateTime(2023, 7, 10), Status=true, LocationID = 2, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 8, Date = new DateTime(2023, 8, 10), Status=true, LocationID = 3, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 9, Date = new DateTime(2023, 9, 10), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 10, Date = new DateTime(2023, 10, 10), Status=true, LocationID = 5, SeasonID = 1, GameTypeID=1}
                     };
 
                     context.Games.AddRange(games);
@@ -268,29 +285,6 @@ namespace WMBA_4.Data
                     context.SaveChanges();
                 }
 
-                // Positions
-                if (!context.Positions.Any())
-                {
-                    var positions = new List<Position>
-                    {
-                        new Position { ID = 1, PositionCode = "P", PositionName = "Pitcher" },
-                        new Position { ID = 2, PositionCode = "C", PositionName = "Catcher" },
-                        new Position { ID = 3, PositionCode = "1B", PositionName = "First Base" },
-                        new Position { ID = 4, PositionCode = "2B", PositionName = "Second Base" },
-                        new Position { ID = 5, PositionCode = "SS", PositionName = "Shortstop" },
-                        new Position { ID = 6, PositionCode = "3B", PositionName = "Third Base" },
-                        new Position { ID = 7, PositionCode = "LF", PositionName = "Left Field" },
-                        new Position { ID = 8, PositionCode = "CF", PositionName = "Center Field" },
-                        new Position { ID = 9, PositionCode = "RF", PositionName = "Right Field" },
-                        new Position { ID = 10, PositionCode = "DH", PositionName = "Designated Hitter" }
-
-                    };
-
-                    context.Positions.AddRange(positions);
-                    context.SaveChanges();
-                }
-
-
                 // Players
                 if (!context.Players.Any())
                 {
@@ -308,7 +302,7 @@ namespace WMBA_4.Data
                         new Player { ID = 10, TeamID = 1, MemberID = "M010", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
                         new Player { ID = 11, TeamID = 1, MemberID = "M011", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
                         new Player { ID = 12, TeamID = 1, MemberID = "M012", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
-                       
+
                         new Player { ID = 13, TeamID = 2, MemberID = "M013", FirstName = "Ethan", LastName = "Harris", JerseyNumber = "9" },
                         new Player { ID = 14, TeamID = 2, MemberID = "M014", FirstName = "Chloe", LastName = "Martin", JerseyNumber = "18" },
                         new Player { ID = 15, TeamID = 2, MemberID = "M015", FirstName = "Benjamin", LastName = "Clark", JerseyNumber = "6" },
@@ -321,7 +315,7 @@ namespace WMBA_4.Data
                         new Player { ID = 22, TeamID = 2, MemberID = "M022", FirstName = "Zoe", LastName = "Cooper", JerseyNumber = "21" },
                         new Player { ID = 23, TeamID = 2, MemberID = "M023", FirstName = "Elijah", LastName = "Perry", JerseyNumber = "2" },
                         new Player { ID = 24, TeamID = 2, MemberID = "M024", FirstName = "Mia", LastName = "Fisher", JerseyNumber = "16" },
-                       
+
                         new Player { ID = 25, TeamID = 3, MemberID = "M025", FirstName = "Caleb", LastName = "Reed", JerseyNumber = "13" },
                         new Player { ID = 26, TeamID = 3, MemberID = "M026", FirstName = "Avery", LastName = "Murphy", JerseyNumber = "29" },
                         new Player { ID = 27, TeamID = 3, MemberID = "M027", FirstName = "Gabriel", LastName = "Bell", JerseyNumber = "24" },
@@ -332,7 +326,7 @@ namespace WMBA_4.Data
                         new Player { ID = 32, TeamID = 3, MemberID = "M032", FirstName = "Aria", LastName = "Hill", JerseyNumber = "8" },
                         new Player { ID = 33, TeamID = 3, MemberID = "M033", FirstName = "Lincoln", LastName = "Wright", JerseyNumber = "14" },
                         new Player { ID = 34, TeamID = 3, MemberID = "M034", FirstName = "Ella", LastName = "Barnes", JerseyNumber = "19" },
-                       
+
                         new Player { ID = 35, TeamID = 4, MemberID = "M035", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "10" },
                         new Player { ID = 36, TeamID = 4, MemberID = "M036", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "28" },
                         new Player { ID = 37, TeamID = 4, MemberID = "M037", FirstName = "Landon", LastName = "Powell", JerseyNumber = "6" },
@@ -357,26 +351,26 @@ namespace WMBA_4.Data
                 {
                     var gameLineUps = new List<GameLineUp>
                     {
-                        new GameLineUp { ID = 1, BattingOrder = 1, GameID = 1, PlayerID = 1, TeamID = 1 },
-                        new GameLineUp { ID = 2, BattingOrder = 2, GameID = 1, PlayerID = 2, TeamID = 1 },
-                        new GameLineUp { ID = 3, BattingOrder = 3, GameID = 1, PlayerID = 3, TeamID = 2 },
-                        new GameLineUp { ID = 4, BattingOrder = 4, GameID = 1, PlayerID = 4, TeamID = 2 },
-                        new GameLineUp { ID = 5, BattingOrder = 5, GameID = 2, PlayerID = 5, TeamID = 3 },
-                        new GameLineUp { ID = 6, BattingOrder = 6, GameID = 2, PlayerID = 6, TeamID = 3 },
-                        new GameLineUp { ID = 7, BattingOrder = 7, GameID = 3, PlayerID = 7, TeamID = 4 },
-                        new GameLineUp { ID = 8, BattingOrder = 8, GameID = 3, PlayerID = 8, TeamID = 4 },
-                        new GameLineUp { ID = 9, BattingOrder = 9, GameID = 4, PlayerID = 9, TeamID = 5 },
-                        new GameLineUp { ID = 10, BattingOrder = 1, GameID = 4, PlayerID = 10, TeamID = 5 },
-                        new GameLineUp { ID = 11, BattingOrder = 2, GameID = 5, PlayerID = 11, TeamID = 6 },
-                        new GameLineUp { ID = 12, BattingOrder = 3, GameID = 5, PlayerID = 12, TeamID = 6 },
-                        new GameLineUp { ID = 13, BattingOrder = 4, GameID = 6, PlayerID = 13, TeamID = 7 },
-                        new GameLineUp { ID = 14, BattingOrder = 5, GameID = 6, PlayerID = 14, TeamID = 7 },
-                        new GameLineUp { ID = 15, BattingOrder = 6, GameID = 7, PlayerID = 15, TeamID = 8 },
-                        new GameLineUp { ID = 16, BattingOrder = 7, GameID = 7, PlayerID = 16, TeamID = 8 },
-                        new GameLineUp { ID = 17, BattingOrder = 8, GameID = 8, PlayerID = 17, TeamID = 9 },
-                        new GameLineUp { ID = 18, BattingOrder = 9, GameID = 8, PlayerID = 18, TeamID = 9 },
-                        new GameLineUp { ID = 19, BattingOrder = 1, GameID = 9, PlayerID = 19, TeamID = 10 },
-                        new GameLineUp { ID = 20, BattingOrder = 2, GameID = 9, PlayerID = 20, TeamID = 10 }
+                        new GameLineUp { ID = 1, BattingOrder = 1, GameID = 1, PlayerID = 1, TeamID=1},
+                        new GameLineUp { ID = 2, BattingOrder = 2, GameID = 1, PlayerID = 2, TeamID=1},
+                        new GameLineUp { ID = 3, BattingOrder = 3, GameID = 1, PlayerID = 3, TeamID=1},
+                        new GameLineUp { ID = 4, BattingOrder = 4, GameID = 1, PlayerID = 4, TeamID=1},
+                        new GameLineUp { ID = 5, BattingOrder = 5, GameID = 2, PlayerID = 5, TeamID=1},
+                        new GameLineUp { ID = 6, BattingOrder = 6, GameID = 2, PlayerID = 6, TeamID=1},
+                        new GameLineUp { ID = 7, BattingOrder = 7, GameID = 3, PlayerID = 7, TeamID=1},
+                        new GameLineUp { ID = 8, BattingOrder = 8, GameID = 3, PlayerID = 8, TeamID=1},
+                        new GameLineUp { ID = 9, BattingOrder = 9, GameID = 4, PlayerID = 9, TeamID=1},
+                        new GameLineUp { ID = 10, BattingOrder = 1, GameID = 4, PlayerID = 10, TeamID=1},
+                        new GameLineUp { ID = 11, BattingOrder = 2, GameID = 5, PlayerID = 11, TeamID=1},
+                        new GameLineUp { ID = 12, BattingOrder = 3, GameID = 5, PlayerID = 12, TeamID=1},
+                        new GameLineUp { ID = 13, BattingOrder = 4, GameID = 6, PlayerID = 13, TeamID=2},
+                        new GameLineUp { ID = 14, BattingOrder = 5, GameID = 6, PlayerID = 14, TeamID=2},
+                        new GameLineUp { ID = 15, BattingOrder = 6, GameID = 7, PlayerID = 15, TeamID=2},
+                        new GameLineUp { ID = 16, BattingOrder = 7, GameID = 7, PlayerID = 16, TeamID=2},
+                        new GameLineUp { ID = 17, BattingOrder = 8, GameID = 8, PlayerID = 17, TeamID=2},
+                        new GameLineUp { ID = 18, BattingOrder = 9, GameID = 8, PlayerID = 18, TeamID=2},
+                        new GameLineUp { ID = 19, BattingOrder = 1, GameID = 9, PlayerID = 19, TeamID=2},
+                        new GameLineUp { ID = 20, BattingOrder = 2, GameID = 9, PlayerID = 20, TeamID=2}
 
                     };
 
@@ -415,7 +409,7 @@ namespace WMBA_4.Data
                     context.GameLineUpPositions.AddRange(gameLineUpPositions);
                     context.SaveChanges();
                 }
-
+                
 
                 // ScorePlayers
                 if (!context.ScorePlayers.Any())
