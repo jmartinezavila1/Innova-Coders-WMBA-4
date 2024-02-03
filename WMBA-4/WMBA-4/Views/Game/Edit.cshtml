@@ -34,19 +34,25 @@
                 <span asp-validation-for="SeasonID" class="text-danger"></span>
             </div>
            
-            <div class="form-group">
+            @* <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID" />
-            </div>
+            </div> *@
         </form>
     </div>
+    <form asp-action="RedirectToTeamList" method="post">
+        <input type="hidden" asp-for="ID" />
+        <input type="hidden" name="teamId" value="@ViewBag.TeamID" />
+        <input type="submit" value="Save" class="btn btn-primary" /> |
+        <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team List</a>
+    </form>
 </div>
 
 @* <div>
     <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to List</a>
 </div> *@
-<div>
+@* <div>
     <a asp-action="Index">Back to Schedule Games</a>
-</div>
+</div> *@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
