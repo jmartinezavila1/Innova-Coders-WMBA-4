@@ -47,10 +47,11 @@
         
     </dl>
     
-    <form asp-action="Delete">
+    <form asp-action="RedirectToTeamList" method="post">
         <input type="hidden" asp-for="ID" />
+        <input type="hidden" name="teamId" value="@ViewBag.TeamID" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        @* <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to List</a> *@
-        <a asp-action="Index">Back to Schedule Games</a>
+        <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team List</a>
+
     </form>
 </div>

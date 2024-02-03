@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
-    public class DivisionController : Controller
+    public class DivisionController : ElephantController
     {
         private readonly WMBA_4_Context _context;
 
@@ -63,7 +64,7 @@ namespace WMBA_4.Controllers
             {
                 _context.Add(division);
                 await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { division.ID });
             }
             ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
@@ -116,7 +117,7 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { division.ID });
             }
             ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
@@ -159,7 +160,7 @@ namespace WMBA_4.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Redirect(ViewData["returnURL"].ToString());
         }
 
         private bool DivisionExists(int id)

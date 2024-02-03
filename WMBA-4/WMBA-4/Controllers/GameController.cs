@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.ViewModels;
@@ -13,7 +14,7 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WMBA_4.Controllers
 {
-    public class GameController : Controller
+    public class GameController : ElephantController
     {
         private readonly WMBA_4_Context _context;
 
@@ -111,7 +112,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game,int Team1,int Team2)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game,int Team1,int Team2, int teamId)
         {
             //Game
             if (ModelState.IsValid)
@@ -143,16 +144,17 @@ namespace WMBA_4.Controllers
 
                 _context.Add(game);
                 await _context.SaveChangesAsync();
-                //return RedirectToAction(nameof(Index));
+                return RedirectToAction("RedirectToTeamList", new { teamId });
             }
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            return RedirectToAction("Details", "Team", new { id = Team1 });
 
             //return RedirectToAction("Details", "Team", new { id = Team1 });
-            return View(game);
+            //return View(game);
         }
 
         // GET: Game/Edit/5
@@ -181,7 +183,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game, int team)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game, int teamId, int team)
         {
             if (id != game.ID)
             {
@@ -206,7 +208,7 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("RedirectToTeamList", new { teamId });
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
@@ -243,7 +245,7 @@ namespace WMBA_4.Controllers
         // POST: Game/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int teamId)
         {
             if (_context.Games == null)
             {
@@ -265,7 +267,13 @@ namespace WMBA_4.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("RedirectToTeamList", new { teamId });
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult RedirectToTeamList(int teamId)
+        {
+            return RedirectToAction("Details", "Team", new { id = teamId });
         }
 
         private void PopulatePlayersAssignedTeam(Game game, int team)

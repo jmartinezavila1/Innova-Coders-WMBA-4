@@ -5,12 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
-    public class PlayerController : Controller
+    public class PlayerController : ElephantController
     {
         private readonly WMBA_4_Context _context;
 
@@ -227,7 +228,7 @@ namespace WMBA_4.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Redirect(ViewData["returnURL"].ToString());
         }
 
         private bool PlayerExists(int id)

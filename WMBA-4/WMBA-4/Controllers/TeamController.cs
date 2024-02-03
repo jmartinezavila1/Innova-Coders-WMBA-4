@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
+using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
-    public class TeamController : Controller
+    public class TeamController : ElephantController
     {
         private readonly WMBA_4_Context _context;
 
@@ -116,7 +117,7 @@ namespace WMBA_4.Controllers
                 {
                     _context.Add(team);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return RedirectToAction("Details", new { team.ID });
                 }
 
             }
@@ -183,7 +184,7 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Details", new { team.ID });
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View(team);
@@ -239,7 +240,7 @@ namespace WMBA_4.Controllers
             }
 
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return Redirect(ViewData["returnURL"].ToString());
         }
 
         public ActionResult GoToImportPlayers()
