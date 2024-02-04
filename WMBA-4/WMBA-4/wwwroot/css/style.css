@@ -125,8 +125,8 @@
 
 /*//////////////////////////////////padding//////////////////////////////////////////*/
 .px-6 {
-    padding-left: 15rem !important;
-    padding-right: 15rem !important;
+    padding-left: 1rem !important;
+    padding-right: 1rem !important;
 }
 
 .py-6 {
@@ -134,38 +134,59 @@
     padding-bottom: 3rem !important;
 }
 
-@media (max-width: 1281px) {
-    .px-6 {
-        padding-left: 10rem !important;
-        padding-right: 10rem !important;
-    }
-}
-
-@media (max-width: 1241px) {
-    .px-6 {
-        padding-left: 5rem !important;
-        padding-right: 5rem !important;
-    }
-}
-
-@media (max-width: 1769px) {
-    .px-6 {
-        padding-left: 4rem !important;
-        padding-right: 4rem !important;
-    }
-}
-
-@media (max-width: 431px) {
+@media (max-width: 426px) {
     .px-6 {
         padding-left: 1.5rem !important;
         padding-right: 1.5rem !important;
     }
 }
 
-@media (max-width: 390px) {
+@media (min-width: 427px) {
     .px-6 {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
+    }
+}
+
+@media (min-width: 524px) {
+    .px-6 {
+        padding-left: 3rem !important;
+        padding-right: 3rem !important;
+    }
+}
+
+@media (min-width: 768px) {
+    .px-6 {
+        padding-left: 5rem !important;
+        padding-right: 5rem !important;
+    }
+}
+
+@media (min-width: 960px) {
+    .px-6 {
+        padding-left: 7rem !important;
+        padding-right: 7rem !important;
+    }
+}
+
+@media (min-width: 1280px) {
+    .px-6 {
+        padding-left: 9rem !important;
+        padding-right: 9rem !important;
+    }
+}
+
+@media (min-width: 1380px) {
+    .px-6 {
+        padding-left: 11rem !important;
+        padding-right:11rem !important;
+    }
+}
+
+@media (min-width: 1420px) {
+    .px-6 {
+        padding-left: 13rem !important;
+        padding-right: 13rem !important;
     }
 }
 /*//////////////////////////////////table//////////////////////////////////////////*/
@@ -362,11 +383,7 @@ div > .nav-hover:hover {
     display: flex;
 }
 
-@media (min-width: 768px) {
-    .logo {
-        margin-left: 60px
-    }
-}
+
 
 
 
