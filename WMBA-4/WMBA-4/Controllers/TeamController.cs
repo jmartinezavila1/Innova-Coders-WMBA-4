@@ -6,10 +6,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
 
 namespace WMBA_4.Controllers
 {
@@ -23,12 +26,28 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID)
         {
-            var wMBA_4_Context = _context.Teams
+            PopulateDropDownLists();
+
+            var teams = from t in  _context.Teams
                 .Include(t => t.Division)
-                .Where(s => s.Status == true);
-            return View(await wMBA_4_Context.ToListAsync());
+                .Where(s => s.Status == true)
+                .OrderBy(t => t.Division)
+                .AsNoTracking()select t;
+ 
+
+            //Filter
+            if (DivisionID.HasValue)
+            {
+                teams = teams.Where(p => p.DivisionID == DivisionID);
+            }           
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
+            }
+
+            return View(await teams.ToListAsync());
         }
 
 
@@ -42,6 +61,13 @@ namespace WMBA_4.Controllers
                         .ThenInclude(g => g.TeamGames)
                             .ThenInclude(tg => tg.Team)
                 .FirstOrDefault(t => t.ID == id);
+
+            var players = from p in _context.Players
+            .Include(p => p.Team)
+            .Where(s => s.Status == true && s.TeamID == id)
+            .OrderBy(p => p.LastName)
+            .AsNoTracking()
+             select p;
 
             if (team == null)
             {
@@ -70,30 +96,8 @@ namespace WMBA_4.Controllers
             }
 
             ViewBag.OpponentTeams = opponentTeams;
-
+            ViewData["Players"] = players.ToList();
             return View(team);
-        }
-
-        //Cristina added this for listing the Players in a Team
-        // GET: Team/Details/5
-        public async Task<IActionResult> TeamPlayer(int teamId)
-        {
-            Team team = await _context.Teams.FindAsync(teamId);
-
-            if (team == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.TeamName = team.Name;
-            ViewBag.TeamID = team.ID;
-
-            IQueryable<Player> player = _context.Players
-            .Where(m => m.TeamID == teamId);
-
-            var playerList = await player.ToListAsync();
-
-            return View(playerList);
         }
 
 
@@ -120,6 +124,10 @@ namespace WMBA_4.Controllers
                     return RedirectToAction("Details", new { team.ID });
                 }
 
+            }
+            catch (RetryLimitExceededException /* dex */)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
             }
             catch (DbUpdateException dex)
             {
@@ -173,6 +181,10 @@ namespace WMBA_4.Controllers
                     _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!TeamExists(team.ID))
@@ -184,10 +196,21 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Details", new { team.ID });
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Name", "Unable to save changes. Remember, you cannot have duplicate Team Names.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
+                }
+                
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
-            return View(team);
+            return View("Index", new List<WMBA_4.Models.Team> { team });
         }
 
         // GET: Team/Delete/5
@@ -228,14 +251,27 @@ namespace WMBA_4.Controllers
                 bool hasScheduledGames = _context.TeamGame
                     .Any(tg => tg.TeamID == id && tg.Game.Date >= DateTime.Today);
 
+                // Verify if the team has Players assigned
+                bool hasplayers = _context.Players
+                    .Any(tg => tg.TeamID == id);
+
                 if (hasScheduledGames)
                 {
                     //Display an error message indicating that the team has games scheduled
                     ModelState.AddModelError(string.Empty, "You cannot delete the team because it has scheduled games for today or later.");
                     return View(nameof(Delete), team);
                 }
-                team.Status = false;
-                _context.Teams.Update(team);
+                else if (hasplayers)
+                {
+                    //Display an error message indicating that the team has players assigned
+                    ModelState.AddModelError(string.Empty, "You cannot delete the team because it has players assigned.");
+                    return View(nameof(Delete), team);
+
+                }
+                else {
+                    team.Status = false;
+                    _context.Teams.Update(team);
+                }
 
             }
 
@@ -428,7 +464,18 @@ namespace WMBA_4.Controllers
          
             return View();
         }
-
+        private SelectList DivisionList(int? selectedId)
+        {
+            return new SelectList(_context
+                .Divisions
+                .OrderBy(m => m.DivisionName), "ID", "DivisionName", selectedId);
+        }
+        
+        private void PopulateDropDownLists(Team team = null)
+        {
+            ViewData["DivisionID"] = DivisionList(team?.DivisionID);
+            
+        }
         private bool TeamExists(int id)
         {
             return _context.Teams.Any(e => e.ID == id);

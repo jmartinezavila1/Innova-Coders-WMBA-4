@@ -7,9 +7,8 @@
         </h1>
     </div>
 </div>
-<div>
-    
-    <h4>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </h4>   
+<div>    
+    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </p>   
     <br />
     <div class="col-md-4">
         <form asp-action="Save" method="post" enctype="multipart/form-data">
