@@ -12,18 +12,3 @@
 
 });
 
-// Slide in and out for side bar
-
-var isRotated = false;
-
-function rotateIcon() {
-    var icon = document.getElementById("slideInAndOut");
-
-    if (!isRotated) {
-        icon.style.transform = "rotate(180deg)";
-    } else {
-        icon.style.transform = "rotate(0deg)";
-    }
-
-    isRotated = !isRotated;
-}

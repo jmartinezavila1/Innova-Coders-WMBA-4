@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using OfficeOpenXml.Utils;
+using System.ComponentModel.DataAnnotations;
+using WMBA_4.Data;
 
 namespace WMBA_4.Models
 {
@@ -9,14 +11,21 @@ namespace WMBA_4.Models
 
         // Summary properties
         [Display(Name = "Player")]
-        public string FullName
+        public string Summary
         {
             get
             {
                 return FirstName + " "
-                    + LastName + ","
+                    + LastName + " "
                     + (string.IsNullOrEmpty(JerseyNumber) ? " " :
-                        (" " + JerseyNumber));
+                        (", " + JerseyNumber));
+            }
+        }
+        public string FullName
+        {
+            get
+            {
+                return FirstName + " " + LastName;
             }
         }
         //End Summary
@@ -25,6 +34,7 @@ namespace WMBA_4.Models
         [Display(Name = "Member ID")]
         [Required(ErrorMessage = "You cannot leave the MemberID blank.")]
         [StringLength(8, ErrorMessage = "Member ID must be exactly 8 characters long.")]
+        [RegularExpression(@"^[A-Za-z0-9]{8}$", ErrorMessage = "Member ID must be a combination of letters and numbers, exactly 8 characters long.")]
         public string MemberID { get; set; }
 
         [Display(Name = "First Name")]
@@ -51,6 +61,6 @@ namespace WMBA_4.Models
         public Team Team { get; set; }
         public ICollection<GameLineUp> GameLineUps { get; set; } = new HashSet<GameLineUp>();
         public ICollection<ScorePlayer> ScorePlayers { get; set; } = new HashSet<ScorePlayer>();
-
+        
     }
 }

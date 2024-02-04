@@ -7,48 +7,53 @@
 <h1>Create</h1>
 
 <h4>Player</h4>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="MemberID" class="control-label"></label>
-                <input asp-for="MemberID" class="form-control" />
-                <span asp-validation-for="MemberID" class="text-danger"></span>
+<form asp-action="Create">
+    <div class="container ">
+        <div class="row align-items-start mb-3">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="FirstName" class="control-label"></label>
+                    <input asp-for="FirstName" class="form-control" />
+                    <span asp-validation-for="FirstName" class="text-danger"></span>
+                </div>
+                <div class="form-group mt-3">
+                    <label asp-for="TeamID" class="control-label"></label>
+                    <select asp-for="TeamID" class="form-control form-select" asp-items="ViewBag.TeamID"></select>
+                </div>
+                <div class="form-group">
+                    <label asp-for="JerseyNumber" class="control-label"></label>
+                    <input asp-for="JerseyNumber" class="form-control" />
+                    <span asp-validation-for="JerseyNumber" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName" class="control-label"></label>
-                <input asp-for="LastName" class="form-control" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="JerseyNumber" class="control-label"></label>
-                <input asp-for="JerseyNumber" class="form-control" />
-                <span asp-validation-for="JerseyNumber" class="text-danger"></span>
-            </div>
-            <div class="form-group">
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="LastName" class="control-label"></label>
+                    <input asp-for="LastName" class="form-control" />
+                    <span asp-validation-for="LastName" class="text-danger"></span>
+                </div>
+                @* <div class="form-group">
                 <label asp-for="Team.Division.DivisionName" class="control-label"></label>
                 <select asp-for="Team.Division.DivisionName" class="form-control" asp-items="ViewBag.TeamID"></select>
                 <span asp-validation-for="Team.Division.DivisionName" class="text-danger"></span>
+                </div> *@
+                <div class="form-group ">
+                    <label asp-for="MemberID" class="control-label"></label>
+                    <input asp-for="MemberID" class="form-control" />
+                    <span asp-validation-for="MemberID" class="text-danger"></span>
+                </div>
             </div>
-            <div class="form-group">
-                <label asp-for="TeamID" class="control-label"></label>
-                <select asp-for="TeamID" class="form-control" asp-items="ViewBag.TeamID"></select>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn-kelly btn-text text-no-deco" />
-            </div>
-        </form>
+            
+        </div>
     </div>
-</div>
+    <div class="form-group text-center">
+        <a asp-action="Index" class="btn btn-outline-secondary mx-1">Back to Player List</a>
+        <input type="submit" value="Create and Save" class="btn btn-kelly mx-1" />
+    </div>
+</form>
 
-<div>
-    <a asp-action="Index">Back to Player List</a>
-</div>
+
 
