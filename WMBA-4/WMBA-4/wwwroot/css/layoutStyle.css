@@ -9093,7 +9093,19 @@ textarea.form-control-lg {
     visibility: hidden !important;
 }
 
+@media (max-width: 575px) {
+    .custom-menu {
+        margin-right: -70px;
+    }
+}
+
 @media (min-width: 576px) {
+    .custom-menu {
+        top: 120px;
+        color: white;
+        margin-right: -70px;
+    }
+
     .float-sm-start {
         float: left !important;
     }
@@ -9746,6 +9758,12 @@ textarea.form-control-lg {
 }
 
 @media (min-width: 768px) {
+    .custom-menu {
+        top: 120px;
+        color: white;
+        margin-right: -70px;
+    }
+
     .float-md-start {
         float: left !important;
     }
@@ -10398,6 +10416,11 @@ textarea.form-control-lg {
 }
 
 @media (min-width: 992px) {
+    .custom-menu {
+        top: 120px;
+        margin-right: -55px;
+    }
+
     .float-lg-start {
         float: left !important;
     }
@@ -11050,6 +11073,12 @@ textarea.form-control-lg {
 }
 
 @media (min-width: 1200px) {
+    .custom-menu {
+        top: 120px;
+        color: white;
+        margin-right: -55px;
+    }
+
     .float-xl-start {
         float: left !important;
     }
@@ -12354,6 +12383,12 @@ textarea.form-control-lg {
 }
 
 @media (min-width: 1200px) {
+    .custom-menu {
+        top: 120px;
+        color: white;
+        margin-right: -55px;
+    }
+
     .fs-1 {
         font-size: 2.5rem !important;
     }
@@ -12475,6 +12510,8 @@ body {
 }
 
 @media (min-width: 992px) {
+
+
     #layoutSidenav #layoutSidenav_nav {
         transform: translateX(0);
     }
@@ -12584,7 +12621,7 @@ body {
                 font-size: 0.75rem;
                 font-weight: bold;
                 text-transform: uppercase;
-                color: var(--ft-light-grey);
+                color: var(--ft-kelly);
             }
 
             .sb-sidenav .sb-sidenav-menu .nav .nav-link {
@@ -12593,13 +12630,13 @@ body {
                 padding-top: 0.75rem;
                 padding-bottom: 0.75rem;
                 position: relative;
-                color: var(--ft-dark-blue);
+                color: var(--ft-white);
                 font-size: 1rem;
                 padding-left: 40px;
                 font-weight: 500;
             }
 
-                .sb-sidenav .sb-sidenav-menu .nav .nav-link:hover{
+                .sb-sidenav .sb-sidenav-menu .nav .nav-link:hover {
                     color: var(--ft-white);
                 }
 

@@ -6,20 +6,20 @@ namespace WMBA_4.Models
     {
         public int ID { get; set; }
 
-   
-// Summary properties
+
+        // Summary properties
         [Display(Name = "Player")]
         public string FullName
         {
             get
             {
-                return FirstName + " "                 
-                    + LastName + "," 
+                return FirstName + " "
+                    + LastName + ","
                     + (string.IsNullOrEmpty(JerseyNumber) ? " " :
                         (" " + JerseyNumber));
             }
         }
-//End Summary
+        //End Summary
 
 
         [Display(Name = "Member ID")]

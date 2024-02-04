@@ -45,19 +45,26 @@
         <table class="table giro-table table-bordered">
             <thead>
                 <tr>
-                  <th>
+                    <th>
                         @* Player *@
-                        <input type="submit" name="actionButton" value="Player/Jersey" class="text-column" />
-                  </th>
+                        <input type="submit" name="actionButton" value="Player" class="text-column" />
+                    </th>
+                    <th>
+                        @* Jersey *@
+                        <input type="submit" value="Jersey Number" class="text-column" />
+                    </th>
+                    <th>
+                        @* Team *@
+                        <input type="submit" name="actionButton" value="Division" class="text-column" />
+                    </th>
                     <th>
                         @* Team *@
                         <input type="submit" name="actionButton" value="Team" class="text-column" />
-                        @* @Html.DisplayNameFor(model => model.Team) *@
                     </th>
                     <th>
                         @* Operation *@
-                        <input value="Operation" class="text-column" />
-                  </th>
+                        <input type="submit" value="Edit/Detail/Delete" class="text-column" />
+                    </th>
                 </tr>
             </thead>
             <tbody>
@@ -68,15 +75,13 @@
                             @Html.DisplayFor(modelItem => item.FullName)
                         </td>
                         <td>
-                            <div>
-                                <div>
-                                    @Html.DisplayFor(modelItem => item.Team.Name)
-
-                                </div>
-                            </div>
+                            @Html.DisplayFor(modelItem => item.JerseyNumber)
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Team.Division.DivisionName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Team.Name)
                         </td>
                         <td>
                             <a asp-action="Edit" asp-route-id="@item.ID">
