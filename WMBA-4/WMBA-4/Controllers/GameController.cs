@@ -283,6 +283,11 @@ namespace WMBA_4.Controllers
                 .Where(m => m.TeamID == team);
             var currentOptionIDs = _context.GameLineUps
                                             .Where(m => m.TeamID == team);
+            var teamName = _context.Teams
+                .Where(m => m.ID == team)
+                .Select(m => m.Name)
+                .FirstOrDefault();
+
             var checkBoxes = new List<CheckOptionVM>();
             foreach (var option in allOptions)
             {
@@ -294,6 +299,7 @@ namespace WMBA_4.Controllers
                 });
             }
             ViewData["PlayersOptions"] = checkBoxes;
+            ViewData["TeamName"] = teamName;
         }
 
         private void UpdateGameLineUp(string[] selectedOptions, Game GameLineUpToUpdate, int team)
@@ -331,6 +337,7 @@ namespace WMBA_4.Controllers
                         _context.Remove(playerToRemove);
                     }
                 }
+                _context.SaveChanges();
             }
         }
 

@@ -1,48 +1,53 @@
 ﻿@model WMBA_4.Models.Game
 
-<h1>
-    @foreach (var t in Model.TeamGames)
-    {
-        @t.Team.Name <br /> 
-    }
-</h1>
-
+<div class="card">
+    <div class="card-body">
+        <h1>
+            @ViewBag.TeamName Line Up 
+        </h1>
+    </div>
+</div>
 <div>
-    <h4>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayNameFor(model => model.Season) </h4>
-      
-    <hr />
-
+    
+    <h4>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </h4>   
+    <br />
     <div class="col-md-4">
         <form asp-action="Save" method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div class="form-group">
+            <div>
 
                 <div>
+
+                    <ul class="list-group">
                     @{
 
                         List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
                         foreach (var checkbox in checkboxes)
                         {
 
-
-                            <input type="checkbox"
-                                   name="selectedOptions"
-                                   value="@checkbox.ID"
-                            @(Html.Raw(checkbox.Assigned ? "checked=\"checked\"" : "")) />
-                            @checkbox.DisplayText @:&nbsp;&nbsp;<br>
-
+                                <li class="list-group-item">
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="selectedOptions"
+                                           value="@checkbox.ID"
+                                    @(checkbox.Assigned ? "checked=\"checked\"" : "") />
+                                    @checkbox.DisplayText&nbsp;&nbsp;
+                                </li>
                         }
 
                     }
-
+                    </ul>
+                   
                 </div>
             </div>
+            
+            <br />
             <div class="form-group">
                 
-                <input type="hidden" name="team" value="@Model?.TeamGames?.FirstOrDefault()?.TeamID" />
+                <input type="hidden" name="team" value="@ViewBag.TeamID" />
                 <input type="hidden" name="id" value="@Model?.ID" />
-                <input type="submit" value="Add" class="btn btn-primary" />
+                <input type="submit" value="Save" class="btn-kelly btn-text text-no-deco" />
             </div>
         </form>
     </div>
@@ -50,6 +55,5 @@
 
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
     <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team List</a>
 </div>
