@@ -10,6 +10,8 @@ using OfficeOpenXml;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using String = System.String;
 
 namespace WMBA_4.Controllers
 {
@@ -23,12 +25,28 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID)
         {
-            var wMBA_4_Context = _context.Teams
+            PopulateDropDownLists();
+
+            var teams = from t in  _context.Teams
                 .Include(t => t.Division)
-                .Where(s => s.Status == true);
-            return View(await wMBA_4_Context.ToListAsync());
+                .Where(s => s.Status == true)
+                .OrderBy(t => t.Division)
+                .AsNoTracking()select t;
+ 
+
+            //Filter
+            if (DivisionID.HasValue)
+            {
+                teams = teams.Where(p => p.DivisionID == DivisionID);
+            }           
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
+            }
+
+            return View(await teams.ToListAsync());
         }
 
 
@@ -42,6 +60,13 @@ namespace WMBA_4.Controllers
                         .ThenInclude(g => g.TeamGames)
                             .ThenInclude(tg => tg.Team)
                 .FirstOrDefault(t => t.ID == id);
+
+            var players = from p in _context.Players
+            .Include(p => p.Team)
+            .Where(s => s.Status == true && s.TeamID == id)
+            .OrderBy(p => p.LastName)
+            .AsNoTracking()
+             select p;
 
             if (team == null)
             {
@@ -70,7 +95,7 @@ namespace WMBA_4.Controllers
             }
 
             ViewBag.OpponentTeams = opponentTeams;
-
+            ViewData["Players"] = players;
             return View(team);
         }
 
@@ -428,7 +453,18 @@ namespace WMBA_4.Controllers
          
             return View();
         }
-
+        private SelectList DivisionList(int? selectedId)
+        {
+            return new SelectList(_context
+                .Divisions
+                .OrderBy(m => m.DivisionName), "ID", "DivisionName", selectedId);
+        }
+        
+        private void PopulateDropDownLists(Team team = null)
+        {
+            ViewData["DivisionID"] = DivisionList(team?.DivisionID);
+            
+        }
         private bool TeamExists(int id)
         {
             return _context.Teams.Any(e => e.ID == id);

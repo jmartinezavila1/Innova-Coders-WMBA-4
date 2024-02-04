@@ -4,17 +4,26 @@
 <p>
     Division: @Model.Division.DivisionName | Coach: @Model.Coach_Name | City: Welland
 </p>
-<p>
-    <a asp-controller="Game" asp-action="Create" asp-route-id="@Model.ID"  class="btn btn-primary" style="background-color: #4CBB17; color: #fff;">Schedule Game</a>
-    <a asp-controller="Team" asp-action="TeamPlayer" asp-route-teamId="@Model.ID" class="btn btn-info" style="background-color: #4CBB17; color: #fff;">View Team Players</a>
-</p>
+
+<h3>Players</h3>
+@foreach (var player in @ViewBag.Players)
+{
+    <ul class="list-group">
+        <li class="list-group-item">
+            <i class="fa-light fa-baseball">@player.FullName</i>
+       </li>
+    </ul>
+}
+
 
 <div>
-    <hr />
-    <table class="table">
+<h3>Scheduled Games</h3>
+    <table class="table giro-table table-bordered">
         <thead>
             <tr>
-                <th>Team Games</th>
+                <th>
+                    Match
+                </th>
                  <th>Game Date</th>
                 <th>Actions</th>
             </tr>
@@ -30,11 +39,16 @@
                     @(visitorTeamName ?? "Unknown Team")</td>
                     <td>@teamGame.Game.Date</td>
                     <td>
-                        <div>
+                        <div>                           
+                            
+                            @using (Html.BeginForm("Details", "Game", FormMethod.Post))
+                            {
+                                @Html.Hidden("id", teamGame.Game.ID)
+                                @Html.Hidden("team", teamGame.TeamID)
 
-                            <a asp-controller="Game" asp-action="Edit" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">Edit</a>|
-                            <a asp-controller="Game" asp-action="Delete" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">Delete</a>|
-                            <a asp-controller="Game" asp-action="Details" asp-route-id="@teamGame.Game.ID" asp-route-team="@teamGame.TeamID">LineUp</a>
+                                <button type="submit" class="btn-kelly btn-text text-no-deco">LineUp</button>
+                            }
+                            
                         </div>
                     </td>
                 </tr>
