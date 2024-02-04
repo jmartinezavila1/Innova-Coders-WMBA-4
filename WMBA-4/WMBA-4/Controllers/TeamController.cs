@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
@@ -95,30 +96,8 @@ namespace WMBA_4.Controllers
             }
 
             ViewBag.OpponentTeams = opponentTeams;
-            ViewData["Players"] = players;
+            ViewData["Players"] = players.ToList();
             return View(team);
-        }
-
-        //Cristina added this for listing the Players in a Team
-        // GET: Team/Details/5
-        public async Task<IActionResult> TeamPlayer(int teamId)
-        {
-            Team team = await _context.Teams.FindAsync(teamId);
-
-            if (team == null)
-            {
-                return NotFound();
-            }
-
-            ViewBag.TeamName = team.Name;
-            ViewBag.TeamID = team.ID;
-
-            IQueryable<Player> player = _context.Players
-            .Where(m => m.TeamID == teamId);
-
-            var playerList = await player.ToListAsync();
-
-            return View(playerList);
         }
 
 
@@ -145,6 +124,10 @@ namespace WMBA_4.Controllers
                     return RedirectToAction("Details", new { team.ID });
                 }
 
+            }
+            catch (RetryLimitExceededException /* dex */)
+            {
+                ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
             }
             catch (DbUpdateException dex)
             {
@@ -198,6 +181,10 @@ namespace WMBA_4.Controllers
                     _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!TeamExists(team.ID))
@@ -209,10 +196,21 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("Details", new { team.ID });
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Name", "Unable to save changes. Remember, you cannot have duplicate Team Names.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
+                }
+                
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
-            return View(team);
+            return View("Index", new List<WMBA_4.Models.Team> { team });
         }
 
         // GET: Team/Delete/5
@@ -253,14 +251,27 @@ namespace WMBA_4.Controllers
                 bool hasScheduledGames = _context.TeamGame
                     .Any(tg => tg.TeamID == id && tg.Game.Date >= DateTime.Today);
 
+                // Verify if the team has Players assigned
+                bool hasplayers = _context.Players
+                    .Any(tg => tg.TeamID == id);
+
                 if (hasScheduledGames)
                 {
                     //Display an error message indicating that the team has games scheduled
                     ModelState.AddModelError(string.Empty, "You cannot delete the team because it has scheduled games for today or later.");
                     return View(nameof(Delete), team);
                 }
-                team.Status = false;
-                _context.Teams.Update(team);
+                else if (hasplayers)
+                {
+                    //Display an error message indicating that the team has players assigned
+                    ModelState.AddModelError(string.Empty, "You cannot delete the team because it has players assigned.");
+                    return View(nameof(Delete), team);
+
+                }
+                else {
+                    team.Status = false;
+                    _context.Teams.Update(team);
+                }
 
             }
 

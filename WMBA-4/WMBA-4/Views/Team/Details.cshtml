@@ -5,16 +5,26 @@
     Division: @Model.Division.DivisionName | Coach: @Model.Coach_Name | City: Welland
 </p>
 
-<h3>Players</h3>
-@foreach (var player in @ViewBag.Players)
-{
-    <ul class="list-group">
-        <li class="list-group-item">
-            <i class="fa-light fa-baseball">@player.FullName</i>
-       </li>
-    </ul>
+@{
+    var playersList = ViewData["Players"] as List<WMBA_4.Models.Player> ?? new List<WMBA_4.Models.Player>();
 }
 
+@if (playersList.Count > 0)
+{
+    <h3>Players</h3>
+    <ul class="list-group">
+        @foreach (var player in playersList)
+        {
+            <li class="list-group-item">
+                <i class="fa-light fa-baseball">@player.FullName</i>
+            </li>
+        }
+    </ul>
+}
+else
+{
+    <p>No players in this Team.</p>
+}
 
 <div>
 <h3>Scheduled Games</h3>
