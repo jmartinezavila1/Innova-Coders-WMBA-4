@@ -153,9 +153,16 @@ namespace WMBA_4.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    _context.Add(player);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    if (IsJerseyNumberDuplicate(player))
+                    {
+                        ModelState.AddModelError("JerseyNumber", "The jersey number should be unique within the team. Please choose a different jersey number.");
+                    }
+                    else
+                    {
+                        _context.Add(player);
+                        await _context.SaveChangesAsync();
+                        return RedirectToAction(nameof(Index));
+                    }
                 }
             }
             catch (DbUpdateException dex)
