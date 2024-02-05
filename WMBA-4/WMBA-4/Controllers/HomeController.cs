@@ -1,22 +1,38 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
+using WMBA_4.Data;
 using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly WMBA_4_Context _context;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(WMBA_4_Context context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
+            var playerCount = await _context.Players
+            .Where(p => p.Status == true)
+            .CountAsync();
+            var gameCount = await _context.Games
+            .Where(g => g.Status == true)
+            .CountAsync();
+            var teamCount = await _context.Teams
+           .Where(t => t.Status == true)
+           .CountAsync();
+
+            ViewBag.PlayerCount = playerCount;
+            ViewBag.GameCount = gameCount;
+            ViewBag.TeamCount = teamCount;
             return View();
         }
+
 
         public IActionResult Privacy()
         {
