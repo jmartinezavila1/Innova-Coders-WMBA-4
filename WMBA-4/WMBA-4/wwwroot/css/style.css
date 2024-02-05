@@ -60,6 +60,15 @@
     /*/////heights/////*/
     --h100: 100px;
 }
+/*/////////////////////////////Paging color/////////////////////////////////////*/
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #000;
+    background-color: #dddddd;
+    border-color: #c3c3c3;
+}
+
 
 /*/////////////////////////////background color/////////////////////////////////////*/
 .bg-kelly {
@@ -302,7 +311,7 @@ th:last-child {
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 
 .logo {
-    width: 10rem;
+    width: 7rem;
     margin-left: 45px;
 }
 
