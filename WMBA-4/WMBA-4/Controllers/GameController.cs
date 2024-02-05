@@ -32,7 +32,8 @@ namespace WMBA_4.Controllers
             .Include(g => g.Season)
             .Include(t => t.TeamGames)
                 .ThenInclude(t => t.Team)
-                    .ThenInclude(d=> d.Division);
+                    .ThenInclude(d => d.Division)
+            .Where(s => s.Status == true);
 
             if (!string.IsNullOrEmpty(seasonName))
             {
@@ -44,7 +45,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game/Details/5
-        public async Task<IActionResult> Details(int? id,int team)
+        public async Task<IActionResult> Details(int? id, int team)
         {
             if (id == null || _context.Games == null)
             {
@@ -64,19 +65,17 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            PopulatePlayersAssignedTeam(game,team);
+            PopulatePlayersAssignedTeam(game, team);
             ViewBag.TeamID = team;
 
             return View(game);
         }
-
-
         // this is for LineUp
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(string[] selectedOptions,int? id,int team,Game game)
+        public async Task<IActionResult> Save(string[] selectedOptions, int? id, int team, Game game)
         {
-            // get the game to update
+            // Obtener el juego para actualizar
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
@@ -85,14 +84,13 @@ namespace WMBA_4.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
-            // Update thhe lineUp of the game
+            // Actualizar la alineación del juego
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
-           
-            await _context.SaveChangesAsync();
-           
-            return RedirectToAction("Details", new { id = id,team=team });
-        }
 
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = id, team = team });
+        }
         // GET: Game/Create
         public IActionResult Create(int id)
         {
@@ -112,7 +110,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game,int Team1,int Team2, int teamId)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId)
         {
             //Game
             if (ModelState.IsValid)
@@ -123,8 +121,8 @@ namespace WMBA_4.Controllers
                 //TeamGame (team1)
                 var teamGame1 = new TeamGame
                 {
-                    IsHomeTeam=true,
-                    IsVisitorTeam=false,
+                    IsHomeTeam = true,
+                    IsVisitorTeam = false,
                     TeamID = Team1,
                     GameID = game.ID
                 };
@@ -144,21 +142,20 @@ namespace WMBA_4.Controllers
 
                 _context.Add(game);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("RedirectToTeamList", new { teamId });
+                //return RedirectToAction("RedirectToTeamList", new { teamId });
+                return RedirectToAction(nameof(Index));
             }
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
-            return RedirectToAction("Details", "Team", new { id = Team1 });
-
             //return RedirectToAction("Details", "Team", new { id = Team1 });
-            //return View(game);
+            return View(game);
         }
 
         // GET: Game/Edit/5
-         public async Task<IActionResult> Edit(int? id, int team)
+        public async Task<IActionResult> Edit(int? id, int team)
         {
             if (id == null || _context.Games == null)
             {
@@ -183,7 +180,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game, int teamId, int team)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,Status,LocationID,SeasonID,GameTypeID")] Game game, int teamId, int team)
         {
             if (id != game.ID)
             {
@@ -208,7 +205,8 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("RedirectToTeamList", new { teamId });
+                //return RedirectToAction("RedirectToTeamList", new { teamId });
+                return RedirectToAction(nameof(Index));
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
@@ -258,16 +256,24 @@ namespace WMBA_4.Controllers
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
                     .ThenInclude(d => d.Division)
-                .FirstOrDefaultAsync(m=>m.ID==id);
-            if (game != null)
+                .FirstOrDefaultAsync(m => m.ID == id);
+            try
             {
-                game.Status = false;
-                _context.Games.Update(game);
-             
+                if (game != null)
+                {
+                    game.Status = false;
+                    _context.Games.Update(game);
+
+                }
             }
-            
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+            }
             await _context.SaveChangesAsync();
-            return RedirectToAction("RedirectToTeamList", new { teamId });
+            //return RedirectToAction("RedirectToTeamList", new { teamId });
+            return RedirectToAction(nameof(Index));
+
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -324,10 +330,10 @@ namespace WMBA_4.Controllers
                     if (!PlayersOptions.Contains(option.ID))  //but not currently in the history
                     {
                         GameLineUpToUpdate.GameLineUps.Add(new GameLineUp { GameID = GameLineUpToUpdate.ID, PlayerID = option.ID, TeamID = team });
-                        
+
                     }
                 }
-                
+
                 else
                 {
                     //Checkbox Not checked
@@ -343,7 +349,7 @@ namespace WMBA_4.Controllers
 
         private bool GameExists(int id)
         {
-          return _context.Games.Any(e => e.ID == id);
+            return _context.Games.Any(e => e.ID == id);
         }
     }
 }
