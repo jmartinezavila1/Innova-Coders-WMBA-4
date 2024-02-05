@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -60,11 +61,25 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,DivisionName,ClubID")] Division division)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(division);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { division.ID });
+                if (ModelState.IsValid)
+                {
+                    _context.Add(division);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { division.ID });
+                }
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Division Name"))
+                {
+                    ModelState.AddModelError("Division Name", "The entered Division Name is already in use. Please provide a different Division Name.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "An error occurred while saving. Retry a few times, and if the issue persists, seek assistance from your system administrator.");
+                }     
             }
             ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
@@ -106,6 +121,10 @@ namespace WMBA_4.Controllers
                     _context.Update(division);
                     await _context.SaveChangesAsync();
                 }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DivisionExists(division.ID))
@@ -115,6 +134,17 @@ namespace WMBA_4.Controllers
                     else
                     {
                         throw;
+                    }
+                }
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Name", "Unable to save changes. Remember, you cannot have duplicate Team Names.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
                 return RedirectToAction("Details", new { division.ID });
