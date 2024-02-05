@@ -16,7 +16,7 @@ namespace WMBA_4.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                //context.Database.EnsureDeleted();
+                context.Database.EnsureDeleted();
                 context.Database.EnsureCreated();
                 //context.Database.Migrate();
                 //To randomly generate data
@@ -53,7 +53,7 @@ namespace WMBA_4.Data
                     var clubs = new List<Club>
                     {
                         new Club { ID = 1, ClubName = "Welland Minor Baseball Association", Status=true, CityID = 1 },
-                     
+
 
                     };
 
@@ -65,7 +65,7 @@ namespace WMBA_4.Data
                 if (!context.Divisions.Any())
                 {
                     var divisions = new List<Division>
-                    {                   
+                    {
                         new Division { ID = 1, DivisionName = "9U",ClubID = 1},
                         new Division { ID = 2, DivisionName = "11U",ClubID = 1},
                         new Division { ID = 3, DivisionName = "13U",ClubID = 1},
@@ -89,7 +89,7 @@ namespace WMBA_4.Data
                         new Team { ID = 4, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 5 },
                         new Team { ID = 5, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 1 },
                         new Team { ID = 6, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 2 }
-                        
+
                     };
 
                     context.Teams.AddRange(teams);
@@ -290,54 +290,55 @@ namespace WMBA_4.Data
                 {
                     var players = new List<Player>
                     {
-                        new Player { ID = 1, TeamID = 1, MemberID = "M001", FirstName = "John", LastName = "Doe", JerseyNumber = "10" },
-                        new Player { ID = 2, TeamID = 1, MemberID = "M002", FirstName = "Jane", LastName = "Smith", JerseyNumber = "22" },
-                        new Player { ID = 3, TeamID = 1, MemberID = "M003", FirstName = "Michael", LastName = "Johnson", JerseyNumber = "5" },
-                        new Player { ID = 4, TeamID = 1, MemberID = "M004", FirstName = "Emily", LastName = "Williams", JerseyNumber = "15" },
-                        new Player { ID = 5, TeamID = 1, MemberID = "M005", FirstName = "David", LastName = "Brown", JerseyNumber = "7" },
-                        new Player { ID = 6, TeamID = 1, MemberID = "M006", FirstName = "Olivia", LastName = "Jones", JerseyNumber = "33" },
-                        new Player { ID = 7, TeamID = 1, MemberID = "M007", FirstName = "Andrew", LastName = "Miller", JerseyNumber = "19" },
-                        new Player { ID = 8, TeamID = 1, MemberID = "M008", FirstName = "Sophia", LastName = "Davis", JerseyNumber = "8" },
-                        new Player { ID = 9, TeamID = 1, MemberID = "M009", FirstName = "William", LastName = "Taylor", JerseyNumber = "3" },
-                        new Player { ID = 10, TeamID = 1, MemberID = "M010", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
-                        new Player { ID = 11, TeamID = 1, MemberID = "M011", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
-                        new Player { ID = 12, TeamID = 1, MemberID = "M012", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
-
-                        new Player { ID = 13, TeamID = 2, MemberID = "M013", FirstName = "Ethan", LastName = "Harris", JerseyNumber = "9" },
-                        new Player { ID = 14, TeamID = 2, MemberID = "M014", FirstName = "Chloe", LastName = "Martin", JerseyNumber = "18" },
-                        new Player { ID = 15, TeamID = 2, MemberID = "M015", FirstName = "Benjamin", LastName = "Clark", JerseyNumber = "6" },
-                        new Player { ID = 16, TeamID = 2, MemberID = "M016", FirstName = "Grace", LastName = "Lewis", JerseyNumber = "20" },
-                        new Player { ID = 17, TeamID = 2, MemberID = "M017", FirstName = "Lucas", LastName = "Walker", JerseyNumber = "11" },
-                        new Player { ID = 18, TeamID = 2, MemberID = "M018", FirstName = "Lily", LastName = "Allen", JerseyNumber = "23" },
-                        new Player { ID = 19, TeamID = 2, MemberID = "M019", FirstName = "Henry", LastName = "Young", JerseyNumber = "4" },
-                        new Player { ID = 20, TeamID = 2, MemberID = "M020", FirstName = "Sophie", LastName = "Turner", JerseyNumber = "30" },
-                        new Player { ID = 21, TeamID = 2, MemberID = "M021", FirstName = "Owen", LastName = "Baker", JerseyNumber = "17" },
-                        new Player { ID = 22, TeamID = 2, MemberID = "M022", FirstName = "Zoe", LastName = "Cooper", JerseyNumber = "21" },
-                        new Player { ID = 23, TeamID = 2, MemberID = "M023", FirstName = "Elijah", LastName = "Perry", JerseyNumber = "2" },
-                        new Player { ID = 24, TeamID = 2, MemberID = "M024", FirstName = "Mia", LastName = "Fisher", JerseyNumber = "16" },
-
-                        new Player { ID = 25, TeamID = 3, MemberID = "M025", FirstName = "Caleb", LastName = "Reed", JerseyNumber = "13" },
-                        new Player { ID = 26, TeamID = 3, MemberID = "M026", FirstName = "Avery", LastName = "Murphy", JerseyNumber = "29" },
-                        new Player { ID = 27, TeamID = 3, MemberID = "M027", FirstName = "Gabriel", LastName = "Bell", JerseyNumber = "24" },
-                        new Player { ID = 28, TeamID = 3, MemberID = "M028", FirstName = "Scarlett", LastName = "Ward", JerseyNumber = "31" },
-                        new Player { ID = 29, TeamID = 3, MemberID = "M029", FirstName = "Isaac", LastName = "Cox", JerseyNumber = "1" },
-                        new Player { ID = 30, TeamID = 3, MemberID = "M030", FirstName = "Hannah", LastName = "Lopez", JerseyNumber = "26" },
-                        new Player { ID = 31, TeamID = 3, MemberID = "M031", FirstName = "Jackson", LastName = "Rogers", JerseyNumber = "22" },
-                        new Player { ID = 32, TeamID = 3, MemberID = "M032", FirstName = "Aria", LastName = "Hill", JerseyNumber = "8" },
-                        new Player { ID = 33, TeamID = 3, MemberID = "M033", FirstName = "Lincoln", LastName = "Wright", JerseyNumber = "14" },
-                        new Player { ID = 34, TeamID = 3, MemberID = "M034", FirstName = "Ella", LastName = "Barnes", JerseyNumber = "19" },
-
-                        new Player { ID = 35, TeamID = 4, MemberID = "M035", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "10" },
-                        new Player { ID = 36, TeamID = 4, MemberID = "M036", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "28" },
-                        new Player { ID = 37, TeamID = 4, MemberID = "M037", FirstName = "Landon", LastName = "Powell", JerseyNumber = "6" },
-                        new Player { ID = 38, TeamID = 4, MemberID = "M038", FirstName = "Piper", LastName = "Watson", JerseyNumber = "23" },
-                        new Player { ID = 39, TeamID = 4, MemberID = "M039", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "9" },
-                        new Player { ID = 40, TeamID = 4, MemberID = "M040", FirstName = "Aaliyah", LastName = "Fletcher", JerseyNumber = "20" },
-                        new Player { ID = 41, TeamID = 4, MemberID = "M041", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "11" },
-                        new Player { ID = 42, TeamID = 4, MemberID = "M042", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "26" },
-                        new Player { ID = 43, TeamID = 4, MemberID = "M043", FirstName = "Landon", LastName = "Powell", JerseyNumber = "2" },
-                        new Player { ID = 44, TeamID = 4, MemberID = "M044", FirstName = "Piper", LastName = "Watson", JerseyNumber = "1" },
-                        new Player { ID = 45, TeamID = 4, MemberID = "M045", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "4" },
+                        //team1
+                        new Player { ID = 1, TeamID = 1, MemberID = "M0000001", FirstName = "John", LastName = "Doe", JerseyNumber = "10" },
+                        new Player { ID = 2, TeamID = 1, MemberID = "M0000002", FirstName = "Jane", LastName = "Smith", JerseyNumber = "22" },
+                        new Player { ID = 3, TeamID = 1, MemberID = "M0000003", FirstName = "Michael", LastName = "Johnson", JerseyNumber = "5" },
+                        new Player { ID = 4, TeamID = 1, MemberID = "M0000004", FirstName = "Emily", LastName = "Williams", JerseyNumber = "15" },
+                        new Player { ID = 5, TeamID = 1, MemberID = "M0000005", FirstName = "David", LastName = "Brown", JerseyNumber = "7" },
+                        new Player { ID = 6, TeamID = 1, MemberID = "M0000006", FirstName = "Olivia", LastName = "Jones", JerseyNumber = "33" },
+                        new Player { ID = 7, TeamID = 1, MemberID = "M0000007", FirstName = "Andrew", LastName = "Miller", JerseyNumber = "19" },
+                        new Player { ID = 8, TeamID = 1, MemberID = "M0000008", FirstName = "Sophia", LastName = "Davis", JerseyNumber = "8" },
+                        new Player { ID = 9, TeamID = 1, MemberID = "M0000009", FirstName = "William", LastName = "Taylor", JerseyNumber = "3" },
+                        new Player { ID = 10, TeamID = 1, MemberID = "M0000010", FirstName = "Emma", LastName = "Anderson", JerseyNumber = "25" },
+                        new Player { ID = 11, TeamID = 1, MemberID = "M0000011", FirstName = "Liam", LastName = "Moore", JerseyNumber = "12" },
+                        new Player { ID = 12, TeamID = 1, MemberID = "M0000012", FirstName = "Ava", LastName = "White", JerseyNumber = "14" },
+                        //team2
+                        new Player { ID = 13, TeamID = 2, MemberID = "M0000013", FirstName = "Ethan", LastName = "Harris", JerseyNumber = "9" },
+                        new Player { ID = 14, TeamID = 2, MemberID = "M0000014", FirstName = "Chloe", LastName = "Martin", JerseyNumber = "18" },
+                        new Player { ID = 15, TeamID = 2, MemberID = "M0000015", FirstName = "Benjamin", LastName = "Clark", JerseyNumber = "6" },
+                        new Player { ID = 16, TeamID = 2, MemberID = "M0000016", FirstName = "Grace", LastName = "Lewis", JerseyNumber = "20" },
+                        new Player { ID = 17, TeamID = 2, MemberID = "M0000017", FirstName = "Lucas", LastName = "Walker", JerseyNumber = "11" },
+                        new Player { ID = 18, TeamID = 2, MemberID = "M0000018", FirstName = "Lily", LastName = "Allen", JerseyNumber = "23" },
+                        new Player { ID = 19, TeamID = 2, MemberID = "M0000019", FirstName = "Henry", LastName = "Young", JerseyNumber = "4" },
+                        new Player { ID = 20, TeamID = 2, MemberID = "M0000020", FirstName = "Sophie", LastName = "Turner", JerseyNumber = "30" },
+                        new Player { ID = 21, TeamID = 2, MemberID = "M0000021", FirstName = "Owen", LastName = "Baker", JerseyNumber = "17" },
+                        new Player { ID = 22, TeamID = 2, MemberID = "M0000022", FirstName = "Zoe", LastName = "Cooper", JerseyNumber = "21" },
+                        new Player { ID = 23, TeamID = 2, MemberID = "M0000023", FirstName = "Elijah", LastName = "Perry", JerseyNumber = "2" },
+                        new Player { ID = 24, TeamID = 2, MemberID = "M0000024", FirstName = "Mia", LastName = "Fisher", JerseyNumber = "16" },
+                        //team3
+                        new Player { ID = 25, TeamID = 3, MemberID = "M0000025", FirstName = "Caleb", LastName = "Reed", JerseyNumber = "13" },
+                        new Player { ID = 26, TeamID = 3, MemberID = "M0000026", FirstName = "Avery", LastName = "Murphy", JerseyNumber = "29" },
+                        new Player { ID = 27, TeamID = 3, MemberID = "M0000027", FirstName = "Gabriel", LastName = "Bell", JerseyNumber = "24" },
+                        new Player { ID = 28, TeamID = 3, MemberID = "M0000028", FirstName = "Scarlett", LastName = "Ward", JerseyNumber = "31" },
+                        new Player { ID = 29, TeamID = 3, MemberID = "M0000029", FirstName = "Isaac", LastName = "Cox", JerseyNumber = "1" },
+                        new Player { ID = 30, TeamID = 3, MemberID = "M0000030", FirstName = "Hannah", LastName = "Lopez", JerseyNumber = "26" },
+                        new Player { ID = 31, TeamID = 3, MemberID = "M0000031", FirstName = "Jackson", LastName = "Rogers", JerseyNumber = "22" },
+                        new Player { ID = 32, TeamID = 3, MemberID = "M0000032", FirstName = "Aria", LastName = "Hill", JerseyNumber = "8" },
+                        new Player { ID = 33, TeamID = 3, MemberID = "M0000033", FirstName = "Lincoln", LastName = "Wright", JerseyNumber = "14" },
+                        new Player { ID = 34, TeamID = 3, MemberID = "M0000034", FirstName = "Ella", LastName = "Barnes", JerseyNumber = "19" },
+                        //team4
+                        new Player { ID = 35, TeamID = 4, MemberID = "M0000035", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "10" },
+                        new Player { ID = 36, TeamID = 4, MemberID = "M0000036", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "28" },
+                        new Player { ID = 37, TeamID = 4, MemberID = "M0000037", FirstName = "Landon", LastName = "Powell", JerseyNumber = "6" },
+                        new Player { ID = 38, TeamID = 4, MemberID = "M0000038", FirstName = "Piper", LastName = "Watson", JerseyNumber = "23" },
+                        new Player { ID = 39, TeamID = 4, MemberID = "M0000039", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "9" },
+                        new Player { ID = 40, TeamID = 4, MemberID = "M0000040", FirstName = "Aaliyah", LastName = "Fletcher", JerseyNumber = "20" },
+                        new Player { ID = 41, TeamID = 4, MemberID = "M0000041", FirstName = "Mason", LastName = "Ferguson", JerseyNumber = "11" },
+                        new Player { ID = 42, TeamID = 4, MemberID = "M0000042", FirstName = "Aurora", LastName = "Simmons", JerseyNumber = "26" },
+                        new Player { ID = 43, TeamID = 4, MemberID = "M0000043", FirstName = "Landon", LastName = "Powell", JerseyNumber = "2" },
+                        new Player { ID = 44, TeamID = 4, MemberID = "M0000044", FirstName = "Piper", LastName = "Watson", JerseyNumber = "1" },
+                        new Player { ID = 45, TeamID = 4, MemberID = "M0000045", FirstName = "Logan", LastName = "Hughes", JerseyNumber = "4" },
 
                     };
 
@@ -409,7 +410,7 @@ namespace WMBA_4.Data
                     context.GameLineUpPositions.AddRange(gameLineUpPositions);
                     context.SaveChanges();
                 }
-                
+
 
                 // ScorePlayers
                 if (!context.ScorePlayers.Any())
