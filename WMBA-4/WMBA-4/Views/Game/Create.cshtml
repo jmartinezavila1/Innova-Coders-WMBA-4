@@ -20,7 +20,7 @@
             <div class="form-group">
                 <label for="Team1">Home Team</label>
                 <select id="Team1" name="Team1" class="form-control" asp-items="ViewBag.Teams"></select>
-            </div>            
+            </div>
             <div class="form-group">
                 <label for="Team2">Visitor Team</label>
                 <select id="Team2" name="Team2" class="form-control" asp-items="ViewBag.Teams"></select>
@@ -33,28 +33,23 @@
                 <label asp-for="SeasonID" class="control-label"></label>
                 <select asp-for="SeasonID" class="form-control" asp-items="ViewBag.SeasonID"></select>
             </div>
-           
-@*             <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div> *@
+            <div class="form-group">
+                <label asp-for="GameTypeID" class="control-label"></label>
+                <select asp-for="GameTypeID" class="form-control" asp-items="ViewBag.GameTypeID"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn-kelly btn-text text-no-deco" />
+            </div>
         </form>
     </div>
-    <form asp-action="RedirectToTeamList" method="post">
-        <input type="hidden" asp-for="ID" />
-        <input type="hidden" name="teamId" value="@ViewBag.TeamID" />
-        <input type="submit" value="Create" class="btn btn-primary" /> |
-        <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Game List</a>
-    </form>
 </div>
 
-
-@* <div>   
-    <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to List</a>
-</div> *@
-@* <div>
-    <a asp-action="Index">Back to Schedule Games</a>
-</div> *@
+<div>
+    <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
