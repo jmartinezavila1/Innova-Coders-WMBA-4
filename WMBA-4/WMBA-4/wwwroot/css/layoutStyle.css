@@ -3719,8 +3719,9 @@ textarea.form-control-lg {
             left: auto;
         }
 }
-@media (max-width: 991px){
-    .col{
+
+@media (max-width: 991px) {
+    .col {
         flex: 100%;
     }
 }
@@ -10437,7 +10438,7 @@ textarea.form-control-lg {
     }
 }
 
-#sidebarToggle{
+#sidebarToggle {
     visibility: visible;
 }
 
@@ -10447,7 +10448,7 @@ textarea.form-control-lg {
         margin-right: -55px;
     }
 
-    #sidebarToggle{
+    #sidebarToggle {
         visibility: hidden;
     }
 
@@ -12546,8 +12547,8 @@ body {
         transform: translateX(0);
     }
 
-     #layoutSidenav #layoutSidenav_content {
-         padding-left: 225px;
+    #layoutSidenav #layoutSidenav_content {
+        padding-left: 225px;
         margin-left: 0;
         transition: margin 0.15s ease-in-out;
     }

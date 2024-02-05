@@ -60,7 +60,7 @@
                         </th>
                         <th>
                             @* Operation *@
-                            <input type="submit" value="Edit/Detail/Delete" class="text-column" />
+                            <input type="submit" value="Edit/Detail" class="text-column" />
                         </th>
                     </tr>
                 </thead>
@@ -88,11 +88,11 @@
                                         visibility
                                     </span>
                                 </a>
-                                <a asp-action="Delete" asp-route-id="@item.ID">
+                                @* <a asp-action="Delete" asp-route-id="@item.ID">
                                     <span class="material-symbols-outlined ft-light-grey px-1">
                                         delete
                                     </span>
-                                </a>
+                                </a> *@
                             </td>
                         </tr>
                     }
