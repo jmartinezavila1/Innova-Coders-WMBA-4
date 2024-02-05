@@ -306,18 +306,6 @@ namespace WMBA_4.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private string GetLatestMemberId()
-        {
-            // 데이터베이스에서 최신 MemberId 가져오기
-            // 예: SELECT TOP 1 MemberId FROM Players ORDER BY MemberId DESC
-            // 데이터베이스 컨텍스트를 사용하여 해당 로직을 구현
-            var latestMember = _context.Players.OrderByDescending(p => p.MemberID).FirstOrDefault();
-
-            // 최신 MemberId가 존재하면 해당 값을 반환, 없으면 기본값 반환
-            return latestMember?.MemberID ?? "M000";
-        }
-
         private bool IsJerseyNumberDuplicate(Player player)
         {
             bool isDuplicated = false;
@@ -325,7 +313,6 @@ namespace WMBA_4.Controllers
                 isDuplicated = true;
             return isDuplicated;
         }
-
         private bool PlayerExists(int id)
         {
             return _context.Players.Any(e => e.ID == id);

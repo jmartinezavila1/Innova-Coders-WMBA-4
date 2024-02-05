@@ -10,7 +10,7 @@
 
         @using (Html.BeginForm("Create", "Player", FormMethod.Get))
         {
-            <button class="btn btn-outline-dark me-2 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 Filter/Search @ViewData["numberFilters"]
             </button>
             <button type="submit" class="btn btn-kelly">Add Player</button>
@@ -56,7 +56,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Page Size: </span>
                         </div>
-                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center"})
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center mx-1"})
                         <div class="input-group-append">
                             <input type="submit" class="btn btn-kelly" value="Set Page Size" />
                         </div>
@@ -109,11 +109,11 @@
                                         visibility
                                     </span>
                                 </a>
-                                @* <a asp-action="Delete" asp-route-id="@item.ID">
+                                <a asp-action="Delete" asp-route-id="@item.ID">
                             <span class="material-symbols-outlined ft-light-grey px-1">
                             delete
                             </span>
-                            </a> *@
+                            </a>
                             </td>
                         </tr>
                     }
