@@ -64,33 +64,10 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            PopulatePlayersAssignedTeam(game,team);
-            ViewBag.TeamID = team;
+            //PopulatePlayersAssignedTeam(game,team);
+            //ViewBag.TeamID = team;
 
             return View(game);
-        }
-
-
-        // this is for LineUp
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(string[] selectedOptions,int? id,int team,Game game)
-        {
-            // get the game to update
-            var GameToUpdate = await _context.Games
-                .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
-                .FirstOrDefaultAsync(p => p.ID == id);
-
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
-
-            // Update thhe lineUp of the game
-            UpdateGameLineUp(selectedOptions, GameToUpdate, team);
-           
-            await _context.SaveChangesAsync();
-           
-            return RedirectToAction("Details", new { id = id,team=team });
         }
 
         // GET: Game/Create
@@ -144,17 +121,18 @@ namespace WMBA_4.Controllers
 
                 _context.Add(game);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("RedirectToTeamList", new { teamId });
+                //return RedirectToAction("RedirectToTeamList", new { teamId });
+                return RedirectToAction(nameof(Index));
             }
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
-            return RedirectToAction("Details", "Team", new { id = Team1 });
+            //return RedirectToAction("Details", "Team", new { id = Team1 });
 
             //return RedirectToAction("Details", "Team", new { id = Team1 });
-            //return View(game);
+            return View(game);
         }
 
         // GET: Game/Edit/5
@@ -183,7 +161,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,score,LocationID,SeasonID,GameTypeID")] Game game, int teamId, int team)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,Status,LocationID,SeasonID,GameTypeID")] Game game, int teamId, int team)
         {
             if (id != game.ID)
             {
@@ -208,7 +186,8 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction("RedirectToTeamList", new { teamId });
+                //return RedirectToAction("RedirectToTeamList", new { teamId });
+                return RedirectToAction(nameof(Index));
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
@@ -267,7 +246,9 @@ namespace WMBA_4.Controllers
             }
             
             await _context.SaveChangesAsync();
-            return RedirectToAction("RedirectToTeamList", new { teamId });
+            //return RedirectToAction("RedirectToTeamList", new { teamId });
+            return RedirectToAction(nameof(Index));
+            
         }
         [HttpPost]
         [ValidateAntiForgeryToken]

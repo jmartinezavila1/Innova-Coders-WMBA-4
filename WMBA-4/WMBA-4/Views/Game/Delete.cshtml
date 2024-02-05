@@ -46,12 +46,10 @@
         </dd>
         
     </dl>
-    
-    <form asp-action="RedirectToTeamList" method="post">
-        <input type="hidden" asp-for="ID" />
-        <input type="hidden" name="teamId" value="@ViewBag.TeamID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team List</a>
 
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="ID" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
     </form>
 </div>

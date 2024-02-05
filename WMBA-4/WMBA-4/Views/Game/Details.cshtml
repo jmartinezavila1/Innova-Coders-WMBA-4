@@ -1,58 +1,48 @@
 ﻿@model WMBA_4.Models.Game
 
-<div class="card">
-    <div class="card-body">
-        <h1>
-            @ViewBag.TeamName Line Up 
-        </h1>
-    </div>
-</div>
-<div>    
-    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </p>   
-    <br />
-    <div class="col-md-4">
-        <form asp-action="Save" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+@{
+    ViewData["Title"] = "Details";
+}
 
-            <div>
+<h1>Details</h1>
 
-                <div>
-
-                    <ul class="list-group">
-                    @{
-
-                        List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
-                        foreach (var checkbox in checkboxes)
-                        {
-
-                                <li class="list-group-item">
-                                    <input type="checkbox"
-                                           class="custom-control-input"
-                                           name="selectedOptions"
-                                           value="@checkbox.ID"
-                                    @(checkbox.Assigned ? "checked=\"checked\"" : "") />
-                                    @checkbox.DisplayText&nbsp;&nbsp;
-                                </li>
-                        }
-
-                    }
-                    </ul>
-                   
-                </div>
-            </div>
-            
-            <br />
-            <div class="form-group">
-                
-                <input type="hidden" name="team" value="@ViewBag.TeamID" />
-                <input type="hidden" name="id" value="@Model?.ID" />
-                <input type="submit" value="Save" class="btn-kelly btn-text text-no-deco" />
-            </div>
-        </form>
-    </div>
-
-
+<div>
+    <h4>Game</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Date)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Date)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Location)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Location.LocationName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Season)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Season.SeasonName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.GameType)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.GameType.Description)
+        </dd>
+    </dl>
 </div>
 <div>
-    <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
+    <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
 </div>
