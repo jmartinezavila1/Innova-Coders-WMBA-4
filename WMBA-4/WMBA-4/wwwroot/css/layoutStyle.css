@@ -1991,6 +1991,7 @@ progress {
     --bs-table-hover-color: var(--bs-body-color);
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
     width: 100%;
+    table-layout: fixed;
     margin-bottom: 1rem;
     color: var(--bs-table-color);
     vertical-align: top;
@@ -2011,6 +2012,13 @@ progress {
     .table > thead, .datatable-table > thead {
         vertical-align: bottom;
     }
+
+table th, table td {
+    width: 5rem; /* 예제에서는 각 열의 폭을 5rem로 설정하였습니다. */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
 
 .table-group-divider {
     border-top: 2px solid currentcolor;
@@ -2923,7 +2931,7 @@ textarea.form-control-lg {
     margin-left: -1px;
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-    background-color: var(--bg-kelly);
+    /*background-color: var(--bg-kelly);*/
 }
 
 .input-group > .form-floating:not(:first-child) > .form-control, .input-group > .form-floating:not(:first-child) > .datatable-input,
@@ -3228,6 +3236,23 @@ textarea.form-control-lg {
     --bs-btn-active-border-color: #0a53be;
     --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
     --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0d6efd;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+
+.btn-grey {
+    --bs-btn-color: #1b1b1b;
+    --bs-btn-bg: #cecece;
+    --bs-btn-border-color: #cecece;
+    --bs-btn-hover-color: #1b1b1b;
+    --bs-btn-hover-bg: #bcbcbc;
+    --bs-btn-hover-border-color: #a1a1a1;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: #adadad;
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #1b1b1b;
     --bs-btn-disabled-bg: #0d6efd;
     --bs-btn-disabled-border-color: #0d6efd;
 }
@@ -5070,7 +5095,7 @@ textarea.form-control-lg {
     --bs-pagination-padding-x: 0.75rem;
     --bs-pagination-padding-y: 0.375rem;
     --bs-pagination-font-size: 1rem;
-    --bs-pagination-color: var(--bs-link-color);
+    --bs-pagination-color: var(--ft-kelly);
     --bs-pagination-bg: #fff;
     --bs-pagination-border-width: 1px;
     --bs-pagination-border-color: #dee2e6;
@@ -12615,7 +12640,7 @@ body {
 
 .sb-topnav {
     padding-left: 0;
-    height: 100px;
+    height: 80px;
     z-index: 1039;
 }
 

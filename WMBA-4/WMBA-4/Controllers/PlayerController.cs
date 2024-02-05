@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using WMBA_4.Utilities;
 
 namespace WMBA_4.Controllers
 {
@@ -17,7 +18,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Player
-        public async Task<IActionResult> Index(string SearchString, int? TeamID,
+        public async Task<IActionResult> Index(string SearchString, int? TeamID, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
@@ -42,57 +43,61 @@ namespace WMBA_4.Controllers
                                        || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
             }
 
-            //sorting
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
-                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                page = 1;//Reset page to start
+                         //sorting
+                if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
                 {
-                    if (actionButton == sortField) //Reverse order on same field
+                    if (sortOptions.Contains(actionButton))//Change of sort is requested
                     {
-                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                        if (actionButton == sortField) //Reverse order on same field
+                        {
+                            sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                        }
+                        sortField = actionButton;//Sort by the button clicked
                     }
-                    sortField = actionButton;//Sort by the button clicked
                 }
-            }
-            if (sortField == "Player")
-            {
-                if (sortDirection == "asc")
+                if (sortField == "Player")
                 {
-                    players = players
-                        .OrderBy(p => p.FirstName)
-                        .ThenBy(p => p.LastName);
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderBy(p => p.FirstName)
+                            .ThenBy(p => p.LastName);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderByDescending(p => p.FirstName)
+                            .ThenByDescending(p => p.LastName);
+                    }
                 }
-                else
+                else if (sortField == "Division")
                 {
-                    players = players
-                        .OrderByDescending(p => p.FirstName)
-                        .ThenByDescending(p => p.LastName);
-                }
-            }
-            else if (sortField == "Division")
-            {
-                if (sortDirection == "asc")
-                {
-                    players = players
-                        .OrderBy(p => p.Team.Division);
-                }
-                else
-                {
-                    players = players
-                        .OrderByDescending(p => p.Team.Division);
-                }
-            }
-            else
-            {
-                if (sortDirection == "asc")
-                {
-                    players = players
-                        .OrderBy(p => p.Team);
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderBy(p => p.Team.Division);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderByDescending(p => p.Team.Division);
+                    }
                 }
                 else
                 {
-                    players = players
-                        .OrderByDescending(p => p.Team);
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderBy(p => p.Team);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderByDescending(p => p.Team);
+                    }
                 }
             }
 
@@ -100,7 +105,12 @@ namespace WMBA_4.Controllers
             ViewData["sortDirection"] = sortDirection;
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
 
-            return View(await players.ToListAsync());
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Player>.CreateAsync(players.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData); ;
         }
 
 

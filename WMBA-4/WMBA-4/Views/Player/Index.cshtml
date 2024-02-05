@@ -10,19 +10,22 @@
 
         @using (Html.BeginForm("Create", "Player", FormMethod.Get))
         {
+            <button class="btn btn-outline-dark me-2 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                Filter/Search @ViewData["numberFilters"]
+            </button>
             <button type="submit" class="btn btn-kelly">Add Player</button>
         }
+
     </div>
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
-            <div class="d-flex">
-                <button class="btn mb-2 btn-outline-dark @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                    Filter/Search @ViewData["numberFilters"]
-                </button>
-            </div>
-            <br />
+            @* <div class="d-flex">
+            <button class="btn btn-outline-dark @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter/Search @ViewData["numberFilters"]
+            </button>
+            </div> *@
             <div class="collapse" id="collapseFilter">
                 <div class="card card-body bg-light">
                     <div class="row">
@@ -42,7 +45,25 @@
                 </div>
             </div>
         </div>
-        <div class="table-responsive">
+
+
+
+        <div class="table-responsive mt-3">
+            @* added from modal *@ 
+            <div class="form-row" style="width: 280px;">
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Page Size: </span>
+                        </div>
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center"})
+                        <div class="input-group-append">
+                            <input type="submit" class="btn btn-kelly" value="Set Page Size" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @* added from modal *@
             <table class="table giro-table table-bordered">
                 <thead>
                     <tr>
@@ -89,15 +110,17 @@
                                     </span>
                                 </a>
                                 @* <a asp-action="Delete" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        delete
-                                    </span>
-                                </a> *@
+                            <span class="material-symbols-outlined ft-light-grey px-1">
+                            delete
+                            </span>
+                            </a> *@
                             </td>
                         </tr>
                     }
                 </tbody>
             </table>
         </div>
+        <partial name="_PagingNavBar" />
     </form>
 </div>
+
