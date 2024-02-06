@@ -14,7 +14,7 @@ namespace WMBA_4.Models
         public string Name { get; set; }
 
         [Display(Name = "Coach Name")]
-        [Required(ErrorMessage = "You cannot leave the Team Name blank.")]
+        [Required(ErrorMessage = "You cannot leave the Coach Name blank.")]
         [StringLength(100, ErrorMessage = "Team name can not be more than 100 characters long.")]
         public string Coach_Name { get; set; }
 
