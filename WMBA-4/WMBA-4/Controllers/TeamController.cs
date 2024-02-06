@@ -275,7 +275,7 @@ namespace WMBA_4.Controllers
                         ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
-                
+                return RedirectToAction("Index");
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View("Index", new List<WMBA_4.Models.Team> { team });
