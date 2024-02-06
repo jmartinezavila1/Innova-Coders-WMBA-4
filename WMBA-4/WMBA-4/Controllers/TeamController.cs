@@ -11,6 +11,7 @@ using OfficeOpenXml;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using WMBA_4.Utilities;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
 
@@ -26,7 +27,8 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team
-        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID)
+        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, int? page, int? pageSizeID,
+            string actionButton, string sortDirection = "asc", string sortField = "Team")
         {
             PopulateDropDownLists();
 
@@ -35,7 +37,8 @@ namespace WMBA_4.Controllers
                 .Where(s => s.Status == true)
                 .OrderBy(t => t.Division)
                 .AsNoTracking()select t;
- 
+            //sorting sortoption array
+            string[] sortOptions = new[] { "Team", "Division", "Coach" };
 
             //Filter
             if (DivisionID.HasValue)
@@ -47,9 +50,74 @@ namespace WMBA_4.Controllers
                 teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
             }
 
-            return View(await teams.ToListAsync());
-        }
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+                         //sorting
+                if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+                {
+                    if (sortOptions.Contains(actionButton))//Change of sort is requested
+                    {
+                        if (actionButton == sortField) //Reverse order on same field
+                        {
+                            sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                        }
+                        sortField = actionButton;//Sort by the button clicked
+                    }
+                }
+                if (sortField == "Team")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        teams = teams
+                            .OrderBy(p => p.Name);
+                            
+                    }
+                    else
+                    {
+                        teams = teams
+                            .OrderByDescending(p => p.Name);
+                    }
+                }
+                else if (sortField == "Division")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        teams = teams
+                            .OrderBy(p => p.Division);
+                    }
+                    else
+                    {
+                        teams = teams
+                            .OrderByDescending(p => p.Division);
+                    }
+                }
+                else
+                {
+                    if (sortDirection == "asc")
+                    {
+                        teams = teams
+                            .OrderBy(p => p.Coach_Name);
+                    }
+                    else
+                    {
+                        teams = teams
+                            .OrderByDescending(p => p.Coach_Name);
+                    }
+                }
+            }
 
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Team>.CreateAsync(teams.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData); ;
+        }
 
         // GET: Team/Details/5
         public IActionResult Details(int id)
@@ -207,7 +275,7 @@ namespace WMBA_4.Controllers
                         ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
-                
+                return RedirectToAction("Index");
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View("Index", new List<WMBA_4.Models.Team> { team });
