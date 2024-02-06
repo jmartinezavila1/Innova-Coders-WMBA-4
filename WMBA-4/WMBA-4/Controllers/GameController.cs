@@ -421,8 +421,9 @@ namespace WMBA_4.Controllers
                         _context.Remove(playerToRemove);
                     }
                 }
-                _context.SaveChanges();
+               
             }
+            _context.SaveChanges();
         }
 
         private bool GameExists(int id)
