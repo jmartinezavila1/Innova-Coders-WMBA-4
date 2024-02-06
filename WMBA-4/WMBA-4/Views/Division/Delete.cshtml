@@ -23,10 +23,10 @@
             @Html.DisplayFor(model => model.Club.ClubName)
         </dd>
     </dl>
-    
-    <form asp-action="Delete">
+
+    <form asp-action="Delete" class="form-group ">
         <input type="hidden" asp-for="ID" />
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        <input type="submit" value="Delete" class="btn btn-danger mx-1" />
     </form>
 </div>

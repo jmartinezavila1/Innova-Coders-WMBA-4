@@ -9,9 +9,9 @@
 <h3>@Model.Name</h3>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit" method="post" enctype="multipart/form-data">         
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -28,15 +28,17 @@
                 <select asp-for="DivisionID" class="form-control form-select" asp-items="ViewBag.DivisionID"></select>
                 <span asp-validation-for="DivisionID" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-                <input type="submit" value="Edit and Save" class="btn btn-kelly mx-1" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+    <div class="form-group">
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        <input type="submit" value="Edit and Save" class="btn btn-kelly mx-1" />
+    </div>
+</form>
 
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
