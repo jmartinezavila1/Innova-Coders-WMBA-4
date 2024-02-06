@@ -6,105 +6,128 @@
 
 <div class="p-in-flex">
     <div class="f-in-flex">
-        <h1>Schedule Games</h1>
+        <h1>Game Assignment</h1>
 
         @using (Html.BeginForm("Create", "Game", FormMethod.Get))
         {
-            <button type="submit" class="btn btn-kelly">Create Match</button>
+            //<button type="submit" class="btn btn-kelly">Create Match</button>
+            <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                Filter/Search @ViewData["numberFilters"]
+            </button>
+            <button type="submit" class="btn btn-kelly">New Match</button>
         }
     </div>
-  @*   <form asp-action="Index">
-        <label for="seasonName">Season:</label>
-        <input type="text" id="seasonName" name="seasonName" class="form-control" />
-        <button type="submit" class="btn btn-kelly">Filter</button>
-    </form> *@
-</div>
 
-<div class="table-responsive">
-    <table class="table giro-table table-bordered">
-        <thead>
-            <tr>
-                <th>
-                    <input type="submit" name="actionButton" value="TeamGames" class="text-column" />
-                </th>
-                @*  <th>
-                <input type="submit" name="actionButton" value="Status" class="text-column" />
-                </th> *@
-                <th>
-                    <input type="submit" name="actionButton" value="Date" class="text-column" />
-                </th>
-                <th>
-                    <input type="submit" name="actionButton" value="Location" class="text-column" />
-                </th>
-                <th>
-                    <input type="submit" name="actionButton" value="Season" class="text-column" />
-                </th>
-                <th>
-                    <input type="submit" name="actionButton" value="GameType" class="text-column" />
-                </th>
-                <th>
-                    <input type="submit" value="Edit/Delete" class="text-column" />
-                </th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item2 in Model)
-            {
-                <tr>
-                    @{
-                        var teamGamesList = item2.TeamGames.ToList();
-                        var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
+  <form asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <div class="form-horizontal">
+        <div class="collapse" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Search by Location:</label>
+                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label class="control-label">Select GameType:</label>
+                        @* @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control" }) *@
+                        @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4 align-self-end">
+                        <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                        <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="table-responsive mt-3">
+            @* added from modal *@
+            <div class="form-row" style="width: 280px;">
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Page Size: </span>
+                        </div>
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center mx-1"})
+                        <div class="input-group-append">
+                            <input type="submit" class="btn btn-kelly" value="Set Page Size" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table giro-table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            <input type="submit" name="actionButton" value="TeamGames" class="text-column" />
+                        </th>
+                        @*  <th>
+                        <input type="submit" name="actionButton" value="Status" class="text-column" />
+                        </th> *@
+                        <th>
+                            <input type="submit" name="actionButton" value="Date" class="text-column" />
+                        </th>
+                        <th>
+                            <input type="submit" name="actionButton" value="Location" class="text-column" />
+                        </th>
+                        <th>
+                            <input type="submit" name="actionButton" value="Season" class="text-column" />
+                        </th>
+                        <th>
+                            <input type="submit" name="actionButton" value="GameType" class="text-column" />
+                        </th>
+                        <th>
+                            <input type="submit" value="Edit/Delete" class="text-column" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item2 in Model)
+                    {
+                        <tr>
+                            @{
+                                var teamGamesList = item2.TeamGames.ToList();
+                                var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
+                            }
+                            <td>
+                                @foreach (var teamGame in teamGamesList)
+                                {
+                                    @teamGame.Team.Name
+                                    //: @teamGame.Score VS
+                                    <br />
+                                }
+                            </td>
+                            <td>
+                                @item2.Date.ToString("MMMM dd yyyy")
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item2.Location.LocationName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item2.Season.SeasonName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item2.GameType.Description)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item2.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        edit
+                                    </span>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item2.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        delete
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
                     }
-                    <td>
-                        @foreach (var teamGame in teamGamesList)
-                        {
-                            @teamGame.Team.Name
-                            //: @teamGame.Score VS
-                            <br />
-                        }
-                    </td>
-                    @*  <td>
-                @Html.DisplayFor(modelItem => item2.Status)
-                </td> *@
-                    <td>
-                        @item2.Date.ToString("MMMM dd yyyy")
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item2.Location.LocationName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item2.Season.SeasonName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item2.GameType.Description)
-                    </td>
-                    <td>
-                        @*   <a asp-action="Details" asp-route-id="@item2.ID" asp-route-team="@firstTeamId">LineUp</a> |
-                    <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item2.ID">Delete</a> *@
-                        @*   <a asp-action="Details" asp-route-id="@item2.ID">Details</a> |
-                    <a asp-action="Edit" asp-route-id="@item2.ID">Edit</a> |
-                    <a asp-action="Delete" asp-route-id="@item2.ID">Delete</a> *@
-                        <a asp-action="Edit" asp-route-id="@item2.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
-                                edit
-                            </span>
-                        </a>
-                        @*   <a asp-action="Details" asp-route-id="@item2.ID">
-                    <span class="material-symbols-outlined ft-light-grey px-1">
-                    visibility
-                    </span>
-                    </a> *@
-                        <a asp-action="Delete" asp-route-id="@item2.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
-                                delete
-                            </span>
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                </tbody>
+            </table>
+        </div>
+        <partial name="_PagingNavBar" />
+    </form>
 </div>
-@* MG *@

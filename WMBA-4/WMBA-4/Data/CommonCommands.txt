@@ -27,3 +27,10 @@ Install-Package EPPlus -v 4.5.3.3
 9. git branch -m <new name> //rename current branch
 10. git branch -vv //list all branches with tracking info
 11. git branch --set-upstream-to=origin/<branch name> //set upstream for a branch
+
+git add . //add all files
+git commit -m "message" //commit changes
+git push origin <branch name> //push changes to remote
+git pull origin main //pull changes from remote
+
+How can I implement authentication and authorization in my ASP.NET Core MVC application?
