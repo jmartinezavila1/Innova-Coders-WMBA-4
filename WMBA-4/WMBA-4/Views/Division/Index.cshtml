@@ -10,61 +10,83 @@
 
         @using (Html.BeginForm("Create", "Division", FormMethod.Get))
         {
-            <button type="submit" class="btn-kelly btn-text text-no-deco">Create New</button>
+            <button type="submit" class="btn-kelly btn-text text-no-deco">Add Division</button>
         }
     </div>
-    <table class="table giro-table table-bordered">
-        <thead>
-            <tr>
-                <th>
-                    Division Name
-                    @* <input type="submit" value="DivisionName" class="btn btn-toolbar text-break" /> *@
-                </th>
-                <th>
-                    League
-                    @* <input type="submit" name="actionButton" value="League" class="btn btn-link" /> *@
-                    @* Html.DisplayNameFor(model => model.League) *@
-                </th>
-                <th>
-                    Operation
-                    @* <input type="submit" value="Operation" class="btn btn-toolbar" /> *@
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DivisionName)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Club.ClubName)
-                    </td>
-                    <td>
-                        <a asp-action="Edit" asp-route-id="@item.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
-                                edit
-                            </span>
-                        </a>
-                        @* <a href="#" onclick="openModal('@Url.Action("Details", "Player", new { id = item.ID })')" style="text-decoration: none;">
-                    <span class="material-symbols-outlined">
-                    description
-                    </span>
-                    </a> *@
-                        <a asp-action="Details" asp-route-id="@item.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
-                                visibility
-                            </span>
-                        </a>
-                        <a asp-action="Delete" asp-route-id="@item.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
+    <form asp-action="Index" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <div class="form-horizontal">
+            <div class="d-flex">
+                <button class="btn mb-2 btn-outline-dark @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+                    Filter/Search @ViewData["numberFilters"]
+                </button>
+            </div>
+            <br />
+            <div class="collapse" id="collapseFilter">
+                <div class="card card-body bg-light">
+                    <div class="row">
+                        <div class="form-group col-md-4">
+                            <label class="control-label">Search Division Name:</label>
+                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                        </div>                        
+                        <div class="form-group col-md-4 align-self-end">
+                            <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-success" />
+                            <a asp-action="Index" class="btn btn-outline-success">Clear</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table giro-table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            @* Division Name *@
+                            <input type="submit" name="actionButton" value="Division" class="text-column" />
+                        </th>
+                        <th>
+                            @* Club Name *@
+                            <input type="submit" name="actionButton" value="Club" class="text-column" />
+                        </th>
+                        <th>
+                            @* Operation *@
+                            <input type="text" value="Edit/Details/Delete" class="text-column" />
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.DivisionName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Club.ClubName)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        edit
+                                    </span>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        visibility
+                                    </span>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
                                 delete
-                            </span>
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </div>
+        </table>
+    </form>
 </div>

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -21,10 +22,75 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Division
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? ClubID,
+            string actionButton, string sortDirection = "asc", string sortField = "Division")
         {
             var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
-            return View(await wMBA_4_Context.ToListAsync());
+            
+            var divisions = from d in _context.Divisions
+                                      .Include(d => d.Club)
+                                      .Where(s => s.Status == true)
+                                      .AsNoTracking()
+                            select d;
+
+            //sorting sortoption array
+            string[] sortOptions = new[] { "Division", "Club" };
+
+            //filter
+            if (ClubID.HasValue)
+            {
+                divisions = divisions.Where(d => d.ClubID == ClubID);
+            }
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                divisions = divisions.Where(d => d.DivisionName.ToUpper().Contains(SearchString.ToUpper()));
+            }
+
+            //sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+
+            if (sortField == "Division")
+            {
+                if (sortDirection == "asc")
+                {
+                    divisions = divisions
+                        .OrderBy(d => d.DivisionName);
+                }
+                else
+                {
+                    divisions = divisions
+                        .OrderByDescending(d => d.DivisionName);
+                }
+            }
+            else
+            {
+                if (sortDirection == "asc")
+                {
+                    divisions = divisions
+                        .OrderBy(d => d.Club);
+                }
+                else
+                {
+                    divisions = divisions
+                        .OrderByDescending(d => d.Club);
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "Name");
+
+            return View(await divisions.ToListAsync());
         }
 
         // GET: Division/Details/5
@@ -60,11 +126,25 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID,DivisionName,ClubID")] Division division)
         {
-            if (ModelState.IsValid)
+            try
             {
-                _context.Add(division);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Details", new { division.ID });
+                if (ModelState.IsValid)
+                {
+                    _context.Add(division);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction("Details", new { division.ID });
+                }
+            }
+            catch (DbUpdateException dex)
+            {
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed: Division Name"))
+                {
+                    ModelState.AddModelError("Division Name", "The entered Division Name is already in use. Please provide a different Division Name.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "An error occurred while saving. Retry a few times, and if the issue persists, seek assistance from your system administrator.");
+                }     
             }
             ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
             return View(division);
@@ -106,6 +186,10 @@ namespace WMBA_4.Controllers
                     _context.Update(division);
                     await _context.SaveChangesAsync();
                 }
+                catch (RetryLimitExceededException /* dex */)
+                {
+                    ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
+                }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!DivisionExists(division.ID))
@@ -115,6 +199,17 @@ namespace WMBA_4.Controllers
                     else
                     {
                         throw;
+                    }
+                }
+                catch (DbUpdateException dex)
+                {
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Name", "Unable to save changes. Remember, you cannot have duplicate Team Names.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                     }
                 }
                 return RedirectToAction("Details", new { division.ID });
