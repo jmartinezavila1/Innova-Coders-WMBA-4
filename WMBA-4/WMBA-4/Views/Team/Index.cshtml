@@ -12,7 +12,7 @@
             <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 Filter/Search @ViewData["numberFilters"]
             </button>
-            <button type="submit" class="btn-kelly btn-text text-no-deco">Add Team</button>
+            <button type="submit" class="btn btn-kelly">Add Team</button>
         }
     </div>
     <form asp-action="Index" method="get">
@@ -58,66 +58,64 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <table class="table giro-table table-bordered">
-            <thead>
-                <tr>
-                    <th>
-                        @* Team *@
-                        <input type="submit" name="actionButton" value="Team" class="text-column" />
-                    </th>
-                    <th>
-                        @* Division *@
-                        <input type="submit" value="Division" class="text-column" />
-                    </th>
-                    <th>
-                        @* Coach *@
-                        <input type="submit" name="actionButton" value="Coach" class="text-column" />
-                    </th>
-                    <th>
-                        @* Operation *@
-                        <input type="submit" value="Edit/Detail/Delete" class="text-column" />
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
+            <table class="table giro-table table-bordered">
+                <thead>
                     <tr>
-
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Name)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Division.DivisionName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Coach_Name)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.ID">
-                                <span class="material-symbols-outlined ft-light-grey px-1">
-                                    edit
-                                </span>
-                            </a>
-                            <a asp-action="Details" asp-route-id="@item.ID">
-                                <span class="material-symbols-outlined ft-light-grey px-1">
-                                    visibility
-                                </span>
-                            </a>
-                            <a asp-action="Delete" asp-route-id="@item.ID">
-                                <span class="material-symbols-outlined ft-light-grey px-1">
-                                    delete
-                                </span>
-                            </a>
-                        </td>
+                        <th>
+                            @* Team *@
+                            <input type="submit" name="actionButton" value="Team" class="text-column" />
+                        </th>
+                        <th>
+                            @* Division *@
+                            <input type="submit" value="Division" class="text-column" />
+                        </th>
+                        <th>
+                            @* Coach *@
+                            <input type="submit" name="actionButton" value="Coach" class="text-column" />
+                        </th>
+                        <th>
+                            @* Operation *@
+                            <input type="submit" value="Edit/Detail/Delete" class="text-column" />
+                        </th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Name)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Division.DivisionName)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Coach_Name)
+                            </td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        edit
+                                    </span>
+                                </a>
+                                <a asp-action="Details" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        visibility
+                                    </span>
+                                </a>
+                                <a asp-action="Delete" asp-route-id="@item.ID">
+                                    <span class="material-symbols-outlined ft-light-grey px-1">
+                                        delete
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
         <partial name="_PagingNavBar" />
     </form>
-
 </div>
 
 
