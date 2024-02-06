@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using WMBA_4.Utilities;
 
 namespace WMBA_4.Controllers
 {
@@ -22,7 +23,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Division
-        public async Task<IActionResult> Index(string SearchString, int? ClubID,
+        public async Task<IActionResult> Index(string SearchString, int? ClubID, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Division")
         {
             var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
@@ -51,6 +52,8 @@ namespace WMBA_4.Controllers
             {
                 if (sortOptions.Contains(actionButton))//Change of sort is requested
                 {
+                    page = 1;//Reset page to start
+                             //sorting
                     if (actionButton == sortField) //Reverse order on same field
                     {
                         sortDirection = sortDirection == "asc" ? "desc" : "asc";
@@ -90,7 +93,12 @@ namespace WMBA_4.Controllers
             ViewData["sortDirection"] = sortDirection;
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "Name");
 
-            return View(await divisions.ToListAsync());
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
+            var pagedData = await PaginatedList<Division>.CreateAsync(divisions.AsNoTracking(), page ?? 1, pageSize);
+
+            return View(pagedData);
         }
 
         // GET: Division/Details/5
