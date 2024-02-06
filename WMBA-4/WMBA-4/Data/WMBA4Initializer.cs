@@ -16,9 +16,9 @@ namespace WMBA_4.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                context.Database.EnsureDeleted();
-                context.Database.EnsureCreated();
-                //context.Database.Migrate();
+                //context.Database.EnsureDeleted();
+                //context.Database.EnsureCreated();
+                context.Database.Migrate();
                 //To randomly generate data
                 Random random = new Random();
 
@@ -83,12 +83,12 @@ namespace WMBA_4.Data
                 {
                     var teams = new List<Team>
                     {
-                        new Team { ID = 1, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 5 },
-                        new Team { ID = 2, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 3, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 4, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 5, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 1 },
-                        new Team { ID = 6, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 2 }
+                        new Team { ID = 1, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 1 },
+                        new Team { ID = 2, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 2 },
+                        new Team { ID = 3, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 3 },
+                        new Team { ID = 4, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 4 },
+                        new Team { ID = 5, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 5 },
+                        new Team { ID = 6, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 1 }
 
                     };
 

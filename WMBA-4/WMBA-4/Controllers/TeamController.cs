@@ -2,16 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using OfficeOpenXml;
+using OfficeOpenXml.Table;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.Utilities;
+using WMBA_4.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
 
@@ -362,10 +365,11 @@ namespace WMBA_4.Controllers
                 long fileLength = theExcel.Length;
                 if (!(mimeType == "" || fileLength == 0))//Looks like we have a file!!!
                 {
-                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet") || mimeType.Contains("csv"))
+                    if (mimeType.Contains("excel") || mimeType.Contains("spreadsheet"))
                     {
                         ExcelPackage excel;
-                        try {
+                        try
+                        {
                             using (var memoryStream = new MemoryStream())
                             {
                                 await theExcel.CopyToAsync(memoryStream);
@@ -404,44 +408,48 @@ namespace WMBA_4.Controllers
                                                 Team t = new Team();
 
                                                 //For Divisions
-                                                string DivisonName = workSheet.Cells[row, 6].Text; 
+                                                string DivisonName = workSheet.Cells[row, 6].Text;
                                                 Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
                                                 if (existingDiv == null)
                                                 {
-                                                   
+
                                                     Division newDivision = newDivision = new Division { DivisionName = DivisonName };
                                                     _context.Divisions.Add(newDivision);
                                                     _context.SaveChanges();
 
-                                                   
+
                                                     t.DivisionID = newDivision.ID;
                                                 }
                                                 else
                                                 {
-                                                    
+
 
                                                     t.DivisionID = existingDiv.ID;
                                                 }
 
 
                                                 //For Teams
-                                                
+
+                                                //string teamNameFirst = workSheet.Cells[row, 8].Text;
+                                                //string teamName = teamNameFirst.Substring(5 - 1);
+                                                //Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
+
                                                 string teamNameFirst = workSheet.Cells[row, 8].Text;
-                                                string teamName = teamNameFirst.Substring(5 - 1);
+                                                string teamName = Regex.Replace(teamNameFirst, @"^\d+[A-Za-z]*\s*", "");
                                                 Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
                                                 if (existingTeam == null)
                                                 {
-                                                    
+
                                                     Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
                                                     _context.Teams.Add(newTeam);
                                                     _context.SaveChanges();
 
-                                                   
+
                                                     p.TeamID = newTeam.ID;
                                                 }
                                                 else
                                                 {
-                                                   
+
                                                     p.TeamID = existingTeam.ID;
                                                 }
 
@@ -455,15 +463,15 @@ namespace WMBA_4.Controllers
                                                 errorCount++;
                                                 if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                                                 {
-                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected as a duplicate."
+                                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " was rejected as a duplicate."
                                                             + "<br />";
                                                 }
                                                 else
                                                 {
-                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused an error."
+                                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " caused an error."
                                                             + "<br />";
                                                 }
-                                                
+
 
                                             }
                                             catch (Exception ex)
@@ -494,7 +502,7 @@ namespace WMBA_4.Controllers
                                     catch (Exception)
                                     {
                                         transaction.Rollback();
-                                        throw; 
+                                        throw;
                                     }
                                 }
                             }
@@ -505,9 +513,9 @@ namespace WMBA_4.Controllers
                         }
                         catch
                         {
-                           
+
                             feedBack = "Invalid Excel file. Please save your CSV document as Excel file and try again.";
-                            
+
                         }
 
                     }
@@ -529,9 +537,10 @@ namespace WMBA_4.Controllers
 
             TempData["Feedback"] = feedBack + "<br /><br />";
 
-         
+
             return View();
         }
+
         private SelectList DivisionList(int? selectedId)
         {
             return new SelectList(_context
