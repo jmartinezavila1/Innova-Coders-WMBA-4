@@ -1,14 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
+using WMBA_4.Utilities;
 using WMBA_4.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -24,7 +21,8 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(string seasonName)
+        public async Task<IActionResult> Index(string SearchString, int? GameTypeID, int? page, int? pageSizeID,
+            string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
             IQueryable<Game> games = _context.Games
             .Include(g => g.GameType)
@@ -35,13 +33,93 @@ namespace WMBA_4.Controllers
                     .ThenInclude(d => d.Division)
             .Where(s => s.Status == true);
 
-            if (!string.IsNullOrEmpty(seasonName))
+            //if (!string.IsNullOrEmpty(seasonName))
+            //{
+            //    games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
+            //}
+
+//sorting sortoption array
+            string[] sortOptions = new[] { "Location", "GameType", "Date" };
+
+            //filter
+            if (GameTypeID.HasValue)
             {
-                games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
+                games = games.Where(g => g.GameTypeID == GameTypeID);
+            }
+            if (!System.String.IsNullOrEmpty(SearchString))
+            {
+                games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
             }
 
+            if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                page = 1;//Reset page to start
+                         //sorting
+                if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
+                {
+                    if (sortOptions.Contains(actionButton))//Change of sort is requested
+                    {
+                        if (actionButton == sortField) //Reverse order on same field
+                        {
+                            sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                        }
+                        sortField = actionButton;//Sort by the button clicked
+                    }
+                }
+                if (sortField == "Location")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        games = games
+                            .OrderBy(l => l.Location.LocationName);
+                    }
+                    else
+                    {
+                        games = games
+                            .OrderByDescending(l => l.Location.LocationName);
+                    }
+                }
+                else if (sortField == "GameType")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        games = games
+                            .OrderBy(g => g.GameType.Description);
+                    }
+                    else
+                    {
+                        games = games
+                            .OrderByDescending(p => p.GameType.Description);
+                    }
+                }
+                else
+                {
+                    if (sortDirection == "asc")
+                    {
+                        games = games
+                            .OrderBy(g => g.GameType.Description);
+                    }
+                    else
+                    {
+                        games = games
+                            .OrderByDescending(g => g.GameType.Description);
+                    }
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            //ViewData["LocationID"] = new SelectList(_context.Teams, "ID", "LocationName");
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
+
+            //Handle Paging
+            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);            
+            var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);           
+
+
             //return View(await games.ToListAsync());
-            return View(games);
+            return View(pagedData);
         }
 
         // GET: Game/Details/5
