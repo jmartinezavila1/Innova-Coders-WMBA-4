@@ -137,6 +137,7 @@ namespace WMBA_4.Controllers
             .Include(p => p.Team)
             .Where(s => s.Status == true && s.TeamID == id)
             .OrderBy(p => p.LastName)
+            .Where(p=>p.Status==true)
             .AsNoTracking()
              select p;
 

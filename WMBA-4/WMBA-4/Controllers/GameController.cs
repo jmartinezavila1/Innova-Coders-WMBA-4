@@ -364,7 +364,7 @@ namespace WMBA_4.Controllers
         {
 
             var allOptions = _context.Players
-                .Where(m => m.TeamID == team);
+                .Where(m => m.TeamID == team && m.Status == true);
             var currentOptionIDs = _context.GameLineUps
                                             .Where(m => m.TeamID == team);
             var teamName = _context.Teams
