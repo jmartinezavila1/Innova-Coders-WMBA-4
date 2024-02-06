@@ -95,8 +95,11 @@
                                 @foreach (var teamGame in teamGamesList)
                                 {
                                     @teamGame.Team.Name
-                                    //: @teamGame.Score VS
-                                    <br />
+                                    if (teamGame != teamGamesList.Last())
+                                    {
+                                        @:  vs
+                                        //@: <br /> vs <br />
+                                    }
                                 }
                             </td>
                             <td>
