@@ -50,7 +50,7 @@
 
     <form asp-action="Delete" class="form-group ">
         <input type="hidden" asp-for="ID" />
-        <a asp-action="Index" class="btn btn-outline-secondary mx-1">Back to Player List</a>
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
         <input type="submit" value="Delete" class="btn btn-danger mx-1" />
     </form>
 </div>

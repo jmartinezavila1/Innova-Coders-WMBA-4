@@ -46,9 +46,9 @@
                     </button>
                 </li>
                 <li class="page-item px-1 active">
-                    <button type="button" title="Click to change page size." data-bs-toggle="modal" data-bs-target="#pageSizeModal" class="btn page-link">
+                    <span class="input-group-text">
                         <span class="d-none d-md-inline">Pg. </span>@Model.PageIndex of @Model.TotalPages
-                    </button>
+                    </span>
                 </li>
                 <li class="page-item px-1">
                     <button type="submit" name="page" @nextDisabled value="@(Model.PageIndex + 1)" class="btn page-link">
