@@ -8,7 +8,6 @@
 
 <h3 class="text-red">Are you sure you want to delete <span class="text-bold">@Model.Name</span> ?</h3>
 <div>
-    <h4>Team</h4>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <hr />
     <dl class="row">
@@ -34,7 +33,7 @@
     
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
-        <input type="submit" value="Delete" class="btn btn-danger" />
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        <input type="submit" value="Delete" class="btn btn-danger" />
     </form>
 </div>
