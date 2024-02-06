@@ -25,7 +25,7 @@
         </dd>
     </dl>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID">Edit</a> |
-    <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
+<div class="form-group">
+    <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+    <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">Edit</a>
 </div>

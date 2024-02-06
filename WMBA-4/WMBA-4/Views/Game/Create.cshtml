@@ -7,9 +7,9 @@
 <h1>Create New Game</h1>
 
 <hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create" method="post" enctype="multipart/form-data">
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="row">
+        <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -36,16 +36,14 @@
                 <label asp-for="GameTypeID" class="control-label"></label>
                 <select asp-for="GameTypeID" class="form-control" asp-items="ViewBag.GameTypeID"></select>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn-kelly btn-text text-no-deco" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+    <div class="form-group">
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        <input type="submit" value="Create and Save" class="btn btn-kelly mx-1" />
+    </div>
+</form>
 
-<div>
-    <a href='@ViewData["returnURL"]'>Back to the @ViewData["ControllerName"] List</a>
-</div>
 
 @section Scripts {
     @{
