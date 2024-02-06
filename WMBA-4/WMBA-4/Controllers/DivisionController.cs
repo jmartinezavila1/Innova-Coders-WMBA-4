@@ -22,10 +22,75 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Division
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string SearchString, int? ClubID,
+            string actionButton, string sortDirection = "asc", string sortField = "Division")
         {
             var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
-            return View(await wMBA_4_Context.ToListAsync());
+            
+            var divisions = from d in _context.Divisions
+                                      .Include(d => d.Club)
+                                      .Where(s => s.Status == true)
+                                      .AsNoTracking()
+                            select d;
+
+            //sorting sortoption array
+            string[] sortOptions = new[] { "Division", "Club" };
+
+            //filter
+            if (ClubID.HasValue)
+            {
+                divisions = divisions.Where(d => d.ClubID == ClubID);
+            }
+            if (!String.IsNullOrEmpty(SearchString))
+            {
+                divisions = divisions.Where(d => d.DivisionName.ToUpper().Contains(SearchString.ToUpper()));
+            }
+
+            //sorting
+            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            {
+                if (sortOptions.Contains(actionButton))//Change of sort is requested
+                {
+                    if (actionButton == sortField) //Reverse order on same field
+                    {
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                    }
+                    sortField = actionButton;//Sort by the button clicked
+                }
+            }
+
+            if (sortField == "Division")
+            {
+                if (sortDirection == "asc")
+                {
+                    divisions = divisions
+                        .OrderBy(d => d.DivisionName);
+                }
+                else
+                {
+                    divisions = divisions
+                        .OrderByDescending(d => d.DivisionName);
+                }
+            }
+            else
+            {
+                if (sortDirection == "asc")
+                {
+                    divisions = divisions
+                        .OrderBy(d => d.Club);
+                }
+                else
+                {
+                    divisions = divisions
+                        .OrderByDescending(d => d.Club);
+                }
+            }
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "Name");
+
+            return View(await divisions.ToListAsync());
         }
 
         // GET: Division/Details/5

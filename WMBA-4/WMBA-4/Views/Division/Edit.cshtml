@@ -1,4 +1,5 @@
-﻿@model WMBA_4.Models.Division
+﻿<!--Edward -->
+@model WMBA_4.Models.Division
 
 @{
     ViewData["Title"] = "Edit";
@@ -23,6 +24,7 @@
                 <select asp-for="ClubID" class="form-control" asp-items="ViewBag.ClubID"></select>
                 <span asp-validation-for="ClubID" class="text-danger"></span>
             </div>
+
             <div class="form-group">
                 <input type="submit" value="Save" class="btn-kelly btn-text text-no-deco" />
             </div>
