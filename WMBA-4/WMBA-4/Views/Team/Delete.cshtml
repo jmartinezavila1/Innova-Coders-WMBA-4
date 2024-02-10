@@ -6,7 +6,7 @@
 
 <h1>Delete</h1>
 
-<h3 class="text-red">Are you sure you want to delete <span class="text-bold">@Model.Name</span> ?</h3>
+<h3 class="text-red">Are you sure you want to inactive <span class="text-bold">@Model.Name</span> ?</h3>
 <div>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <hr />
@@ -34,6 +34,6 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="ID" />
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-        <input type="submit" value="Delete" class="btn btn-danger" />
+        <input type="submit" value="Inactive" class="btn btn-danger" />
     </form>
 </div>
