@@ -19,12 +19,10 @@
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
-            @* <div class="d-flex">
-            <button class="btn btn-outline-dark @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+           <button class="btn @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
             Filter/Search @ViewData["numberFilters"]
-            </button>
-            </div> *@
-            <div class="collapse" id="collapseFilter">
+        </button><br />
+        <div class="collapse @ViewData["ShowFilter"]" id="collapseFilter">
                 <div class="card card-body bg-light">
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -75,7 +73,7 @@
                         </th>
                         <th>
                             @* Operation *@
-                            <input type="submit" value="Edit/Detail/Delete" class="text-column" />
+                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
                         </th>
                     </tr>
                 </thead>

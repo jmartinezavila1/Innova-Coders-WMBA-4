@@ -35,6 +35,11 @@ namespace WMBA_4.Controllers
         {
             PopulateDropDownLists();
 
+            //Count the number of filters applied - start by assuming no filters
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+            //Then in each "test" for filtering, add to the count of Filters applied
+
             var teams = from t in  _context.Teams
                 .Include(t => t.Division)
                 .Where(s => s.Status == true)
@@ -47,10 +52,23 @@ namespace WMBA_4.Controllers
             if (DivisionID.HasValue)
             {
                 teams = teams.Where(p => p.DivisionID == DivisionID);
+                numberFilters++;
             }           
             if (!String.IsNullOrEmpty(SearchString))
             {
                 teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
+            }
+
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                //@ViewData["ShowFilter"] = " show";
             }
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
