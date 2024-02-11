@@ -9,25 +9,27 @@
     var playersList = ViewData["Players"] as List<WMBA_4.Models.Player> ?? new List<WMBA_4.Models.Player>();
 }
 
-@if (playersList.Count > 0)
-{
-    <h3>Players</h3>
-    <ul class="list-group">
-        @foreach (var player in playersList)
-        {
-            <li class="list-group-item">
-                <i class="fa-light fa-baseball">@player.FullName</i>
-            </li>
-        }
-    </ul>
-}
-else
-{
-    <p>No players in this Team.</p>
-}
+<button class="collapsible">Players</button>
+<div class="content">
+    @if (playersList.Count > 0)
+    {
+        <ul class="list-group">
+            @foreach (var player in playersList)
+            {
+                <li class="list-group-item">
+                    <i class="fa-light fa-baseball">@player.FullName</i>
+                </li>
+            }
+        </ul>
+    }
+    else
+    {
+        <p>No players in this Team.</p>
+    }
+</div>
 
-<div>
-<h3>Scheduled Games</h3>
+<button class="collapsible">Scheduled Games</button>
+<div class="content">
     <table class="table giro-table table-bordered">
         <thead>
             <tr>
@@ -72,3 +74,45 @@ else
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
     </div>
 </div>
+
+<style>
+    .collapsible {
+        background-color: #777;
+        color: white;
+        cursor: pointer;
+        padding: 18px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 15px;
+    }
+
+    .active, .collapsible:hover {
+        background-color: #555;
+    }
+
+    .content {
+        padding: 0 18px;
+        display: none;
+        overflow: hidden;
+        background-color: #f1f1f1;
+    }
+</style>
+
+<script>
+    var coll = document.getElementsByClassName("collapsible");
+    var i;
+
+    for (i = 0; i < coll.length; i++) {
+        coll[i].addEventListener("click", function() {
+            this.classList.toggle("active");
+            var content = this.nextElementSibling;
+            if (content.style.display === "block") {
+                content.style.display = "none";
+            } else {
+                content.style.display = "block";
+            }
+        });
+    }
+</script>
