@@ -369,6 +369,10 @@ namespace WMBA_4.Controllers
             return Redirect(ViewData["returnURL"].ToString());
         }
 
+        /// <summary>
+        /// This is for importing Teams
+        /// </summary>
+        /// <returns></returns>
         public ActionResult GoToImportPlayers()
         {
             return View("ImportTeam");
@@ -395,140 +399,10 @@ namespace WMBA_4.Controllers
                                 excel = new ExcelPackage(memoryStream);
                             }
                             var workSheet = excel.Workbook.Worksheets[0];
-                            var start = workSheet.Dimension.Start;
-                            var end = workSheet.Dimension.End;
 
-                            if (workSheet.Cells[1, 2].Text == "First Name" &&
-                                workSheet.Cells[1, 3].Text == "Last Name" &&
-                                workSheet.Cells[1, 4].Text == "Member ID" &&
-                                workSheet.Cells[1, 6].Text == "Division" &&
-                                workSheet.Cells[1, 7].Text == "Club" &&
-                                workSheet.Cells[1, 8].Text == "Team")
+                            // Call data processing method
+                            feedBack = await ProcessImportedData(workSheet);
 
-                            {
-                                int successCount = 0;
-                                int errorCount = 0;
-
-                                using (var transaction = _context.Database.BeginTransaction())
-                                {
-                                    try
-                                    {
-                                        for (int row = start.Row + 1; row <= end.Row; row++)
-
-                                        {
-                                            Player p = new Player();
-                                            try
-                                            {
-
-                                                // Row by row...
-                                                p.FirstName = workSheet.Cells[row, 2].Text;
-                                                p.LastName = workSheet.Cells[row, 3].Text;
-                                                p.MemberID = workSheet.Cells[row, 4].Text;
-                                                Team t = new Team();
-
-                                                //For Divisions
-                                                string DivisonName = workSheet.Cells[row, 6].Text;
-                                                Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
-                                                if (existingDiv == null)
-                                                {
-
-                                                    Division newDivision = newDivision = new Division { DivisionName = DivisonName };
-                                                    _context.Divisions.Add(newDivision);
-                                                    _context.SaveChanges();
-
-
-                                                    t.DivisionID = newDivision.ID;
-                                                }
-                                                else
-                                                {
-
-
-                                                    t.DivisionID = existingDiv.ID;
-                                                }
-
-
-                                                //For Teams
-
-                                                //string teamNameFirst = workSheet.Cells[row, 8].Text;
-                                                //string teamName = teamNameFirst.Substring(5 - 1);
-                                                //Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
-
-                                                string teamNameFirst = workSheet.Cells[row, 8].Text;
-                                                string teamName = Regex.Replace(teamNameFirst, @"^\d+[A-Za-z]*\s*", "");
-                                                Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
-                                                if (existingTeam == null)
-                                                {
-
-                                                    Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
-                                                    _context.Teams.Add(newTeam);
-                                                    _context.SaveChanges();
-
-
-                                                    p.TeamID = newTeam.ID;
-                                                }
-                                                else
-                                                {
-
-                                                    p.TeamID = existingTeam.ID;
-                                                }
-
-                                                _context.Players.Add(p);
-                                                _context.SaveChanges();
-                                                successCount++;
-
-                                            }
-                                            catch (DbUpdateException dex)
-                                            {
-                                                errorCount++;
-                                                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                                {
-                                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " was rejected as a duplicate."
-                                                            + "<br />";
-                                                }
-                                                else
-                                                {
-                                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " caused an error."
-                                                            + "<br />";
-                                                }
-
-
-                                            }
-                                            catch (Exception ex)
-                                            {
-                                                errorCount++;
-                                                if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                                {
-                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected because the Team name is duplicated."
-                                                            + "<br />";
-                                                }
-                                                else
-                                                {
-                                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused and error."
-                                                            + "<br />";
-                                                }
-
-                                            }
-                                        }
-                                        foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
-                                        {
-                                            entry.State = EntityState.Detached;
-                                        }
-                                        transaction.Commit();
-                                        feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
-                                            " Records with " + successCount.ToString() + " inserted and " +
-                                            errorCount.ToString() + " rejected";
-                                    }
-                                    catch (Exception)
-                                    {
-                                        transaction.Rollback();
-                                        throw;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                feedBack = "Error: You may have selected the wrong file to upload.<br /> Remember, you must have the headings 'First Name','Last Name','Member ID','Season','Division' and 'Team' in the first two cells of the first row.";
-                            }
                         }
                         catch
                         {
@@ -538,26 +412,182 @@ namespace WMBA_4.Controllers
                         }
 
                     }
+                    else if (mimeType.Contains("csv"))
+                    {
+                        var format = new ExcelTextFormat();
+                        format.Delimiter = ',';
+                        bool firstRowIsHeader = true;
+
+                        using var reader = new System.IO.StreamReader(theExcel.OpenReadStream());
+
+                        using ExcelPackage package = new ExcelPackage();
+                        var result = reader.ReadToEnd();
+                        ExcelWorksheet workSheet = package.Workbook.Worksheets.Add("Imported Report Data");
+
+                        workSheet.Cells["A1"].LoadFromText(result, format, TableStyles.None, firstRowIsHeader);
+
+                        // Call data processing method
+                        feedBack = await ProcessImportedData(workSheet);
+                    }
                     else
                     {
-                        feedBack = "Error: That file is not an Excel spreadsheet.";
+                        feedBack = "Error: That file is not an Excel spreadsheet or CSV file";
                     }
                 }
                 else
                 {
-                    feedBack = "Error:  file appears to be empty";
+                    feedBack = "Error: Problem with the file";
                 }
-
             }
             else
             {
                 feedBack = "Error: No file uploaded";
             }
 
-            TempData["Feedback"] = feedBack + "<br /><br />";
+                TempData["Feedback"] = feedBack + "<br /><br />";
 
 
-            return View();
+                return View();
+            
+        }
+
+        private async Task<string> ProcessImportedData(ExcelWorksheet workSheet)
+        {
+            string feedBack = string.Empty;
+            var start = workSheet.Dimension.Start;
+            var end = workSheet.Dimension.End;
+
+            if (workSheet.Cells[1, 2].Text == "First Name" &&
+                workSheet.Cells[1, 3].Text == "Last Name" &&
+                workSheet.Cells[1, 4].Text == "Member ID" &&
+                workSheet.Cells[1, 6].Text == "Division" &&
+                workSheet.Cells[1, 7].Text == "Club" &&
+                workSheet.Cells[1, 8].Text == "Team")
+
+            {
+                int successCount = 0;
+                int errorCount = 0;
+
+                using (var transaction = _context.Database.BeginTransaction())
+                {
+                    try
+                    {
+                        for (int row = start.Row + 1; row <= end.Row; row++)
+
+                        {
+                            Player p = new Player();
+                            try
+                            {
+
+                                // Row by row...
+                                p.FirstName = workSheet.Cells[row, 2].Text;
+                                p.LastName = workSheet.Cells[row, 3].Text;
+                                p.MemberID = workSheet.Cells[row, 4].Text;
+                                Team t = new Team();
+
+                                //For Divisions
+                                string DivisonName = workSheet.Cells[row, 6].Text;
+                                Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
+                                if (existingDiv == null)
+                                {
+
+                                    Division newDivision = newDivision = new Division { DivisionName = DivisonName };
+                                    _context.Divisions.Add(newDivision);
+                                    _context.SaveChanges();
+
+
+                                    t.DivisionID = newDivision.ID;
+                                }
+                                else
+                                {
+
+
+                                    t.DivisionID = existingDiv.ID;
+                                }
+
+
+                                //For Teams
+
+
+                                string teamNameFirst = workSheet.Cells[row, 8].Text;
+                                string teamName = Regex.Replace(teamNameFirst, @"^\d+[A-Za-z]*\s*", "");
+                                Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
+                                if (existingTeam == null)
+                                {
+
+                                    Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID, Coach_Name = "No Assigned" };
+                                    _context.Teams.Add(newTeam);
+                                    _context.SaveChanges();
+
+
+                                    p.TeamID = newTeam.ID;
+                                }
+                                else
+                                {
+
+                                    p.TeamID = existingTeam.ID;
+                                }
+
+
+                                _context.Players.Add(p);
+                                _context.SaveChanges();
+                                successCount++;
+
+                            }
+                            catch (DbUpdateException dex)
+                            {
+                                errorCount++;
+                                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                                {
+                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " was rejected as a duplicate."
+                                            + "<br />";
+                                }
+                                else
+                                {
+                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " caused an error."
+                                            + "<br />";
+                                }
+
+
+                            }
+                            catch (Exception ex)
+                            {
+                                errorCount++;
+                                if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                                {
+                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected because the Team name is duplicated."
+                                            + "<br />";
+                                }
+                                else
+                                {
+                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused and error."
+                                            + "<br />";
+                                }
+
+                            }
+                        }
+                        foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
+                        {
+                            entry.State = EntityState.Detached;
+                        }
+                        transaction.Commit();
+                        feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
+                            " Records with " + successCount.ToString() + " inserted and " +
+                            errorCount.ToString() + " rejected";
+                    }
+                    catch (Exception)
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
+            else
+            {
+                feedBack = "Error: You may have selected the wrong file to upload.<br /> Remember, you must have the headings 'First Name','Last Name','Member ID','Season','Division' and 'Team' in the first two cells of the first row.";
+            }
+
+            return feedBack;
         }
 
         private SelectList DivisionList(int? selectedId)
