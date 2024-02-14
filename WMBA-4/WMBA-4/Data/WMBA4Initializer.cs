@@ -83,16 +83,29 @@ namespace WMBA_4.Data
                 {
                     var teams = new List<Team>
                     {
-                        new Team { ID = 1, Name = "Whitecaps", Coach_Name = "Orv Franchuk", DivisionID = 1 },
-                        new Team { ID = 2, Name = "Bisons", Coach_Name = "No Manager", DivisionID = 2 },
-                        new Team { ID = 3, Name = "Trash Pandas", Coach_Name = "No Manager", DivisionID = 3 },
-                        new Team { ID = 4, Name = "Dragons", Coach_Name = "No Manager", DivisionID = 4 },
-                        new Team { ID = 5, Name = "Bananas", Coach_Name = "No Manager", DivisionID = 5 },
-                        new Team { ID = 6, Name = "Iron Birds", Coach_Name = "No Manager", DivisionID = 1 }
+                        new Team { ID = 1, Name = "Whitecaps", DivisionID = 1 },
+                        new Team { ID = 2, Name = "Bisons", DivisionID = 2 },
+                        new Team { ID = 3, Name = "Trash Pandas", DivisionID = 3 },
+                        new Team { ID = 4, Name = "Dragons",  DivisionID = 4 },
+                        new Team { ID = 5, Name = "Bananas", DivisionID = 5 },
+                        new Team { ID = 6, Name = "Iron Birds", DivisionID = 1 }
 
                     };
 
                     context.Teams.AddRange(teams);
+                    context.SaveChanges();
+                }
+                // Roles 
+                if (!context.Roles.Any())
+                {
+                    var roles = new List<Role>
+                    {
+                        new Role { ID = 1, Description = "Coach" },
+                        new Role { ID = 2, Description = "Scorekeeper" },
+
+                    };
+
+                    context.Roles.AddRange(roles);
                     context.SaveChanges();
                 }
 
@@ -101,26 +114,26 @@ namespace WMBA_4.Data
                 {
                     var staffMembers = new List<Staff>
                     {
-                        new Staff { FirstName = "John", LastName = "Doe", Email = "john.doe@example.com" },
-                        new Staff { FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com" },
-                        new Staff { FirstName = "Robert", LastName = "Johnson", Email = "robert.johnson@example.com" },
-                        new Staff { FirstName = "Emily", LastName = "Williams", Email = "emily.williams@example.com" },
-                        new Staff { FirstName = "Michael", LastName = "Brown", Email = "michael.brown@example.com" },
-                        new Staff { FirstName = "Olivia", LastName = "Miller", Email = "olivia.miller@example.com" },
-                        new Staff { FirstName = "William", LastName = "Davis", Email = "william.davis@example.com" },
-                        new Staff { FirstName = "Sophia", LastName = "Garcia", Email = "sophia.garcia@example.com" },
-                        new Staff { FirstName = "James", LastName = "Martinez", Email = "james.martinez@example.com" },
-                        new Staff { FirstName = "Emma", LastName = "Jackson", Email = "emma.jackson@example.com" },
-                        new Staff { FirstName = "Alexander", LastName = "Taylor", Email = "alexander.taylor@example.com" },
-                        new Staff { FirstName = "Ava", LastName = "Anderson", Email = "ava.anderson@example.com" },
-                        new Staff { FirstName = "Daniel", LastName = "Thomas", Email = "daniel.thomas@example.com" },
-                        new Staff { FirstName = "Mia", LastName = "Moore", Email = "mia.moore@example.com" },
-                        new Staff { FirstName = "Ethan", LastName = "Clark", Email = "ethan.clark@example.com" },
-                        new Staff { FirstName = "Isabella", LastName = "Lewis", Email = "isabella.lewis@example.com" },
-                        new Staff { FirstName = "Benjamin", LastName = "Hill", Email = "benjamin.hill@example.com" },
-                        new Staff { FirstName = "Avery", LastName = "King", Email = "avery.king@example.com" },
-                        new Staff { FirstName = "Ryan", LastName = "Cooper", Email = "ryan.cooper@example.com" },
-                        new Staff { FirstName = "Nora", LastName = "Baker", Email = "nora.baker@example.com" }
+                        new Staff { FirstName = "John", LastName = "Doe", Email = "john.doe@example.com", RoleId = 1 },
+                        new Staff { FirstName = "Jane", LastName = "Smith", Email = "jane.smith@example.com" , RoleId = 1 },
+                        new Staff { FirstName = "Robert", LastName = "Johnson", Email = "robert.johnson@example.com" , RoleId = 1},
+                        new Staff { FirstName = "Emily", LastName = "Williams", Email = "emily.williams@example.com", RoleId = 1 },
+                        new Staff { FirstName = "Michael", LastName = "Brown", Email = "michael.brown@example.com" , RoleId = 1},
+                        new Staff { FirstName = "Olivia", LastName = "Miller", Email = "olivia.miller@example.com" , RoleId = 1},
+                        new Staff { FirstName = "William", LastName = "Davis", Email = "william.davis@example.com" , RoleId = 1},
+                        new Staff { FirstName = "Sophia", LastName = "Garcia", Email = "sophia.garcia@example.com" , RoleId = 1},
+                        new Staff { FirstName = "James", LastName = "Martinez", Email = "james.martinez@example.com", RoleId = 1 },
+                        new Staff { FirstName = "Emma", LastName = "Jackson", Email = "emma.jackson@example.com" , RoleId = 1},
+                        new Staff { FirstName = "Alexander", LastName = "Taylor", Email = "alexander.taylor@example.com", RoleId = 2},
+                        new Staff { FirstName = "Ava", LastName = "Anderson", Email = "ava.anderson@example.com", RoleId = 2},
+                        new Staff { FirstName = "Daniel", LastName = "Thomas", Email = "daniel.thomas@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Mia", LastName = "Moore", Email = "mia.moore@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Ethan", LastName = "Clark", Email = "ethan.clark@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Isabella", LastName = "Lewis", Email = "isabella.lewis@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Benjamin", LastName = "Hill", Email = "benjamin.hill@example.com", RoleId = 2 },
+                        new Staff { FirstName = "Avery", LastName = "King", Email = "avery.king@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Ryan", LastName = "Cooper", Email = "ryan.cooper@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Nora", LastName = "Baker", Email = "nora.baker@example.com" , RoleId = 2}
                     };
 
                     context.Staff.AddRange(staffMembers);
