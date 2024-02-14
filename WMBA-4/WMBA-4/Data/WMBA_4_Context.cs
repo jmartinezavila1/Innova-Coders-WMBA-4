@@ -34,6 +34,7 @@ namespace WMBA_4.Data
         public DbSet<Season> Seasons { get; set; }
 
         public DbSet<Staff> Staff { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         public DbSet<Team> Teams { get; set; }
 
@@ -191,8 +192,14 @@ namespace WMBA_4.Data
             modelBuilder.Entity<GameLineUpPosition>()
             .HasKey(t => new { t.GameLineUpID, t.PositionID });
 
+            //One To Many
+            modelBuilder.Entity<Role>()
+                .HasMany<Staff>(ft => ft.StaffMembers)
+                .WithOne(f => f.Roles)
+                .HasForeignKey(f => f.RoleId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-           
+
         }
 
 

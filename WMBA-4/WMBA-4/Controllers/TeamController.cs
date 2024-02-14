@@ -42,6 +42,7 @@ namespace WMBA_4.Controllers
 
             var teams = from t in  _context.Teams
                 .Include(t => t.Division)
+                .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
                 .Where(s => s.Status == true)
                 .OrderBy(t => t.Division)
                 .AsNoTracking()select t;
@@ -113,19 +114,7 @@ namespace WMBA_4.Controllers
                             .OrderByDescending(p => p.Division);
                     }
                 }
-                else
-                {
-                    if (sortDirection == "asc")
-                    {
-                        teams = teams
-                            .OrderBy(p => p.Coach_Name);
-                    }
-                    else
-                    {
-                        teams = teams
-                            .OrderByDescending(p => p.Coach_Name);
-                    }
-                }
+                
             }
 
             ViewData["sortField"] = sortField;
@@ -145,6 +134,7 @@ namespace WMBA_4.Controllers
         {
             var team = _context.Teams
                 .Include(t => t.Division)
+                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff).ThenInclude(s => s.Roles)
                 .Include(t => t.TeamGames)
                     .ThenInclude(tg => tg.Game)
                         .ThenInclude(g => g.TeamGames)
@@ -184,6 +174,11 @@ namespace WMBA_4.Controllers
                     opponentTeams[teamGame.GameID] = opponentTeam ?? "Unknown Team";
                 }
             }
+            // Get the coach of the team
+            var coach = team.TeamStaff.FirstOrDefault(ts => ts.Staff.Roles.Description == "Coach")?.Staff;
+
+            // Pass the coach to the view 
+            ViewBag.Coach = coach;
 
             ViewBag.OpponentTeams = opponentTeams;
             ViewData["Players"] = players.ToList();
@@ -195,6 +190,17 @@ namespace WMBA_4.Controllers
         public IActionResult Create()
         {
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+
+
+            var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
+            var staffSelectItems = staffMembers.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
+            });
+
+            ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text");
+
             return View();
         }
 
@@ -203,17 +209,24 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,Coach_Name,DivisionID")] Team team)
+        public async Task<IActionResult> Create([Bind("ID,Name,DivisionID")] Team team, List<int> TeamStaff)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
                     _context.Add(team);
+                    await _context.SaveChangesAsync();  // Save the team first to generate the ID
+
+                    foreach (var id in TeamStaff)
+                    {
+                        var teamStaff = new TeamStaff { TeamID = team.ID, StaffID = id };
+                        _context.Add(teamStaff);
+                    }
+
                     await _context.SaveChangesAsync();
                     return RedirectToAction("Details", new { team.ID });
                 }
-
             }
             catch (RetryLimitExceededException /* dex */)
             {
@@ -243,12 +256,33 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            var team = await _context.Teams.FindAsync(id);
+            var team = await _context.Teams
+                .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
+                .FirstOrDefaultAsync(t => t.ID == id);
+
+            //var team = await _context.Teams.FindAsync(id);
             if (team == null)
             {
                 return NotFound();
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
+
+
+            var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
+            var staffSelectItems = staffMembers.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
+            });
+
+            // Get the IDs of the staff members associated with this team and convert them to string
+            var selectedStaffIds = team.TeamStaff.Select(ts => ts.StaffID.ToString()).ToList();
+
+            ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text", selectedStaffIds);
+
+            // Pass the selected staff IDs to the view using ViewBag
+            ViewBag.SelectedStaffIds = selectedStaffIds;
+
             return View(team);
         }
 
@@ -257,7 +291,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,Coach_Name,DivisionID")] Team team)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,DivisionID")] Team team, List<int> SelectedStaffIds)
         {
             if (id != team.ID)
             {
@@ -268,6 +302,16 @@ namespace WMBA_4.Controllers
             {
                 try
                 {
+                    // Remove existing staff members
+                    var existingStaffMembers = _context.TeamStaff.Where(ts => ts.TeamID == id);
+                    _context.TeamStaff.RemoveRange(existingStaffMembers);
+
+                    // Add selected staff members
+                    foreach (var staffId in SelectedStaffIds)
+                    {
+                        var teamStaff = new TeamStaff { TeamID = id, StaffID = staffId };
+                        _context.Add(teamStaff);
+                    }
                     _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
@@ -515,7 +559,7 @@ namespace WMBA_4.Controllers
                                 if (existingTeam == null)
                                 {
 
-                                    Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID, Coach_Name = "No Assigned" };
+                                    Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
                                     _context.Teams.Add(newTeam);
                                     _context.SaveChanges();
 

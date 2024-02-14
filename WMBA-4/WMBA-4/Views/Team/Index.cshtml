@@ -66,11 +66,7 @@
                         <th>
                             @* Division *@
                             <input type="submit" value="Division" class="text-column" />
-                        </th>
-                        <th>
-                            @* Coach *@
-                            <input type="submit" name="actionButton" value="Coach" class="text-column" />
-                        </th>
+                        </th>                      
                         <th>
                             @* Operation *@
                             <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
@@ -86,9 +82,6 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item.Division.DivisionName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Coach_Name)
                             </td>
                             <td>
                                 <a asp-action="Edit" asp-route-id="@item.ID">

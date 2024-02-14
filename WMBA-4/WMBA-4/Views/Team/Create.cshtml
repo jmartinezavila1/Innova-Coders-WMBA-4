@@ -19,9 +19,8 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Coach_Name" class="control-label"></label>
-                <input asp-for="Coach_Name" class="form-control" />
-                <span asp-validation-for="Coach_Name" class="text-danger"></span>
+                <label asp-for="TeamStaff" class="control-label"></label>
+                <select asp-for="TeamStaff" asp-items="ViewBag.StaffId" class="form-control" multiple></select>
             </div>
             <div class="form-group">
                 <label asp-for="DivisionID" class="control-label"></label>
