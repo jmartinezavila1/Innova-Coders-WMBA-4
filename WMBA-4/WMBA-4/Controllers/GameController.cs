@@ -294,65 +294,75 @@ namespace WMBA_4.Controllers
 
             if (ModelState.IsValid)
             {
-                try
+                var teamGames = await _context.TeamGame.Where(tg => tg.GameID == id).ToListAsync();
+                if (teamGames.Count != 2)
                 {
-                    var teamGames = await _context.TeamGame.Where(tg => tg.GameID == id).ToListAsync();
-                    if (teamGames.Count != 2)
-                    {
-                        // Handle the case where there are not exactly two teams for the game
-                    }
-
-                    var teamGame1 = teamGames[0];
-                    var teamGame2 = teamGames[1];
-
-                    // Delete the existing TeamGames
-                    _context.TeamGame.Remove(teamGame1);
-                    _context.TeamGame.Remove(teamGame2);
-                    await _context.SaveChangesAsync();
-
-                    // Create new TeamGames with the new TeamIDs
-                    var newTeamGame1 = new TeamGame
-                    {
-                        GameID = id,
-                        TeamID = team1Id,
-                        score = score1,
-                        IsHomeTeam = true,
-                        IsVisitorTeam = false
-                    };
-                    _context.TeamGame.Add(newTeamGame1);
-
-                    var newTeamGame2 = new TeamGame
-                    {
-                        GameID = id,
-                        TeamID = team2Id,
-                        score = score2,
-                        IsHomeTeam = false,
-                        IsVisitorTeam = true
-                    };
-                    _context.TeamGame.Add(newTeamGame2);
-
-                    // Update the game
-                    _context.Update(game);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    // Handle the case where there are not exactly two teams for the game                    
                 }
-                catch (DbUpdateConcurrencyException)
+
+                var teamGame1 = teamGames[0];
+                var teamGame2 = teamGames[1];
+                using (var transaction = _context.Database.BeginTransaction())
                 {
-                    if (!GameExists(game.ID))
+                    try
                     {
-                        return NotFound();
+                        // Delete the existing TeamGames
+                        _context.TeamGame.Remove(teamGame1);
+                        _context.TeamGame.Remove(teamGame2);
+                        await _context.SaveChangesAsync();
+
+                        // Create new TeamGames with the new TeamIDs
+                        var newTeamGame1 = new TeamGame
+                        {
+                            GameID = id,
+                            TeamID = team1Id,
+                            score = score1,
+                            IsHomeTeam = true,
+                            IsVisitorTeam = false
+                        };
+                        _context.TeamGame.Add(newTeamGame1);
+
+                        var newTeamGame2 = new TeamGame
+                        {
+                            GameID = id,
+                            TeamID = team2Id,
+                            score = score2,
+                            IsHomeTeam = false,
+                            IsVisitorTeam = true
+                        };
+                        _context.TeamGame.Add(newTeamGame2);
+
+                        // Update the game
+                        _context.Update(game);
+                        await _context.SaveChangesAsync();
+
+                        // Commit the transaction
+                        transaction.Commit();
+                        return RedirectToAction(nameof(Index));
                     }
-                    else
+                    catch (DbUpdateConcurrencyException)
                     {
-                        throw;
+                        // Roll back the transaction
+                        transaction.Rollback();
+
+                        if (!GameExists(game.ID))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
                     }
-                }
-                catch (InvalidOperationException ex)
-                {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Home and visiting team must be different," +
-                        "Try again, and if the problem persists, " +
-                        "see your system administrator.");
+                    catch (InvalidOperationException ex)
+                    {
+                        // Roll back the transaction
+                        transaction.Rollback();
+                        
+                        ModelState.AddModelError("", "Unable to save changes. " +                        
+                            "Try again, and if the problem persists, " +
+                            "see your system administrator.");
+                    }
                 }
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
