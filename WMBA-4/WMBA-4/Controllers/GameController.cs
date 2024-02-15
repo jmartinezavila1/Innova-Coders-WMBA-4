@@ -176,7 +176,7 @@ namespace WMBA_4.Controllers
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
+            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");            
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
             ViewBag.TeamID = id;
 
@@ -227,18 +227,16 @@ namespace WMBA_4.Controllers
                 }
                 catch (InvalidOperationException ex)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. " +
-                        "Home and visiting team must be different," +
+                    ModelState.AddModelError("", "Unable to save changes. " +                        
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");
                 }
             }
-
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
-            //return RedirectToAction("Details", "Team", new { id = Team1 });
+            ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
+            
             return View(game);
         }
 
@@ -250,7 +248,11 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            var game = await _context.Games.FindAsync(id);
+            var game = await _context.Games
+                .Include(tg => tg.TeamGames)
+                .ThenInclude(t => t.Team)
+                .FirstOrDefaultAsync(g => g.ID == id);
+
             if (game == null)
             {
                 return NotFound();
@@ -270,7 +272,7 @@ namespace WMBA_4.Controllers
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame1.TeamID);
-            ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame2.TeamID);
+            ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame2.TeamID);            
             
             ViewData["Score1"] = teamGame1.score;
             ViewData["Score2"] = teamGame2.score;
@@ -293,48 +295,72 @@ namespace WMBA_4.Controllers
             if (ModelState.IsValid)
             {
                 try
+                {
+                    var teamGames = await _context.TeamGame.Where(tg => tg.GameID == id).ToListAsync();
+                    if (teamGames.Count != 2)
                     {
-                        // Update the game
-                        _context.Update(game);
-
-                        // Update the teams
-                         var teamGames = await _context.TeamGame.Where(tg => tg.GameID == id).ToListAsync();
-                            if (teamGames.Count != 2)
-                            {
-                                // Handle the case where there are not exactly two teams for the game
-                            }
-
-                        var teamGame1 = teamGames[0];
-                            teamGame1.TeamID = team1Id;
-                            teamGame1.score = score1;
-                            _context.Update(teamGame1);
-
-                        var teamGame2 = teamGames[1];
-                            teamGame2.TeamID = team2Id;
-                            teamGame2.score = score2;
-                            _context.Update(teamGame2);
-
-                        await _context.SaveChangesAsync();
+                        // Handle the case where there are not exactly two teams for the game
                     }
-                    catch (DbUpdateConcurrencyException)
+
+                    var teamGame1 = teamGames[0];
+                    var teamGame2 = teamGames[1];
+
+                    // Delete the existing TeamGames
+                    _context.TeamGame.Remove(teamGame1);
+                    _context.TeamGame.Remove(teamGame2);
+                    await _context.SaveChangesAsync();
+
+                    // Create new TeamGames with the new TeamIDs
+                    var newTeamGame1 = new TeamGame
                     {
-                        if (!GameExists(game.ID))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
+                        GameID = id,
+                        TeamID = team1Id,
+                        score = score1,
+                        IsHomeTeam = true,
+                        IsVisitorTeam = false
+                    };
+                    _context.TeamGame.Add(newTeamGame1);
+
+                    var newTeamGame2 = new TeamGame
+                    {
+                        GameID = id,
+                        TeamID = team2Id,
+                        score = score2,
+                        IsHomeTeam = false,
+                        IsVisitorTeam = true
+                    };
+                    _context.TeamGame.Add(newTeamGame2);
+
+                    // Update the game
+                    _context.Update(game);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!GameExists(game.ID))
+                    {
+                        return NotFound();
                     }
-                //return RedirectToAction("RedirectToTeamList", new { teamId });
-                return RedirectToAction(nameof(Index));
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (InvalidOperationException ex)
+                {
+                    ModelState.AddModelError("", "Unable to save changes. " +
+                        "Home and visiting team must be different," +
+                        "Try again, and if the problem persists, " +
+                        "see your system administrator.");
+                }
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", team1Id);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", team2Id);
+
             ViewData["Score1"] = score1;
             ViewData["Score2"] = score2;
             ViewBag.TeamID = team;
