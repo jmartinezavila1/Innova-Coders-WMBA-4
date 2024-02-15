@@ -216,7 +216,7 @@ namespace WMBA_4.Controllers
                 if (ModelState.IsValid)
                 {
                     _context.Add(team);
-                    await _context.SaveChangesAsync();  // Save the team first to generate the ID
+                    await _context.SaveChangesAsync(); 
 
                     foreach (var id in TeamStaff)
                     {
@@ -275,12 +275,12 @@ namespace WMBA_4.Controllers
                 Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
             });
 
-            // Get the IDs of the staff members associated with this team and convert them to string
+            
             var selectedStaffIds = team.TeamStaff.Select(ts => ts.StaffID.ToString()).ToList();
 
             ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text", selectedStaffIds);
 
-            // Pass the selected staff IDs to the view using ViewBag
+            
             ViewBag.SelectedStaffIds = selectedStaffIds;
 
             return View(team);
@@ -302,11 +302,11 @@ namespace WMBA_4.Controllers
             {
                 try
                 {
-                    // Remove existing staff members
+                    
                     var existingStaffMembers = _context.TeamStaff.Where(ts => ts.TeamID == id);
                     _context.TeamStaff.RemoveRange(existingStaffMembers);
 
-                    // Add selected staff members
+                   
                     foreach (var staffId in SelectedStaffIds)
                     {
                         var teamStaff = new TeamStaff { TeamID = id, StaffID = staffId };
@@ -315,7 +315,7 @@ namespace WMBA_4.Controllers
                     _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
-                catch (RetryLimitExceededException /* dex */)
+                catch (RetryLimitExceededException )
                 {
                     ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
                 }
@@ -345,6 +345,41 @@ namespace WMBA_4.Controllers
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View("Index", new List<WMBA_4.Models.Team> { team });
+        }
+        [HttpPost]
+    public async Task<IActionResult> AddCoach(string firstName, string lastName, string email)
+        {
+            try
+            {
+                
+                var coachRole = await _context.Roles.FirstOrDefaultAsync(r => r.Description == "Coach");
+                if (coachRole == null)
+                {
+                    ModelState.AddModelError("", "The Coach role does not exist.");
+                    return BadRequest(ModelState);
+                }
+
+               
+                var coach = new Staff
+                {
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    Status = true, 
+                    RoleId = coachRole.ID 
+                };
+
+                
+                _context.Staff.Add(coach);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { id = coach.ID, name = $"{coach.FirstName} {coach.LastName}" });
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", "An error occurred while adding the coach.");
+                return BadRequest(ModelState);
+            }
         }
 
         // GET: Team/Delete/5

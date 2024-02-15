@@ -19,18 +19,18 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div>
-
-                <select name="SelectedStaffIds" asp-for="TeamStaff" class="form-control" multiple>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
+                    <i class="fas fa-plus"></i> 
+                </button>
+                <select id="SelectedStaffIds" name="SelectedStaffIds" asp-for="TeamStaff" class="form-control" multiple>
                     @foreach (var item in ViewBag.StaffId as MultiSelectList)
                     {
                         var isSelected = ViewBag.SelectedStaffIds.Contains(item.Value) ? "selected" : null;
                         <option value="@item.Value" selected="@isSelected">@item.Text</option>
                     }
                 </select>
-                
-
             </div>
-            
+
             <div class="form-group">
                 <label asp-for="DivisionID" class="control-label"></label>
                 <select asp-for="DivisionID" class="form-control form-select" asp-items="ViewBag.DivisionID"></select>
@@ -45,8 +45,67 @@
 </form>
 
 
+<div class="modal fade" id="addCoachModal" tabindex="-1" role="dialog" aria-labelledby="addCoachModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCoachModalLabel">Add New Coach</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addCoachForm">
+                    <div class="form-group">
+                        <label for="coachFirstName">First Name</label>
+                        <input type="text" class="form-control" id="coachFirstName" name="coachFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coachLastName">Last Name</label>
+                        <input type="text" class="form-control" id="coachLastName" name="coachLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="coachEmail">Email</label>
+                        <input type="email" class="form-control" id="coachEmail" name="coachEmail" required>
+                    </div>
+                   
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" id="saveCoachBtn">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+    <script>
+        $(document).ready(function () {
+            $('#saveCoachBtn').click(function () {
+                var firstName = $('#coachFirstName').val();
+                var lastName = $('#coachLastName').val();
+                var email = $('#coachEmail').val();
+               
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("AddCoach", "Team")',
+                    data: { firstName: firstName, lastName: lastName, email: email },
+                    success: function (data) {
+                        
+                        $('#SelectedStaffIds').append('<option value="' + data.id + '">' + data.name + '</option>');
+                        
+                        $('#addCoachModal').modal('hide');
+                    },
+                    error: function () {
+                        alert('Error occurred while adding coach.');
+                    }
+                });
+            });
+        });
+    </script>
 }
+
