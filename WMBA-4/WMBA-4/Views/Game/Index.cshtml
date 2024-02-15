@@ -14,7 +14,7 @@
             <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 Filter/Search @ViewData["numberFilters"]
             </button>
-            <button type="submit" class="btn btn-kelly">New Match</button>
+            <button type="submit" class="btn btn-kelly">Add Game</button>
         }
     </div>
 
@@ -91,17 +91,38 @@
                                 var teamGamesList = item2.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
                             }
-                            <td>
+                            <td>   
+                                @* Location *@
+                                @item2.Location.LocationName <br /> <br />
+                             
+                                @foreach (var teamGame in teamGamesList)
+                                {
+                                    //First team in the list
+                                    if (teamGame != teamGamesList.Last())
+                                    {
+                                        @:@teamGame.Team.Name
+                                        @: <strong> @teamGame.score  </strong>
+                                    }
+                                    //Last team in the list
+                                    else
+                                    {
+                                        @: <strong>  -  </strong>
+                                        @: <strong>  @teamGame.score </strong>
+                                        @: @teamGame.Team.Name
+                                    }
+                                }
+                            </td>
+                           @*  <td>
                                 @foreach (var teamGame in teamGamesList)
                                 {
                                     @teamGame.Team.Name
                                     if (teamGame != teamGamesList.Last())
                                     {
-                                        @:  vs
-                                        //@: <br /> vs <br />
+                                        //@: <strong>  Vs  </strong>
+                                        @: <br /> <strong>  Vs  </strong> <br />
                                     }
                                 }
-                            </td>
+                            </td> *@
                             <td>
                                 @item2.Date.ToString("MMMM dd yyyy")
                             </td>
