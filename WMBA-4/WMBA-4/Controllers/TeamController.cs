@@ -40,12 +40,13 @@ namespace WMBA_4.Controllers
             int numberFilters = 0;
             //Then in each "test" for filtering, add to the count of Filters applied
 
-            var teams = from t in  _context.Teams
+            var teams = from t in _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
                 .Where(s => s.Status == true)
                 .OrderBy(t => t.Division)
-                .AsNoTracking()select t;
+                .AsNoTracking()
+                        select t;
             //sorting sortoption array
             string[] sortOptions = new[] { "Team", "Division", "Coach" };
 
@@ -54,7 +55,7 @@ namespace WMBA_4.Controllers
             {
                 teams = teams.Where(p => p.DivisionID == DivisionID);
                 numberFilters++;
-            }           
+            }
             if (!String.IsNullOrEmpty(SearchString))
             {
                 teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
@@ -93,7 +94,7 @@ namespace WMBA_4.Controllers
                     {
                         teams = teams
                             .OrderBy(p => p.Name);
-                            
+
                     }
                     else
                     {
@@ -114,7 +115,7 @@ namespace WMBA_4.Controllers
                             .OrderByDescending(p => p.Division);
                     }
                 }
-                
+
             }
 
             ViewData["sortField"] = sortField;
@@ -145,9 +146,9 @@ namespace WMBA_4.Controllers
             .Include(p => p.Team)
             .Where(s => s.Status == true && s.TeamID == id)
             .OrderBy(p => p.LastName)
-            .Where(p=>p.Status==true)
+            .Where(p => p.Status == true)
             .AsNoTracking()
-             select p;
+                          select p;
 
             if (team == null)
             {
@@ -216,7 +217,7 @@ namespace WMBA_4.Controllers
                 if (ModelState.IsValid)
                 {
                     _context.Add(team);
-                    await _context.SaveChangesAsync(); 
+                    await _context.SaveChangesAsync();
 
                     foreach (var id in TeamStaff)
                     {
@@ -275,12 +276,12 @@ namespace WMBA_4.Controllers
                 Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
             });
 
-            
+
             var selectedStaffIds = team.TeamStaff.Select(ts => ts.StaffID.ToString()).ToList();
 
             ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text", selectedStaffIds);
 
-            
+
             ViewBag.SelectedStaffIds = selectedStaffIds;
 
             return View(team);
@@ -302,11 +303,11 @@ namespace WMBA_4.Controllers
             {
                 try
                 {
-                    
+
                     var existingStaffMembers = _context.TeamStaff.Where(ts => ts.TeamID == id);
                     _context.TeamStaff.RemoveRange(existingStaffMembers);
 
-                   
+
                     foreach (var staffId in SelectedStaffIds)
                     {
                         var teamStaff = new TeamStaff { TeamID = id, StaffID = staffId };
@@ -315,7 +316,7 @@ namespace WMBA_4.Controllers
                     _context.Update(team);
                     await _context.SaveChangesAsync();
                 }
-                catch (RetryLimitExceededException )
+                catch (RetryLimitExceededException)
                 {
                     ModelState.AddModelError("", "Unable to save changes after multiple attempts. Try again, and if the problem persists, see your system administrator.");
                 }
@@ -347,11 +348,11 @@ namespace WMBA_4.Controllers
             return View("Index", new List<WMBA_4.Models.Team> { team });
         }
         [HttpPost]
-    public async Task<IActionResult> AddCoach(string firstName, string lastName, string email)
+        public async Task<IActionResult> AddCoach(string firstName, string lastName, string email)
         {
             try
             {
-                
+
                 var coachRole = await _context.Roles.FirstOrDefaultAsync(r => r.Description == "Coach");
                 if (coachRole == null)
                 {
@@ -359,17 +360,17 @@ namespace WMBA_4.Controllers
                     return BadRequest(ModelState);
                 }
 
-               
+
                 var coach = new Staff
                 {
                     FirstName = firstName,
                     LastName = lastName,
                     Email = email,
-                    Status = true, 
-                    RoleId = coachRole.ID 
+                    Status = true,
+                    RoleId = coachRole.ID
                 };
 
-                
+
                 _context.Staff.Add(coach);
                 await _context.SaveChangesAsync();
 
@@ -437,7 +438,8 @@ namespace WMBA_4.Controllers
                     return View(nameof(Delete), team);
 
                 }
-                else {
+                else
+                {
                     team.Status = false;
                     _context.Teams.Update(team);
                 }
@@ -523,11 +525,11 @@ namespace WMBA_4.Controllers
                 feedBack = "Error: No file uploaded";
             }
 
-                TempData["Feedback"] = feedBack + "<br /><br />";
+            TempData["Feedback"] = feedBack + "<br /><br />";
 
 
-                return View();
-            
+            return View();
+
         }
 
         private async Task<string> ProcessImportedData(ExcelWorksheet workSheet)
@@ -547,21 +549,36 @@ namespace WMBA_4.Controllers
                 int successCount = 0;
                 int errorCount = 0;
 
-                using (var transaction = _context.Database.BeginTransaction())
+
+
+                for (int row = start.Row + 1; row <= end.Row; row++)
                 {
-                    try
+                    using (var transaction = _context.Database.BeginTransaction())
                     {
-                        for (int row = start.Row + 1; row <= end.Row; row++)
-
+                        Player pl = new Player();
+                        try
                         {
-                            Player p = new Player();
-                            try
-                            {
+                            
+                            pl.FirstName = workSheet.Cells[row, 2].Text;
+                            pl.LastName = workSheet.Cells[row, 3].Text;
+                            pl.MemberID = workSheet.Cells[row, 4].Text;
 
-                                // Row by row...
-                                p.FirstName = workSheet.Cells[row, 2].Text;
-                                p.LastName = workSheet.Cells[row, 3].Text;
-                                p.MemberID = workSheet.Cells[row, 4].Text;
+                            // Validación para la columna "Season"
+                            string season = workSheet.Cells[row, 5].Text;
+                            int currentYear = DateTime.Now.Year;
+                            if (season != currentYear.ToString())
+                            {
+                                transaction.Rollback();
+                                errorCount++;
+                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected because the Season value is not the current year."
+                                        + "<br />";
+                                continue; // Salta al siguiente registro
+                            }
+
+
+                            Player existingPlayer = _context.Players.FirstOrDefault(p => p.MemberID == pl.MemberID);
+                            if (existingPlayer == null)
+                            {
                                 Team t = new Team();
 
                                 //For Divisions
@@ -572,7 +589,7 @@ namespace WMBA_4.Controllers
 
                                     Division newDivision = newDivision = new Division { DivisionName = DivisonName };
                                     _context.Divisions.Add(newDivision);
-                                    _context.SaveChanges();
+
 
 
                                     t.DivisionID = newDivision.ID;
@@ -596,70 +613,80 @@ namespace WMBA_4.Controllers
 
                                     Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
                                     _context.Teams.Add(newTeam);
-                                    _context.SaveChanges();
 
 
-                                    p.TeamID = newTeam.ID;
+
+                                    pl.TeamID = newTeam.ID;
                                 }
                                 else
                                 {
 
-                                    p.TeamID = existingTeam.ID;
+                                    pl.TeamID = existingTeam.ID;
                                 }
 
 
-                                _context.Players.Add(p);
+                                _context.Players.Add(pl);
                                 _context.SaveChanges();
                                 successCount++;
-
+                                transaction.Commit();
                             }
-                            catch (DbUpdateException dex)
+                            else
                             {
+                                // El jugador ya existe, por lo que no lo agregamos
+                                transaction.Rollback();
                                 errorCount++;
-                                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                {
-                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " was rejected as a duplicate."
-                                            + "<br />";
-                                }
-                                else
-                                {
-                                    feedBack += "Error: Record " + p.FirstName + " " + p.LastName + " caused an error."
-                                            + "<br />";
-                                }
-
-
+                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        + "<br />";
                             }
-                            catch (Exception ex)
-                            {
-                                errorCount++;
-                                if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
-                                {
-                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " was rejected because the Team name is duplicated."
-                                            + "<br />";
-                                }
-                                else
-                                {
-                                    feedBack += "Error: Record " + p.FirstName + p.LastName + " caused and error."
-                                            + "<br />";
-                                }
 
-                            }
                         }
-                        foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
+                        catch (DbUpdateException dex)
                         {
-                            entry.State = EntityState.Detached;
+                            transaction.Rollback();
+                            errorCount++;
+                            if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                            {
+                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        + "<br />";
+                            }
+                            else
+                            {
+                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " caused an error."
+                                        + "<br />";
+                            }
+
+
                         }
-                        transaction.Commit();
-                        feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
-                            " Records with " + successCount.ToString() + " inserted and " +
-                            errorCount.ToString() + " rejected";
+                        catch (Exception ex)
+                        {
+                            transaction.Rollback();
+                            errorCount++;
+                            if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                            {
+                                feedBack += "Error: Record " + pl.FirstName + pl.LastName + " was rejected because the Team name is duplicated."
+                                        + "<br />";
+                            }
+                            else
+                            {
+                                feedBack += "Error: Record " + pl.FirstName + pl.LastName + " caused and error."
+                                        + "<br />";
+                            }
+
+                        }
+
+
                     }
-                    catch (Exception)
-                    {
-                        transaction.Rollback();
-                        throw;
-                    }
+
                 }
+                foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
+                {
+                    entry.State = EntityState.Detached;
+                }
+
+                feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
+                    " Records with " + successCount.ToString() + " inserted and " +
+                    errorCount.ToString() + " rejected";
+
             }
             else
             {
@@ -675,11 +702,11 @@ namespace WMBA_4.Controllers
                 .Divisions
                 .OrderBy(m => m.DivisionName), "ID", "DivisionName", selectedId);
         }
-        
+
         private void PopulateDropDownLists(Team team = null)
         {
             ViewData["DivisionID"] = DivisionList(team?.DivisionID);
-            
+
         }
         private bool TeamExists(int id)
         {
