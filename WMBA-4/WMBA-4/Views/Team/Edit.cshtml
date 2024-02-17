@@ -22,6 +22,7 @@
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
                     <i class="fas fa-plus"></i> 
                 </button>
+                <label asp-for="TeamStaff" class="control-label"></label>
                 <select id="SelectedStaffIds" name="SelectedStaffIds" asp-for="TeamStaff" class="form-control" multiple>
                     @foreach (var item in ViewBag.StaffId as MultiSelectList)
                     {
