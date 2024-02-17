@@ -335,7 +335,7 @@ namespace WMBA_4.Data
                         new Game { ID = 79, Date = new DateTime(2024, 9, 10), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 80, Date = new DateTime(2024, 10, 10), Status=true, LocationID = 5, SeasonID = 1, GameTypeID=1},
 
-                                                new Game { ID = 81, Date = new DateTime(2024, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
+                        new Game { ID = 81, Date = new DateTime(2024, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 82, Date = new DateTime(2024, 2, 15), Status=true, LocationID = 2, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 83, Date = new DateTime(2024, 3, 15), Status=true, LocationID = 3, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 84, Date = new DateTime(2024, 4, 15), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},

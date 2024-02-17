@@ -21,7 +21,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(string SearchString, int? GameTypeID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
             IQueryable<Game> games = _context.Games
@@ -30,7 +30,7 @@ namespace WMBA_4.Controllers
             .Include(g => g.Season)
             .Include(t => t.TeamGames)
                 .ThenInclude(t => t.Team)
-                    .ThenInclude(d => d.Division)
+                    .ThenInclude(d => d.Division)            
             .Where(s => s.Status == true);
 
             //if (!string.IsNullOrEmpty(seasonName))
@@ -38,10 +38,14 @@ namespace WMBA_4.Controllers
             //    games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
             //}
 
-//sorting sortoption array
-            string[] sortOptions = new[] { "Location", "GameType", "Date" };
+            //sorting sortoption array
+            string[] sortOptions = new[] { "Division", "Location", "GameType", "Date" };
 
             //filter
+            if (divisionID.HasValue)
+            {
+                games = games.Where(g => g.TeamGames.Any(t => t.Team.DivisionID == divisionID));
+            }
             if (GameTypeID.HasValue)
             {
                 games = games.Where(g => g.GameTypeID == GameTypeID);
@@ -66,6 +70,20 @@ namespace WMBA_4.Controllers
                         sortField = actionButton;//Sort by the button clicked
                     }
                 }
+                if (sortField == "Division")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        games = games
+                            .OrderBy(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
+                    }
+                    else
+                    {
+                        games = games
+                            .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
+                    }
+                }
+                else
                 if (sortField == "Location")
                 {
                     if (sortDirection == "asc")
@@ -110,6 +128,9 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             //ViewData["LocationID"] = new SelectList(_context.Teams, "ID", "LocationName");
+            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+            ViewData["SearchString"] = SearchString;            
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
 
             //Handle Paging
@@ -136,7 +157,7 @@ namespace WMBA_4.Controllers
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
-                        .ThenInclude(d => d.Division)
+                        .ThenInclude(d => d.Division)                
                 .FirstOrDefaultAsync(m => m.ID == id);
             if (game == null)
             {
@@ -157,7 +178,8 @@ namespace WMBA_4.Controllers
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
-
+            //ViewData["DivisionID"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
@@ -169,14 +191,30 @@ namespace WMBA_4.Controllers
 
             return RedirectToAction("Details", new { id = id, team = team });
         }
+        
         // GET: Game/Create
         public IActionResult Create(int id)
         {
-            Game game = new Game();
+            //Game game = new Game();
+            var game = new Game
+            {
+                TeamGames = new List<TeamGame> // Create a new List<TeamGame> to hold the collection of TeamGame objects
+                {
+                    _context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).FirstOrDefault()
+                }
+            };
 
+            var divisions = _context.Divisions.ToList();
+            var firstDivisionId = divisions.FirstOrDefault()?.ID;
+
+            
+            
+            ViewBag.Teams = new SelectList(_context.Teams.Where(t => t.DivisionID == firstDivisionId), "TeamID", "TeamName");
+            //ViewData["Divisions"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");            
+            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
             ViewBag.TeamID = id;
 
@@ -232,6 +270,8 @@ namespace WMBA_4.Controllers
                         "see your system administrator.");
                 }
             }
+            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
@@ -250,7 +290,9 @@ namespace WMBA_4.Controllers
 
             var game = await _context.Games
                 .Include(tg => tg.TeamGames)
-                .ThenInclude(t => t.Team)
+                    .ThenInclude(t => t.Team)
+                        .Include(tg => tg.TeamGames)
+                            .ThenInclude(t => t.Team.Division)
                 .FirstOrDefaultAsync(g => g.ID == id);
 
             if (game == null)
@@ -270,7 +312,8 @@ namespace WMBA_4.Controllers
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
+            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame1.TeamID);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame2.TeamID);            
             
@@ -368,6 +411,8 @@ namespace WMBA_4.Controllers
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
+            //ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", game.DivisionID); 
+            //ViewData["DivisionID"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", team1Id);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", team2Id);
 
@@ -509,6 +554,16 @@ namespace WMBA_4.Controllers
                
             }
             _context.SaveChanges();
+        }
+
+        public async Task<IActionResult> GetTeams(int divisionId)
+        {
+            var teams = await _context.Teams
+                .Where(t => t.DivisionID == divisionId)
+                .Select(t => new { teamId = t.ID, teamName = t.Name })
+                .ToListAsync();
+
+            return Json(teams);
         }
 
         private bool GameExists(int id)
