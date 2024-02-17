@@ -104,7 +104,17 @@ namespace WMBA_4.Data
 
             //Many to Many Intersection
             modelBuilder.Entity<TeamGame>()
-            .HasKey(t => new { t.TeamID, t.GameID });
+                .HasKey(t => new { t.TeamID, t.GameID });
+
+            modelBuilder.Entity<TeamGame>()
+                .HasOne(tg => tg.Game) // TeamGame tiene un Game
+                .WithMany(g => g.TeamGames) // Game tiene muchos TeamGame
+                .HasForeignKey(tg => tg.GameID); // La clave foránea en TeamGame es GameID
+
+            modelBuilder.Entity<TeamGame>()
+                .HasOne(tg => tg.Team) // TeamGame tiene un Team
+                .WithMany(t => t.TeamGames) // Team tiene muchos TeamGame
+                .HasForeignKey(tg => tg.TeamID); // La clave foránea en TeamGame es TeamID
 
 
             //Prevent Cascade Delete from Team to TeamGame
@@ -138,6 +148,10 @@ namespace WMBA_4.Data
                 .HasForeignKey(f => f.GameID)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //modelBuilder.Entity<Game>()
+            //        .HasMany(g => g.TeamGames)
+            //        .WithOne(tg => tg.Game)
+            //        .HasForeignKey(tg => tg.GameID);
 
             //Prevent Cascade Delete from Teams to players
             //so we are prevented from deleting a Player with

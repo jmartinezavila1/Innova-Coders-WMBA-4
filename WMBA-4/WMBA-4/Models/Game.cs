@@ -29,6 +29,9 @@ namespace WMBA_4.Models
         public int GameTypeID { get; set; }
         public GameType GameType { get; set; }
 
+        //public int DivisionID { get; set; }
+
+        //public Division Division { get; set; }
 
         public ICollection<TeamGame> TeamGames { get; set; } = new HashSet<TeamGame>();
 

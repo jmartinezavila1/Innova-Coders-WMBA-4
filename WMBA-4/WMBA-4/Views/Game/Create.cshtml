@@ -7,10 +7,19 @@
 <h1>Add Game</h1>
 
 <hr />
+
+<div class="form-group">
+    <label for="DivisionID" class="control-label">Division</label>
+    <select id="DivisionID" name="DivisionID" class="form-control" asp-items="@ViewBag.DivisionID" required>
+        <option value="">Select a Division</option>
+    </select>
+</div>
+
 <form asp-action="Create" method="post" enctype="multipart/form-data">
     <div class="row">
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
                 <input asp-for="Date" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
@@ -49,4 +58,31 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
+
+    <script>
+        $(function() {
+            // Vaciar los dropdowns cuando se carga la página y agregar opción por defecto
+            $('#Team1').empty().append('<option>Teams not found in that Division</option>');
+            $('#Team2').empty().append('<option>Teams not found in that Division</option>');
+
+            $('#DivisionID').change(function() {
+                var divisionId = $(this).val();
+                $.getJSON('/Game/GetTeams', { divisionId: divisionId }, function(teams) {
+                    var team1Select = $('#Team1');
+                    var team2Select = $('#Team2');
+                    team1Select.empty();
+                    team2Select.empty();
+                    if (teams.length === 0) {
+                        team1Select.append('<option>Teams not found in that Division</option>');
+                        team2Select.append('<option>Teams not found in that Division</option>');
+                    } else {
+                        $.each(teams, function(index, team) {
+                            team1Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
+                            team2Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
+                        });
+                    }
+                });
+            });
+        });
+    </script>
 }
