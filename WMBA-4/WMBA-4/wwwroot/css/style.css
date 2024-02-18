@@ -188,7 +188,7 @@
 @media (min-width: 1380px) {
     .px-6 {
         padding-left: 11rem !important;
-        padding-right:11rem !important;
+        padding-right: 11rem !important;
     }
 }
 
@@ -222,6 +222,7 @@ tbody > tr:hover {
     .giro-table > thead > tr,
     .giro-table > tbody > tr > td {
         vertical-align: middle;
+        text-wrap: unset;
     }
 
     .giro-table thead {

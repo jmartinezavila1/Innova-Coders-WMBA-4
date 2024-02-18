@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using System.Numerics;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -110,6 +111,7 @@ namespace WMBA_4.Controllers
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Player>.CreateAsync(players.AsNoTracking(), page ?? 1, pageSize);
 
+
             return View(pagedData); ;
         }
 
@@ -139,6 +141,8 @@ namespace WMBA_4.Controllers
         public IActionResult Create()
         {
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+
             return View();
         }
 
@@ -200,10 +204,9 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", player.TeamID);
-            ViewData["Team.DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
-            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
+
             return View(player);
         }
 
@@ -214,14 +217,17 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id)
         {
-            var playerToUpdate = await _context.Players.FirstOrDefaultAsync(p => p.ID == id);
+            var playerToUpdate = await _context.Players
+                .Include(p => p.Team)
+                .ThenInclude(p => p.Division)
+                .FirstOrDefaultAsync(p => p.ID == id);
 
             if (playerToUpdate == null)
             {
                 return NotFound();
             }
 
-            if (await TryUpdateModelAsync<Player>(playerToUpdate,"", p=>p.MemberID, p=>p.FirstName, p => p.LastName,
+            if (await TryUpdateModelAsync<Player>(playerToUpdate, "", p => p.MemberID, p => p.FirstName, p => p.LastName,
                 p => p.JerseyNumber, p => p.TeamID))
             {
                 try
@@ -260,8 +266,9 @@ namespace WMBA_4.Controllers
                     }
                 }
             }
-
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", playerToUpdate.TeamID);
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", playerToUpdate.Team.DivisionID);
+
             return View(playerToUpdate);
         }
 
@@ -316,7 +323,7 @@ namespace WMBA_4.Controllers
         private bool IsJerseyNumberDuplicate(Player player)
         {
             bool isDuplicated = false;
-            if(_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
+            if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
                 isDuplicated = true;
             return isDuplicated;
         }
