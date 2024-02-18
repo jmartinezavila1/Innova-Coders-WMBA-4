@@ -1,5 +1,6 @@
 ﻿@model WMBA_4.Models.Game
 
+
 <div class="card">
     <div class="card-body">
         <h1>
@@ -17,22 +18,23 @@
             <div>
 
                 <div>
-
-                    <ul class="list-group">
+                    
+                    <ul id="sortableList" class="list-group">
                     @{
 
                         List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
-                        foreach (var checkbox in checkboxes)
+                    
+                            @for (int i = 0; i < checkboxes.Count; i++)
                         {
-
-                                <li class="list-group-item">
-                                    <input type="checkbox"
-                                           class="custom-control-input"
-                                           name="selectedOptions"
-                                           value="@checkbox.ID"
-                                    @(checkbox.Assigned ? "checked=\"checked\"" : "") />
-                                    @checkbox.DisplayText&nbsp;&nbsp;
-                                </li>
+                            <li class="list-group-item" data-id="@checkboxes[i].ID">
+                                    <span class="batting-order">@((i + 1).ToString())</span>
+                                <input type="checkbox"
+                                       class="custom-control-input"
+                                       name="selectedOptions"
+                                       value="@checkboxes[i].ID"
+                                       @(checkboxes[i].Assigned ? "checked=\"checked\"" : "") />
+                                @checkboxes[i].DisplayText&nbsp;&nbsp;
+                            </li>
                         }
 
                     }
@@ -56,3 +58,34 @@
 <div>
     <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team Details</a>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.13.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', (event) => {
+        var el = document.getElementById('sortableList');
+        Sortable.create(el, {
+            animation: 150,
+            onEnd: function () {
+                var listItems = el.children;
+                for (var i = 0; i < listItems.length; i++) {
+                    var listItem = listItems[i];
+                    listItem.querySelector('.batting-order').textContent = i + 1;
+                }
+            }
+        });
+
+        document.getElementById('saveButton').addEventListener('click', function () {
+            var playerOrder = [];
+            var listItems = el.children;
+            for (var i = 0; i < listItems.length; i++) {
+                var listItem = listItems[i];
+                if (listItem.querySelector('input[type="checkbox"]').checked) {
+                    playerOrder.push({
+                        id: listItem.getAttribute('data-id'),
+                        order: i
+                    });
+                }
+            }
+
+        });
+    });
+</script>
