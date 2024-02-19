@@ -4,12 +4,12 @@
 <div class="card">
     <div class="card-body">
         <h1>
-            @ViewBag.TeamName Line Up 
+            @ViewBag.TeamName Line Up
         </h1>
     </div>
 </div>
-<div>    
-    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </p>   
+<div>
+    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </p>
     <br />
     <div class="col-md-4">
         <form asp-action="Save" method="post" enctype="multipart/form-data">
@@ -18,34 +18,35 @@
             <div>
 
                 <div>
-                    
+
                     <ul id="sortableList" class="list-group">
-                    @{
+                        @{
 
-                        List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
-                    
+                            List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
+
                             @for (int i = 0; i < checkboxes.Count; i++)
-                        {
-                            <li class="list-group-item" data-id="@checkboxes[i].ID">
-                                    <span class="batting-order">@((i + 1).ToString())</span>
-                                <input type="checkbox"
-                                       class="custom-control-input"
-                                       name="selectedOptions"
-                                       value="@checkboxes[i].ID"
-                                       @(checkboxes[i].Assigned ? "checked=\"checked\"" : "") />
-                                @checkboxes[i].DisplayText&nbsp;&nbsp;
-                            </li>
-                        }
+                            {
+                                <li class="list-group-item" data-id="@checkboxes[i].ID">
+                                    <span class="batting-order">@(checkboxes[i].BattingOrder != 0 ? checkboxes[i].BattingOrder.ToString() : "")</span>
+                                    <input type="checkbox"
+                                           class="custom-control-input"
+                                           name="selectedOptions"
+                                           value="@checkboxes[i].ID"
+                                    @(checkboxes[i].Assigned ? "checked=\"checked\"" : "") />
+                                    @checkboxes[i].DisplayText&nbsp;&nbsp;
 
-                    }
+                                </li>
+                            }
+
+                        }
                     </ul>
-                   
+
                 </div>
             </div>
-            
+
             <br />
             <div class="form-group">
-                
+
                 <input type="hidden" name="team" value="@ViewBag.TeamID" />
                 <input type="hidden" name="id" value="@Model?.ID" />
                 <input type="submit" value="Save" class="btn-kelly btn-text text-no-deco" />

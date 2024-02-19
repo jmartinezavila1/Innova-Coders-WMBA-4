@@ -157,8 +157,11 @@ namespace WMBA_4.Controllers
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
-                        .ThenInclude(d => d.Division)                
+                        .ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
+
+
             if (game == null)
             {
                 return NotFound();
@@ -178,14 +181,14 @@ namespace WMBA_4.Controllers
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
-            //ViewData["DivisionID"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
             // Actualizar la alineación del juego
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
+
 
             await _context.SaveChangesAsync();
 
@@ -494,25 +497,33 @@ namespace WMBA_4.Controllers
         {
 
             var allOptions = _context.Players
-                .Where(m => m.TeamID == team && m.Status == true);
+               .Where(m => m.TeamID == team && m.Status == true);
+
             var currentOptionIDs = _context.GameLineUps
-                                            .Where(m => m.TeamID == team);
+                                            .Where(m => m.TeamID == team && m.GameID == game.ID);
             var teamName = _context.Teams
                 .Where(m => m.ID == team)
                 .Select(m => m.Name)
                 .FirstOrDefault();
 
             var checkBoxes = new List<CheckOptionVM>();
+            var CheckBoxesOrdered = new List<CheckOptionVM>();
             foreach (var option in allOptions)
             {
                 checkBoxes.Add(new CheckOptionVM
                 {
                     ID = option.ID,
                     DisplayText = option.FullName,
+                    BattingOrder = currentOptionIDs.Where(c => c.PlayerID == option.ID).Select(c => c.BattingOrder).FirstOrDefault(),
                     Assigned = currentOptionIDs.Where(c => c.PlayerID == option.ID).Any(),
                 });
             }
-            ViewData["PlayersOptions"] = checkBoxes;
+
+            CheckBoxesOrdered = checkBoxes
+            .OrderBy(b => b.BattingOrder == 0 ? 1 : 0)
+            .ThenBy(b => b.BattingOrder)
+            .ToList();
+            ViewData["PlayersOptions"] = CheckBoxesOrdered;
             ViewData["TeamName"] = teamName;
         }
 
@@ -528,30 +539,22 @@ namespace WMBA_4.Controllers
             var PlayersOptions = new HashSet<int>
                 (GameLineUpToUpdate.GameLineUps.Select(c => c.PlayerID));//IDs of the currently selected conditions
 
-            var playersList = _context.Players
-               .Where(m => m.TeamID == team);
 
-            foreach (var option in playersList)
+            int battingOrder = 1;
+
+            var gameLineUpsToRemove = _context.GameLineUps
+                                  .Where(m => m.TeamID == team && m.GameID == GameLineUpToUpdate.ID);
+
+            _context.GameLineUps.RemoveRange(gameLineUpsToRemove);
+         
+            foreach (var option in selectedOptionsHS)
             {
-                if (selectedOptionsHS.Contains(option.ID.ToString())) //It is checked
-                {
-                    if (!PlayersOptions.Contains(option.ID))  //but not currently in the history
-                    {
-                        GameLineUpToUpdate.GameLineUps.Add(new GameLineUp { GameID = GameLineUpToUpdate.ID, PlayerID = option.ID, TeamID = team });
 
-                    }
-                }
+                var newGameLineUp = new GameLineUp { GameID = GameLineUpToUpdate.ID, BattingOrder = battingOrder, PlayerID = int.Parse(option), TeamID = team };
+                GameLineUpToUpdate.GameLineUps.Add(newGameLineUp);
 
-                else
-                {
-                    //Checkbox Not checked
-                    if (PlayersOptions.Contains(option.ID)) //but it is currently in the history - so remove it
-                    {
-                        GameLineUp playerToRemove = GameLineUpToUpdate.GameLineUps.SingleOrDefault(c => c.PlayerID == option.ID);
-                        _context.Remove(playerToRemove);
-                    }
-                }
-               
+                battingOrder += 1;
+                
             }
             _context.SaveChanges();
         }
