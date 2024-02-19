@@ -16,9 +16,9 @@ namespace WMBA_4.Data
             try
             {
                 //We can use this to delete the database and start fresh.
-                //context.Database.EnsureDeleted();
-                //context.Database.EnsureCreated();
-                context.Database.Migrate();
+                context.Database.EnsureDeleted();
+                context.Database.EnsureCreated();
+                //context.Database.Migrate();
                 //To randomly generate data
                 Random random = new Random();
 
@@ -225,16 +225,17 @@ namespace WMBA_4.Data
                 {
                     var positions = new List<Position>
                     {
-                        new Position { ID = 1, PositionCode = "P", PositionName = "Pitcher" },
-                        new Position { ID = 2, PositionCode = "C", PositionName = "Catcher" },
-                        new Position { ID = 3, PositionCode = "1B", PositionName = "First Base" },
-                        new Position { ID = 4, PositionCode = "2B", PositionName = "Second Base" },
-                        new Position { ID = 5, PositionCode = "SS", PositionName = "Shortstop" },
-                        new Position { ID = 6, PositionCode = "3B", PositionName = "Third Base" },
-                        new Position { ID = 7, PositionCode = "LF", PositionName = "Left Field" },
-                        new Position { ID = 8, PositionCode = "CF", PositionName = "Center Field" },
-                        new Position { ID = 9, PositionCode = "RF", PositionName = "Right Field" },
-                        new Position { ID = 10, PositionCode = "DH", PositionName = "Designated Hitter" }
+                        new Position { ID = 1, PositionCode = "U", PositionName = "Undefined" },
+                        new Position { ID = 2, PositionCode = "P", PositionName = "Pitcher" },
+                        new Position { ID = 3, PositionCode = "C", PositionName = "Catcher" },
+                        new Position { ID = 4, PositionCode = "1B", PositionName = "First Base" },
+                        new Position { ID = 5, PositionCode = "2B", PositionName = "Second Base" },
+                        new Position { ID = 6, PositionCode = "SS", PositionName = "Shortstop" },
+                        new Position { ID = 7, PositionCode = "3B", PositionName = "Third Base" },
+                        new Position { ID = 8, PositionCode = "LF", PositionName = "Left Field" },
+                        new Position { ID = 9, PositionCode = "CF", PositionName = "Center Field" },
+                        new Position { ID = 10, PositionCode = "RF", PositionName = "Right Field" },
+                        new Position { ID = 11, PositionCode = "DH", PositionName = "Designated Hitter" }
 
                     };
 
@@ -246,7 +247,7 @@ namespace WMBA_4.Data
                 if (!context.Games.Any())
                 {
                     var games = new List<Game>
-                    {                        
+                    {
                         new Game { ID = 1, Date = new DateTime(2024, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 2, Date = new DateTime(2024, 2, 15), Status=true, LocationID = 2, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 3, Date = new DateTime(2024, 3, 15), Status=true, LocationID = 3, SeasonID = 1, GameTypeID=1},
@@ -335,7 +336,7 @@ namespace WMBA_4.Data
                         new Game { ID = 79, Date = new DateTime(2024, 9, 10), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 80, Date = new DateTime(2024, 10, 10), Status=true, LocationID = 5, SeasonID = 1, GameTypeID=1},
 
-                        new Game { ID = 81, Date = new DateTime(2024, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
+                                                new Game { ID = 81, Date = new DateTime(2024, 1, 15), Status=true, LocationID = 1, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 82, Date = new DateTime(2024, 2, 15), Status=true, LocationID = 2, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 83, Date = new DateTime(2024, 3, 15), Status=true, LocationID = 3, SeasonID = 1, GameTypeID=1},
                         new Game { ID = 84, Date = new DateTime(2024, 4, 15), Status=true, LocationID = 4, SeasonID = 1, GameTypeID=1},
@@ -393,64 +394,91 @@ namespace WMBA_4.Data
                     {
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 1, GameID = 1 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 2, GameID = 1 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 3, GameID = 2 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 4, GameID = 2 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 5, GameID = 3 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 6, GameID = 3 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 1, GameID = 4 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 2, GameID = 4 },
+
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 3, GameID = 4 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 4, GameID = 4 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 3, GameID = 5 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 4, GameID = 5 },
-                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 5, GameID = 6 },
-                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 6, GameID = 6 },
+
+                        new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 2, GameID = 6 },
+                        new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 5, GameID = 6 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 1, GameID = 7 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 2, GameID = 7 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 3, GameID = 8 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 4, GameID = 8 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 5, GameID = 9 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 6, GameID = 9 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 1, GameID = 10 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 2, GameID = 10 },
 
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 1, GameID = 11 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 2, GameID = 11 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 3, GameID = 12 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 4, GameID = 12 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 5, GameID = 13 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 6, GameID = 13 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 1, GameID = 14 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 2, GameID = 14 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 3, GameID = 15 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 4, GameID = 15 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 5, GameID = 16 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 6, GameID = 16 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 1, GameID = 17 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 2, GameID = 17 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 3, GameID = 18 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 4, GameID = 18 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 5, GameID = 19 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 6, GameID = 19 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 1, GameID = 20 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 2, GameID = 20 },
 
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 1, GameID = 21 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 2, GameID = 21 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 3, GameID = 22 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 4, GameID = 22 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 5, GameID = 23 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 6, GameID = 23 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 1, GameID = 24 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 2, GameID = 24 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 3, GameID = 25 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 4, GameID = 25 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 5, TeamID = 5, GameID = 26 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 7, TeamID = 6, GameID = 26 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 3, TeamID = 1, GameID = 27 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 8, TeamID = 2, GameID = 27 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 6, TeamID = 3, GameID = 28 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 5, TeamID = 4, GameID = 28 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 7, TeamID = 5, GameID = 29 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 3, TeamID = 6, GameID = 29 },
+
                         new TeamGame { IsHomeTeam = true, IsVisitorTeam = false, score = 8, TeamID = 1, GameID = 30 },
                         new TeamGame { IsHomeTeam = false, IsVisitorTeam = true, score = 6, TeamID = 2, GameID = 30 },
 
@@ -715,26 +743,33 @@ namespace WMBA_4.Data
                 {
                     var gameLineUps = new List<GameLineUp>
                     {
+                        //Game 1
                         new GameLineUp { ID = 1, BattingOrder = 1, GameID = 1, PlayerID = 1, TeamID=1},
                         new GameLineUp { ID = 2, BattingOrder = 2, GameID = 1, PlayerID = 2, TeamID=1},
                         new GameLineUp { ID = 3, BattingOrder = 3, GameID = 1, PlayerID = 3, TeamID=1},
                         new GameLineUp { ID = 4, BattingOrder = 4, GameID = 1, PlayerID = 4, TeamID=1},
-                        new GameLineUp { ID = 5, BattingOrder = 5, GameID = 2, PlayerID = 5, TeamID=1},
-                        new GameLineUp { ID = 6, BattingOrder = 6, GameID = 2, PlayerID = 6, TeamID=1},
-                        new GameLineUp { ID = 7, BattingOrder = 7, GameID = 3, PlayerID = 7, TeamID=1},
-                        new GameLineUp { ID = 8, BattingOrder = 8, GameID = 3, PlayerID = 8, TeamID=1},
-                        new GameLineUp { ID = 9, BattingOrder = 9, GameID = 4, PlayerID = 9, TeamID=1},
-                        new GameLineUp { ID = 10, BattingOrder = 1, GameID = 4, PlayerID = 10, TeamID=1},
-                        new GameLineUp { ID = 11, BattingOrder = 2, GameID = 5, PlayerID = 11, TeamID=1},
-                        new GameLineUp { ID = 12, BattingOrder = 3, GameID = 5, PlayerID = 12, TeamID=1},
-                        new GameLineUp { ID = 13, BattingOrder = 4, GameID = 6, PlayerID = 13, TeamID=2},
-                        new GameLineUp { ID = 14, BattingOrder = 5, GameID = 6, PlayerID = 14, TeamID=2},
-                        new GameLineUp { ID = 15, BattingOrder = 6, GameID = 7, PlayerID = 15, TeamID=2},
-                        new GameLineUp { ID = 16, BattingOrder = 7, GameID = 7, PlayerID = 16, TeamID=2},
-                        new GameLineUp { ID = 17, BattingOrder = 8, GameID = 8, PlayerID = 17, TeamID=2},
-                        new GameLineUp { ID = 18, BattingOrder = 9, GameID = 8, PlayerID = 18, TeamID=2},
-                        new GameLineUp { ID = 19, BattingOrder = 1, GameID = 9, PlayerID = 19, TeamID=2},
-                        new GameLineUp { ID = 20, BattingOrder = 2, GameID = 9, PlayerID = 20, TeamID=2}
+
+                        new GameLineUp { ID = 5, BattingOrder = 1, GameID = 1, PlayerID = 13, TeamID=2},
+                        new GameLineUp { ID = 6, BattingOrder = 2, GameID = 1, PlayerID = 14, TeamID=2},
+                        new GameLineUp { ID = 7, BattingOrder = 3, GameID = 1, PlayerID = 15, TeamID=2},
+                        new GameLineUp { ID = 8, BattingOrder = 4, GameID = 1, PlayerID = 16, TeamID=2},
+
+                        //Game 4
+                        new GameLineUp { ID = 9, BattingOrder = 1, GameID = 4,  PlayerID = 25, TeamID=3},
+                        new GameLineUp { ID = 10, BattingOrder = 2, GameID = 4, PlayerID = 26, TeamID=3},
+
+                        new GameLineUp { ID = 11, BattingOrder = 1, GameID = 4, PlayerID = 35, TeamID=4},
+                        new GameLineUp { ID = 12, BattingOrder = 2, GameID = 4, PlayerID = 36, TeamID=4},
+
+                        //Game 6
+                        new GameLineUp { ID = 13, BattingOrder = 1, GameID = 6, PlayerID = 1, TeamID=2},
+                        new GameLineUp { ID = 14, BattingOrder = 2, GameID = 6, PlayerID = 2, TeamID=2},
+                        new GameLineUp { ID = 15, BattingOrder = 3, GameID = 6, PlayerID = 3, TeamID=2},
+                        new GameLineUp { ID = 16, BattingOrder = 4, GameID = 6, PlayerID = 4, TeamID=2},
+                        new GameLineUp { ID = 17, BattingOrder = 8, GameID = 8, PlayerID = 5, TeamID=2},
+                        new GameLineUp { ID = 18, BattingOrder = 9, GameID = 8, PlayerID = 6, TeamID=2},
+                        new GameLineUp { ID = 19, BattingOrder = 1, GameID = 9, PlayerID = 7, TeamID=2},
+                        new GameLineUp { ID = 20, BattingOrder = 2, GameID = 9, PlayerID = 8, TeamID=2}
 
                     };
 
