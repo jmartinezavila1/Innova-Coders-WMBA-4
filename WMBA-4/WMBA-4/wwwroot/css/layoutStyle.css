@@ -12675,7 +12675,7 @@ body {
         }
 
             .sb-sidenav .sb-sidenav-menu .nav .sb-sidenav-menu-heading {
-                padding: 1.75rem 1rem 0.75rem;
+                padding: 1.25rem 1rem 0.75rem;
                 font-size: 0.75rem;
                 font-weight: bold;
                 text-transform: uppercase;
@@ -12951,7 +12951,7 @@ body {
     display: table;
 }
 
-.datatable-pagination li.datatable-hidden {
+.datatable-pagination li.datatable-hidden{
     visibility: visible;
 }
 

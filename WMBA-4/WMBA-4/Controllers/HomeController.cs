@@ -32,8 +32,6 @@ namespace WMBA_4.Controllers
             ViewBag.TeamCount = teamCount;
             return View();
         }
-
-
         public IActionResult Privacy()
         {
             return View();
