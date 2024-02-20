@@ -1,0 +1,51 @@
+﻿@model WMBA_4.Models.Staff
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+<h3 class="text-red">Are you sure you want to delete <span class="text-bold">@Model.FirstName @Model.LastName</span> ?</h3>
+<div>
+    <h4>Staff</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Status)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Roles)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Roles.Description)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete" class="form-group ">
+        <input type="hidden" asp-for="ID" />
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        <input type="submit" value="Delete" class="btn btn-danger mx-1" />
+    </form>
+</div>
