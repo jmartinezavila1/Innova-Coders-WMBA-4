@@ -271,6 +271,16 @@ namespace WMBA_4.Controllers
 
             return View(playerToUpdate);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetDivisionName(int teamId)
+        {
+            var team = await _context.Teams.Include(t => t.Division).FirstOrDefaultAsync(t => t.ID == teamId);
+            if (team != null)
+            {
+                return Json(team.Division.DivisionName);
+            }
+            return Json(null);
+        }
 
         // GET: Player/Delete/5
         public async Task<IActionResult> Delete(int? id)

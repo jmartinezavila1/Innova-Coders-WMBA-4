@@ -266,7 +266,7 @@ namespace WMBA_4.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException)
                 {
                     ModelState.AddModelError("", "Unable to save changes. " +                        
                         "Try again, and if the problem persists, " +
@@ -400,7 +400,7 @@ namespace WMBA_4.Controllers
                             throw;
                         }
                     }
-                    catch (InvalidOperationException ex)
+                    catch (InvalidOperationException)
                     {
                         // Roll back the transaction
                         transaction.Rollback();
