@@ -25,13 +25,10 @@
                 <label asp-for="TeamID" class="control-label"></label>
                 <select asp-for="TeamID" class="form-control form-select" asp-items="ViewBag.TeamID"></select>
             </div>
-            @* </div> *@
-            @* <div class="col"> *@
-            @* <div class="form-group">
-            <label asp-for="Team.Division.DivisionName" class="control-label"></label>
-            <select asp-for="Team.Division.DivisionName" class="form-control" asp-items="ViewBag.TeamID"></select>
-            <span asp-validation-for="Team.Division.DivisionName" class="text-danger"></span>
-            </div> *@
+            <div class="form-group">
+                <label id="DivisionNameLabel" class="control-label">Division Name</label>
+                <input id="DivisionName" class="form-control" disabled />
+            </div>
             <div class="form-group">
                 <label asp-for="JerseyNumber" class="control-label"></label>
                 <input asp-for="JerseyNumber" class="form-control" />
@@ -49,6 +46,41 @@
         <input type="submit" value="Create and Save" class="btn btn-kelly mx-1" />
     </div>
 </form>
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+           
+            var teamId = $('#TeamID').val();
+            $.ajax({
+                url: '/Player/GetDivisionName',
+                type: 'GET',
+                data: { teamId: teamId },
+                success: function (response) {
+                    $('#DivisionName').val(response);
+                },
+                error: function () {
+                    $('#DivisionName').val('Error fetching division');
+                }
+            });
+
+            
+            $('#TeamID').change(function () {
+                var teamId = $(this).val();
+                $.ajax({
+                    url: '/Player/GetDivisionName',
+                    type: 'GET',
+                    data: { teamId: teamId },
+                    success: function (response) {
+                        $('#DivisionName').val(response);
+                    },
+                    error: function () {
+                        $('#DivisionName').val('Error fetching division');
+                    }
+                });
+            });
+        });
+    </script>
+}
 
 
 

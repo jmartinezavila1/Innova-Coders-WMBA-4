@@ -376,7 +376,7 @@ namespace WMBA_4.Controllers
 
                 return Ok(new { id = coach.ID, name = $"{coach.FirstName} {coach.LastName}" });
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 ModelState.AddModelError("", "An error occurred while adding the coach.");
                 return BadRequest(ModelState);
