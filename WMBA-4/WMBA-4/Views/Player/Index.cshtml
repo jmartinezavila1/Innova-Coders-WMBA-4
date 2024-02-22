@@ -160,7 +160,7 @@
                             </div>
                         </th>
                         <th>
-                            <input type="submit" value="Edit/Detail/Delete" class="text-column" />
+                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
                         </th>
 
                     </tr>
@@ -168,7 +168,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="@((item.Status) ? "" : "inactive-player")">
                             <td>
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>

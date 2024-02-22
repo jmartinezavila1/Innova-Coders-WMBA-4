@@ -43,7 +43,14 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    name: "activate",
+    pattern: "Player/Activate/{id}",
+    defaults: new { controller = "Player", action = "Activate" });
+
 app.MapRazorPages();
+
 
 //Seed Sata
 WMBA4Initializer.Seed(app);
