@@ -312,18 +312,33 @@ namespace WMBA_4.Controllers
             var teamGame1 = teamGames[0];
             var teamGame2 = teamGames[1];
 
+            var divisionId1 = teamGame1.Team.DivisionID; // Get the DivisionID from Team1 of the teams
+            
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame1.TeamID);
-            ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame2.TeamID);            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", divisionId1); // Set the selected DivisionID
+            ViewData["Team1ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame1.TeamID); // Filter the teams by DivisionID
+            ViewData["Team2ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame2.TeamID); // Filter the teams by DivisionID
+       
             
             ViewData["Score1"] = teamGame1.score;
             ViewData["Score2"] = teamGame2.score;
             ViewBag.TeamID = team;
-            return View(game);
+            //return View(game);
+
+            var viewModel = new GameEditVM
+            {
+                Game = game,
+                DivisionID = divisionId1,
+                Team1ID = teamGame1.TeamID,
+                Team2ID = teamGame2.TeamID,
+                Score1 = teamGame1.score,
+                Score2 = teamGame2.score
+            };
+
+            return View(viewModel);
         }
 
         // POST: Game/Edit/5

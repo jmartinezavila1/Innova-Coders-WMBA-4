@@ -84,10 +84,10 @@ namespace WMBA_4.Data
                     var teams = new List<Team>
                     {
                         new Team { ID = 1, Name = "Whitecaps", DivisionID = 1 },
-                        new Team { ID = 2, Name = "Bisons", DivisionID = 2 },
-                        new Team { ID = 3, Name = "Trash Pandas", DivisionID = 3 },
-                        new Team { ID = 4, Name = "Dragons",  DivisionID = 4 },
-                        new Team { ID = 5, Name = "Bananas", DivisionID = 5 },
+                        new Team { ID = 2, Name = "Bisons", DivisionID = 1 },
+                        new Team { ID = 3, Name = "Trash Pandas", DivisionID = 1 },
+                        new Team { ID = 4, Name = "Dragons",  DivisionID = 1 },
+                        new Team { ID = 5, Name = "Bananas", DivisionID = 1 },
                         new Team { ID = 6, Name = "Iron Birds", DivisionID = 1 }
 
                     };
