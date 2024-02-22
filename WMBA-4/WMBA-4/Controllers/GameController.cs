@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -229,8 +230,31 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId, string LocationName)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
+            // Verifica si el LocationID existe en la base de datos
+            var location = await _context.Locations.FindAsync(game.LocationID);
+            if (location == null)
+            {
+                // Si no existe, crea una nueva ubicación y guárdala en la base de datos
+                location = new Models.Location { ID = game.LocationID, LocationName = LocationName, CityID = 1 };
+                _context.Locations.Add(location);
+                await _context.SaveChangesAsync();
+
+                game.LocationID = location.ID;    
+
+                ModelState.Remove("LocationID");            
+            }
+            
             //Game
             if (ModelState.IsValid)
             {
@@ -582,6 +606,21 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             return Json(teams);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateLocation(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("Name is required.");
+            }
+
+            var location = new Models.Location { LocationName = name };
+            _context.Locations.Add(location);
+            await _context.SaveChangesAsync();
+
+            return Ok(location.ID);
         }
 
         private bool GameExists(int id)

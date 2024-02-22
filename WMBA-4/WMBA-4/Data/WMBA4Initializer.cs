@@ -27,19 +27,20 @@ namespace WMBA_4.Data
                 {
                     var cities = new List<City>
                     {
-                        new City { ID = 1, CityName = "Toronto" },
-                        new City { ID = 2, CityName = "Vancouver" },
-                        new City { ID = 3, CityName = "Montreal" },
-                        new City { ID = 4, CityName = "Calgary" },
-                        new City { ID = 5, CityName = "Edmonton" },
-                        new City { ID = 6, CityName = "Ottawa" },
-                        new City { ID = 7, CityName = "Winnipeg" },
-                        new City { ID = 8, CityName = "Quebec City" },
-                        new City { ID = 9, CityName = "Hamilton" },
-                        new City { ID = 10, CityName = "Halifax" },
-                        new City { ID = 11, CityName = "London" },
-                        new City { ID = 12, CityName = "Victoria" },
-                        new City { ID = 13, CityName = "Saskatoon" }
+                        new City { ID = 1, CityName = "Unknow" },
+                        new City { ID = 2, CityName = "Toronto" },
+                        new City { ID = 3, CityName = "Vancouver" },
+                        new City { ID = 4, CityName = "Montreal" },
+                        new City { ID = 5, CityName = "Calgary" },
+                        new City { ID = 6, CityName = "Edmonton" },
+                        new City { ID = 7, CityName = "Ottawa" },
+                        new City { ID = 8, CityName = "Winnipeg" },
+                        new City { ID = 9, CityName = "Quebec City" },
+                        new City { ID = 10, CityName = "Hamilton" },
+                        new City { ID = 11, CityName = "Halifax" },
+                        new City { ID = 12, CityName = "London" },
+                        new City { ID = 13, CityName = "Victoria" },
+                        new City { ID = 14, CityName = "Saskatoon" }
 
                     };
                     context.Cities.AddRange(cities);
