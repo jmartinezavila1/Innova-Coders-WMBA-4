@@ -26,7 +26,6 @@ namespace WMBA_4.Controllers
 
             var players = from p in _context.Players
                                     .Include(p => p.Team).ThenInclude(d => d.Division)
-                                    .Where(s => s.Status == true)
                                     .AsNoTracking()
                           select p;
 
@@ -113,6 +112,28 @@ namespace WMBA_4.Controllers
 
 
             return View(pagedData); ;
+        }
+
+        // GET: Player/Activate/5
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            // Set the player's status to active
+            player.Status = true;
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
 
@@ -318,16 +339,15 @@ namespace WMBA_4.Controllers
             {
                 if (player != null)
                 {
-                    player.Status = false;
-                    player.Team = null;
+                    player.Status = false; // Set status to inactive
                     _context.Players.Update(player);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (DbUpdateException)
             {
                 ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         private bool IsJerseyNumberDuplicate(Player player)

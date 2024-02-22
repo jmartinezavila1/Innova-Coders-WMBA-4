@@ -4,24 +4,12 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Inactive</h1>
 
-<h3 class="text-red">Are you sure you want to delete <span class="text-bold">@Model.FirstName @Model.LastName</span> ?</h3>
 <div>
     <hr />
     <dl class="row">
-        @* <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd> *@
+
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Team)
         </dt>
@@ -48,9 +36,35 @@
         </dd>
     </dl>
 
-    <form asp-action="Delete" class="form-group ">
+    <form id="deleteForm" asp-action="Delete" class="form-group">
         <input type="hidden" asp-for="ID" />
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-        <input type="submit" value="Delete" class="btn btn-danger mx-1" />
+
+        @{
+            if (Model.Status) // If player is active
+            {
+                <button type="button" onclick="confirmDelete()" class="btn btn-danger mx-1">Inactive</button>
+            }
+            else // If player is inactive
+            {
+                <button type="button" onclick="confirmActivate()" class="btn btn-success mx-1">Activate</button>
+            }
+        }
     </form>
 </div>
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            if (confirm('Are you sure you want to inactive this player?')) {
+                document.getElementById("deleteForm").submit();
+            }
+        }
+
+        function confirmActivate() {
+            if (confirm('Are you sure you want to activate this player?')) {
+                location.href = '@Url.Action("Activate", "Player", new { id = Model.ID })';
+            }
+        }
+    </script>
+}

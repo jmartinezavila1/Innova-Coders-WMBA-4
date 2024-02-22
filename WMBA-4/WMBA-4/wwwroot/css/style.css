@@ -394,7 +394,10 @@ div > .nav-hover:hover {
 }
 
 
-
+.inactive-player {
+    background-color: #f2f2f2; /* Change background color for inactive players */
+    color: #999; /* Change text color for inactive players */
+}
 
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
