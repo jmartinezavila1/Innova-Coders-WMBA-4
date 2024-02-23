@@ -43,6 +43,10 @@ namespace WMBA_4.Controllers
                                        || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
             }
 
+            players = players.OrderByDescending(p => p.Status) // Active players first
+                    .ThenBy(p => p.LastName)             // Order by last name
+                    .ThenBy(p => p.FirstName);           // Then by first name
+
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 page = 1;//Reset page to start

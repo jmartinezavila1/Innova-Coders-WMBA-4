@@ -49,6 +49,11 @@ app.MapControllerRoute(
     pattern: "Player/Activate/{id}",
     defaults: new { controller = "Player", action = "Activate" });
 
+app.MapControllerRoute(
+    name: "activate",
+    pattern: "Team/Activate/{id}",
+    defaults: new { controller = "Team", action = "Activate" });
+
 app.MapRazorPages();
 
 
