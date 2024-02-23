@@ -19,19 +19,19 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Player
-        public async Task<IActionResult> Index(string SearchString, int? TeamID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? id, string SearchString, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
 
             var players = from p in _context.Players
                                     .Include(p => p.Team).ThenInclude(d => d.Division)
-                                    .Where(s => s.Status == true)
+                                    .OrderByDescending(s => s.Status)
                                     .AsNoTracking()
                           select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "Division", "Team" };
+            string[] sortOptions = new[] { "Player", "Division", "Team", "Status"};
 
             //filter
             if (TeamID.HasValue)
@@ -42,6 +42,14 @@ namespace WMBA_4.Controllers
             {
                 players = players.Where(p => p.LastName.ToUpper().Contains(SearchString.ToUpper())
                                        || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
+            }
+            if (isActive == true)
+            {
+                players = players.Where(p => p.Status == true);
+            }
+            if (isInactive == true)
+            {
+                players = players.Where(p => p.Status == false);
             }
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
@@ -86,8 +94,8 @@ namespace WMBA_4.Controllers
                         players = players
                             .OrderByDescending(p => p.Team.Division);
                     }
-                }
-                else
+                } 
+                else if (sortField == "Team")
                 {
                     if (sortDirection == "asc")
                     {
@@ -98,6 +106,19 @@ namespace WMBA_4.Controllers
                     {
                         players = players
                             .OrderByDescending(p => p.Team);
+                    }
+                }
+                else
+                {
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderByDescending(p => p.Status);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderBy(p => p.Status);
                     }
                 }
             }
@@ -115,6 +136,30 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
+        //POST
+        //Status update in Index view
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int id, bool status)
+        {
+            var playerToUpdate = await _context.Players.FindAsync(id);
+
+            if (playerToUpdate == null)
+            {
+                return NotFound();
+            }
+
+            playerToUpdate.Status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index)); ;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
 
         // GET: Player/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -210,7 +255,7 @@ namespace WMBA_4.Controllers
             var teamsInBiggerDivision = await _context.Teams
                 .Include(t => t.Division)
                 .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
-                .OrderBy(t=>t.Name)
+                .OrderBy(t => t.Name)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -237,8 +282,10 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
+        
+
             if (await TryUpdateModelAsync<Player>(playerToUpdate, "", p => p.MemberID, p => p.FirstName, p => p.LastName,
-                p => p.JerseyNumber, p => p.TeamID))
+                p => p.JerseyNumber,p=>p.Status, p => p.TeamID))
             {
                 try
                 {
