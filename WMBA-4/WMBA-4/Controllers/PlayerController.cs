@@ -52,6 +52,10 @@ namespace WMBA_4.Controllers
                 players = players.Where(p => p.Status == false);
             }
 
+            players = players.OrderByDescending(p => p.Status) // Active players first
+                    .ThenBy(p => p.LastName)             // Order by last name
+                    .ThenBy(p => p.FirstName);           // Then by first name
+
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 page = 1;//Reset page to start
@@ -136,6 +140,7 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
+
         //POST
         //Status update in Index view
         [HttpPost]
@@ -144,9 +149,16 @@ namespace WMBA_4.Controllers
             var playerToUpdate = await _context.Players.FindAsync(id);
 
             if (playerToUpdate == null)
+
+        // GET: Player/Activate/5
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+
             {
                 return NotFound();
             }
+
 
             playerToUpdate.Status = status;
 
@@ -160,6 +172,22 @@ namespace WMBA_4.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
+
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            // Set the player's status to active
+            player.Status = true;
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
 
         // GET: Player/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -338,6 +366,16 @@ namespace WMBA_4.Controllers
 
             return View(playerToUpdate);
         }
+        [HttpGet]
+        public async Task<IActionResult> GetDivisionName(int teamId)
+        {
+            var team = await _context.Teams.Include(t => t.Division).FirstOrDefaultAsync(t => t.ID == teamId);
+            if (team != null)
+            {
+                return Json(team.Division.DivisionName);
+            }
+            return Json(null);
+        }
 
         // GET: Player/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -375,16 +413,15 @@ namespace WMBA_4.Controllers
             {
                 if (player != null)
                 {
-                    player.Status = false;
-                    player.Team = null;
+                    player.Status = false; // Set status to inactive
                     _context.Players.Update(player);
+                    await _context.SaveChangesAsync();
                 }
             }
             catch (DbUpdateException)
             {
                 ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
             }
-            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
         private bool IsJerseyNumberDuplicate(Player player)

@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -157,8 +158,11 @@ namespace WMBA_4.Controllers
                 .Include(g => g.Season)
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
-                        .ThenInclude(d => d.Division)                
+                        .ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
+
+
             if (game == null)
             {
                 return NotFound();
@@ -178,14 +182,14 @@ namespace WMBA_4.Controllers
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
                 .FirstOrDefaultAsync(p => p.ID == id);
-            //ViewData["DivisionID"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
             // Actualizar la alineación del juego
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
+
 
             await _context.SaveChangesAsync();
 
@@ -226,8 +230,31 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId, string LocationName)
         {
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                foreach (var error in errors)
+                {
+                    Console.WriteLine(error.ErrorMessage);
+                }
+            }
+
+            // Verifica si el LocationID existe en la base de datos
+            var location = await _context.Locations.FindAsync(game.LocationID);
+            if (location == null)
+            {
+                // Si no existe, crea una nueva ubicación y guárdala en la base de datos
+                location = new Models.Location { ID = game.LocationID, LocationName = LocationName, CityID = 1 };
+                _context.Locations.Add(location);
+                await _context.SaveChangesAsync();
+
+                game.LocationID = location.ID;    
+
+                ModelState.Remove("LocationID");            
+            }
+            
             //Game
             if (ModelState.IsValid)
             {
@@ -263,7 +290,7 @@ namespace WMBA_4.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (InvalidOperationException ex)
+                catch (InvalidOperationException)
                 {
                     ModelState.AddModelError("", "Unable to save changes. " +                        
                         "Try again, and if the problem persists, " +
@@ -309,18 +336,33 @@ namespace WMBA_4.Controllers
             var teamGame1 = teamGames[0];
             var teamGame2 = teamGames[1];
 
+            var divisionId1 = teamGame1.Team.DivisionID; // Get the DivisionID from Team1 of the teams
+            
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame1.TeamID);
-            ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", teamGame2.TeamID);            
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", divisionId1); // Set the selected DivisionID
+            ViewData["Team1ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame1.TeamID); // Filter the teams by DivisionID
+            ViewData["Team2ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame2.TeamID); // Filter the teams by DivisionID
+       
             
             ViewData["Score1"] = teamGame1.score;
             ViewData["Score2"] = teamGame2.score;
             ViewBag.TeamID = team;
-            return View(game);
+            //return View(game);
+
+            var viewModel = new GameEditVM
+            {
+                Game = game,
+                DivisionID = divisionId1,
+                Team1ID = teamGame1.TeamID,
+                Team2ID = teamGame2.TeamID,
+                Score1 = teamGame1.score,
+                Score2 = teamGame2.score
+            };
+
+            return View(viewModel);
         }
 
         // POST: Game/Edit/5
@@ -397,7 +439,7 @@ namespace WMBA_4.Controllers
                             throw;
                         }
                     }
-                    catch (InvalidOperationException ex)
+                    catch (InvalidOperationException)
                     {
                         // Roll back the transaction
                         transaction.Rollback();
@@ -494,25 +536,33 @@ namespace WMBA_4.Controllers
         {
 
             var allOptions = _context.Players
-                .Where(m => m.TeamID == team && m.Status == true);
+               .Where(m => m.TeamID == team && m.Status == true);
+
             var currentOptionIDs = _context.GameLineUps
-                                            .Where(m => m.TeamID == team);
+                                            .Where(m => m.TeamID == team && m.GameID == game.ID);
             var teamName = _context.Teams
                 .Where(m => m.ID == team)
                 .Select(m => m.Name)
                 .FirstOrDefault();
 
             var checkBoxes = new List<CheckOptionVM>();
+            var CheckBoxesOrdered = new List<CheckOptionVM>();
             foreach (var option in allOptions)
             {
                 checkBoxes.Add(new CheckOptionVM
                 {
                     ID = option.ID,
                     DisplayText = option.FullName,
+                    BattingOrder = currentOptionIDs.Where(c => c.PlayerID == option.ID).Select(c => c.BattingOrder).FirstOrDefault(),
                     Assigned = currentOptionIDs.Where(c => c.PlayerID == option.ID).Any(),
                 });
             }
-            ViewData["PlayersOptions"] = checkBoxes;
+
+            CheckBoxesOrdered = checkBoxes
+            .OrderBy(b => b.BattingOrder == 0 ? 1 : 0)
+            .ThenBy(b => b.BattingOrder)
+            .ToList();
+            ViewData["PlayersOptions"] = CheckBoxesOrdered;
             ViewData["TeamName"] = teamName;
         }
 
@@ -528,30 +578,22 @@ namespace WMBA_4.Controllers
             var PlayersOptions = new HashSet<int>
                 (GameLineUpToUpdate.GameLineUps.Select(c => c.PlayerID));//IDs of the currently selected conditions
 
-            var playersList = _context.Players
-               .Where(m => m.TeamID == team);
 
-            foreach (var option in playersList)
+            int battingOrder = 1;
+
+            var gameLineUpsToRemove = _context.GameLineUps
+                                  .Where(m => m.TeamID == team && m.GameID == GameLineUpToUpdate.ID);
+
+            _context.GameLineUps.RemoveRange(gameLineUpsToRemove);
+         
+            foreach (var option in selectedOptionsHS)
             {
-                if (selectedOptionsHS.Contains(option.ID.ToString())) //It is checked
-                {
-                    if (!PlayersOptions.Contains(option.ID))  //but not currently in the history
-                    {
-                        GameLineUpToUpdate.GameLineUps.Add(new GameLineUp { GameID = GameLineUpToUpdate.ID, PlayerID = option.ID, TeamID = team });
 
-                    }
-                }
+                var newGameLineUp = new GameLineUp { GameID = GameLineUpToUpdate.ID, BattingOrder = battingOrder, PlayerID = int.Parse(option), TeamID = team };
+                GameLineUpToUpdate.GameLineUps.Add(newGameLineUp);
 
-                else
-                {
-                    //Checkbox Not checked
-                    if (PlayersOptions.Contains(option.ID)) //but it is currently in the history - so remove it
-                    {
-                        GameLineUp playerToRemove = GameLineUpToUpdate.GameLineUps.SingleOrDefault(c => c.PlayerID == option.ID);
-                        _context.Remove(playerToRemove);
-                    }
-                }
-               
+                battingOrder += 1;
+                
             }
             _context.SaveChanges();
         }
@@ -564,6 +606,21 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             return Json(teams);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateLocation(string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest("Name is required.");
+            }
+
+            var location = new Models.Location { LocationName = name };
+            _context.Locations.Add(location);
+            await _context.SaveChangesAsync();
+
+            return Ok(location.ID);
         }
 
         private bool GameExists(int id)

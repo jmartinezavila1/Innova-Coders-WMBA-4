@@ -172,6 +172,7 @@
                             </div>
                         </th>
                         <th>
+
                             <div class="d-flex justify-content-center">
                                 <input type="submit" name="actionButton" value="Status" class="text-column" />
                                 @if (ViewData["sortField"].ToString() == "Status")
@@ -206,6 +207,9 @@
                         </th>
                         <th>
                             <input type="submit" value="Edit/Detail" class="text-column" />
+
+                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
+
                         </th>
 
                     </tr>
@@ -213,7 +217,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="@((item.Status) ? "" : "inactive-player")">
                             <td>
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>
