@@ -43,7 +43,6 @@ namespace WMBA_4.Controllers
             var teams = from t in _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
-                .Where(s => s.Status == true)
                 .OrderBy(t => t.Division)
                 .AsNoTracking()
                         select t;
@@ -72,6 +71,10 @@ namespace WMBA_4.Controllers
                 //Keep the Bootstrap collapse open
                 //@ViewData["ShowFilter"] = " show";
             }
+
+            teams = teams.OrderByDescending(p => p.Status) // Active players first
+                    .ThenBy(p => p.Name);             // Order by last name
+                    
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -128,6 +131,28 @@ namespace WMBA_4.Controllers
             var pagedData = await PaginatedList<Team>.CreateAsync(teams.AsNoTracking(), page ?? 1, pageSize);
 
             return View(pagedData); ;
+        }
+
+        // GET: Player/Activate/5
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var team = await _context.Teams.FindAsync(id);
+            if (team == null)
+            {
+                return NotFound();
+            }
+
+            // Set the player's status to active
+            team.Status = true;
+            _context.Teams.Update(team);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Team/Details/5
@@ -442,11 +467,11 @@ namespace WMBA_4.Controllers
                 {
                     team.Status = false;
                     _context.Teams.Update(team);
+                    await _context.SaveChangesAsync();
                 }
 
             }
 
-            await _context.SaveChangesAsync();
             return Redirect(ViewData["returnURL"].ToString());
         }
 

@@ -73,7 +73,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr class="@((item.Status) ? "" : "inactive-team")">
                             <td>
                                 @Html.DisplayFor(modelItem => item.Name)
                             </td>
