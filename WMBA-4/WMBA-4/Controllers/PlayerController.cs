@@ -232,6 +232,7 @@ namespace WMBA_4.Controllers
             {
                 try
                 {
+                    //null will acceptable for duplicate 'null'
                     if (IsJerseyNumberDuplicate(playerToUpdate))
                     {
                         ModelState.AddModelError("JerseyNumber", "The jersey number should be unique within the team. Please choose a different jersey number.");
@@ -322,10 +323,17 @@ namespace WMBA_4.Controllers
         }
         private bool IsJerseyNumberDuplicate(Player player)
         {
-            bool isDuplicated = false;
-            if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
-                isDuplicated = true;
-            return isDuplicated;
+            //bool isDuplicated = false;
+            //if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
+            //    isDuplicated = true;
+            //return isDuplicated;
+            if (player.JerseyNumber == null)
+            {
+                return false;
+            }
+
+            return _context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber);
+
         }
         private bool PlayerExists(int id)
         {
