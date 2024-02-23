@@ -204,7 +204,17 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", player.TeamID);
+
+            var playerTeamDivisionId = player.Team.DivisionID;
+
+            var teamsInBiggerDivision = await _context.Teams
+                .Include(t => t.Division)
+                .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
+                .OrderBy(t=>t.Name)
+                .AsNoTracking()
+                .ToListAsync();
+
+            ViewData["TeamID"] = new SelectList(teamsInBiggerDivision, "ID", "Name", player.TeamID);
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
 
             return View(player);
@@ -267,7 +277,16 @@ namespace WMBA_4.Controllers
                     }
                 }
             }
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", playerToUpdate.TeamID);
+
+            var playerTeamDivisionId = playerToUpdate.Team.DivisionID;
+
+            var teamsInBiggerDivision = await _context.Teams
+                .Include(t => t.Division)
+                .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+
+            ViewData["TeamID"] = new SelectList(teamsInBiggerDivision, "ID", "Name", playerToUpdate.TeamID);
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", playerToUpdate.Team.DivisionID);
 
             return View(playerToUpdate);
