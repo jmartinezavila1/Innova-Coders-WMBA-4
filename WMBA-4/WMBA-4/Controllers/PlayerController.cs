@@ -19,18 +19,19 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Player
-        public async Task<IActionResult> Index(string SearchString, int? TeamID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? id, string SearchString, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
 
             var players = from p in _context.Players
                                     .Include(p => p.Team).ThenInclude(d => d.Division)
+                                    .OrderByDescending(s => s.Status)
                                     .AsNoTracking()
                           select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "Division", "Team" };
+            string[] sortOptions = new[] { "Player", "Division", "Team", "Status"};
 
             //filter
             if (TeamID.HasValue)
@@ -41,6 +42,14 @@ namespace WMBA_4.Controllers
             {
                 players = players.Where(p => p.LastName.ToUpper().Contains(SearchString.ToUpper())
                                        || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
+            }
+            if (isActive == true)
+            {
+                players = players.Where(p => p.Status == true);
+            }
+            if (isInactive == true)
+            {
+                players = players.Where(p => p.Status == false);
             }
 
             players = players.OrderByDescending(p => p.Status) // Active players first
@@ -89,8 +98,8 @@ namespace WMBA_4.Controllers
                         players = players
                             .OrderByDescending(p => p.Team.Division);
                     }
-                }
-                else
+                } 
+                else if (sortField == "Team")
                 {
                     if (sortDirection == "asc")
                     {
@@ -101,6 +110,19 @@ namespace WMBA_4.Controllers
                     {
                         players = players
                             .OrderByDescending(p => p.Team);
+                    }
+                }
+                else
+                {
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderByDescending(p => p.Status);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderBy(p => p.Status);
                     }
                 }
             }
@@ -118,13 +140,38 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
+
+        //POST
+        //Status update in Index view
+        [HttpPost]
+        public async Task<IActionResult> UpdateStatus(int id, bool status)
+        {
+            var playerToUpdate = await _context.Players.FindAsync(id);
+
+            if (playerToUpdate == null)
+
         // GET: Player/Activate/5
         public async Task<IActionResult> Activate(int? id)
         {
             if (id == null)
+
             {
                 return NotFound();
             }
+
+
+            playerToUpdate.Status = status;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index)); ;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred: {ex.Message}");
+            }
+        }
 
             var player = await _context.Players.FindAsync(id);
             if (player == null)
@@ -139,6 +186,7 @@ namespace WMBA_4.Controllers
 
             return RedirectToAction(nameof(Index));
         }
+
 
 
         // GET: Player/Details/5
@@ -229,7 +277,17 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", player.TeamID);
+
+            var playerTeamDivisionId = player.Team.DivisionID;
+
+            var teamsInBiggerDivision = await _context.Teams
+                .Include(t => t.Division)
+                .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
+                .OrderBy(t => t.Name)
+                .AsNoTracking()
+                .ToListAsync();
+
+            ViewData["TeamID"] = new SelectList(teamsInBiggerDivision, "ID", "Name", player.TeamID);
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
 
             return View(player);
@@ -252,11 +310,14 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
+        
+
             if (await TryUpdateModelAsync<Player>(playerToUpdate, "", p => p.MemberID, p => p.FirstName, p => p.LastName,
-                p => p.JerseyNumber, p => p.TeamID))
+                p => p.JerseyNumber,p=>p.Status, p => p.TeamID))
             {
                 try
                 {
+                    //null will acceptable for duplicate 'null'
                     if (IsJerseyNumberDuplicate(playerToUpdate))
                     {
                         ModelState.AddModelError("JerseyNumber", "The jersey number should be unique within the team. Please choose a different jersey number.");
@@ -291,7 +352,16 @@ namespace WMBA_4.Controllers
                     }
                 }
             }
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name", playerToUpdate.TeamID);
+
+            var playerTeamDivisionId = playerToUpdate.Team.DivisionID;
+
+            var teamsInBiggerDivision = await _context.Teams
+                .Include(t => t.Division)
+                .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
+                .OrderBy(t => t.Name)
+                .ToListAsync();
+
+            ViewData["TeamID"] = new SelectList(teamsInBiggerDivision, "ID", "Name", playerToUpdate.TeamID);
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", playerToUpdate.Team.DivisionID);
 
             return View(playerToUpdate);
@@ -356,10 +426,17 @@ namespace WMBA_4.Controllers
         }
         private bool IsJerseyNumberDuplicate(Player player)
         {
-            bool isDuplicated = false;
-            if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
-                isDuplicated = true;
-            return isDuplicated;
+            //bool isDuplicated = false;
+            //if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
+            //    isDuplicated = true;
+            //return isDuplicated;
+            if (player.JerseyNumber == null)
+            {
+                return false;
+            }
+
+            return _context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber);
+
         }
         private bool PlayerExists(int id)
         {

@@ -48,10 +48,9 @@ namespace WMBA_4.Models
         [StringLength(100, ErrorMessage = "Last name cannot be more than 100 characters long.")]
         public string LastName { get; set; }
 
-
         [Display(Name = "Jersey Number")]
-        [Range(1, 100, ErrorMessage = "Please enter a number between 1 and 100.")]
-        public string JerseyNumber { get; set; }
+        [Range(0, 100, ErrorMessage = "Please enter a number between 0 and 100.")]
+        public string? JerseyNumber { get; set; }
 
         [Display(Name = "Status")]
         public bool Status { get; set; } = true;

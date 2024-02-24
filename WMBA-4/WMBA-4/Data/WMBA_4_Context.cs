@@ -180,6 +180,7 @@ namespace WMBA_4.Data
             //Add a unique index to Jersey Name 
             modelBuilder.Entity<Player>()
             .HasIndex(p => new { p.JerseyNumber, p.TeamID })
+            .HasFilter("[JerseyNumber] is not null and [TeamID] is not null")
             .IsUnique();
 
             //Add a unique index to Seasons code
