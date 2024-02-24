@@ -207,9 +207,6 @@
                         </th>
                         <th>
                             <input type="submit" value="Edit/Detail" class="text-column" />
-
-                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
-
                         </th>
 
                     </tr>
@@ -283,7 +280,7 @@
         function updatePlayerStatus(playerId, isChecked) {
             $.ajax({
                 type: 'POST',
-                url: '/Player/UpdateStatus',
+                url: '/Player/updatePlayerStatus',
                 data: { id: playerId, status: isChecked },
                 success: function () {
                     alert(playerName + ' status changed successfully!');

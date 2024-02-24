@@ -140,25 +140,17 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
-
         //POST
         //Status update in Index view
         [HttpPost]
-        public async Task<IActionResult> UpdateStatus(int id, bool status)
+        public async Task<IActionResult> updatePlayerStatus(int id, bool status)
         {
             var playerToUpdate = await _context.Players.FindAsync(id);
 
             if (playerToUpdate == null)
-
-        // GET: Player/Activate/5
-        public async Task<IActionResult> Activate(int? id)
-        {
-            if (id == null)
-
             {
                 return NotFound();
             }
-
 
             playerToUpdate.Status = status;
 
@@ -172,22 +164,6 @@ namespace WMBA_4.Controllers
                 return StatusCode(500, $"An error occurred: {ex.Message}");
             }
         }
-
-            var player = await _context.Players.FindAsync(id);
-            if (player == null)
-            {
-                return NotFound();
-            }
-
-            // Set the player's status to active
-            player.Status = true;
-            _context.Players.Update(player);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-
 
         // GET: Player/Details/5
         public async Task<IActionResult> Details(int? id)
