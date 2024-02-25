@@ -1,0 +1,35 @@
+﻿@model WMBA_4.Models.GameLineUp
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Witch Team are you scoring?</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create" method="get">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="TeamID" class="control-label"></label>
+                <select asp-for="TeamID" class="form-control" asp-items="ViewBag.TeamID"></select>
+            </div>
+            <input type="hidden" name="GameID" value="@ViewBag.GameID" />
+            <button type="submit" class="btn btn-primary">
+                <span class="material-symbols-outlined ft-light-grey px-1">
+                    Scoreboard
+                </span>
+            </button>
+        </form>
+    </div>
+</div>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

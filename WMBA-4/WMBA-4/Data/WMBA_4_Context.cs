@@ -31,6 +31,10 @@ namespace WMBA_4.Data
 
         public DbSet<ScorePlayer> ScorePlayers { get; set; }
 
+        public DbSet<Inning> Innings { get; set; }
+
+        public DbSet<Inplay> Inplays { get; set; }
+
         public DbSet<Season> Seasons { get; set; }
 
         public DbSet<Staff> Staff { get; set; }
@@ -142,11 +146,11 @@ namespace WMBA_4.Data
             //Prevent Cascade Delete from Game to Scoreplayer
             //so we are prevented from deleting a FunctionType with
             //Functions assigned
-            modelBuilder.Entity<Game>()
-                .HasMany<ScorePlayer>(ft => ft.ScorePlayers)
-                .WithOne(f => f.Game)
-                .HasForeignKey(f => f.GameID)
-                .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<Game>()
+            //    .HasMany<ScorePlayer>(ft => ft.ScorePlayers)
+            //    .WithOne(f => f.Game)
+            //    .HasForeignKey(f => f.GameID)
+            //    .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.Entity<Game>()
             //        .HasMany(g => g.TeamGames)

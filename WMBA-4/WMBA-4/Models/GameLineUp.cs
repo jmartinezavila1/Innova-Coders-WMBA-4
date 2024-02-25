@@ -18,7 +18,7 @@ namespace WMBA_4.Models
         [Display(Name = "Player")]
         public int PlayerID { get; set; }
 
-        public Player Player  { get; set; }
+        public Player Player { get; set; }
 
         [Display(Name = "Team")]
         public int TeamID { get; set; }
@@ -26,6 +26,8 @@ namespace WMBA_4.Models
         public Team Team { get; set; }
 
         public ICollection<GameLineUpPosition> GameLineUpPositions { get; set; } = new HashSet<GameLineUpPosition>();
+
+        public ICollection<ScorePlayer> ScoresPlayer { get; set; } = new HashSet<ScorePlayer>();
 
     }
 }

@@ -5,28 +5,12 @@ namespace WMBA_4.Models
     public class ScorePlayer
     {
         public int ID { get; set; }
-        public int InningNumber { get; set; }
 
         [Display(Name = "Hits")]
         public int H { get; set; }
 
         [Display(Name = "Runs Batted in")]
         public int RBI { get; set; }
-
-        [Display(Name = "Runs")]
-        public int R { get; set; }
-
-        [Display(Name = "StrikeOut")]
-        public int StrikeOut { get; set; }
-
-        [Display(Name = "GroundOut")]
-        public int GroundOut { get; set; }
-
-        [Display(Name = "PopOut")]
-        public int PopOut { get; set; }
-
-        [Display(Name = "Flyout")]
-        public int Flyout { get; set; }
 
         [Display(Name = "1 Base Hit /1B")]
         public int Singles { get; set; }
@@ -43,30 +27,38 @@ namespace WMBA_4.Models
         [Display(Name = "Base on balls (walks)")]
         public int BB { get; set; }
 
-        [Display(Name = "Hit by pitch")]
-        public int HBP { get; set; }
-
-        [Display(Name = "Stolen Base")]
-        public int SB { get; set; }
-
-        [Display(Name = "Sacrifice")]
-        public int SAC { get; set; }
-
         [Display(Name = "Plate Appearance")]
         public int PA { get; set; }
 
         [Display(Name = "At Bat")]
         public int AB { get; set; }
 
-        [Display(Name = "Game")]
-        public int GameID { get; set; }
-        public Game Game { get; set; }
-
-        [Display(Name = "Player")]
-        public int PlayerID { get; set; }
-        public Player Player { get; set; }
+        [Display(Name = "Run")]
+        public int Run { get; set; }
 
 
+        [Display(Name = "Hit by pitch")]
+        public int HBP { get; set; }
+
+        [Display(Name = "StrikeOut")]
+        public int StrikeOut { get; set; }
+
+        [Display(Name = "Out")]
+        public int Out { get; set; }
+
+        [Display(Name = "Fouls")]
+        public int Fouls { get; set; }
+
+        [Display(Name = "Balls")]
+        public int Balls { get; set; }
+
+        [Display(Name = "Batting Order")]
+        public int BattingOrder { get; set; }
+
+        [Display(Name = "Position")]
+        public int Position { get; set; }
+        public int GameLineUpID { get; set; }
+        public GameLineUp GameLineUp { get; set; }
 
 
     }
