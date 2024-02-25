@@ -811,6 +811,7 @@ namespace WMBA_4.Data
                 }
 
 
+
                 // ScorePlayers
                 if (!context.ScorePlayers.Any())
                 {
@@ -818,55 +819,48 @@ namespace WMBA_4.Data
                     {
                         new ScorePlayer
                         {
-                            InningNumber = 1,
                             H = 3,
                             RBI = 2,
-                            R = 1,
-                            StrikeOut = 0,
-                            GroundOut = 1,
-                            PopOut = 0,
-                            Flyout = 1,
                             Singles = 2,
                             Doubles = 1,
                             Triples = 0,
                             HR = 1,
                             BB = 1,
-                            HBP = 0,
-                            SB = 1,
-                            SAC = 0,
                             PA = 4,
                             AB = 3,
-                            GameID = 1,
-                            PlayerID = 1
+                            Run = 1,
+                            HBP = 0,
+                            StrikeOut = 0,
+                            Out = 0,
+                            Fouls =0,
+                            Balls = 0,
+                            GameLineUpID=1
                         },
                         new ScorePlayer
                         {
-                            InningNumber = 1,
-                            H = 3,
+                             H = 3,
                             RBI = 2,
-                            R = 1,
-                            StrikeOut = 0,
-                            GroundOut = 1,
-                            PopOut = 0,
-                            Flyout = 1,
                             Singles = 2,
                             Doubles = 1,
                             Triples = 0,
                             HR = 1,
                             BB = 1,
-                            HBP = 0,
-                            SB = 1,
-                            SAC = 0,
                             PA = 4,
                             AB = 3,
-                            GameID = 1,
-                            PlayerID = 2
+                            Run = 1,
+                            HBP = 0,
+                            StrikeOut = 0,
+                            Out = 0,
+                            Fouls =0,
+                            Balls = 0,
+                            GameLineUpID=1
                         },
                     };
 
                     context.ScorePlayers.AddRange(scorePlayers);
                     context.SaveChanges();
                 }
+            
             }
             catch (Exception ex)
             {

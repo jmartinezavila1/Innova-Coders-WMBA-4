@@ -19,9 +19,10 @@ namespace WMBA_4.Models
 
         public Team Team { get; set; }
 
-
         [Display(Name = "Game")]
         public int GameID { get; set; }
         public Game Game { get; set; }
+
+        public ICollection<Inning> Innings { get; set; } = new HashSet<Inning>();
     }
 }

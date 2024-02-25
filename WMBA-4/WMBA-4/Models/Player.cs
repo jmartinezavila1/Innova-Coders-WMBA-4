@@ -1,5 +1,6 @@
 ﻿using OfficeOpenXml.Utils;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using WMBA_4.Data;
 
 namespace WMBA_4.Models
@@ -54,6 +55,18 @@ namespace WMBA_4.Models
 
         [Display(Name = "Status")]
         public bool Status { get; set; } = true;
+
+        [InverseProperty("PlayerInBase1")]
+        public ICollection<Inplay> PlayerBase1 { get; set; }
+
+        [InverseProperty("PlayerInBase2")]
+        public ICollection<Inplay> PlayerBase2 { get; set; }
+
+        [InverseProperty("PlayerInBase3")]
+        public ICollection<Inplay> PlayerBase3 { get; set; }
+
+        [InverseProperty("PlayerBatting")]
+        public ICollection<Inplay> PlayerBatting { get; set; }
 
         [Display(Name = "Team")]
         public int TeamID { get; set; }

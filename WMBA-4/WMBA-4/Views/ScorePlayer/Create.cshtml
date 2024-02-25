@@ -1,0 +1,95 @@
+﻿@model WMBA_4.Models.GameLineUp
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
+                    @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
+                    {
+                        <h3 style="text-align: left;">@ViewBag.Teams[0].Name</h3>
+                        if (ViewBag.Teams.Count > 1)
+                        {
+                            <h3 style="text-align: right;">@ViewBag.Teams[1].Name</h3>
+                        }
+                    }
+                </div>
+                <div class="d-flex justify-content-around bg-light p-3">
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <h4 id="strikes">Strikes: @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                        <h4 id="outs">Outs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
+                        <h4 id="fouls">Fouls: @(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</h4>
+                        <h4 id="balls">Balls: @(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</h4>
+                    }
+                </div>
+                <br />
+                <div>
+                    <h5 class="card-title">Inning:</h5>
+                    @if (ViewBag.FirstPlayer != null)
+                    {
+                        <h5 id="playerAtBat" class="card-title">Player at bat: @ViewBag.FirstPlayer</h5>
+                    }
+                </div>
+                <img src="/images/baseball-diamond.png" class="card-img-top mx-auto d-block" alt="diamond baseball">
+                <div class="card-body">
+
+                    <a href="#" class="btn btn-kelly mx-1">Ball</a>
+                    <a href="#" class="btn btn-kelly mx-1">Strike</a>
+                    <a href="#" class="btn btn-kelly mx-1">Foul</a>
+                    <a href="#" class="btn btn-kelly mx-1">HBP</a>
+                    <a href="#" class="btn btn-kelly mx-1">Out</a>
+                    <a href="#" class="btn btn-kelly mx-1">In Play</a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="d-flex justify-content-around mt-3">
+    <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-secondary rounded-circle p-3">Start</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">New Ining</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">LineUp</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
+</div>
+
+@section Styles {
+    <style>
+        .btn.rounded-circle {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 30px;
+        }
+    </style>
+}
+<script>
+    $(document).ready(function () {
+        $('#startButton').click(function (e) {
+            e.preventDefault();
+
+            $.ajax({
+                url: $(this).attr('href'),
+                type: 'GET',
+                success: function (data) {
+                    $('#strikes').text('Strikes: ' + data.Inplay.Strikes);
+                    $('#outs').text('Outs: ' + data.Inplay.Outs);
+                    $('#fouls').text('Fouls: ' + data.Inplay.Fouls);
+                    $('#balls').text('Balls: ' + data.Inplay.Balls);
+                    $('#playerAtBat').text('Player at bat: ' + data.FirstPlayer);
+                },
+                error: function () {
+                    
+                }
+            });
+        });
+    });
+</script>
