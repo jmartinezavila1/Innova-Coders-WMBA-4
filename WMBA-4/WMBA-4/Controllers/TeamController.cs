@@ -293,6 +293,12 @@ namespace WMBA_4.Controllers
             }
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
 
+            if (!team.Status) // Check if team is inactive
+            {
+                TempData["ErrorMessage"] = "The team is inactive, you cannot edit this team.";
+                return RedirectToAction("Index");
+            }
+
 
             var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
             var staffSelectItems = staffMembers.Select(s => new SelectListItem
