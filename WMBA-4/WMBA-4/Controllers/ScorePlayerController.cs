@@ -171,6 +171,11 @@ namespace WMBA_4.Controllers
                         .Select(t => new { t.Team.ID, t.Team.Name })
                         .Distinct()
                         .ToListAsync();
+            if (teams.Count == 0)
+            {
+                TempData["Message"] = "No hay alineación para estos equipos.";
+                return RedirectToAction("Index"); // redirige a la vista que quieras
+            }
             ViewData["TeamID"] = new SelectList(teams, "ID", "Name");
             ViewData["GameID"] = id;
 
@@ -181,58 +186,146 @@ namespace WMBA_4.Controllers
         }
 
         // This method is for the Start Button
+
         public async Task<IActionResult> Start(int teamId, int gameId)
         {
-            // Creating a new inning
-            var inning = new Inning
+            try
             {
-                InningNumber = 1,
-                TeamID = teamId,
-                GameID = gameId
-            };
+                // Creating a new inning
+                
+                var inning = new Inning 
+                { 
+                    InningNumber = 1, 
+                    TeamID = teamId,
+                    GameID = gameId 
+                };
 
-            // Add the inning to the context and save the changes
-            _context.Innings.Add(inning);
-            await _context.SaveChangesAsync();
+                // Add the inning to the context and save the changes
+                _context.Innings.Add(inning);
+                await _context.SaveChangesAsync();
 
-            // load the lineup data
-            var lineup = _context.GameLineUps
-                .Include(p => p.Player)
-                .Where(g => g.GameID == gameId && g.TeamID == teamId && g.BattingOrder == 1)
-                .Select(p => p.Player.FullName)
-                .FirstOrDefault();
+                // load the lineup data
+                var firstPlayer = _context.GameLineUps
+                  .Include(p => p.Player)
+                  .Where(g => g.GameID == gameId && g.TeamID == teamId && g.BattingOrder == 1)
+                  .Select(p => p.Player)
+                  .FirstOrDefault();
 
-            //load inplay data
-            var inplay = new Inplay();
+                //load inplay data
+                var inplay = new Inplay();
+                var scoreplayer = new ScorePlayer();
 
-            if (lineup == null)
+                if (firstPlayer == null)
+                {
+                    return NotFound();
+                }
+
+                inplay = new Inplay
+                {
+                    InningID = inning.ID,
+                    PlayerBattingID = firstPlayer.ID
+                };
+                _context.Inplays.Add(inplay);
+                await _context.SaveChangesAsync();
+
+                var inplay2 = _context.Inplays
+                            .Include(i => i.Inning).ThenInclude(inn => inn.Team)
+                            .Include(i => i.Inning).ThenInclude(inn => inn.Game)
+                            .Include(i => i.PlayerBatting)
+                            .Where(i => i.InningID == inning.ID)
+                            .FirstOrDefault();
+
+
+
+                if (inplay2 == null)
+                {
+                    return NotFound();
+                }
+
+
+                var inplayData = new
+                {
+                    ID= inplay2.ID,
+                    Runs = inplay2.Runs,
+                    Strikes = inplay2.Strikes,
+                    Outs = inplay2.Outs,
+                    Fouls = inplay2.Fouls,
+                    Balls = inplay2.Balls,
+                    InningNumber = inplay2.Inning.InningNumber,
+                    FirstPlayer = firstPlayer != null ? firstPlayer.FullName : "N/A"
+                };
+
+                scoreplayer = new ScorePlayer
+                {
+                    GameLineUpID = firstPlayer.ID,
+                };
+                _context.ScorePlayers.Add(scoreplayer);
+                await _context.SaveChangesAsync();
+
+
+
+                return Json(new { Inplay = inplayData });
+            }
+            catch (Exception ex)
+            {
+                return Problem(ex.Message);
+            }
+
+        }
+
+
+        //Meotodo para el conteo de bolas
+
+        [HttpPost]
+        public async Task<IActionResult> CountBalls(int inplayId)
+        {
+            // get the inplay record
+            var inplay = await _context.Inplays.FindAsync(inplayId);
+            if (inplay == null)
             {
                 return NotFound();
             }
 
-            inplay = new Inplay
+            //if the balls are less than 4, increment the balls
+            if (inplay.Balls < 4)
             {
-                InningID = inning.ID,
+                inplay.Balls++;
+            }
 
-            };
-            _context.Inplays.Add(inplay);
+            //if the balls are 4, increment the PA and BB in ScorePlayer
+            if (inplay.Balls == 4)
+            {
+           
+
+                var lineupID = _context.GameLineUps
+                    .Where(g => g.PlayerID == inplay.PlayerBattingID)
+                    .Select(g => g.ID)
+                    .FirstOrDefault();
+
+                var scorePlayer = await _context.ScorePlayers
+                    .Where(sp => sp.GameLineUpID == lineupID)
+                    .FirstOrDefaultAsync();
+
+                if (scorePlayer == null)
+                {
+                    return NotFound();
+                }
+
+                //// Actualiza los campos PA y BB
+                scorePlayer.PA = 1;
+                scorePlayer.BB = 1;
+            }
+
+            // Guarda los cambios en la base de datos
             await _context.SaveChangesAsync();
 
-            var inplayScores = _context.Inplays
-            .Where(i => i.InningID == inning.ID)
-            .FirstOrDefault();
-
-            // pass the data to the view
-            //ViewBag.FirstPlayer = lineup;
-            //ViewBag.Inplay = inplayScores;
-
-
-            return Json(new { Inplay = inplayScores, FirstPlayer = lineup });
-            //return View("Create");
+            // Devuelve una respuesta
+            return Json(new { Inplay = inplay });
         }
 
-        // GET: ScorePlayer/Create
-        public async Task<IActionResult> Create(int GameID, int TeamID)
+
+        // GET: First screen of ScorePlayer
+        public async Task<IActionResult> ScoreKeeping(int GameID, int TeamID)
         {
 
             var teams = await _context.GameLineUps
@@ -257,113 +350,10 @@ namespace WMBA_4.Controllers
             return View();
         }
 
-        // POST: ScorePlayer/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,H,RBI,Singles,Doubles,Triples,HR,BB,PA,AB,Run,HBP,StrikeOut,Out,Fouls,Balls,BattingOrder,Position,GameLineUpID")] ScorePlayer scorePlayer)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(scorePlayer);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GameLineUpID"] = new SelectList(_context.GameLineUps, "ID", "ID", scorePlayer.GameLineUpID);
-            return View(scorePlayer);
-        }
 
-        // GET: ScorePlayer/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null || _context.ScorePlayers == null)
-            {
-                return NotFound();
-            }
 
-            var scorePlayer = await _context.ScorePlayers.FindAsync(id);
-            if (scorePlayer == null)
-            {
-                return NotFound();
-            }
-            ViewData["GameLineUpID"] = new SelectList(_context.GameLineUps, "ID", "ID", scorePlayer.GameLineUpID);
-            return View(scorePlayer);
-        }
 
-        // POST: ScorePlayer/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,H,RBI,Singles,Doubles,Triples,HR,BB,PA,AB,Run,HBP,StrikeOut,Out,Fouls,Balls,BattingOrder,Position,GameLineUpID")] ScorePlayer scorePlayer)
-        {
-            if (id != scorePlayer.ID)
-            {
-                return NotFound();
-            }
 
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(scorePlayer);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ScorePlayerExists(scorePlayer.ID))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["GameLineUpID"] = new SelectList(_context.GameLineUps, "ID", "ID", scorePlayer.GameLineUpID);
-            return View(scorePlayer);
-        }
-
-        // GET: ScorePlayer/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.ScorePlayers == null)
-            {
-                return NotFound();
-            }
-
-            var scorePlayer = await _context.ScorePlayers
-                .Include(s => s.GameLineUp)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (scorePlayer == null)
-            {
-                return NotFound();
-            }
-
-            return View(scorePlayer);
-        }
-
-        // POST: ScorePlayer/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            if (_context.ScorePlayers == null)
-            {
-                return Problem("Entity set 'WMBA_4_Context.ScorePlayers'  is null.");
-            }
-            var scorePlayer = await _context.ScorePlayers.FindAsync(id);
-            if (scorePlayer != null)
-            {
-                _context.ScorePlayers.Remove(scorePlayer);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool ScorePlayerExists(int id)
         {
