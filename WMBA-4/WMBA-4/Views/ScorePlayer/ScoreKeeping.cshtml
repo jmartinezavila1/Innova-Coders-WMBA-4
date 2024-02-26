@@ -1,0 +1,150 @@
+﻿@model WMBA_4.Models.GameLineUp
+
+@{
+    ViewData["Title"] = "ScoreKeeping";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="ScoreKeeping">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="card">
+                <div class="card-header" style="display: flex; justify-content: space-between;">
+                    @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
+                    {
+                        <h3 style="text-align: left;">@ViewBag.Teams[0].Name</h3>
+                        @if (ViewBag.Inplay != null)
+                        {
+                            <h4 id="runs">Runs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Runs : "")</h4>
+
+                        }
+                        if (ViewBag.Teams.Count > 1)
+                        {
+                            <h3 style="text-align: right;">@ViewBag.Teams[1].Name</h3>
+                        }
+                    }
+                </div>
+                <div class="d-flex justify-content-around bg-light p-3">
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <h4 id="strikes">Strikes: @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                        <h4 id="outs">Outs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
+                        <h4 id="fouls">Fouls: @(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</h4>
+                        <h4 id="balls">Balls: <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
+                    }
+                </div>
+                <br />
+                <div>
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <h5 id="inning" class="card-title">Inning: @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "N/A")</h5>
+                        <h5 id="playerAtBat" class="card-title">Player at bat: @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "N/A")</h5>
+                    }
+                </div>
+                <div>
+                    <img src="/images/baseball-diamond.png" class="card-img-top mx-auto d-block" alt="diamond baseball">
+
+                </div>
+                <div>
+                    @if (ViewBag.Inplay != null)
+                    {
+
+                        <h3 id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
+                    }
+                </div>
+
+                <div class="card-body">
+
+                    <a id="ballsButton" class="btn btn-kelly mx-1">Ball</a>
+                    <a href="#" class="btn btn-kelly mx-1">Strike</a>
+                    <a href="#" class="btn btn-kelly mx-1">Foul</a>
+                    <a href="#" class="btn btn-kelly mx-1">HBP</a>
+                    <a href="#" class="btn btn-kelly mx-1">Out</a>
+                    <a href="#" class="btn btn-kelly mx-1">In Play</a>
+
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="d-flex justify-content-around mt-3">
+    <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-secondary rounded-circle p-3">Start</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">New Ining</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">LineUp</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
+    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
+</div>
+
+@* Boton de inicio de juego *@
+<script>
+    $(document).ready(function () {
+        $('#startButton').click(function (e) {
+            e.preventDefault();
+
+            // Disable the button
+            $(this).prop('disabled', true);
+
+            var url = $(this).attr('href');
+            url = url.replace('http://', 'https://');
+
+            $.ajax({
+                url: url,
+                type: 'GET',
+
+                success: function (data) {
+                    if (data.inplay) {
+                        $('#inplayId').text(data.inplay.id);
+                        $('#strikes').text('Strikes: ' + data.inplay.strikes);
+                        $('#outs').text('Outs: ' + data.inplay.outs);
+                        $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                        $('#balls').text('Balls: ' + data.inplay.balls);
+                        $('#runs').text('Runs: ' + data.inplay.runs);
+                        $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                        $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    } else {
+                        console.log('inplay is undefined');
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
+</script>
+
+@* Conteo de bolas *@
+<script>
+    $('#ballsButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').text();
+
+        $.ajax({
+            url: '/ScorePlayer/CountBalls',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+                // Actualiza el contador de Balls en la vista
+                $('#ballsCount').text(data.inplay.balls);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    });
+</script>
+
+@section Styles {
+    <style>
+        .btn.rounded-circle {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 30px;
+        }
+    </style>
+}

@@ -1,7 +1,7 @@
 ﻿@model WMBA_4.Models.GameLineUp
 
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "ScoreKeeping";
 }
 
 <h1>Witch Team are you scoring?</h1>
@@ -9,7 +9,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" method="get">
+        <form asp-action="ScoreKeeping" method="get">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="TeamID" class="control-label"></label>
