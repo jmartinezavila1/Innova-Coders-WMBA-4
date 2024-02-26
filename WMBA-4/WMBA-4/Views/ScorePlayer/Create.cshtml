@@ -36,7 +36,7 @@
                         <h5 id="playerAtBat" class="card-title">Player at bat: @ViewBag.FirstPlayer</h5>
                     }
                 </div>
-                <img src="/images/baseball-diamond.png" class="card-img-top mx-auto d-block" alt="diamond baseball">
+                @* <img src="/images/baseball-diamond.png" class="card-img-top mx-auto d-block" alt="diamond baseball"> *@
                 <div class="card-body">
 
                     <a href="#" class="btn btn-kelly mx-1">Ball</a>
@@ -48,6 +48,10 @@
                 </div>
             </div>
         </form>
+        <div style="display: flex; flex-direction: column;">
+            <partial name="_Field" />
+            <button onclick="moveButton()">Click</button>
+        </div>
     </div>
 </div>
 <div class="d-flex justify-content-around mt-3">
@@ -92,4 +96,11 @@
             });
         });
     });
+</script>
+
+<script>
+    function moveButton() {
+        var buttonGroup = document.getElementById("buttonGroup");
+        buttonGroup.setAttribute("transform", "translate(400, 365)");
+    }
 </script>

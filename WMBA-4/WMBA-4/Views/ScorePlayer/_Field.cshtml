@@ -1,0 +1,43 @@
+﻿<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 800" id="baseballContainer">
+    <!-- Field -->
+    <polygon points="0,0 0,320 300,610 600,320 600,0" class="field" />
+    <polygon points="300,580 315.18,565.58 300,565.58 300,580" fill="white" />
+    <path d="M 300,590 L 520.18,370.58 A 22,20 0 0 0 70.82,360 Z" class="home-base" />
+
+    <!-- in field -->
+    <polygon points="300,220 430,350 300,480 170,350" class="field" transform="translate(0, 50)" />
+
+    <!-- 1st base -->
+    <circle cx="440" cy="400" r="30" class="home-base" />
+    <polygon points="200,147 287,233 200,320 113,233" fill="white" transform="translate(405, 370) scale(0.13)" />
+
+    <!-- 2nd base -->
+    <circle cx="300" cy="265" r="30" class="home-base" />
+    <polygon points="200,147 287,233 200,320 113,233" fill="white" transform="translate(274, 242) scale(0.13)" />
+
+    <!-- 3rd base -->
+    <circle cx="160" cy="400" r="30" class="home-base" />
+    <polygon points="200,147 287,233 200,320 113,233" fill="white" transform="translate(142, 370) scale(0.13)" />
+
+    <!-- Home base feild -->
+    <circle cx="300" cy="560" r="50" class="home-base" stroke-width="2" />
+
+    <!-- Foul line -->
+    <line x1="0" y1="280" x2="265" y2="545.74" stroke="white" stroke-width="1" />
+    <line x1="600" y1="280" x2="335" y2="545.74" stroke="white" stroke-width="1" />
+
+    <!-- Pitch -->
+    <circle cx="300" cy="400" r="38" fill="white" stroke="white" stroke-width="2" />
+
+    <!-- Home base -->
+    <polygon points="300,570 315.18,560.58 314.81,545.58 285.19,545.58 284.82,560.58" fill="white" />
+    <rect x="265" y="546" width="15" height="40" fill="none" stroke="white" stroke-width="1" />
+    <rect x="320" y="546" width="15" height="40" fill="none" stroke="white" stroke-width="1" />
+
+    <!-- Player name with jersey -->
+    <g id="buttonGroup" transform="translate(265, 520)">
+        <rect id="buttonRect" x="0" y="0" width="70" height="70" />
+        <text id="playerText" x="25" y="25" onclick="moveButton()">Player</text>
+        <text id="playerNumber" x="25" y="40" onclick="moveButton()">#00</text>
+    </g>
+</svg>

@@ -26,7 +26,6 @@ namespace WMBA_4.Controllers
 
             var players = from p in _context.Players
                                     .Include(p => p.Team).ThenInclude(d => d.Division)
-                                    .OrderByDescending(s => s.Status)
                                     .AsNoTracking()
                           select p;
 
@@ -52,9 +51,11 @@ namespace WMBA_4.Controllers
                 players = players.Where(p => p.Status == false);
             }
 
-            players = players.OrderByDescending(p => p.Status) // Active players first
-                    .ThenBy(p => p.LastName)             // Order by last name
-                    .ThenBy(p => p.FirstName);           // Then by first name
+            players = players // Active players first
+                    .OrderBy(p => p.FirstName)
+                    .ThenBy(p => p.LastName)
+                    .ThenBy(p=>p.TeamID)
+                    .ThenBy(p=>p.Team.DivisionID);        // Order by last name
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
