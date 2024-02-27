@@ -17,6 +17,9 @@ namespace WMBA_4.Controllers
 
         public async Task<IActionResult> Index()
         {
+            var divisionCount = await _context.Divisions
+            .Where(d => d.Status == true)
+            .CountAsync();
             var playerCount = await _context.Players
             .Where(p => p.Status == true)
             .CountAsync();
@@ -27,6 +30,7 @@ namespace WMBA_4.Controllers
            .Where(t => t.Status == true)
            .CountAsync();
 
+            ViewBag.DivisionCount = divisionCount;
             ViewBag.PlayerCount = playerCount;
             ViewBag.GameCount = gameCount;
             ViewBag.TeamCount = teamCount;

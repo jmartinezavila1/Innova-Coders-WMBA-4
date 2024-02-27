@@ -8,8 +8,20 @@
         <ol class="breadcrumb mb-4">
             <li class="breadcrumb-item active">Season 2024</li>
         </ol>
-        <div class="row">
-            <div class="col-xl-3 col-md-6">
+        @* Current entities counts boxes *@
+        <div class="row" data-masonry='{"percentPosition": true }'>
+            <div class="col-xl-3 col-md-3">
+                <div class="card text-black mb-4">
+                    <div class="card-body d-flex justify-content-around">
+                        <span>Total Divisions</span>
+                        <span>@ViewBag.DivisionCount</span>
+                    </div>
+                    <div class="card-footer d-flex align-items-center justify-content-between">
+                        <a class="small text-black stretched-link" asp-area="" asp-controller="Division" asp-action="Index">View Divisions</a>
+                        <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                    </div>
+                </div>
+            </div><div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4">
                     <div class="card-body d-flex justify-content-around">
                         <span>Total Teams</span>
@@ -21,7 +33,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4">
                     <div class="card-body d-flex justify-content-around">
                         <span>Total Player</span>
@@ -33,7 +45,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6">
+            <div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4">
                     <div class="card-body d-flex justify-content-around">
                         <span>Total Games</span>
@@ -46,45 +58,84 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-xl-6">
-                <div class="card mb-4">
-                    <div class="card-header">
-                        Import Teams
-                    </div>
-                    <div class="card-body">
-                        <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
-                            <div class="row justify-content-evenly">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="control-label custom-file-label">Upload Excel File:</label>
-                                        <div class="input-group mb-3">
-                                            <input type="file" class="form-control" name="theExcel" id="theExcel">
-                                        </div>
-                                        <div>
-                                            Files must be less than 100 MB.<br />
-                                            Allowed file types: .xls, .xlsx
-                                        </div>
+        @* import box *@
+        <div class="col-xl-6">
+            <div class="card mb-4">
+                <div class="card-header">
+                    Import Teams
+                </div>
+                <div class="card-body">
+                    <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
+                        <div class="row justify-content-evenly">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="control-label custom-file-label">Upload Excel File:</label>
+                                    <div class="input-group mb-3">
+                                        <input type="file" class="form-control" name="theExcel" id="theExcel">
                                     </div>
-                                    <div class="form-group">
-                                        <input type="submit" value="Upload Data" class="btn btn-kelly" />
+                                    <div>
+                                        Files must be less than 100 MB.<br />
+                                        Allowed file types: .xls, .xlsx
                                     </div>
                                 </div>
-                                <div class="col-md-7">
-                                    <ul>
-                                        <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
-                                        <li>Begin entering the data from the second row of your spreadsheet.</li>
-                                        <li>We recommend downloading the template to expedite your work.</li>
-                                    </ul>
-
-                                </div>
-                                <div style="text-align: center;">
-                                    <a asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate" class="btn-kelly btn-text text-no-deco"><i class="bi bi-download"></i>Template</a>
+                                <div class="form-group">
+                                    <input type="submit" value="Upload Data" class="btn btn-kelly" />
                                 </div>
                             </div>
-                        </form>
+                            <div class="col-md-7">
+                                <ul>
+                                    <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
+                                    <li>Begin entering the data from the second row of your spreadsheet.</li>
+                                    <li>We recommend downloading the template to expedite your work.</li>
+                                </ul>
+
+                            </div>
+                            <div style="text-align: center;">
+                                <a asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate" class="btn-kelly btn-text text-no-deco"><i class="bi bi-download"></i>Template</a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        @* Game Assignments *@
+        @* Will develop for game assingment *@
+        <div class="col-xl-6">
+            <div id="myCarousel" class="carousel slide mb-6" data-bs-ride="carousel">
+                <div class="carousel-inner" >
+                    <div class="carousel-item active">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                            <div class="carousel-caption text-start">
+                                <p><a class="btn btn-lg btn-primary" href="#">Sign up today</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                            <div class="carousel-caption">
+                                <p><a class="btn btn-lg btn-primary" href="#">Learn more</a></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                            <div class="carousel-caption text-end">
+                                <p><a class="btn btn-lg btn-primary" href="#">Browse gallery</a></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span class="visually-hidden">Next</span>
+                </button>
             </div>
         </div>
     </div>
