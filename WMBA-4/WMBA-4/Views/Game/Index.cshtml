@@ -92,7 +92,7 @@
                             <input type="submit" name="actionButton" value="GameType" class="text-column" />
                         </th>
                         <th>
-                            <input type="submit" value="Edit/Inactive" class="text-column" />
+                            <input type="submit" value="Edit/Status" class="text-column" />
                         </th>
                     </tr>
                 </thead>
@@ -158,7 +158,9 @@
                             <td>
                                 @Html.DisplayFor(modelItem => item2.GameType.Description)
                             </td>
-                            <td>
+                            
+                            
+@*                             <td>
                                 <a asp-action="Edit" asp-route-id="@item2.ID">
                                     <span class="material-symbols-outlined ft-light-grey px-1">
                                         edit
@@ -166,10 +168,51 @@
                                 </a>
                                 <a asp-action="Delete" asp-route-id="@item2.ID">
                                     <span class="material-symbols-outlined ft-light-grey px-1">
-                                        delete
+                                        sports_baseball
                                     </span>
                                 </a>
+                            </td> *@
+
+                            <td>
+                                @if (item2.Status == true)
+                                {
+                                <a asp-action="Edit" asp-route-id="@item2.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            edit
+                                        </span>
+                                </a>
+@*                                 <a asp-action="Details" asp-route-id="@item2.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            visibility
+                                        </span>
+                                </a> *@
+                                <a asp-action="Delete" asp-route-id="@item2.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-2">
+                                            sports_baseball
+                                        </span>
+                                </a>
+                                }
+                                else
+                                {
+                                    <div class="d-inline">
+                                        <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);">
+                                            edit
+                                        </span>
+                                    </div>
+@*                                     <a asp-action="Details" asp-route-id="@item2.ID">
+                                        <span class="material-symbols-outlined px-1">
+                                            visibility
+                                        </span>
+                                    </a> *@
+                                    <a asp-action="Delete" asp-route-id="@item2.ID">
+                                        <span class="material-symbols-outlined px-2">
+                                            sport_baseball_inactive
+                                        </span>
+                                    </a>
+                                }
                             </td>
+
+
                         </tr>
                     }
                 </tbody>

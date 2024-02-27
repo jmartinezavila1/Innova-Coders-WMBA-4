@@ -25,19 +25,18 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
+
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+
             IQueryable<Game> games = _context.Games
             .Include(g => g.GameType)
             .Include(g => g.Location)
             .Include(g => g.Season)
             .Include(t => t.TeamGames)
                 .ThenInclude(t => t.Team)
-                    .ThenInclude(d => d.Division)            
-            .Where(s => s.Status == true);
-
-            //if (!string.IsNullOrEmpty(seasonName))
-            //{
-            //    games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
-            //}
+                    .ThenInclude(d => d.Division);         
+            //.Where(s => s.Status == true);
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Division", "Location", "GameType", "Date" };
@@ -46,15 +45,33 @@ namespace WMBA_4.Controllers
             if (divisionID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.Team.DivisionID == divisionID));
+                numberFilters++;
             }
             if (GameTypeID.HasValue)
             {
                 games = games.Where(g => g.GameTypeID == GameTypeID);
+                numberFilters++;
             }
             if (!System.String.IsNullOrEmpty(SearchString))
             {
                 games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
             }
+
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                //@ViewData["ShowFilter"] = " show";
+            }
+
+            games = games.OrderByDescending(g => g.Status) // Active games first
+                    .ThenBy(g => g.Date);             // Order by last name
+
 
             if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -142,6 +159,27 @@ namespace WMBA_4.Controllers
 
             //return View(await games.ToListAsync());
             return View(pagedData);
+        }
+
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var game = await _context.Games.FindAsync(id);
+            if (game == null)
+            {
+                return NotFound();
+            }
+
+            // Set the player's status to active
+            game.Status = true;
+            _context.Games.Update(game);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Game/Details/5
@@ -518,7 +556,7 @@ namespace WMBA_4.Controllers
             }
             catch (DbUpdateException)
             {
-                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+                ModelState.AddModelError("", "Unable to Inactive record. Try again, and if the problem persists see your system administrator.");
             }
             await _context.SaveChangesAsync();
             //return RedirectToAction("RedirectToTeamList", new { teamId });
