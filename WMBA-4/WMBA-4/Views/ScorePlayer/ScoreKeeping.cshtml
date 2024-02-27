@@ -71,10 +71,62 @@
 <div class="d-flex justify-content-around mt-3">
     <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-secondary rounded-circle p-3">Start</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">New Ining</a>
-    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">LineUp</a>
+    <a href="#" id="lineupButton" class="btn btn-secondary rounded-circle p-3" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">LineUp</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
 </div>
+
+<div id="lineupPopup" class="popup-container" style="display: none;">
+    <div class="popup-content">
+        <button id="closeButton" class="close">&times;</button> <!-- "x" button -->
+        <!-- This is where the lineup view will be loaded -->
+        <button id="popoverButton" class="btn btn-secondary">Open Popover</button>
+        <div id="popoverContent" style="display: none;">
+            <!-- Popover content goes here -->
+            This is the content of the popover.
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Existing code for the start button AJAX request goes here
+            $('#popoverButton').popover({
+                container: 'body',
+                content: $('#popoverContent').html(),
+                html: true,
+                title: 'Popover Title',
+            });
+
+            $('#lineupButton').click(function (e) {
+                e.preventDefault();
+
+                var gameId = $(this).data('gameid');
+                var teamId = $(this).data('teamid');
+
+                $.ajax({
+                    url: '/ScorePlayer/GetLineup', // Change the URL to your endpoint that returns the lineup view
+                    type: 'GET',
+                    data: { gameId: gameId, teamId: teamId },
+                    success: function (data) {
+                        $('#lineupPopup .popup-content').html(data);
+                        $('#lineupPopup').show();
+                    },
+                    error: function () {
+                        console.error('Failed to fetch lineup data.');
+                    }
+                });
+            });
+
+            $(document).click(function (e) {
+                if (!$(e.target).closest('#lineupPopup').length) {
+                    $('#lineupPopup').hide();
+                }
+            });
+        });
+    </script>
+}
 
 @* Boton de inicio de juego *@
 <script>

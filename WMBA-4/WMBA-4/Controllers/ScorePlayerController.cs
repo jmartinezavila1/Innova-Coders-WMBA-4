@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using WMBA_4.Data;
@@ -350,7 +346,16 @@ namespace WMBA_4.Controllers
             return View();
         }
 
+        // GET: Lineup
+        public async Task<IActionResult> GetLineup(int gameId, int teamId)
+        {
+            var lineup = await _context.GameLineUps
+                .Include(gl => gl.Player)
+                .Where(gl => gl.GameID == gameId && gl.TeamID == teamId)
+                .ToListAsync();
 
+            return PartialView("_LineupView", lineup);
+        }
 
 
 

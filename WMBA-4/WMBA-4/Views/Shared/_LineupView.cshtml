@@ -1,0 +1,22 @@
+﻿@model List<WMBA_4.Models.GameLineUp>
+
+<div class="lineup-container">
+    <h3>Lineup</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Batting Position</th>
+                <th>Player</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var player in Model)
+            {
+                <tr>
+                    <td>@player.BattingOrder</td>
+                    <td>@player.Player.FullName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
