@@ -27,10 +27,11 @@
                 <div class="d-flex justify-content-around bg-light p-3">
                     @if (ViewBag.Inplay != null)
                     {
-                        <h4 id="strikes">Strikes: @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                        <h4 id="strikeText">Strikes: <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
                         <h4 id="outs">Outs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
                         <h4 id="fouls">Fouls: @(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</h4>
-                        <h4 id="balls">Balls: <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
+
+                        <h4 id="ballsText">Balls: <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
                     }
                 </div>
                 <br />
@@ -49,19 +50,18 @@
                     @if (ViewBag.Inplay != null)
                     {
 
-                        <h3 id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
+                        <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
                     }
                 </div>
 
                 <div class="card-body">
 
                     <a id="ballsButton" class="btn btn-kelly mx-1">Ball</a>
-                    <a href="#" class="btn btn-kelly mx-1">Strike</a>
-                    <a href="#" class="btn btn-kelly mx-1">Foul</a>
-                    <a href="#" class="btn btn-kelly mx-1">HBP</a>
-                    <a href="#" class="btn btn-kelly mx-1">Out</a>
+                    <a id="strikeButton" class="btn btn-kelly mx-1">Strike</a>
+                    <a id="foulButton" class="btn btn-kelly mx-1">Foul</a>
+                    <a id="hbpButton" class="btn btn-kelly mx-1">HBP</a>
+                    <a id="outButton" class="btn btn-kelly mx-1">Out</a>
                     <a href="#" class="btn btn-kelly mx-1">In Play</a>
-
 
                 </div>
             </div>
@@ -71,14 +71,26 @@
 <div class="d-flex justify-content-around mt-3">
     <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-secondary rounded-circle p-3">Start</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">New Ining</a>
-    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">LineUp</a>
+    <a href="#" id="lineupButton" class="btn btn-secondary rounded-circle p-3" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">LineUp</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
 </div>
+<div id="lineupPopup" class="popup-container" style="display: none;">
+    <div class="popup-content">
+        <button id="closeButton" class="close">&times;</button> <!-- "x" button -->
+        <!-- This is where the lineup view will be loaded -->
+        <button id="popoverButton" class="btn btn-secondary">Open Popover</button>
+        <div id="popoverContent" style="display: none;">
+            <!-- Popover content goes here -->
+            This is the content of the popover.
+        </div>
+    </div>
+</div>
 
-@* Boton de inicio de juego *@
+@* Script for Button´s action *@
 <script>
     $(document).ready(function () {
+        // Start Button
         $('#startButton').click(function (e) {
             e.preventDefault();
 
@@ -94,11 +106,11 @@
 
                 success: function (data) {
                     if (data.inplay) {
-                        $('#inplayId').text(data.inplay.id);
-                        $('#strikes').text('Strikes: ' + data.inplay.strikes);
+                        $('#inplayId').val(data.inplay.id);
+                        $('#strikesCount').text(data.inplay.strikes);
                         $('#outs').text('Outs: ' + data.inplay.outs);
                         $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                        $('#balls').text('Balls: ' + data.inplay.balls);
+                        $('#ballsCount').text('Balls: ' + data.inplay.balls);
                         $('#runs').text('Runs: ' + data.inplay.runs);
                         $('#inning').text('Inning: ' + data.inplay.inningNumber);
                         $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
@@ -111,29 +123,187 @@
                 }
             });
         });
-    });
-</script>
 
-@* Conteo de bolas *@
-<script>
-    $('#ballsButton').click(function (e) {
-        e.preventDefault();
-        var inplayId = $('#inplayId').text();
+        // Ball Button
 
-        $.ajax({
-            url: '/ScorePlayer/CountBalls',
-            type: 'POST',
-            data: { inplayId: inplayId },
-            success: function (data) {
-                // Actualiza el contador de Balls en la vista
-                $('#ballsCount').text(data.inplay.balls);
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(textStatus, errorThrown);
-            }
+        $('#ballsButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();;
+
+            $.ajax({
+                url: '/ScorePlayer/CountBalls',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text('Outs: ' + data.inplay.outs);
+                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
         });
+
+        // Strike Button
+
+        $('#strikeButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();;
+
+            $.ajax({
+                url: '/ScorePlayer/CountStrikes',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    // Actualiza el contador de Balls en la vista
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text('Outs: ' + data.inplay.outs);
+                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+
+        // Foul Button
+
+        $('#foulButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();;
+
+            $.ajax({
+                url: '/ScorePlayer/CountFouls',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    // Actualiza el contador de Balls en la vista
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text('Outs: ' + data.inplay.outs);
+                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+
+        // Hit by pitch Button
+
+        $('#hbpButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();;
+
+            $.ajax({
+                url: '/ScorePlayer/HitByPitch',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    // Actualiza el contador de Balls en la vista
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text('Outs: ' + data.inplay.outs);
+                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+
+        // Out Button
+
+        $('#outButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();;
+
+            $.ajax({
+                url: '/ScorePlayer/Out',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    // Actualiza el contador de Balls en la vista
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text('Outs: ' + data.inplay.outs);
+                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
+                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+        
     });
 </script>
+
+@* Script for the LineUp Button *@
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Existing code for the start button AJAX request goes here
+            $('#popoverButton').popover({
+                container: 'body',
+                content: $('#popoverContent').html(),
+                html: true,
+                title: 'Popover Title',
+            });
+
+            $('#lineupButton').click(function (e) {
+                e.preventDefault();
+
+                var gameId = $(this).data('gameid');
+                var teamId = $(this).data('teamid');
+
+                $.ajax({
+                    url: '/ScorePlayer/GetLineup', // Change the URL to your endpoint that returns the lineup view
+                    type: 'GET',
+                    data: { gameId: gameId, teamId: teamId },
+                    success: function (data) {
+                        $('#lineupPopup .popup-content').html(data);
+                        $('#lineupPopup').show();
+                    },
+                    error: function () {
+                        console.error('Failed to fetch lineup data.');
+                    }
+                });
+            });
+
+            $(document).click(function (e) {
+                if (!$(e.target).closest('#lineupPopup').length) {
+                    $('#lineupPopup').hide();
+                }
+            });
+        });
+    </script>
+}
+
+
+@* Kim can you please change this to the loyout I dont want to move your code?, if you change de design its ok *@
 
 @section Styles {
     <style>

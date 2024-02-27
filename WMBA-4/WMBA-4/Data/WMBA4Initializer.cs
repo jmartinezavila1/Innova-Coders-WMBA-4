@@ -812,54 +812,54 @@ namespace WMBA_4.Data
 
 
 
-                // ScorePlayers
-                if (!context.ScorePlayers.Any())
-                {
-                    var scorePlayers = new List<ScorePlayer>
-                    {
-                        new ScorePlayer
-                        {
-                            H = 3,
-                            RBI = 2,
-                            Singles = 2,
-                            Doubles = 1,
-                            Triples = 0,
-                            HR = 1,
-                            BB = 1,
-                            PA = 4,
-                            AB = 3,
-                            Run = 1,
-                            HBP = 0,
-                            StrikeOut = 0,
-                            Out = 0,
-                            Fouls =0,
-                            Balls = 0,
-                            GameLineUpID=1
-                        },
-                        new ScorePlayer
-                        {
-                             H = 3,
-                            RBI = 2,
-                            Singles = 2,
-                            Doubles = 1,
-                            Triples = 0,
-                            HR = 1,
-                            BB = 1,
-                            PA = 4,
-                            AB = 3,
-                            Run = 1,
-                            HBP = 0,
-                            StrikeOut = 0,
-                            Out = 0,
-                            Fouls =0,
-                            Balls = 0,
-                            GameLineUpID=1
-                        },
-                    };
+                //// ScorePlayers
+                //if (!context.ScorePlayers.Any())
+                //{
+                //    var scorePlayers = new List<ScorePlayer>
+                //    {
+                //        new ScorePlayer
+                //        {
+                //            H = 3,
+                //            RBI = 2,
+                //            Singles = 2,
+                //            Doubles = 1,
+                //            Triples = 0,
+                //            HR = 1,
+                //            BB = 1,
+                //            PA = 4,
+                //            AB = 3,
+                //            Run = 1,
+                //            HBP = 0,
+                //            StrikeOut = 0,
+                //            Out = 0,
+                //            Fouls =0,
+                //            Balls = 0,
+                //            GameLineUpID=1
+                //        },
+                //        new ScorePlayer
+                //        {
+                //             H = 3,
+                //            RBI = 2,
+                //            Singles = 2,
+                //            Doubles = 1,
+                //            Triples = 0,
+                //            HR = 1,
+                //            BB = 1,
+                //            PA = 4,
+                //            AB = 3,
+                //            Run = 1,
+                //            HBP = 0,
+                //            StrikeOut = 0,
+                //            Out = 0,
+                //            Fouls =0,
+                //            Balls = 0,
+                //            GameLineUpID=1
+                //        },
+                //    };
 
-                    context.ScorePlayers.AddRange(scorePlayers);
-                    context.SaveChanges();
-                }
+                //    context.ScorePlayers.AddRange(scorePlayers);
+                //    context.SaveChanges();
+                //}
             
             }
             catch (Exception ex)
