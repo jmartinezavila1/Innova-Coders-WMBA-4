@@ -60,6 +60,15 @@
     /*/////heights/////*/
     --h100: 100px;
 }
+/*/////////////////////////////Elements/////////////////////////////////////*/
+
+a[disabled] {
+    color: #999999;
+    cursor: not-allowed;
+    pointer-events: none; /* 링크 클릭 이벤트 비활성화 */
+}
+
+
 /*/////////////////////////////Paging color/////////////////////////////////////*/
 
 .page-item.active .page-link {
@@ -308,6 +317,11 @@ th:last-child {
     margin-bottom: 20px;
 }
 
+.n-in-flex {
+    display: flex;
+    justify-content: space-around;
+}
+
 
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 
@@ -337,12 +351,15 @@ th:last-child {
 }
 
 .material-symbols-outlined {
-    color: var(--ft-kelly);
+    /*color: var(--ft-kelly);*/
 }
 
-    .material-symbols-outlined:hover {
+    .material-symbols-outlined:hover
+     {
         color: rgba( var(--ft-dark-blue), 0.3); /*in the index operation hovers*/
     }
+
+
 
 .text-no-deco {
     text-decoration: none;
