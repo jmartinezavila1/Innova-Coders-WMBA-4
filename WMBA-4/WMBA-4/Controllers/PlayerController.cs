@@ -23,38 +23,59 @@ namespace WMBA_4.Controllers
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
+            //Count the number of filters applied - start by assuming no filters
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
 
             var players = from p in _context.Players
                                     .Include(p => p.Team).ThenInclude(d => d.Division)
-                                    .OrderByDescending(s => s.Status)
+                                    .OrderBy(s => s.Status == true)
                                     .AsNoTracking()
                           select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "Division", "Team", "Status"};
+            string[] sortOptions = new[] { "Player", "Division", "Team"};
 
             //filter
             if (TeamID.HasValue)
             {
                 players = players.Where(p => p.TeamID == TeamID);
+                numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchString))
             {
                 players = players.Where(p => p.LastName.ToUpper().Contains(SearchString.ToUpper())
                                        || p.FirstName.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
             }
             if (isActive == true)
             {
                 players = players.Where(p => p.Status == true);
+                numberFilters++;
             }
             if (isInactive == true)
             {
                 players = players.Where(p => p.Status == false);
+                numberFilters++;
             }
 
-            players = players.OrderByDescending(p => p.Status) // Active players first
-                    .ThenBy(p => p.LastName)             // Order by last name
-                    .ThenBy(p => p.FirstName);           // Then by first name
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                //@ViewData["ShowFilter"] = " show";
+            }
+
+            players = players
+                .OrderByDescending(p => p.Status) // send all false status players to the back in the list 
+                .ThenBy(p => p.FirstName)
+                .ThenBy(p => p.LastName)
+                .ThenBy(p=>p.Team.Name)
+                .ThenBy(p=>p.Team.Division.DivisionName);         
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -112,19 +133,6 @@ namespace WMBA_4.Controllers
                             .OrderByDescending(p => p.Team);
                     }
                 }
-                else
-                {
-                    if (sortDirection == "asc")
-                    {
-                        players = players
-                            .OrderByDescending(p => p.Status);
-                    }
-                    else
-                    {
-                        players = players
-                            .OrderBy(p => p.Status);
-                    }
-                }
             }
 
             ViewData["sortField"] = sortField;
@@ -138,31 +146,6 @@ namespace WMBA_4.Controllers
 
 
             return View(pagedData); ;
-        }
-
-        //POST
-        //Status update in Index view
-        [HttpPost]
-        public async Task<IActionResult> updatePlayerStatus(int id, bool status)
-        {
-            var playerToUpdate = await _context.Players.FindAsync(id);
-
-            if (playerToUpdate == null)
-            {
-                return NotFound();
-            }
-
-            playerToUpdate.Status = status;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index)); ;
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred: {ex.Message}");
-            }
         }
 
         // GET: Player/Details/5
@@ -185,6 +168,29 @@ namespace WMBA_4.Controllers
 
             return View(player);
         }
+
+        // GET: Player/Activate/5
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var player = await _context.Players.FindAsync(id);
+            if (player == null)
+            {
+                return NotFound();
+            }
+
+            // Set the player's status to active
+            player.Status = true;
+            _context.Players.Update(player);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
 
         // GET: Player/Create
         public IActionResult Create()

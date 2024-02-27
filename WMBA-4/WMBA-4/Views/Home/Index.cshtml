@@ -71,11 +71,15 @@
                                     </div>
                                 </div>
                                 <div class="col-md-7">
-                                    <p>
-                                        Put all the data to upload into the first columns of the Excel spreadsheet.<br />
-                                        Start the data in the second row of your spreadsheet to leave room for the <br />headings "ID","First Name","Last Name","Member ID","Season","Division", "Club" and "Team" in the first row.<br />
-                                        The program looks for these column headings to help make sure you uploaded the correct file.
-                                    </p>
+                                    <ul>
+                                        <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
+                                        <li>Begin entering the data from the second row of your spreadsheet.</li>
+                                        <li>We recommend downloading the template to expedite your work.</li>
+                                    </ul>
+
+                                </div>
+                                <div style="text-align: center;">
+                                    <a asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate" class="btn-kelly btn-text text-no-deco"><i class="bi bi-download"></i>Template</a>
                                 </div>
                             </div>
                         </form>

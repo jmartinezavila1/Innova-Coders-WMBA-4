@@ -172,43 +172,8 @@
                             </div>
                         </th>
                         <th>
-
-                            <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Status" class="text-column" />
-                                @if (ViewData["sortField"].ToString() == "Status")
-                                {
-                                    <div>
-                                        @if (ViewData["sortDirection"].ToString() == "asc")
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
-                                                <i class="fa-solid fa-sort-up"></i>
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
-                                                <i class="fa-solid fa-sort-down"></i>
-                                            </span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
-                                            <i class="fa-solid fa-sort-up"></i>
-                                        </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
-                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
-                                        </span>
-                                    </div>
-                                }
-                            </div>
+                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
                         </th>
-                        <th>
-                            <input type="submit" value="Edit/Detail" class="text-column" />
-                        </th>
-
                     </tr>
                 </thead>
                 <tbody>
@@ -225,30 +190,42 @@
                                 @Html.DisplayFor(modelItem => item.Team.Division.DivisionName)
                             </td>
                             <td>
-                                <div class="form-group">
-                                    <div class="form-check d-flex justify-content-center">
-                                        <input class="form-check-input status-checkbox" type="checkbox" data-player-id="@item.ID" @(item.Status ? "checked" : "") />
-                                        <span class="player-name" style="display: none;">@item.FullName</span>
+                                @if (item.Status == true)
+                                {
+                                    <a asp-action="Edit" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            edit
+                                        </span>
+                                    </a>
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            visibility
+                                        </span>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-2">
+                                            person_check
+                                        </span>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <div class="d-inline">
+                                        <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);">
+                                            edit
+                                        </span>
                                     </div>
-                                </div>
-                                @* @Html.DisplayFor(modelItem => item.Status) *@
-                            </td>
-                            <td>
-                                <a asp-action="Edit" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        edit
-                                    </span>
-                                </a>
-                                <a asp-action="Details" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        visibility
-                                    </span>
-                                </a>
-                                @*  <a asp-action="Delete" asp-route-id="@item.ID">
-                            <span class="material-symbols-outlined ft-light-grey px-1">
-                            delete
-                            </span>
-                            </a> *@
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-1">
+                                            visibility
+                                        </span>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-2">
+                                            person_off
+                                        </span>
+                                    </a>
+                                }
                             </td>
                         </tr>
                     }
@@ -258,40 +235,5 @@
         <partial name="_PagingNavBar" />
     </form>
 </div>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.status-checkbox').change(function () {
-                var playerId = $(this).data('player-id');
-                var playerName = $(this).closest('tr').find('.player-name').text();
-                var isChecked = $(this).is(':checked');
-
-                var confirmationMessage = !isChecked ? "Are you sure you want to change '" + playerName + "' status?" : "Are you sure you want to activate '" + playerName + "'?";
-
-                if (confirm(confirmationMessage)) {
-                    updatePlayerStatus(playerId, isChecked);
-                } else {
-                    $(this).prop('checked', !isChecked);
-                }
-            });
-        });
-
-        function updatePlayerStatus(playerId, isChecked) {
-            $.ajax({
-                type: 'POST',
-                url: '/Player/updatePlayerStatus',
-                data: { id: playerId, status: isChecked },
-                success: function () {
-                    alert(playerName + ' status changed successfully!');
-                },
-                error: function () {
-                    alert('An error occurred while updating the status.');
-                }
-            });
-        }
-    </script>
-}
-
 
 

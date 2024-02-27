@@ -19,51 +19,19 @@
     @* fontawesome *@
     <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
-   @*  Scorekeeperview-- Cristina Added *@
+
+    @*  Scorekeeperview-- Cristina Added *@
     @RenderSection("Styles", required: false)
 </head>
 <body class="sb-nav-fixed">
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-light-grey d-flex justify-content-between">
+    <nav class="sb-topnav navbar bg-light-grey n-in-flex">
+        <div>
+            <!-- Sidebar Toggle-->
+            <button class="btn btn-link btn-sm order-lg-1 ms-5 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly fs-5"></i></button>
+        </div>
         <!-- Navbar Brand-->
         <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
-        <!-- Sidebar Toggle-->
-        <button class="btn btn-link btn-sm order-1 order-lg-1 me-5 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly fs-5"></i></button>
-        <!-- Navbar Search-->
-        <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-            @* <div class="input-group">
-            <input class="form-control" type="text" placeholder="Search for..." aria-label="Search for..." aria-describedby="btnNavbarSearch">
-            <button class="btn bg-kelly" id="btnNavbarSearch" type="button"><i class="fas fa-search ft-white"></i></button>
-            </div> *@
-        </form>
-        @* <div class="mb-0"> *@
-        <!-- Setting-->
-        @* <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li class="nav-item dropdown d-flex">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-gear ft-kelly"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="navbarDropdown"> *@
-        @* <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">City</a>
-        </li> *@
-        @* <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Divicsion" asp-action="Index">Division</a>
-        </li> *@
-        @* <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Season Game</a>
-        </li> *@
-        @* </ul> *@
-        @* <!-- User-->
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fas fa-user fa-fw ft-kelly"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-        <partial name="_LoginPartial" />
-        </ul>
-        </li>
-        </ul>
-        </li>*@
-        @*   </ul>
-        </div> *@
+        <div></div>
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
