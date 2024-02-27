@@ -4,9 +4,9 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Delete</h1>
+<h1>Inactive</h1>
 
-<h3 class="text-red">Are you sure you want to delete this game?</h3>
+@* <h3 class="text-red">Are you sure you want to Inactive this game?</h3>*@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <div>
     <hr />
@@ -47,10 +47,41 @@
 
     </dl>
 
-    <form asp-action="Delete" class="form-group ">
+@*     <form asp-action="Inactive" class="form-group ">
         <input type="hidden" asp-for="ID" />
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-        <input type="submit" value="Delete" class="btn btn-danger mx-1" />
+        <input type="submit" value="Inactive" class="btn btn-danger mx-1" />
+    </form> *@
+
+    <form id="deleteForm" asp-action="Delete" class="form-group">
+        <input type="hidden" asp-for="ID" />
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+        
+         @{
+            if (Model.Status) // If team is active
+            {
+                <button type="button" onclick="confirmDelete()" class="btn btn-danger mx-1">Inactive</button>
+            }
+            else // If team is inactive
+            {
+                <button type="button" onclick="confirmActivate()" class="btn btn-success mx-1">Activate</button>
+            }
+        }
     </form>
 </div>
-@* MG *@
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            if (confirm('Are you sure you want to inactive this Game?')) {
+                document.getElementById("deleteForm").submit();
+            }
+        }
+
+        function confirmActivate() {
+            if (confirm('Are you sure you want to activate this Game?')) {
+                location.href = '@Url.Action("Activate", "Game", new { id = Model.ID })';
+            }
+        }
+    </script>
+}
