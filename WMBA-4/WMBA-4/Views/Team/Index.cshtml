@@ -81,21 +81,42 @@
                                 @Html.DisplayFor(modelItem => item.Division.DivisionName)
                             </td>
                             <td>
+                                @if (item.Status == true)
+                                {
                                 <a asp-action="Edit" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        edit
-                                    </span>
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            edit
+                                        </span>
                                 </a>
                                 <a asp-action="Details" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        visibility
-                                    </span>
+                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                            visibility
+                                        </span>
                                 </a>
                                 <a asp-action="Delete" asp-route-id="@item.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                        delete
-                                    </span>
+                                        <span class="material-symbols-outlined ft-kelly px-2">
+                                            groupcheck
+                                        </span>
                                 </a>
+                                }
+                                else
+                                {
+                                    <div class="d-inline">
+                                        <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);">
+                                            edit
+                                        </span>
+                                    </div>
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-1">
+                                            visibility
+                                        </span>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-2">
+                                            group_off
+                                        </span>
+                                    </a>
+                                }
                             </td>
                         </tr>
                     }
