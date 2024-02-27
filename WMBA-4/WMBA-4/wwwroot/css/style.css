@@ -402,6 +402,20 @@ div > .nav-hover:hover {
     background-color: #f2f2f2; /* Change background color for inactive players */
     color: #999; /* Change text color for inactive players */
 }
+#lineupPopup {
+    position: absolute;
+    top: 50%; /* Adjust as needed */
+    left: 50%; /* Adjust as needed */
+    transform: translate(-50%, -50%);
+    z-index: 9999; /* Ensure the popup appears on top of other elements */
+    display: none;
+}
 
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
