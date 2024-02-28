@@ -19,6 +19,7 @@
     <div class="row">
         <div class="col-md-4">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            @*@Html.ValidationSummary(true, "", new { @class = "text-danger" }) <!-- Add this line -->*@
 
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
@@ -36,7 +37,7 @@
             <div class="form-group">
                 <label asp-for="LocationID" class="control-label"></label>
                 <select asp-for="LocationID" class="form-control" asp-items="ViewBag.LocationID"></select>
-                <input type="hidden" id="LocationName" name="LocationName" />
+                @*<input type="hidden" id="LocationName" name="LocationName" />*@
             </div>
             <div class="form-group">
                 <label asp-for="SeasonID" class="control-label"></label>
@@ -60,11 +61,11 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
+@*     <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script> *@
 
-    <script>
+@*     <script>
         $(document).ready(function() {
             $('#LocationID').select2({
                 tags: true
@@ -91,33 +92,44 @@
                 $('#LocationName').val(selectedLocationName);
             });            
         });
-    </script>
+    </script>     *@
 
-    
+<script>
+    $(function() {  
 
-    <script>
-        $(function() {            
-            $('#Team1').empty().append('<option>Teams not found in that Division</option>');
-            $('#Team2').empty().append('<option>Teams not found in that Division</option>');
+        $('#Team1').empty().append('<option>Teams not found in that Division</option>');
+        $('#Team2').empty().append('<option>Teams not found in that Division</option>');
 
-            $('#DivisionID').change(function() {
-                var divisionId = $(this).val();
-                $.getJSON('/Game/GetTeams', { divisionId: divisionId }, function(teams) {
-                    var team1Select = $('#Team1');
-                    var team2Select = $('#Team2');
-                    team1Select.empty();
-                    team2Select.empty();
-                    if (teams.length === 0) {
-                        team1Select.append('<option>Teams not found in that Division</option>');
-                        team2Select.append('<option>Teams not found in that Division</option>');
-                    } else {
-                        $.each(teams, function(index, team) {
-                            team1Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
-                            team2Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
-                        });
-                    }
-                });
+        $('#DivisionID').change(function() {
+            var divisionId = $(this).val();
+            $.getJSON('/Game/GetTeams', { divisionId: divisionId }, function(teams) {
+                //console.log(teams); // Log the teams to the console
+                var team1Select = $('#Team1');
+                var team2Select = $('#Team2');
+                team1Select.empty();
+                team2Select.empty();
+                if (teams.$values.length === 0) {
+                    team1Select.append('<option>Teams not found in that Division</option>');
+                    team2Select.append('<option>Teams not found in that Division</option>');
+                } else {
+                    $.each(teams.$values, function(index, team) {
+                        //console.log(team); // Log each team to the console
+                        team1Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
+                        team2Select.append($('<option/>', { value: team.teamId, text: team.teamName }));
+                    });
+                }
             });
         });
-    </script>
+
+        var now = new Date();
+        var month = String(now.getMonth() + 1).padStart(2, '0'); //January is 0!
+        var day = String(now.getDate()).padStart(2, '0');
+        var year = now.getFullYear();
+        var hours = String(now.getHours()).padStart(2, '0');
+        var minutes = String(now.getMinutes()).padStart(2, '0');
+
+        var dateTime = year + '-' + month + '-' + day + 'T' + hours + ':' + minutes;
+        $('#Date').val(dateTime);
+    });
+</script>
 }
