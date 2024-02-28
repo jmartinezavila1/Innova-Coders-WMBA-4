@@ -28,8 +28,8 @@
                     @if (ViewBag.Inplay != null)
                     {
                         <h4 id="strikeText">Strikes: <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
-                        <h4 id="outs">Outs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
-                        <h4 id="fouls">Fouls: @(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</h4>
+                        <h4 id="outsText">Outs: <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
+                        <h4 id="foulsText">Fouls: <span id="fouls">@(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</span></h4>
 
                         <h4 id="ballsText">Balls: <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
                     }
@@ -61,7 +61,8 @@
                     <a id="foulButton" class="btn btn-kelly mx-1">Foul</a>
                     <a id="hbpButton" class="btn btn-kelly mx-1">HBP</a>
                     <a id="outButton" class="btn btn-kelly mx-1">Out</a>
-                    <a href="#" class="btn btn-kelly mx-1">In Play</a>
+                    <a id="openPopupButton" data-inplayId=" ViewBag.Inplay.ID" class="btn btn-kelly mx-1">In Play</a>
+                    
 
                 </div>
             </div>
@@ -75,6 +76,10 @@
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
 </div>
+
+
+
+@* This is for LineUp Popup *@
 <div id="lineupPopup" class="popup-container" style="display: none;">
     <div class="popup-content">
         <button id="closeButton" class="close">&times;</button> <!-- "x" button -->
@@ -87,9 +92,54 @@
     </div>
 </div>
 
+
+@* Ths is for InPlay popup *@
+
+<!-- Modal -->
+<div class="modal fade" id="inplayModal" tabindex="-1" role="dialog" aria-labelledby="inplayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inplayModalLabel">Inplay Data</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="inplayModalBody">
+                <!-- Aquí se cargará la vista parcial -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $('#openPopupButton').click(function () {
+        var inplayId = $('#inplayId').val();
+
+        // Haz una solicitud AJAX a tu controlador
+        $.ajax({
+            url: '/ScorePlayer/LoadInplayPartial',
+            data: { inplayId: inplayId },
+            success: function (response) {
+                // Inserta la vista parcial en tu página
+                $('#inplayModalBody').html(response);
+
+                // Muestra el modal
+                $('#inplayModal').modal('show');
+            }
+        });
+    });
+</script>
+
 @* Script for Button´s action *@
 <script>
     $(document).ready(function () {
+
         // Start Button
         $('#startButton').click(function (e) {
             e.preventDefault();
@@ -108,10 +158,10 @@
                     if (data.inplay) {
                         $('#inplayId').val(data.inplay.id);
                         $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text('Outs: ' + data.inplay.outs);
-                        $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                        $('#ballsCount').text('Balls: ' + data.inplay.balls);
-                        $('#runs').text('Runs: ' + data.inplay.runs);
+                        $('#outs').text(data.inplay.outs);
+                        $('#fouls').text(data.inplay.fouls);
+                        $('#ballsCount').text(data.inplay.balls);
+                        $('#runs').text(data.inplay.runs);
                         $('#inning').text('Inning: ' + data.inplay.inningNumber);
                         $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                     } else {
@@ -128,7 +178,7 @@
 
         $('#ballsButton').click(function (e) {
             e.preventDefault();
-            var inplayId = $('#inplayId').val();;
+            var inplayId = $('#inplayId').val();
 
             $.ajax({
                 url: '/ScorePlayer/CountBalls',
@@ -138,9 +188,9 @@
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text('Outs: ' + data.inplay.outs);
-                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -165,9 +215,9 @@
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text('Outs: ' + data.inplay.outs);
-                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -192,9 +242,9 @@
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text('Outs: ' + data.inplay.outs);
-                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -219,9 +269,9 @@
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text('Outs: ' + data.inplay.outs);
-                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -246,9 +296,9 @@
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text('Outs: ' + data.inplay.outs);
-                    $('#fouls').text('Fouls: ' + data.inplay.fouls);
-                    $('#runs').text('Runs: ' + data.inplay.runs);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },

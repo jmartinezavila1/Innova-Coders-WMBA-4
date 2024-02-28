@@ -1,0 +1,75 @@
+﻿@model dynamic
+
+<script>
+    var inplayData = @Html.Raw(Json.Serialize(Model));
+
+    if (inplayData) {
+        console.log(inplayData.balls);
+    } else {
+        console.log('inplayData no está definido');
+    }
+</script>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Player</th>
+            <th>1B</th>
+            <th>2B</th>
+            <th>3B</th>
+            <th>RBI</th>        
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id="playerBatting">@Model.PlayerBatting</td>
+            <td><input type="radio" name="home" value="1" /></td>
+            <td><input type="radio" name="home" value="2" /></td>
+            <td><input type="radio" name="home" value="3" /></td>
+            <td><input type="text" name="rbi1" maxlength="3" size="3" /></td>
+            <td>
+                <button type="button" class="btn btn-success">Run</button>
+                <button type="button" class="btn btn-danger">Out</button>
+            </td>
+        </tr>
+        <tr>
+            <td id="playerInBase1">@Model.PlayerInBase1</td>
+            <td><input type="radio" name="base1" value="1" @(Model.PlayerInBase1 != "N/A" ? "checked" : "") /></td>
+            <td><input type="radio" name="base1" value="2" /></td>
+            <td><input type="radio" name="base1" value="3" /></td>
+            <td><input type="text" name="rbi2" maxlength="3" size="3" /></td>
+            <td>
+                <button type="button" class="btn btn-success">Run</button>
+                <button type="button" class="btn btn-danger">Out</button>
+            </td>
+        </tr>
+        <tr>
+            <td id="playerInBase1">@Model.PlayerInBase1</td>
+            <td><input type="radio" name="base2" value="1" @(Model.PlayerInBase2 != "N/A" ? "checked" : "") /></td>
+            <td><input type="radio" name="base2" value="2" /></td>
+            <td><input type="radio" name="base2" value="3" /></td>
+            <td><input type="text" width="10" name="rbi3" size="3" /></td>
+            <td>
+                <button type="button" class="btn btn-success">Run</button>
+                <button type="button" class="btn btn-danger">Out</button>
+            </td>
+        </tr>
+        <tr>
+            <td id="playerInBase3">@Model.PlayerInBase3</td>
+            <td><input type="radio" name="base3" value="1" /></td>
+            <td><input type="radio" name="base3" value="2" /></td>
+            <td><input type="radio" name="base3" value="3" /></td>
+            <td><input type="text" width="10" name="rbi4" size="3" /></td>
+            <td>
+                <button type="button" class="btn btn-success">Run</button>
+                <button type="button" class="btn btn-danger">Out</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<style>
+    .table td, .table th {
+        padding: 0.05rem;
+        margin: 0;
+    }
+</style>
