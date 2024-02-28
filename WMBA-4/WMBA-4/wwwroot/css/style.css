@@ -410,14 +410,17 @@ div > .nav-hover:hover {
     display: flex;
 }
 
-
+.inactive-game {
+    background-color: #f2f2f2; /* Change background color for inactive games */
+    color: #999; /* Change text color for inactive games */
+}
 .inactive-player {
     background-color: #f2f2f2; /* Change background color for inactive players */
     color: #999; /* Change text color for inactive players */
 }
 .inactive-team {
-    background-color: #f2f2f2; /* Change background color for inactive players */
-    color: #999; /* Change text color for inactive players */
+    background-color: #f2f2f2; /* Change background color for inactive teams */
+    color: #999; /* Change text color for inactive teams */
 }
 #lineupPopup {
     position: absolute;

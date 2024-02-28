@@ -22,7 +22,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
 
@@ -55,6 +55,17 @@ namespace WMBA_4.Controllers
             if (!System.String.IsNullOrEmpty(SearchString))
             {
                 games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
+            }
+
+            if (isActive == true)
+            {
+                games = games.Where(g => g.Status == true);
+                numberFilters++;
+            }
+            if (isInactive == true)
+            {
+                games = games.Where(g => g.Status == false);
                 numberFilters++;
             }
 
