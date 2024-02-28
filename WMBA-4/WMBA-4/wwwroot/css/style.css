@@ -42,7 +42,7 @@
     --bg-dark-blue: #23314E;
     /*////font colors////*/
     --ft-black: #000000;
-    --ft-grey: #7C7C7C;
+    --ft-grey: #999999;
     --ft-light-grey: #E4E4E4;
     --ft-light-grey2: #DADADA;
     --ft-white: #FCFAFA;
@@ -67,7 +67,9 @@ a[disabled] {
     cursor: not-allowed;
     pointer-events: none; /* 링크 클릭 이벤트 비활성화 */
 }
-
+tbody tr{
+    cursor: pointer;
+}
 
 /*/////////////////////////////Paging color/////////////////////////////////////*/
 
@@ -150,6 +152,11 @@ a[disabled] {
 .py-6 {
     padding-top: 6rem !important;
     padding-bottom: 3rem !important;
+}
+@media (max-width: 391px){
+    .t-in-flex {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 426px) {
@@ -320,8 +327,13 @@ th:last-child {
 .n-in-flex {
     display: flex;
     justify-content: space-around;
+    flex-wrap: nowrap;
 }
 
+.t-in-flex {
+    display: flex;
+    justify-content: center;
+}
 
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 
@@ -356,10 +368,12 @@ th:last-child {
 
     .material-symbols-outlined:hover
      {
-        color: rgba( var(--ft-dark-blue), 0.3); /*in the index operation hovers*/
+        color: var(--ft-dark-blue); /*in the index operation hovers*/
     }
 
-
+.inactive-player td:not(:last-child) {
+    color: var(--ft-grey);
+}
 
 .text-no-deco {
     text-decoration: none;

@@ -3749,6 +3749,15 @@ textarea.form-control-lg {
     .col {
         flex: 100%;
     }
+
+    .dropdown-menu-lg-end {
+        --bs-position: end;
+    }
+
+        .dropdown-menu-lg-end[data-bs-popper] {
+            right: 0;
+            left: auto;
+        }
 }
 
 @media (min-width: 992px) {
