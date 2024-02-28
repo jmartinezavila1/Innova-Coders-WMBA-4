@@ -25,20 +25,30 @@
         <div class="collapse" id="collapseFilter">
             <div class="card card-body bg-light">
                 <div class="row">
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-5">
                         <label class="control-label">Select Division:</label>                        
                         @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control" })
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-5">
                         <label class="control-label">Search by Location:</label>
                         @Html.TextBox("SearchString", null, new { @class = "form-control" })
                     </div>
-                    <div class="form-group col-md-4">
+                    <div class="form-group col-md-5">
                         <label class="control-label">Select GameType:</label>
                         @* @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control" }) *@
                         @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control" })
                     </div>
-                    <div class="form-group col-md-4 align-self-end">
+                    <div class="form-group col-md-5 align-content-center">
+                        <div class="d-flex my-2">
+                            @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
+                            <label class="control-label" for="isActiveCheckbox">Active Games Only</label>
+                        </div>
+                        <div class="d-flex my-2">
+                            @Html.CheckBox("isInactive", null, new { @class = "form-check form-switch me-2", id = "isInactiveCheckbox" })
+                            <label class="control-label" for="isInactiveCheckbox">Inactive Games Only</label>
+                        </div>
+                    </div>
+                    <div class="form-group col-md-5 align-self-end">
                         <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
                         <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
                     </div>
@@ -73,23 +83,138 @@
                         <th>
                             <input type="submit" name="actionButton" value="TeamGames" class="text-column" />
                         </th>
-                        @*  <th>
-                        <input type="submit" name="actionButton" value="Status" class="text-column" />
-                        </th> *@
+                        @*Division Field*@
                         <th>
-                            <input type="submit" name="actionButton" value="Division" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Division" class="text-column" />
+                                @if (ViewData["sortField"].ToString() == "Division")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
                         </th>
                         <th>
-                            <input type="submit" name="actionButton" value="Date" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Date" class="text-column" />
+                                @if (ViewData["sortField"].ToString() == "Date")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>      
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Location" class="text-column" />
+                                @if (ViewData["sortField"].ToString() == "Location")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
                         </th>
                         <th>
-                            <input type="submit" name="actionButton" value="Location" class="text-column" />
-                        </th>
-@*                         <th>
-                            <input type="submit" name="actionButton" value="Season" class="text-column" />
-                        </th>   *@                      
-                        <th>
-                            <input type="submit" name="actionButton" value="GameType" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="GameType" class="text-column" />
+                                @if (ViewData["sortField"].ToString() == "GameType")
+								{
+									<div>
+										@if (ViewData["sortDirection"].ToString() == "asc")
+										{
+											<span class="material-icons-outlined ms-1 ft-kelly">
+												<i class="fa-solid fa-sort-up"></i>
+											</span>
+										}
+										else
+										{
+											<span class="material-icons-outlined ms-1 ft-kelly">
+												<i class="fa-solid fa-sort-down"></i>
+											</span>
+										}
+									</div>
+								}
+								else
+								{
+									<div>
+										<span class="material-icons-outlined ms-1 ft-kelly">
+											<i class="fa-solid fa-sort-up"></i>
+										</span>
+										<span class="material-icons-outlined ms-1 ft-kelly">
+											<i class="fa-solid fa-sort-down" style="display: none;"></i>
+										</span>
+									</div>
+								}
+                            </div>
                         </th>
                         <th>
                             <input type="submit" value="Edit/Status" class="text-column" />
@@ -99,7 +224,7 @@
                 <tbody>
                     @foreach (var item2 in Model)
                     {
-                        <tr>
+                        <tr class="@((item2.Status) ? "" : "inactive-game")">
                             @{
                                 var teamGamesList = item2.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
@@ -140,7 +265,7 @@
                                 @foreach (var teamGame in teamGamesList)
                                 {
                                     @Html.DisplayFor(modelItem => teamGame.Team.Division.DivisionName)
-                                    @*                                     if (teamGame != teamGamesList.Last())
+                                    @*if (teamGame != teamGamesList.Last())
                             {
                             @: <br />
                             } *@
@@ -151,14 +276,10 @@
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item2.Location.LocationName)
-                            </td>
-@*                             <td>
-                                @Html.DisplayFor(modelItem => item2.Season.SeasonName)
-                            </td>    *@                         
+                            </td>                       
                             <td>
                                 @Html.DisplayFor(modelItem => item2.GameType.Description)
-                            </td>
-                            
+                            </td>                            
                             
 @*                             <td>
                                 <a asp-action="Edit" asp-route-id="@item2.ID">
@@ -186,11 +307,12 @@
                                             visibility
                                         </span>
                                 </a> *@
+
                                 <a asp-action="Delete" asp-route-id="@item2.ID">
                                         <span class="material-symbols-outlined ft-kelly px-2">
                                             sports_baseball
                                         </span>
-                                </a>
+                                </a>                                
                                 }
                                 else
                                 {
@@ -203,16 +325,22 @@
                                         <span class="material-symbols-outlined px-1">
                                             visibility
                                         </span>
-                                    </a> *@
+                                    </a> *@                                    
                                     <a asp-action="Delete" asp-route-id="@item2.ID">
+                                        @* sports_baseball_inactive *@
+@*                                      <span class="material-symbols-outlined px-2"> *@                                           
+                        @*                     <svg xmlns="http://www.w3.org/2000/svg" width="23" height="23" fill="currentColor" viewBox="0 0 24 24" class="mb-2">
+                                                <path d="M 18.65133 19.825 L 16.51948 17.69315 C 15.74796 18.354499999999998 14.874810000000002 18.89549 13.900010000000002 19.31613 C 12.683340000000001 19.84113 11.383340000000002 20.103630000000003 10.000010000000001 20.103630000000003 C 8.616680000000002 20.103630000000003 7.316680000000002 19.841130000000003 6.100010000000001 19.31613 C 4.883340000000001 18.791130000000003 3.825010000000001 18.07863 2.925010000000001 17.178630000000002 C 2.0250100000000013 16.278630000000003 1.3125100000000012 15.220300000000002 0.787510000000001 14.003630000000001 C 0.262510000000001 12.78696 0.000010000000001064713 11.486960000000002 0.000010000000001064713 10.10363 C 0.000010000000001064713 8.720300000000002 0.2625100000000011 7.420300000000001 0.787510000000001 6.20363 C 1.208140000000001 5.22883 1.749130000000001 4.35568 2.410490000000001 3.5841600000000002 L 0.25134000000000123 1.4250100000000003 L 1.6763400000000013 0.000010000000000287557 L 20.07634 18.400009999999998 z M 3.60001 14.90363 C 4.35001 14.3203 4.93751 13.61196 5.36251 12.77863 C 5.78751 11.9453 6.0000100000000005 11.05363 6.0000100000000005 10.103629999999999 C 6.0000100000000005 9.15363 5.78751 8.261959999999998 5.36251 7.428629999999999 C 4.9375100000000005 6.595299999999999 4.35001 5.886959999999999 3.60001 5.303629999999999 C 3.08334 6.003629999999999 2.68751 6.761959999999999 2.41251 7.578629999999999 C 2.1375100000000002 8.395299999999999 2.00001 9.236959999999998 2.00001 10.103629999999999 C 2.00001 10.970299999999998 2.1375100000000002 11.81196 2.41251 12.62863 C 2.68751 13.4453 3.08334 14.203629999999999 3.60001 14.90363 z M 10.00001 18.10363 C 10.91668 18.10363 11.804179999999999 17.9578 12.66251 17.66613 C 13.52084 17.37446 14.300009999999999 16.93696 15.00001 16.35363 C 14.32249 15.806859999999999 13.75306 15.177439999999999 13.29171 14.46538 L 7.94045 9.11412 C 7.98015 9.43923 8 9.76906 8 10.10361 C 8 11.32028 7.7375 12.47444 7.2125 13.56611 C 6.6875 14.65778 5.95 15.58694 5 16.35361 C 5.7 16.93694 6.47917 17.37444 7.3375 17.66611 C 8.19583 17.95778 9.08333 18.10361 10 18.10361 z M 12.78751 6.64113 C 13.31251 5.549460000000001 14.050009999999999 4.6203 15.00001 3.8536300000000003 C 14.30001 3.2703 13.52084 2.8328000000000007 12.66251 2.5411300000000003 C 11.804179999999999 2.2494600000000005 10.91668 2.1036300000000003 10.00001 2.1036300000000003 C 9.08334 2.1036300000000003 8.19584 2.2494600000000005 7.33751 2.5411300000000003 C 7.26806 2.5647300000000004 7.19913 2.5892800000000005 7.13071 2.61479 L 5.625319999999999 1.1094000000000002 C 5.780779999999999 1.03336 5.93901 0.9606000000000001 6.100009999999999 0.8911300000000002 C 7.316679999999999 0.3661300000000002 8.616679999999999 0.10363000000000022 10.00001 0.10363000000000022 C 11.38334 0.10363000000000022 12.68334 0.36613000000000023 13.90001 0.8911300000000002 C 15.11668 1.4161300000000003 16.17501 2.1286300000000002 17.07501 3.0286300000000006 C 17.975009999999997 3.9286300000000005 18.68751 4.986960000000001 19.212509999999998 6.20363 C 19.737509999999997 7.4203 20.00001 8.7203 20.00001 10.10363 C 20.00001 11.48696 19.73751 12.78696 19.212509999999998 14.003630000000001 C 19.14304 14.16463 19.070279999999997 14.32286 18.994239999999998 14.478320000000002 L 17.470249999999997 12.954330000000002 C 17.511519999999997 12.846820000000003 17.550599999999996 12.738250000000003 17.587509999999998 12.628630000000003 C 17.862509999999997 11.811960000000003 18.00001 10.970300000000003 18.00001 10.103630000000003 C 18.00001 9.236960000000003 17.86251 8.395300000000002 17.587509999999998 7.578630000000002 C 17.31251 6.761960000000002 16.91668 6.003630000000002 16.400009999999998 5.303630000000002 C 15.650009999999998 5.886960000000002 15.062509999999998 6.595300000000002 14.637509999999999 7.428630000000002 C 14.301849999999998 8.086780000000001 14.09874 8.781330000000002 14.028179999999999 9.512260000000001 L 12.33124 7.815320000000002 C 12.450909999999999 7.416200000000002 12.603 7.024810000000001 12.78751 6.641130000000001 z" stroke-linecap="round" />
+                                            </svg>
+                                        </span> *@
                                         <span class="material-symbols-outlined px-2">
-                                            sport_baseball_inactive
+                                            public_off
                                         </span>
                                     </a>
+
+
                                 }
                             </td>
-
-
                         </tr>
                     }
                 </tbody>
