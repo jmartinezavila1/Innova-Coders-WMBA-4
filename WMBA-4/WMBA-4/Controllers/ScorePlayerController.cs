@@ -303,7 +303,7 @@ namespace WMBA_4.Controllers
             }
 
             //if the balls are less than 4, increment the balls
-            if (inplay.Balls < 3)
+            if (inplay.Balls <= 3)
             {
                 inplay.Balls++;
                 // Guarda los cambios en la base de datos
@@ -334,7 +334,7 @@ namespace WMBA_4.Controllers
             }
 
             //if the balls are 4, increment the PA and BB in ScorePlayer
-            else if (inplay.Balls >= 3)
+            else if (inplay.Balls > 3)
             {
                 var inning = await _context.Innings.FindAsync(inplay.InningID);
 

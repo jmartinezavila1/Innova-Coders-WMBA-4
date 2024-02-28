@@ -193,13 +193,28 @@
                     $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+
+                    // Check if the ball count is 4, then open the modal
+                    if (data.inplay.balls === 4) {
+                        // If you want to show the modal and load its content from the server
+                        $.ajax({
+                            url: '/ScorePlayer/LoadInplayPartial',
+                            data: { inplayId: inplayId },
+                            success: function (response) {
+                                $('#inplayModalBody').html(response);
+                                $('#inplayModal').modal('show');
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(textStatus, errorThrown);
+                            }
+                        });
+                    }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
                 }
             });
         });
-
         // Strike Button
 
         $('#strikeButton').click(function (e) {
