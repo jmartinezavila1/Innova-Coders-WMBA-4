@@ -18,6 +18,7 @@
 
     </div>
     <form asp-action="Index" method="get">
+
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
@@ -74,7 +75,7 @@
                     <tr>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Player" class="text-column" />
+                                <input type="submit" name="actionButton" value="Player" class="text-column me-2" />
                                 @if (ViewData["sortField"].ToString() == "Player")
                                 {
                                     <div>
@@ -107,7 +108,7 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Team" class="text-column" />
+                                <input type="submit" name="actionButton" value="Team" class="text-column me-2" />
                                 @if (ViewData["sortField"].ToString() == "Team")
                                 {
                                     <div>
@@ -140,7 +141,7 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Division" class="text-column" />
+                                <input type="submit" name="actionButton" value="Division" class="text-column me-2" />
                                 @if (ViewData["sortField"].ToString() == "Division")
                                 {
                                     <div>
@@ -172,14 +173,14 @@
                             </div>
                         </th>
                         <th>
-                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
+                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr class="@((item.Status) ? "" : "inactive-player")">
+                        <tr class="@((item.Status) ? "" : "inactive-player") player-row" onclick="redirectToDetails('@item.ID')">
                             <td>
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>
@@ -192,21 +193,18 @@
                             <td>
                                 @if (item.Status == true)
                                 {
-                                    <a asp-action="Edit" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            edit
-                                        </span>
-                                    </a>
-                                    <a asp-action="Details" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            visibility
-                                        </span>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined">
-                                            person
-                                        </span>
-                                    </a>
+                                    <div class="t-in-flex">
+                                        <a asp-action="Edit" asp-route-id="@item.ID">
+                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                                edit
+                                            </span>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.ID">
+                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                                person
+                                            </span>
+                                        </a>
+                                    </div>
                                 }
                                 else
                                 {
@@ -215,11 +213,6 @@
                                             edit
                                         </span>
                                     </div>
-                                    <a asp-action="Details" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined px-1">
-                                            visibility
-                                        </span>
-                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined px-2">
                                             person_off
@@ -229,6 +222,7 @@
                             </td>
                         </tr>
                     }
+
                 </tbody>
             </table>
         </div>
@@ -236,4 +230,11 @@
     </form>
 </div>
 
-
+@* show a player's details view when click the row *@
+@section Scripts{
+    <script>
+        function redirectToDetails(playerId) {
+            window.location.href = '@Url.Action("Details", "Player")/' + playerId;
+        }
+    </script>
+}

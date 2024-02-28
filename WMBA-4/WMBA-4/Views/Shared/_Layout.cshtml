@@ -30,14 +30,44 @@
             <button class="btn btn-link btn-sm order-lg-1 ms-5 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly fs-5"></i></button>
         </div>
         <!-- Navbar Brand-->
-        <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
-        <div></div>
+        <a class="navbar-brand d-flex justify-content-center" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
+        <!-- Setting-->
+        <div class="me-5">
+            <div class="flex-shrink-0 dropdown">
+                <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-gear ft-kelly"></i></a>
+                <ul class="dropdown-menu dropdown-menu-lg-end mt-3">
+                    @* <li><a class="dropdown-item" href="#">Manage City</a></li>
+                    <li><a class="dropdown-item" href="#">Manage Location</a></li> *@
+                    <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Manage Staff</a></li> @* staff link*@
+                    @* <li><hr class="dropdown-divider"></li> *@
+                    @* <li><a class="dropdown-item" href="#">Sign out</a></li> *@
+                </ul>
+            </div>
+        </div>
+        @*
+        <div class="mb-0">
+        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item dropdown d-flex">
+        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-gear ft-kelly"></i></a>
+        <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="navbarDropdown">
+        <li class="nav-item no-list-decor dropdown-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">City</a>
+        </li>
+        <li class="nav-item no-list-decor dropdown-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Divicsion" asp-action="Index">Division</a>
+        </li>
+        <li class="nav-item no-list-decor dropdown-item">
+        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Season Game</a>
+        </li>
+        </ul>
+        </li>
+        </ul>
+        </div> *@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion bg-sidenav" id="sidenavAccordion">
                 <partial name="_Sidebar" />
-
             </nav>
         </div>
         <div id="layoutSidenav_content">
