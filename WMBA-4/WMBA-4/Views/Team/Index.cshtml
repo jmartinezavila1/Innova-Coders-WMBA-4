@@ -19,7 +19,7 @@
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
-        <div class="collapse @ViewData["ShowFilter"]" id="collapseFilter">
+        <div class="collapse" id="collapseFilter">
                 <div class="card card-body bg-light">
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -30,6 +30,15 @@
                             <label class="control-label">Select Division:</label>
                             @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control" })
                         </div>
+                        <div class="form-group col-md-4 align-content-center">
+                            <div class="d-flex my-2">
+                                @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
+                                <label class="control-label" for="isActiveCheckbox">Active Teams Only</label>
+                            </div>
+                            <div class="d-flex my-2">
+                                @Html.CheckBox("isInactive", null, new { @class = "form-check form-switch me-2", id = "isInactiveCheckbox" })
+                                <label class="control-label" for="isInactiveCheckbox">Inactive Teams Only</label>
+                            </div>
                         <div class="form-group col-md-4 align-self-end">
                             <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
                             <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
@@ -37,6 +46,7 @@
                     </div>
                 </div>
             </div>
+         </div>
         </div>
         <div class="table-responsive mt-3">
             @* added from modal *@
@@ -57,17 +67,73 @@
                 <thead>
                     <tr>
                         <th>
-                            @* Team *@
-                            <input type="submit" name="actionButton" value="Team" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Team" class="text-column me-2" />
+                                @if (ViewData["sortField"].ToString() == "Team")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
                         </th>
                         <th>
-                            @* Division *@
-                            <input type="submit" value="Division" class="text-column" />
-                        </th>                      
-                        <th>
-                            @* Operation *@
-                            <input type="submit" value="Edit/Detail/Inactive" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Division" class="text-column me-2" />
+                                @if (ViewData["sortField"].ToString() == "Division")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
                         </th>
+                        <th>
+                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
                     </tr>
                 </thead>
                 <tbody>
