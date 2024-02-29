@@ -71,6 +71,17 @@ tbody tr{
     cursor: pointer;
 }
 
+/*/////////////////////////////Check Box/////////////////////////////////////*/
+
+.form-group label:hover {
+    cursor: pointer;
+}
+
+.form-group label input[type="checkbox"] {
+    pointer-events: auto;
+}
+
+
 /*/////////////////////////////Paging color/////////////////////////////////////*/
 
 .page-item.active .page-link {
