@@ -30,7 +30,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team
-        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, bool isActive, bool isInactive,int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Team")
         {
             PopulateDropDownLists();
@@ -60,7 +60,17 @@ namespace WMBA_4.Controllers
                 teams = teams.Where(p => p.Name.ToUpper().Contains(SearchString.ToUpper()));
                 numberFilters++;
             }
+            if (isActive == true)
+            {
+                teams = teams.Where(p => p.Status == true);
+                numberFilters++;
+            }
+            if (isInactive == true)
+            {
+                teams = teams.Where(p => p.Status == false);
 
+                numberFilters++;
+            }
             if (numberFilters != 0)
             {
                 //Toggle the Open/Closed state of the collapse depending on if we are filtering
@@ -73,8 +83,9 @@ namespace WMBA_4.Controllers
             }
 
             teams = teams.OrderByDescending(p => p.Status) // Active players first
-                    .ThenBy(p => p.Name);             // Order by last name
-                    
+                    .ThenBy(p => p.Name)     
+                    .ThenBy(p => p.Division.DivisionName); // Order by last name
+
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
