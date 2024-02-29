@@ -35,7 +35,7 @@ namespace WMBA_4.Controllers
                           select p;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "Division", "Team"};
+            string[] sortOptions = new[] { "Player", "Team", "Division" };
 
             //filter
             if (TeamID.HasValue)
@@ -108,32 +108,33 @@ namespace WMBA_4.Controllers
                             .ThenByDescending(p => p.LastName);
                     }
                 }
-                else if (sortField == "Division")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        players = players
-                            .OrderBy(p => p.Team.Division);
-                    }
-                    else
-                    {
-                        players = players
-                            .OrderByDescending(p => p.Team.Division);
-                    }
-                } 
                 else if (sortField == "Team")
                 {
                     if (sortDirection == "asc")
                     {
                         players = players
-                            .OrderBy(p => p.Team);
+                            .OrderBy(p => p.Team.Name);
                     }
                     else
                     {
                         players = players
-                            .OrderByDescending(p => p.Team);
+                            .OrderByDescending(p => p.Team.Name);
                     }
                 }
+                else if (sortField == "Division")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        players = players
+                            .OrderBy(p => p.Team.Division.DivisionName);
+                    }
+                    else
+                    {
+                        players = players
+                            .OrderByDescending(p => p.Team.Division.DivisionName);
+                    }
+                } 
+                
             }
 
             ViewData["sortField"] = sortField;

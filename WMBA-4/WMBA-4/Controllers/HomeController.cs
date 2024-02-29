@@ -14,9 +14,16 @@ namespace WMBA_4.Controllers
         {
             _context = context;
         }
-
         public async Task<IActionResult> Index()
         {
+            IQueryable<Game> games = _context.Games
+           .Include(g => g.GameType)
+           .Include(g => g.Location)
+           .Include(g => g.Season)
+           .Include(t => t.TeamGames)
+               .ThenInclude(t => t.Team)
+                   .ThenInclude(d => d.Division);
+
             var divisionCount = await _context.Divisions
             .Where(d => d.Status == true)
             .CountAsync();
@@ -34,8 +41,11 @@ namespace WMBA_4.Controllers
             ViewBag.PlayerCount = playerCount;
             ViewBag.GameCount = gameCount;
             ViewBag.TeamCount = teamCount;
-            return View();
+            ViewBag.TeamName= _context.Teams.FirstOrDefault()?.Name;
+
+            return View(games);
         }
+
         public IActionResult Privacy()
         {
             return View();
