@@ -276,8 +276,8 @@
                             } *@
                                 }
                             </td>
-                            <td>
-                                @item2.Date.ToString("MMMM dd yyyy")
+                            <td>                                
+                                @Html.DisplayFor(modelItem => item2.Date)
                             </td>
                             <td>
                                 @Html.DisplayFor(modelItem => item2.Location.LocationName)
