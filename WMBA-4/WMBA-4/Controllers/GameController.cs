@@ -112,6 +112,21 @@ namespace WMBA_4.Controllers
                             .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
                     }
                 }
+                if (sortField == "Date")
+                {
+                    if (sortDirection == "asc")
+                    {
+                        games = games
+                            .OrderBy(d => d.Status)
+                            .ThenBy(d => d.Date); 
+                    }
+                    else
+                    {
+                        games = games
+                            .OrderByDescending(d => d.Date)
+                            .ThenBy(d => d.Date); ;
+                    }
+                }
                 else
                 if (sortField == "Location")
                 {
