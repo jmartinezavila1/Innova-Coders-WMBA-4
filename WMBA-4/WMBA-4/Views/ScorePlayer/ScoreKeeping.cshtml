@@ -109,32 +109,95 @@
                 <!-- Aquí se cargará la vista parcial -->
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary">Save changes</button>
+                <button id="closeButton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="saveChangesButton" type="button" class="btn btn-kelly mx-1">Save changes</button>
             </div>
         </div>
     </div>
 </div>
+@* 
+
+Cierra popup y actualiza la info de inplay *@
+<script>
+    $(document).ready(function () {
+        $('#closeButton').click(function () {
+            // Recoge los datos de tu formulario
+            var inplay = {
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#ballsCount').text(data.inplay.balls);
+                $('#runs').text(data.inplay.runs);
+                $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+            };
+
+            // Envía los datos al servidor
+            $.ajax({
+                url: '/ScorePlayer/UpdateInplay',  // Cambia esto a la URL de tu acción
+                type: 'POST',
+                data: inplay,
+                success: function () {
+                    // Cierra el popup cuando la solicitud se complete con éxito
+                    $('#myPopup').hide();
+                }
+            });
+        });
+    });
+</script>
 
 
+
+
+@* For the Modal Inplay *@
 <script>
     $('#openPopupButton').click(function () {
         var inplayId = $('#inplayId').val();
-
-        // Haz una solicitud AJAX a tu controlador
         $.ajax({
             url: '/ScorePlayer/LoadInplayPartial',
             data: { inplayId: inplayId },
             success: function (response) {
-                // Inserta la vista parcial en tu página
+
                 $('#inplayModalBody').html(response);
 
-                // Muestra el modal
                 $('#inplayModal').modal('show');
             }
         });
     });
 </script>
+
+@* For saving the changes in the modal *@
+<script>
+    $(document).ready(function () {
+        $('#saveChangesButton').click(function () {
+            var data = {
+                inplayID: $('#inplayId').val(),
+                playerBattingId: $('input[name="playerBattingId"]').val(),
+                playerInBase1Id: $('input[name="playerInBase1Id"]:checked').val(),
+                playerInBase2Id: $('input[name="playerInBase2Id"]:checked').val(),
+                playerInBase3Id: $('input[name="playerInBase3Id"]:checked').val(),
+
+            };
+
+            $.ajax({
+                url: '/ScorePlayer/SaveInplayChanges',
+                type: 'POST',
+                data: data,
+                success: function (response) {
+                    if (response.success) {
+                        console.log('Los datos se guardaron correctamente');
+                        $('#inplayModal').modal('hide');
+                    } else {
+                        console.log('Hubo un error al guardar los datos');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
 
 @* Script for Button´s action *@
 <script>
@@ -196,7 +259,7 @@
 
                     // Check if the ball count is 4, then open the modal
                     if (data.inplay.balls === 4) {
-                        // If you want to show the modal and load its content from the server
+                        
                         $.ajax({
                             url: '/ScorePlayer/LoadInplayPartial',
                             data: { inplayId: inplayId },
