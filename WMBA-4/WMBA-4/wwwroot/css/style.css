@@ -131,6 +131,17 @@ tbody tr{
 .border-kelly {
     border: 0.8px solid var(--bg-kelly);
 }
+.card-hover {
+    transition: transform 0.3s ease-in-out; /* 요소 확대 애니메이션 */
+}
+
+    .card-hover:hover {
+        /*border: 2px solid #007bff;*/ /* 테두리 색상 변경 */
+        background-color: rgba(75, 75, 75, 0.06); /* 배경 색상 및 불투명도 변경 */
+        transform: scale(1.03); /* 요소 확대 */
+        
+    }
+
 
 /*/////////////////////////////border shapes/////////////////////////////////////*/
 .rounded-end-circle {
@@ -223,6 +234,7 @@ tbody tr{
     border: none;
     background: none;
     text-align: center;
+    margin-right:0.5rem;
 }
 
 tbody > tr:hover {

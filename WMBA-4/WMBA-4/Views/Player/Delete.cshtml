@@ -4,7 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Inactive</h1>
+<h1>Status</h1>
+<h4 class="ft-grey">
+    @Model.FirstName @Model.LastName status is
+    @(Model.Status ? "Active" : "Inactive")
+</h4>
 
 <div>
     <hr />
