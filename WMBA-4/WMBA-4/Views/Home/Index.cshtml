@@ -1,4 +1,6 @@
-﻿@{
+﻿@model IEnumerable<Game>
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -109,39 +111,68 @@
                         </form>
                     </div>
                 </div>
-                <div class="col-xl-6">
-                    <div class="card mb-4 card-hover shadow ">
-                        <div class="card-header">
-                            Import Teams
-                        </div>
-                        <div class="card-body">
-                            <div class="col">
-                                <div class="col-sm-6 mb-3 mb-sm-0">
-                                    <div class="card">
+                <!-- Upcoming Games List -->
+                <div class="card mb-4 card-hover shadow">
+                    <div class="card-header">
+                        Import Teams
+                    </div>
+                    <div class="card-body d-flex">
+                        <button id="prevButton" class="btn btn-light">
+                            <span class="material-symbols-outlined">
+                                arrow_back_ios_new
+                            </span>
+                        </button>
+                        <div class="d-flex carousel-container" style="overflow-x: hidden; scroll-behavior: smooth;">
+                            @foreach (var game in Model)
+                            {
+                                <div class="col-md-6 col-md-3 mx-2 card-wrapper">
+                                    <div class="card mb-4 card-hover shadow">
+                                        <div class="card-header">
+                                            @game.GameType.Description
+                                        </div>
                                         <div class="card-body">
-                                            <h5 class="card-title">Special title treatment</h5>
-                                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+                                            <h5 class="card-title">@game.Location.LocationName</h5>
+                                            <p class="card-text">Other details</p>
                                             <a href="#" class="btn btn-primary">Go somewhere</a>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="col-sm-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <h5 class="card-title">Special title treatment</h5>
-                                            <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                                            <a href="#" class="btn btn-primary">Go somewhere</a>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            }
                         </div>
+                        <button id="nextButton" class="btn btn-light">
+                            <span class="material-symbols-outlined">
+                                arrow_forward_ios
+                            </span>
+                        </button>
                     </div>
                 </div>
             </div>
-            @* Game Assignments *@
-            @* Will develop for game assingment *@
-            
         </div>
     </div>
 </main>
+
+@section scripts
+{
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+            const carouselContainer = document.querySelector('.carousel-container');
+            const cardWidth = carouselContainer.querySelector('.col-md-6').offsetWidth +16; // Include margin
+
+            // Set each card's position to center
+            const cards = document.querySelectorAll('.card-wrapper');
+            cards.forEach(card => {
+                card.style.left = (carouselContainer.offsetWidth / 2 - card.offsetWidth / 2) + 'px';
+            });
+
+            prevButton.addEventListener('click', function () {
+                carouselContainer.scrollLeft -= cardWidth;
+            });
+
+            nextButton.addEventListener('click', function () {
+                carouselContainer.scrollLeft += cardWidth;
+            });
+        });
+    </script>
+}
