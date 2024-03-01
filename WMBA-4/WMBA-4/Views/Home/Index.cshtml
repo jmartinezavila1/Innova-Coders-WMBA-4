@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Home Page";
+    var today = DateTime.Today;
 }
 
 <main>
@@ -14,9 +15,9 @@
         <div class="row" data-masonry='{"percentPosition": true }'>
             <div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around">
+                    <div class="card-body d-flex justify-content-around align-items-center">
                         <span>Total Divisions</span>
-                        <span>@ViewBag.DivisionCount</span>
+                        <span class="text-bold fs-5 ft-kelly">@ViewBag.DivisionCount</span>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-black stretched-link" asp-area="" asp-controller="Division" asp-action="Index">View Divisions</a>
@@ -25,9 +26,9 @@
                 </div>
             </div><div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around">
+                    <div class="card-body d-flex justify-content-around align-items-center">
                         <span>Total Teams</span>
-                        <span>@ViewBag.TeamCount</span>
+                        <span class="text-bold fs-5 ft-kelly">@ViewBag.TeamCount</span>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-black stretched-link" asp-area="" asp-controller="Team" asp-action="Index">View Teams</a>
@@ -37,9 +38,9 @@
             </div>
             <div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around">
+                    <div class="card-body d-flex justify-content-around align-items-center">
                         <span>Total Players</span>
-                        <span>@ViewBag.PlayerCount</span>
+                        <span class="text-bold fs-5 ft-kelly">@ViewBag.PlayerCount</span>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-black stretched-link" asp-area="" asp-controller="Player" asp-action="Index">View Players</a>
@@ -49,9 +50,9 @@
             </div>
             <div class="col-xl-3 col-md-3">
                 <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around">
+                    <div class="card-body d-flex justify-content-around align-items-center">
                         <span>Total Games</span>
-                        <span>@ViewBag.GameCount</span>
+                        <span class="text-bold fs-5 ft-kelly">@ViewBag.GameCount</span>
                     </div>
                     <div class="card-footer d-flex align-items-center justify-content-between">
                         <a class="small text-black stretched-link" asp-area="" asp-controller="Game" asp-action="Index">View Games</a>
@@ -88,13 +89,6 @@
                                             </span>
                                             <span>Upload File</span>
                                         </button>
-                                        <button type="submit" class="btn btn-outline-secondary d-flex my-2" asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate">
-                                            <span class="material-symbols-outlined me-2">
-                                                download
-                                            </span>
-                                            <span>Download Template</span>
-                                        </button>
-
                                     </div>
                                 </div>
                                 <div class="col-md-6">
@@ -103,9 +97,12 @@
                                         <li>Begin entering the data from the second row of your spreadsheet.</li>
                                         <li>We recommend downloading the template to expedite your work.</li>
                                     </ul>
-
-                                </div>
-                                <div style="text-align: center;">
+                                    <button type="submit" class="btn btn-outline-secondary d-flex my-2" asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate">
+                                        <span class="material-symbols-outlined me-2">
+                                            download
+                                        </span>
+                                        <span>Download Template</span>
+                                    </button>
                                 </div>
                             </div>
                         </form>
@@ -114,32 +111,48 @@
                 <!-- Upcoming Games List -->
                 <div class="card mb-4 card-hover shadow">
                     <div class="card-header">
-                        Import Teams
+                        Upcoming Games
                     </div>
-                    <div class="card-body d-flex">
-                        <button id="prevButton" class="btn btn-light">
+                    <div class="card-body d-flex align-items-center">
+                        <button id="prevButton" class="btn btn-light h-01">
                             <span class="material-symbols-outlined">
                                 arrow_back_ios_new
                             </span>
                         </button>
-                        <div class="d-flex carousel-container" style="overflow-x: hidden; scroll-behavior: smooth;">
-                            @foreach (var game in Model)
+                        <div class="d-flex carousel-container align-items-center overflow-hidden mx-2 p-3" style="scroll-behavior: smooth;">
+                            @foreach (var game in Model.Where(g => g.Date >= today))
                             {
-                                <div class="col-md-6 col-md-3 mx-2 card-wrapper">
-                                    <div class="card mb-4 card-hover shadow">
+                                <div class="col-md-5 mx-2 card-wrapper game-card">
+                                    <div class="card card-hover shadow-sm">
                                         <div class="card-header">
                                             @game.GameType.Description
                                         </div>
                                         <div class="card-body">
+                                            @{
+                                                var teamGamesList = game.TeamGames.ToList();
+                                                var firstTeamGame = teamGamesList.FirstOrDefault();
+                                                var secondTeamGame = teamGamesList.LastOrDefault();
+                                            }
+                                            @if (firstTeamGame != null && secondTeamGame != null)
+                                            {
+                                                <h5 class="card-title">@firstTeamGame.Team.Name vs @secondTeamGame.Team.Name</h5>
+                                                <p class="card-text">
+                                                    <strong>@firstTeamGame.score</strong> - <strong>@secondTeamGame.score</strong>
+                                                </p>
+                                            }
+                                            else
+                                            {
+                                                <p class="card-text">Team information not available</p>
+                                            }
+                                            <h5 class="card-title">@game.Date</h5>
                                             <h5 class="card-title">@game.Location.LocationName</h5>
-                                            <p class="card-text">Other details</p>
-                                            <a href="#" class="btn btn-primary">Go somewhere</a>
+                                            <a asp-area="" asp-controller="ScorePlayer" asp-action="Index" class="btn btn-primary">Start game</a>
                                         </div>
                                     </div>
                                 </div>
                             }
                         </div>
-                        <button id="nextButton" class="btn btn-light">
+                        <button id="nextButton" class="btn btn-light h-01">
                             <span class="material-symbols-outlined">
                                 arrow_forward_ios
                             </span>
@@ -158,10 +171,10 @@
             const prevButton = document.getElementById('prevButton');
             const nextButton = document.getElementById('nextButton');
             const carouselContainer = document.querySelector('.carousel-container');
-            const cardWidth = carouselContainer.querySelector('.col-md-6').offsetWidth +16; // Include margin
+            const cardWidth = carouselContainer.querySelector('.game-card').offsetWidth + 16; // Include margin
 
             // Set each card's position to center
-            const cards = document.querySelectorAll('.card-wrapper');
+            const cards = document.querySelectorAll('.game-card');
             cards.forEach(card => {
                 card.style.left = (carouselContainer.offsetWidth / 2 - card.offsetWidth / 2) + 'px';
             });
