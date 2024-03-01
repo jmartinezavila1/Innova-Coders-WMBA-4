@@ -62,7 +62,7 @@
                     <a id="hbpButton" class="btn btn-kelly mx-1">HBP</a>
                     <a id="outButton" class="btn btn-kelly mx-1">Out</a>
                     <a id="openPopupButton" data-inplayId=" ViewBag.Inplay.ID" class="btn btn-kelly mx-1">In Play</a>
-                    
+                    <a id="nextBatterButton" class="btn btn-kelly mx-1">Next Batter</a>
 
                 </div>
             </div>
@@ -101,7 +101,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="inplayModalLabel">Inplay Data</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button id="closeButtonInplayx" type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -109,7 +109,7 @@
                 <!-- Aquí se cargará la vista parcial -->
             </div>
             <div class="modal-footer">
-                <button id="closeButton" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="closeButtonInplay" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                 <button id="saveChangesButton" type="button" class="btn btn-kelly mx-1">Save changes</button>
             </div>
         </div>
@@ -117,37 +117,22 @@
 </div>
 @* 
 
-Cierra popup y actualiza la info de inplay *@
+Cierra popup  inplay *@
 <script>
-    $(document).ready(function () {
-        $('#closeButton').click(function () {
-            // Recoge los datos de tu formulario
-            var inplay = {
-                $('#inplayId').val(data.inplay.id);
-                $('#strikesCount').text(data.inplay.strikes);
-                $('#outs').text(data.inplay.outs);
-                $('#fouls').text(data.inplay.fouls);
-                $('#ballsCount').text(data.inplay.balls);
-                $('#runs').text(data.inplay.runs);
-                $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
-            };
-
-            // Envía los datos al servidor
-            $.ajax({
-                url: '/ScorePlayer/UpdateInplay',  // Cambia esto a la URL de tu acción
-                type: 'POST',
-                data: inplay,
-                success: function () {
-                    // Cierra el popup cuando la solicitud se complete con éxito
-                    $('#myPopup').hide();
-                }
-            });
-        });
+    $('#closeButtonInplay').click(function () {
+        // Solo cierra el popup
+        $('#inplayModal').modal('hide');
     });
 </script>
 
+@* Cierra boton Inplay desde la x *@
 
+<script>
+    $('#closeButtonInplayx').click(function () {
+        // Solo cierra el popup
+        $('#inplayModal').modal('hide');
+    });
+</script>
 
 
 @* For the Modal Inplay *@
@@ -177,7 +162,6 @@ Cierra popup y actualiza la info de inplay *@
                 playerInBase1Id: $('input[name="playerInBase1Id"]:checked').val(),
                 playerInBase2Id: $('input[name="playerInBase2Id"]:checked').val(),
                 playerInBase3Id: $('input[name="playerInBase3Id"]:checked').val(),
-
             };
 
             $.ajax({
@@ -187,6 +171,17 @@ Cierra popup y actualiza la info de inplay *@
                 success: function (response) {
                     if (response.success) {
                         console.log('Los datos se guardaron correctamente');
+
+                        $('#inplayId').val(response.inplay.id);
+                        $('#strikesCount').text(response.inplay.strikes);
+                        $('#outs').text(response.inplay.outs);
+                        $('#fouls').text(response.inplay.fouls);
+                        $('#ballsCount').text(response.inplay.balls);
+                        $('#runs').text(response.inplay.runs);
+                        $('#inning').text('Inning: ' + response.inplay.inningNumber);
+                        $('#playerAtBat').text('Player at bat: ' + response.inplay.firstPlayer);
+
+                        // Cierra el popup
                         $('#inplayModal').modal('hide');
                     } else {
                         console.log('Hubo un error al guardar los datos');
@@ -352,6 +347,18 @@ Cierra popup y actualiza la info de inplay *@
                     $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+
+                    $.ajax({
+                        url: '/ScorePlayer/LoadInplayPartial',
+                        data: { inplayId: inplayId },
+                        success: function (response) {
+                            $('#inplayModalBody').html(response);
+                            $('#inplayModal').modal('show');
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            console.log(textStatus, errorThrown);
+                        }
+                    });
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -385,6 +392,35 @@ Cierra popup y actualiza la info de inplay *@
                 }
             });
         });
+
+//Next batter button
+
+        $('#nextBatterButton').click(function (e) {
+            e.preventDefault();
+            var inplayId = $('#inplayId').val();
+
+            $.ajax({
+                url: '/ScorePlayer/NextBatter',
+                type: 'POST',
+                data: { inplayId: inplayId },
+                success: function (data) {
+                    $('#ballsCount').text(data.inplay.balls);
+                    $('#inplayId').val(data.inplay.id);
+                    $('#strikesCount').text(data.inplay.strikes);
+                    $('#outs').text(data.inplay.outs);
+                    $('#fouls').text(data.inplay.fouls);
+                    $('#runs').text(data.inplay.runs);
+                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+
+
 
     });
 </script>
