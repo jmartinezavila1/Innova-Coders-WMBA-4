@@ -4,8 +4,11 @@
     ViewData["Title"] = "Delete";
 }
 
-<h1>Inactive</h1>
-
+<h1>Status</h1>
+<h4 class="ft-grey">
+    @Model.Name status is
+    @(Model.Status ? "Active" : "Inactive")
+</h4>
 <div>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <hr />
