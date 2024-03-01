@@ -1,58 +1,34 @@
 ﻿@{
     var feedback = Html.Raw(TempData["Feedback"]);
 }
-
+<div class="mb-4">
 @if (!string.IsNullOrWhiteSpace(feedback.ToString()))
 {
-    <button class="btn btn-danger" type="button" data-toggle="collapse" data-target="#feedbackCollapse" aria-expanded="false" aria-controls="feedbackCollapse">
-        Show Feedback
+    <button class="btn btn-danger mb-2" type="button" data-toggle="collapse" data-target="#feedbackCollapse" aria-expanded="false" aria-controls="feedbackCollapse">
+        Check Feedback Detail
     </button>
-
     <div class="collapse" id="feedbackCollapse">
-        <div class="card card-body">
-            @feedback
+        <div class="card card-body p-4 d-flex justify-content-center" id="feedback">
+                <p class="m-0">@feedback</p>
         </div>
     </div>
 }
-<br />
-<div class="card mb-sm-3" style="min-width: 18rem;">
-    <h4 class="card-header" id="Team">Import Teams</h4>
-    <div class="card-body">
-        <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label custom-file-label">Upload Excel File:</label>
-                        <div class="input-group mb-3">
-                            <input type="file" class="form-control" name="theExcel" id="theExcel">
-                        </div>
-                        <div>
-                            Files must be less than 100 MB.<br />
-                            Allowed file types: .xls, .xlsx,
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <input type="submit" value="Upload Data" class="btn-kelly btn-text text-no-deco" />              
-                    </div>
-                </div>
-                <div class="col-md-7">
-                    <ul>
-                        <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
-                        <li>Begin entering the data from the second row of your spreadsheet.</li>
-                        <li>We recommend downloading the template to expedite your work.</li>
-                    </ul>
-                    
-                </div>
-                <div style="text-align: center;">
-                    <a asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate" class="btn-kelly btn-text text-no-deco"><i class="bi bi-download"></i>Template</a>
-                </div>
-            </div>
-        </form>
-
-    </div>
-    <div class="card-footer">
-        
-    </div>
+</div>
+<div class="card-hover shadow">
+<partial name="_ImportTeams"/>
 </div>
 
+@section Scripts {
+    <script>
+        window.addEventListener("load", function () {
+            var feedback = document.getElementById("feedback").innerText;
+            var button = document.getElementById("feedbackButton");
 
+            if (feedback.includes("Finished Importing")) {
+                button.classList.remove("btn-danger");
+                button.classList.add("btn-success");
+                button.textContent = "Importing Succeed";
+            }
+        });
+    </script>
+}

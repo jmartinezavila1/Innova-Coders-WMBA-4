@@ -505,6 +505,10 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> ImportTeam(IFormFile theExcel)
         {
             string feedBack = string.Empty;
+            string errorInvalid = "Invalid Excel file. Please save your CSV document as Excel file and try again.";
+            string errorCSV = "Error: That file is not an Excel spreadsheet or CSV file";
+            string errorFile = "Error: Problem with the file";
+            string errorNofile = "Error: No file uploaded";
             if (theExcel != null)
             {
                 string mimeType = theExcel.ContentType;
@@ -530,7 +534,7 @@ namespace WMBA_4.Controllers
                         catch
                         {
 
-                            feedBack = "Invalid Excel file. Please save your CSV document as Excel file and try again.";
+                            feedBack = "<span class=\"text-danger\">" + errorInvalid + "</span>";
 
                         }
 
@@ -554,20 +558,20 @@ namespace WMBA_4.Controllers
                     }
                     else
                     {
-                        feedBack = "Error: That file is not an Excel spreadsheet or CSV file";
+                        feedBack = "<span class=\"text-danger\">" + errorCSV + "</span>";
                     }
                 }
                 else
                 {
-                    feedBack = "Error: Problem with the file";
+                    feedBack = "<span class=\"text-danger\">" + errorFile + "</span>";
                 }
             }
             else
             {
-                feedBack = "Error: No file uploaded";
+                feedBack = "<span class=\"text-danger\">" + errorNofile + "</span>";
             }
 
-            TempData["Feedback"] = feedBack + "<br /><br />";
+            TempData["Feedback"] = feedBack;
 
 
             return View();
@@ -586,12 +590,9 @@ namespace WMBA_4.Controllers
                 workSheet.Cells[1, 6].Text == "Division" &&
                 workSheet.Cells[1, 7].Text == "Club" &&
                 workSheet.Cells[1, 8].Text == "Team")
-
             {
                 int successCount = 0;
                 int errorCount = 0;
-
-
 
                 for (int row = start.Row + 1; row <= end.Row; row++)
                 {
@@ -600,7 +601,11 @@ namespace WMBA_4.Controllers
                         Player pl = new Player();
                         try
                         {
-                            
+                            if (errorCount > 0)
+                            {
+                                feedBack += "There was a problem with the data you tried to import. The errors listed below." + "<br/>";
+                            }
+
                             pl.FirstName = workSheet.Cells[row, 2].Text;
                             pl.LastName = workSheet.Cells[row, 3].Text;
                             pl.MemberID = workSheet.Cells[row, 4].Text;
@@ -612,61 +617,41 @@ namespace WMBA_4.Controllers
                             {
                                 transaction.Rollback();
                                 errorCount++;
-                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected because the Season value is not the current year."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected because the Season value is not the current year."
+                                        +"</span>"+"<br />";
                                 continue; // Salta al siguiente registro
                             }
-
-
                             Player existingPlayer = _context.Players.FirstOrDefault(p => p.MemberID == pl.MemberID);
                             if (existingPlayer == null)
                             {
                                 Team t = new Team();
-
                                 //For Divisions
                                 string DivisonName = workSheet.Cells[row, 6].Text;
                                 Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
                                 if (existingDiv == null)
                                 {
-
                                     Division newDivision = newDivision = new Division { DivisionName = DivisonName };
                                     _context.Divisions.Add(newDivision);
-
-
-
                                     t.DivisionID = newDivision.ID;
                                 }
                                 else
                                 {
-
-
                                     t.DivisionID = existingDiv.ID;
                                 }
-
-
                                 //For Teams
-
-
                                 string teamNameFirst = workSheet.Cells[row, 8].Text;
                                 string teamName = Regex.Replace(teamNameFirst, @"^\d+[A-Za-z]*\s*", "");
                                 Team existingTeam = _context.Teams.FirstOrDefault(t => t.Name == teamName);
                                 if (existingTeam == null)
                                 {
-
                                     Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
                                     _context.Teams.Add(newTeam);
-
-
-
                                     pl.TeamID = newTeam.ID;
                                 }
                                 else
                                 {
-
                                     pl.TeamID = existingTeam.ID;
                                 }
-
-
                                 _context.Players.Add(pl);
                                 _context.SaveChanges();
                                 successCount++;
@@ -677,10 +662,9 @@ namespace WMBA_4.Controllers
                                 // El jugador ya existe, por lo que no lo agregamos
                                 transaction.Rollback();
                                 errorCount++;
-                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        +"</span>"+"<br />";
                             }
-
                         }
                         catch (DbUpdateException dex)
                         {
@@ -688,16 +672,14 @@ namespace WMBA_4.Controllers
                             errorCount++;
                             if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                             {
-                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        +"</span>"+"<br />";
                             }
                             else
                             {
-                                feedBack += "Error: Record " + pl.FirstName + " " + pl.LastName + " caused an error."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " caused an error."
+                                        + "</span>" + "<br />";
                             }
-
-
                         }
                         catch (Exception ex)
                         {
@@ -705,38 +687,44 @@ namespace WMBA_4.Controllers
                             errorCount++;
                             if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                             {
-                                feedBack += "Error: Record " + pl.FirstName + pl.LastName + " was rejected because the Team name is duplicated."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + pl.LastName + " was rejected because the Team name is duplicated."
+                                        +"</span>"+ "<br />";
                             }
                             else
                             {
-                                feedBack += "Error: Record " + pl.FirstName + pl.LastName + " caused and error."
-                                        + "<br />";
+                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + pl.LastName + " caused and error."
+                                        + "</span>" + "<br />";
                             }
-
                         }
-
-
                     }
-
                 }
                 foreach (var entry in _context.ChangeTracker.Entries<Player>().Where(e => e.State == EntityState.Added))
                 {
                     entry.State = EntityState.Detached;
                 }
-
-                feedBack += "Finished Importing " + (successCount + errorCount).ToString() +
-                    " Records with " + successCount.ToString() + " inserted and " +
-                    errorCount.ToString() + " rejected";
-
+                if (successCount > 0)
+                {
+                    feedBack += "Your file has been successfully imported and saved." + "<br/>";
+                    feedBack += "Result: " + "<span class=\"text-bold\">" + (successCount + errorCount).ToString() + "</span>" +
+                " Records with " + "<span class=\"text-bold text-primary\">" + successCount.ToString() + "</span>" + " inserted and " +
+                "<span class=\"text-bold text-danger\">" + errorCount.ToString() + "</span>" + " rejected";
+                }
+                else
+                {
+                    feedBack += "Result: " + "<span class=\"text-bold mt-2\">" + (successCount + errorCount).ToString() + "</span>" +
+                " Records with " + "<span class=\"text-bold text-primary\">" + successCount.ToString() + "</span>" + " inserted and " +
+                "<span class=\"text-bold text-danger\">" + errorCount.ToString() + "</span>" + " rejected";
+                }
+               
             }
             else
             {
                 feedBack = "Error: You may have selected the wrong file to upload.<br /> Remember, you must have the headings 'First Name','Last Name','Member ID','Season','Division' and 'Team' in the first two cells of the first row.";
             }
-
             return feedBack;
         }
+
+
 
         private SelectList DivisionList(int? selectedId)
         {
