@@ -49,7 +49,7 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-           
+
             var teamId = $('#TeamID').val();
             $.ajax({
                 url: '/Player/GetDivisionName',
@@ -63,7 +63,7 @@
                 }
             });
 
-            
+
             $('#TeamID').change(function () {
                 var teamId = $(this).val();
                 $.ajax({
@@ -80,6 +80,5 @@
             });
         });
     </script>
-
-
+}
 

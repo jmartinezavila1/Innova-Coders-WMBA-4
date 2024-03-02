@@ -2,20 +2,20 @@
     var feedback = Html.Raw(TempData["Feedback"]);
 }
 <div class="mb-4">
-@if (!string.IsNullOrWhiteSpace(feedback.ToString()))
-{
-    <button class="btn btn-danger mb-2" type="button" data-toggle="collapse" data-target="#feedbackCollapse" aria-expanded="false" aria-controls="feedbackCollapse">
-        Check Feedback Detail
-    </button>
-    <div class="collapse" id="feedbackCollapse">
-        <div class="card card-body p-4 d-flex justify-content-center" id="feedback">
+    @if (!string.IsNullOrWhiteSpace(feedback.ToString()))
+    {
+        <button class="btn btn-danger mb-2" type="button" data-toggle="collapse" data-target="#feedbackCollapse" aria-expanded="false" aria-controls="feedbackCollapse">
+            Check Feedback Detail
+        </button>
+        <div class="collapse" id="feedbackCollapse">
+            <div class="card card-body p-4 d-flex justify-content-center" id="feedback">
                 <p class="m-0">@feedback</p>
+            </div>
         </div>
-    </div>
-}
+    }
 </div>
 <div class="card-hover shadow">
-<partial name="_ImportTeams"/>
+    <partial name="_ImportTeams" />
 </div>
 
 @section Scripts {
