@@ -2,7 +2,13 @@
 {
     public class InPlayMV
     {
+
         public int InplayID { get; set; }
+
+        public int? PlayerInBase1Base { get; set; }
+        public int? PlayerInBase2Base { get; set; }
+        public int? PlayerInBase3Base { get; set; }
+
         public int? PlayerBattingId { get; set; }
         public string PlayerBattingName { get; set; }
         public int? PlayerInBase1Id { get; set; }
@@ -13,4 +19,3 @@
         public string PlayerInBase3Name { get; set; }
     }
 }
-    
