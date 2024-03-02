@@ -67,10 +67,37 @@ a[disabled] {
     cursor: not-allowed;
     pointer-events: none; /* 링크 클릭 이벤트 비활성화 */
 }
-tbody tr{
+
+tbody tr {
     cursor: pointer;
 }
 
+/*/////////////////////////////Collapsible in Team Detail/////////////////////////////////////*/
+
+.collapsible {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    padding: 10px 20px; /* Adjust padding for oval shape */
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;padding: 12px 36px;
+    border-radius: 50px; /* Make it an oval shape */
+}
+}
+
+    .collapsible:hover {
+        background-color: #46a049;
+    }
+
+.content {
+    padding: 12px 36px;
+    display: none;
+    overflow: hidden;
+    transition: height 0.3s ease;
+}
 /*/////////////////////////////Check Box/////////////////////////////////////*/
 
 .form-group label:hover {
@@ -92,8 +119,8 @@ tbody tr{
 }
 
 /*/////////////////////////////Properties/////////////////////////////////////*/
-.h-01{
-    height:100px;
+.h-01 {
+    height: 100px;
 }
 
 
@@ -147,6 +174,7 @@ tbody tr{
 .border-kelly {
     border: 0.8px solid var(--bg-kelly);
 }
+
 .card-hover {
     transition: transform 0.3s ease-in-out; /* 요소 확대 애니메이션 */
 }
@@ -155,7 +183,6 @@ tbody tr{
         /*border: 2px solid #007bff;*/ /* 테두리 색상 변경 */
         background-color: rgba(75, 75, 75, 0.06); /* 배경 색상 및 불투명도 변경 */
         transform: scale(1.03); /* 요소 확대 */
-        
     }
 
 
@@ -180,7 +207,8 @@ tbody tr{
     padding-top: 6rem !important;
     padding-bottom: 3rem !important;
 }
-@media (max-width: 391px){
+
+@media (max-width: 391px) {
     .t-in-flex {
         flex-direction: column;
     }
@@ -250,7 +278,7 @@ tbody tr{
     border: none;
     background: none;
     text-align: center;
-    margin-right:0.5rem;
+    margin-right: 0.5rem;
 }
 
 tbody > tr:hover {
@@ -363,8 +391,16 @@ th:last-child {
     justify-content: center;
 }
 
-/*//////////////////////////////////classes///////////////////////////////////////////*/
+.li-flex {
+    display: flex;
+    justify-content: space-between;
+}
 
+/*Added by Cristina S*/
+.form-group {
+    margin-bottom: 1rem;
+}
+/*//////////////////////////////////classes///////////////////////////////////////////*/
 .logo {
     width: 7rem;
     margin-left: 45px;
@@ -375,7 +411,7 @@ th:last-child {
 }
 
 .btn-kelly {
-    padding: 0.5rem 0.9rem;
+    padding: 0.45rem 0.9rem;
     border: none;
     background-color: var(--bg-kelly);
     border-radius: 10px;
@@ -394,8 +430,7 @@ th:last-child {
     /*color: var(--ft-kelly);*/
 }
 
-    .material-symbols-outlined:hover
-     {
+    .material-symbols-outlined:hover {
         color: var(--ft-dark-blue); /*in the index operation hovers*/
     }
 
@@ -456,14 +491,17 @@ div > .nav-hover:hover {
     background-color: #f2f2f2; /* Change background color for inactive games */
     color: #999; /* Change text color for inactive games */
 }
+
 .inactive-player {
     background-color: #f2f2f2; /* Change background color for inactive players */
     color: #999; /* Change text color for inactive players */
 }
+
 .inactive-team {
     background-color: #f2f2f2; /* Change background color for inactive teams */
     color: #999; /* Change text color for inactive teams */
 }
+
 #lineupPopup {
     position: absolute;
     top: 50%; /* Adjust as needed */
@@ -481,3 +519,14 @@ div > .nav-hover:hover {
 }
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
+#sortableList {
+    cursor: pointer;
+}
+
+    #sortableList .list-group-item {
+        transition: transform 0.3s ease;
+    }
+
+        #sortableList .list-group-item:hover {
+            transform: scale(1.02);
+        }
