@@ -115,7 +115,7 @@
         </div>
     </div>
 </div>
-@* 
+@*
 
 Cierra popup  inplay *@
 <script>
@@ -169,9 +169,9 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: data,
                 success: function (response) {
+                    console.log(response);
                     if (response.success) {
                         console.log('Los datos se guardaron correctamente');
-
                         $('#inplayId').val(response.inplay.id);
                         $('#strikesCount').text(response.inplay.strikes);
                         $('#outs').text(response.inplay.outs);
@@ -184,7 +184,7 @@ Cierra popup  inplay *@
                         // Cierra el popup
                         $('#inplayModal').modal('hide');
                     } else {
-                        console.log('Hubo un error al guardar los datos');
+                        console.log('Hubo un error al guardar los datos de Inply');
                     }
                 }
             });
@@ -202,8 +202,6 @@ Cierra popup  inplay *@
         $('#startButton').click(function (e) {
             e.preventDefault();
 
-            // Disable the button
-            $(this).prop('disabled', true);
 
             var url = $(this).attr('href');
             url = url.replace('http://', 'https://');
@@ -243,6 +241,10 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: { inplayId: inplayId },
                 success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
                     $('#strikesCount').text(data.inplay.strikes);
@@ -254,7 +256,7 @@ Cierra popup  inplay *@
 
                     // Check if the ball count is 4, then open the modal
                     if (data.inplay.balls === 4) {
-                        
+
                         $.ajax({
                             url: '/ScorePlayer/LoadInplayPartial',
                             data: { inplayId: inplayId },
@@ -393,7 +395,7 @@ Cierra popup  inplay *@
             });
         });
 
-//Next batter button
+        //Next batter button
 
         $('#nextBatterButton').click(function (e) {
             e.preventDefault();
@@ -412,7 +414,7 @@ Cierra popup  inplay *@
                     $('#runs').text(data.inplay.runs);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
-                    
+
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
