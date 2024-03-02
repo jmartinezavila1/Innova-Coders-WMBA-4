@@ -22,7 +22,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, bool isActive, bool isInactive, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, bool isActive, bool isInactive, int? page, int? pageSizeID, int? year, int? month, int? day,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
 
@@ -55,6 +55,21 @@ namespace WMBA_4.Controllers
             if (!System.String.IsNullOrEmpty(SearchString))
             {
                 games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
+            }    
+            if (year.HasValue)
+            {
+                games = games.Where(g => g.Date.Year == year.Value);
+                numberFilters++;
+            }
+            if (month.HasValue)
+            {
+                games = games.Where(g => g.Date.Month == month.Value);
+                numberFilters++;
+            }
+            if (day.HasValue)
+            {
+                games = games.Where(g => g.Date.Day == day.Value);
                 numberFilters++;
             }
 
