@@ -17,6 +17,7 @@ namespace WMBA_4.Models
         public int InningID { get; set; }
         public Inning Inning { get; set; }
 
+        public int NextPlayer { get; set; }
 
         /// <summary>
         /// Inverse properties for the player in the base

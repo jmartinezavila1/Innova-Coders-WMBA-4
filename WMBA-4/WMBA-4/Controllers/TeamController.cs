@@ -219,6 +219,7 @@ namespace WMBA_4.Controllers
 
             ViewBag.OpponentTeams = opponentTeams;
             ViewData["Players"] = players.ToList();
+           
             return View(team);
         }
 

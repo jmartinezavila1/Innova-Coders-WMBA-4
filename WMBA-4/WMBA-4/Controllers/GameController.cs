@@ -209,9 +209,9 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game/Details/5
-        public async Task<IActionResult> Details(int? id, int team)
+        public async Task<IActionResult> Details(int? gameid, int team)
         {
-            if (id == null || _context.Games == null)
+            if (gameid == null || _context.Games == null)
             {
                 return NotFound();
             }
@@ -223,7 +223,7 @@ namespace WMBA_4.Controllers
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
                         .ThenInclude(d => d.Division)
-                .FirstOrDefaultAsync(m => m.ID == id);
+                .FirstOrDefaultAsync(m => m.ID == gameid);
 
 
 
@@ -234,18 +234,19 @@ namespace WMBA_4.Controllers
 
             PopulatePlayersAssignedTeam(game, team);
             ViewBag.TeamID = team;
+            ViewBag.GameID = gameid;
 
             return View(game);
         }
         // this is for LineUp
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Save(string[] selectedOptions, int? id, int team, Game game)
+        public async Task<IActionResult> Save(string[] selectedOptions, int? gameid, int team, Game game)
         {
             // Obtener el juego para actualizar
             var GameToUpdate = await _context.Games
                 .Include(p => p.GameLineUps).ThenInclude(p => p.Player)
-                .FirstOrDefaultAsync(p => p.ID == id);
+                .FirstOrDefaultAsync(p => p.ID == gameid);
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
@@ -257,7 +258,7 @@ namespace WMBA_4.Controllers
 
             await _context.SaveChangesAsync();
 
-            return RedirectToAction("Details", new { id = id, team = team });
+            return RedirectToAction("Details", "Game", new { gameid = gameid, team = team });
         }
         
         // GET: Game/Create
@@ -656,23 +657,40 @@ namespace WMBA_4.Controllers
             var PlayersOptions = new HashSet<int>
                 (GameLineUpToUpdate.GameLineUps.Select(c => c.PlayerID));//IDs of the currently selected conditions
 
-
             int battingOrder = 1;
 
-            var gameLineUpsToRemove = _context.GameLineUps
-                                  .Where(m => m.TeamID == team && m.GameID == GameLineUpToUpdate.ID);
-
-            _context.GameLineUps.RemoveRange(gameLineUpsToRemove);
-         
             foreach (var option in selectedOptionsHS)
             {
+                var playerId = int.Parse(option);
+                var existingGameLineUp = _context.GameLineUps
+                    .FirstOrDefault(m => m.TeamID == team && m.GameID == GameLineUpToUpdate.ID && m.PlayerID == playerId);
 
-                var newGameLineUp = new GameLineUp { GameID = GameLineUpToUpdate.ID, BattingOrder = battingOrder, PlayerID = int.Parse(option), TeamID = team };
-                GameLineUpToUpdate.GameLineUps.Add(newGameLineUp);
+                if (existingGameLineUp != null)
+                {
+                    // Update the batting order of the existing player
+                    existingGameLineUp.BattingOrder = battingOrder;
+                    
+                }
+                else
+                {
+                    // Add the new player to the game lineup
+                    var newGameLineUp = new GameLineUp { GameID = GameLineUpToUpdate.ID, BattingOrder = battingOrder, PlayerID = playerId, TeamID = team };
+                    GameLineUpToUpdate.GameLineUps.Add(newGameLineUp);
+                }
 
                 battingOrder += 1;
-                
             }
+
+            var playersToRemove = GameLineUpToUpdate.GameLineUps
+                .Where(m => !selectedOptionsHS.Contains(m.PlayerID.ToString()))
+                .ToList();
+
+            foreach (var playerToRemove in playersToRemove)
+            {
+                GameLineUpToUpdate.GameLineUps.Remove(playerToRemove);
+            }
+
+         
             _context.SaveChanges();
         }
 
