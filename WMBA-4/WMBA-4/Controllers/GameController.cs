@@ -684,7 +684,7 @@ namespace WMBA_4.Controllers
                 {
                     // Update the batting order of the existing player
                     existingGameLineUp.BattingOrder = battingOrder;
-                    
+
                 }
                 else
                 {
@@ -702,10 +702,14 @@ namespace WMBA_4.Controllers
 
             foreach (var playerToRemove in playersToRemove)
             {
-                GameLineUpToUpdate.GameLineUps.Remove(playerToRemove);
+                if (playerToRemove.TeamID == team)
+                {
+                    GameLineUpToUpdate.GameLineUps.Remove(playerToRemove);
+                }
+
             }
 
-         
+
             _context.SaveChanges();
         }
 

@@ -1,65 +1,52 @@
 ﻿@model WMBA_4.Models.Game
 
+<header>
+    <h1>@ViewBag.TeamName Line Up</h1>
+</header>
+<section>
+    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName)</p>
+</section>
+<hr />
 
-<div class="card">
-    <div class="card-body">
-        <h1>
-            @ViewBag.TeamName Line Up
-        </h1>
-    </div>
+<div class="col-md-4">
+    <form asp-action="Save" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div>
+            <ul id="sortableList" class="list-group my-4">
+                @{
+                    List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
+                    @for (int i = 0; i < checkboxes.Count; i++)
+                    {
+                        <li class="list-group-item li-flex" data-id="@checkboxes[i].ID">
+                            <div>
+                                <span class="batting-order me-2">@(checkboxes[i].BattingOrder != 0 ? checkboxes[i].BattingOrder.ToString() : "")</span>
+                                <input type="checkbox"
+                                       class="custom-control-input me-2"
+                                       name="selectedOptions"
+                                       value="@checkboxes[i].ID"
+                                @(checkboxes[i].Assigned ? "checked=\"checked\"" : "") />
+                                @checkboxes[i].DisplayText&nbsp;&nbsp;
+                            </div>
+                            <div>
+                                <span class="material-symbols-outlined ft-grey">
+                                    drag_handle
+                                </span>
+                            </div>
+                        </li>
+                    }
+                }
+            </ul>
+        </div>
+        <div class="form-group d-flex">
+            <a class="btn btn-outline-secondary mx-1" asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team Details</a>
+            <input type="hidden" name="team" value="@ViewBag.TeamID" />
+            <input type="hidden" name="gameid" value="@ViewBag.GameID" />
+            <input type="submit" id="saveButton" value="Save" class="btn-kelly btn-text text-no-deco" />
+        </div>
+    </form>
 </div>
-<div>
-    <p>@Model.Date | @Html.DisplayFor(model => model.Location.LocationName) | @Html.DisplayFor(model => model.Season.SeasonName) </p>
-    <br />
-    <div class="col-md-4">
-        <form asp-action="Save" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-            <div>
-
-                <div>
-
-                    <ul id="sortableList" class="list-group">
-                        @{
-
-                            List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
-
-                            @for (int i = 0; i < checkboxes.Count; i++)
-                            {
-                                <li class="list-group-item" data-id="@checkboxes[i].ID">
-                                    <span class="batting-order">@(checkboxes[i].BattingOrder != 0 ? checkboxes[i].BattingOrder.ToString() : "")</span>
-                                    <input type="checkbox"
-                                           class="custom-control-input"
-                                           name="selectedOptions"
-                                           value="@checkboxes[i].ID"
-                                    @(checkboxes[i].Assigned ? "checked=\"checked\"" : "") />
-                                    @checkboxes[i].DisplayText&nbsp;&nbsp;
-
-                                </li>
-                            }
-
-                        }
-                    </ul>
-
-                </div>
-            </div>
-
-            <br />
-            <div class="form-group">
-
-                <input type="hidden" name="team" value="@ViewBag.TeamID" />
-                <input type="hidden" name="gameid" value="@ViewBag.GameID" />
-                <input type="submit" id="saveButton" value="Save" class="btn-kelly btn-text text-no-deco" />
-            </div>
-        </form>
-    </div>
-
-
-</div>
-<div>
-    <a asp-controller="Team" asp-action="details" asp-route-id="@ViewBag.TeamID">Back to Team Details</a>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.13.0/Sortable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.13.0/Sortable.min.js" defer></script>
 <script>
     document.addEventListener('DOMContentLoaded', (event) => {
         var el = document.getElementById('sortableList');
@@ -86,7 +73,6 @@
                     });
                 }
             }
-
         });
     });
 </script>
