@@ -10,10 +10,10 @@
     var hasScheduledGames = Model.TeamGames.Any();
 }
 <div style="margin-bottom: 20px;">
-    <button class="collapsible" style="background-color: #4CAF50;">
-        <i class="fas fa-chevron-down"></i> Players
+    <button class="collapsible active" style="background-color: #4CAF50;">
+        <i class="arrow fas fa-chevron-up"></i> Players
     </button>
-    <div class="content">
+    <div class="content" style="display: block;">
         @if (playersList.Count > 0)
         {
             <ul class="list-group">
@@ -31,12 +31,12 @@
         }
     </div>
 </div>
-<div style="margin-bottom: 20px;">
 
-    <button class="collapsible" style="background-color: #4CAF50;">
-        <i class="fas fa-chevron-down"></i> Scheduled Games
+<div style="margin-bottom: 20px;">
+    <button class="collapsible active" style="background-color: #4CAF50;">
+        <i class="arrow fas fa-chevron-up"></i> Scheduled Games
     </button>
-    <div class="content">
+    <div class="content" style="display: block;">
         @if (hasScheduledGames)
         {
             <table class="table giro-table table-bordered">
@@ -112,6 +112,14 @@
         background-color: #f1f1f1;
         border-radius: 20px; /* Adjust border radius for content */
     }
+
+    .arrow {
+        transition: transform 0.3s ease;
+    }
+
+        .arrow.rotate {
+            transform: rotate(180deg);
+        }
 </style>
 
 <script>
@@ -119,15 +127,24 @@
     var i;
 
     for (i = 0; i < coll.length; i++) {
+        var content = coll[i].nextElementSibling;
+        var arrow = coll[i].querySelector('.arrow');
+
+        // Initially open all collapsible sections
+        content.style.display = "block";
+        arrow.classList.add('rotate');
+
         coll[i].addEventListener("click", function () {
             this.classList.toggle("active");
             var content = this.nextElementSibling;
+            var arrow = this.querySelector('.arrow');
             if (content.style.display === "block") {
                 content.style.display = "none";
+                arrow.classList.remove('rotate');
             } else {
                 content.style.display = "block";
+                arrow.classList.add('rotate');
             }
         });
     }
 </script>
-
