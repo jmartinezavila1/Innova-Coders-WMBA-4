@@ -106,7 +106,6 @@
                 </button>
             </div>
             <div class="modal-body" id="inplayModalBody">
-               
             </div>
             <div class="modal-footer">
                 <button id="closeButtonInplay" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -174,7 +173,7 @@ Cierra popup  inplay *@
                 IsOutPlayer2: $('input[name="isOutPlayer2"]').is(':checked'),
                 IsOutPlayer3: $('input[name="isOutPlayer3"]').is(':checked'),
             };
-            
+
             $.ajax({
                 url: '/ScorePlayer/SaveInplayChanges',
                 type: 'POST',
@@ -329,6 +328,10 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: { inplayId: inplayId },
                 success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
                     // Actualiza el contador de Balls en la vista
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
@@ -356,6 +359,10 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: { inplayId: inplayId },
                 success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
                     // Actualiza el contador de Balls en la vista
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
@@ -395,6 +402,10 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: { inplayId: inplayId },
                 success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
                     // Actualiza el contador de Balls en la vista
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);

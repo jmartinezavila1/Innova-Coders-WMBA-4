@@ -202,7 +202,7 @@ namespace WMBA_4.Controllers
                     .FirstOrDefault();
                 var inplay = new Inplay();
                 object inplayData = null;
-                string player = ""; 
+                string player = "";
 
                 if (existingInning != null)
                 {
@@ -224,7 +224,8 @@ namespace WMBA_4.Controllers
                            .Select(p => p.FullName)
                            .FirstOrDefault();
                     }
-                    else {
+                    else
+                    {
                         player = _context.Players
                            .Where(p => p.ID == inplay.PlayerBattingID)
                            .Select(p => p.FullName)
@@ -235,8 +236,8 @@ namespace WMBA_4.Controllers
 
                     if (inplay != null)
                     {
-                        
-                       
+
+
                         // Actualizar la información de la vista y retornar
                         inplayData = new
                         {
@@ -247,7 +248,7 @@ namespace WMBA_4.Controllers
                             Fouls = inplay.Fouls,
                             Balls = inplay.Balls,
                             InningNumber = inplay.Inning.InningNumber,
-                            FirstPlayer =player
+                            FirstPlayer = player
 
                         };
 
@@ -374,7 +375,7 @@ namespace WMBA_4.Controllers
                     success = false,
                     message = "Click on Next Player to continue."
                 });
-            }           
+            }
 
             var player = _context.Players
                      .Where(p => p.ID == inplay.PlayerBattingID)
@@ -440,7 +441,7 @@ namespace WMBA_4.Controllers
 
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
-                
+
 
                 inplay.NextPlayer = (int)inplay.PlayerBattingID;
 
@@ -514,6 +515,17 @@ namespace WMBA_4.Controllers
                    .FirstOrDefault();
 
 
+            // if nextPlayer es null, then get the first player in the lineup
+            if (nextPlayer == null)
+            {
+                nextPlayer = _context.GameLineUps
+                    .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID)
+                    .OrderBy(g => g.BattingOrder)
+                    .Select(g => g.Player)
+                    .FirstOrDefault();
+            }
+
+
             //if the strikes are less than 3, increment the strikes
             if (inplay.Strikes < 3)
             {
@@ -521,7 +533,7 @@ namespace WMBA_4.Controllers
                 await _context.SaveChangesAsync();
 
 
-                
+
                 inplayData = new
                 {
                     ID = inplay.ID,
@@ -537,7 +549,7 @@ namespace WMBA_4.Controllers
 
             //if the Strikes are 3, increment the PA and Strike Out in ScorePlayer
             else if (inplay.Strikes >= 3)
-            {                
+            {
 
                 var lineupID = _context.GameLineUps
                     .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
@@ -558,12 +570,13 @@ namespace WMBA_4.Controllers
                 scorePlayer.StrikeOut++;
 
 
-                inplay.PlayerBattingID = null;
+
                 inplay.Balls = 0;
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
                 inplay.Outs++;
                 inplay.NextPlayer = (int)inplay.PlayerBattingID;
+                inplay.PlayerBattingID = null;
 
 
 
@@ -586,7 +599,6 @@ namespace WMBA_4.Controllers
 
             }
 
-
             return Json(new { Inplay = inplayData });
 
         }
@@ -602,6 +614,14 @@ namespace WMBA_4.Controllers
             if (inplay == null)
             {
                 return NotFound();
+            }
+            if (inplay.PlayerBattingID == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Click on Next Player to continue."
+                });
             }
 
             //if the stikes are less than 2, increment the fouls
@@ -684,6 +704,14 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
+            if (inplay.PlayerBattingID == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Click on Next Player to continue."
+                });
+            }
 
             var player = _context.Players
                      .Where(p => p.ID == inplay.PlayerBattingID)
@@ -761,6 +789,14 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
+            if (inplay.PlayerBattingID == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Click on Next Player to continue."
+                });
+            }
 
             var inning = await _context.Innings.FindAsync(inplay.InningID);
 
@@ -787,8 +823,8 @@ namespace WMBA_4.Controllers
                 .Select(g => g.Player)
                 .FirstOrDefault();
 
-
-            inplay.PlayerBattingID = nextPlayer.ID;
+            inplay.NextPlayer = (int)inplay.PlayerBattingID;
+            inplay.PlayerBattingID = null;
             inplay.Balls = 0;
             inplay.Strikes = 0;
             inplay.Fouls = 0;
@@ -808,13 +844,11 @@ namespace WMBA_4.Controllers
                 Fouls = inplay.Fouls,
                 Balls = inplay.Balls,
                 InningNumber = inningNumber,
-                FirstPlayer = nextPlayer != null ? nextPlayer.FullName : "N/A"
+                FirstPlayer = "No player"
             };
             inplay.Strikes = 0;
             // Guarda los cambios en la base de datos
             await _context.SaveChangesAsync();
-
-
 
 
             return Json(new { Inplay = inplayData });
@@ -974,7 +1008,7 @@ namespace WMBA_4.Controllers
                 PlayerInBase1Base = inplay.PlayerInBase1ID.HasValue ? 1 : (int?)null,
                 PlayerInBase2Base = inplay.PlayerInBase2ID.HasValue ? 2 : (int?)null,
                 PlayerInBase3Base = inplay.PlayerInBase3ID.HasValue ? 3 : (int?)null,
-                
+
 
             };
 
@@ -1016,8 +1050,8 @@ namespace WMBA_4.Controllers
                 ScorePlayer sppP1;
                 ScorePlayer sppP2;
                 ScorePlayer sppP3;
-                int pb1=(int)model.PlayerInBase1Id;
-                int pb2= (int)model.PlayerInBase2Id;
+                int pb1 = (int)model.PlayerInBase1Id;
+                int pb2 = (int)model.PlayerInBase2Id;
                 int pb3 = (int)model.PlayerInBase3Id;
 
                 int baseNum = 0;
@@ -1136,7 +1170,7 @@ namespace WMBA_4.Controllers
                 {
                     inplay.PlayerInBase2ID = pb1;
                 }
-                else if (model.PlayerInBase1Base == 3) 
+                else if (model.PlayerInBase1Base == 3)
                 {
                     inplay.PlayerInBase3ID = pb1;
                 }
@@ -1144,7 +1178,7 @@ namespace WMBA_4.Controllers
 
 
 
-                if (model.PlayerInBase2Base == 1) 
+                if (model.PlayerInBase2Base == 1)
                 {
                     inplay.PlayerInBase1ID = pb2;
                 }
@@ -1157,7 +1191,7 @@ namespace WMBA_4.Controllers
                     inplay.PlayerInBase3ID = pb2;
                 }
 
-              
+
 
                 if (model.PlayerInBase3Base == 1)
                 {
@@ -1196,9 +1230,9 @@ namespace WMBA_4.Controllers
                     inplay.PlayerBattingID = null;
                 }
 
-                if (model.IsHit) 
+                if (model.IsHit)
                 {
-                    if(baseNum == 1)
+                    if (baseNum == 1)
                     {
                         scorePlayer.Singles++;
                     }
@@ -1213,10 +1247,10 @@ namespace WMBA_4.Controllers
                     scorePlayer.H++;
                     scorePlayer.PA++;
                     scorePlayer.AB++;
-                    
+
                 }
 
-                
+
 
                 inplay.Balls = 0;
                 try
@@ -1226,7 +1260,7 @@ namespace WMBA_4.Controllers
                 catch (Exception ex)
                 {
 
-                 
+
                     return Json(new { success = false });
                 }
 
@@ -1244,9 +1278,9 @@ namespace WMBA_4.Controllers
                     FirstPlayer = "No Player",
                 };
 
-  
+
                 return Json(new { success = true, inplay = inplayData });
-             
+
             }
             catch (Exception ex)
             {
