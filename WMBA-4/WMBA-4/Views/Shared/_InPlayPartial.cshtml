@@ -55,22 +55,22 @@
                     <input type="hidden" id="playerInBase3Id" value="@Model.PlayerInBase3Id" />
                     <input type="hidden" id="playerBattingId" value="@Model.PlayerBattingId" />
                 </td>
-               
+
             </tr>
             <tr>
                 <th colspan="6">Player Batting</th>
             </tr>
             <tr>
                 <td id="playerBatting">@Model.PlayerBattingName</td>
-               
-                <td><input type="radio" name="PlayerBattingBase" value="1"/></td>
+
+                <td><input type="radio" name="PlayerBattingBase" value="1" /></td>
                 <td><input type="radio" name="PlayerBattingBase" value="2" /></td>
                 <td><input type="radio" name="PlayerBattingBase" value="3" /></td>
                 <td><input type="text" name="rbiBatting" maxlength="3" size="3" /></td>
                 <td>
                     <input type="checkbox" name="isHit" /> Hit
                     <button type="button" class="btn btn-success">HR</button>
-                  
+
                 </td>
             </tr>
         </tbody>
@@ -83,7 +83,19 @@
         }
     });
 </script>
+<script>
+    $('input[type="radio"]').change(function () {
+        var selectedValue = $(this).val();
+        var otherSelectedValues = $('input[type="radio"]:checked').not(this).map(function () {
+            return $(this).val();
+        }).get();
 
+        if (otherSelectedValues.includes(selectedValue)) {
+            alert('No pueden estar dos jugadores en la misma base');
+            $(this).prop('checked', false);
+        }
+    });
+</script>
 <style>
     .table td, .table th {
         padding: 0.02rem;
