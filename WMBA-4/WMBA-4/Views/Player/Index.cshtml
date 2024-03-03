@@ -173,7 +173,7 @@
                             </div>
                         </th>
                         <th>
-                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
+                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Detail |&nbsp;</span><span>Status</span></div>
                         </th>
                     </tr>
                 </thead>
@@ -195,12 +195,17 @@
                                 {
                                     <div class="t-in-flex">
                                         <a asp-action="Edit" asp-route-id="@item.ID">
-                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                            <span class="material-symbols-outlined ft-kelly px-2">
                                                 edit
                                             </span>
                                         </a>
+                                        <a asp-action="Details" asp-route-id="@item.ID">
+                                            <span class="material-symbols-outlined ft-kelly px-2">
+                                                visibility
+                                            </span>
+                                        </a>
                                         <a asp-action="Delete" asp-route-id="@item.ID">
-                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                            <span class="material-symbols-outlined ft-kelly px-2">
                                                 person
                                             </span>
                                         </a>
@@ -209,10 +214,15 @@
                                 else
                                 {
                                     <div class="d-inline">
-                                        <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);">
+                                        <span class="material-symbols-outlined px-2" style="color: var(--ft-light-grey);">
                                             edit
                                         </span>
                                     </div>
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-2">
+                                            visibility
+                                        </span>
+                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined px-2">
                                             person_off
