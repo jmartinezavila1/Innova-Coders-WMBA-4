@@ -19,6 +19,8 @@
         public bool IsOutPlayer1 { get; set; }
         public bool IsOutPlayer2 { get; set; }
         public bool IsOutPlayer3 { get; set; }
+        public int IsRBI { get; set; }
+        public bool IsHomerun { get; set; }
         public int? PlayerBattingId { get; set; }
         public string PlayerBattingName { get; set; }
         public int? PlayerInBase1Id { get; set; }
