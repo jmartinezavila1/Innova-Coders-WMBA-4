@@ -391,6 +391,7 @@ th:last-child {
 .t-in-flex {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap;
 }
 
 .li-flex {
@@ -436,7 +437,8 @@ th:last-child {
         color: var(--ft-dark-blue); /*in the index operation hovers*/
     }
 
-.inactive-player td:not(:last-child) {
+.inactive-player td:not(:last-child),
+.inactive-team td:not(:last-child){
     color: var(--ft-grey);
 }
 
