@@ -4,11 +4,10 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Player</th>
+                <th>Players in Base</th>
                 <th>1B</th>
                 <th>2B</th>
                 <th>3B</th>
-                <th>RBI</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -19,7 +18,6 @@
                 <td><input type="radio" name="PlayerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase1Base" value="2" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 2 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase1Base" value="3" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi1" maxlength="3" size="3" /></td>
                 <td>
                     <input type="checkbox" name="isRunPlayer1" /> Run
                     <input type="checkbox" name="isOutPlayer1" /> Out
@@ -31,7 +29,6 @@
                 <td><input type="radio" name="PlayerInBase2Base" value="1" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 1 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase2Base" value="2" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 2 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase2Base" value="3" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi" maxlength="3" size="3" /></td>
                 <td>
                     <input type="checkbox" name="isRunPlayer2" /> Run
                     <input type="checkbox" name="isOutPlayer2" /> Out
@@ -42,7 +39,6 @@
                 <td><input type="radio" name="PlayerInBase3Base" value="1" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 1 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase3Base" value="2" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 2 ? "checked" : "") /></td>
                 <td><input type="radio" name="PlayerInBase3Base" value="3" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi" maxlength="3" size="3" /></td>
                 <td>
                     <input type="checkbox" name="isRunPlayer3" /> Run
                     <input type="checkbox" name="isOutPlayer3" /> Out
@@ -58,7 +54,7 @@
 
             </tr>
             <tr>
-                <th colspan="6">Player Batting</th>
+                <th colspan="5">Player Batting</th>
             </tr>
             <tr>
                 <td id="playerBatting">@Model.PlayerBattingName</td>
@@ -66,10 +62,10 @@
                 <td><input type="radio" name="PlayerBattingBase" value="1" /></td>
                 <td><input type="radio" name="PlayerBattingBase" value="2" /></td>
                 <td><input type="radio" name="PlayerBattingBase" value="3" /></td>
-                <td><input type="text" name="rbiBatting" maxlength="3" size="3" /></td>
                 <td>
+                    RBI: <input type="text" name="isRBI" maxlength="3" size="3" />
                     <input type="checkbox" name="isHit" /> Hit
-                    <button type="button" class="btn btn-success">HR</button>
+                    <input type="checkbox" name="isHomerun" /> HomeRun
 
                 </td>
             </tr>
@@ -101,4 +97,8 @@
         padding: 0.02rem;
         margin: 0;
     }
+
+        .table th:last-child {
+            width: 200px;
+        }
 </style>

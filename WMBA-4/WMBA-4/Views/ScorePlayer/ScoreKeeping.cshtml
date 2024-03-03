@@ -172,6 +172,9 @@ Cierra popup  inplay *@
                 IsOutPlayer1: $('input[name="isOutPlayer1"]').is(':checked'),
                 IsOutPlayer2: $('input[name="isOutPlayer2"]').is(':checked'),
                 IsOutPlayer3: $('input[name="isOutPlayer3"]').is(':checked'),
+                IsRBI: Number($('input[name="isRBI"]').val()),
+                IsHomerun: $('input[name="isHomerun"]').is(':checked'),
+
             };
 
             $.ajax({

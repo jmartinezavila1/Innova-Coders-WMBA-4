@@ -1161,6 +1161,9 @@ namespace WMBA_4.Controllers
 
 
                 //Saving options selected for players in base
+                inplay.PlayerInBase1ID = null;
+                inplay.PlayerInBase2ID = null;
+                inplay.PlayerInBase3ID = null;
 
                 if (model.PlayerInBase1Base == 1)
                 {
@@ -1230,6 +1233,8 @@ namespace WMBA_4.Controllers
                     inplay.PlayerBattingID = null;
                 }
 
+                //This is for saving the information abot hits
+
                 if (model.IsHit)
                 {
                     if (baseNum == 1)
@@ -1247,6 +1252,30 @@ namespace WMBA_4.Controllers
                     scorePlayer.H++;
                     scorePlayer.PA++;
                     scorePlayer.AB++;
+
+                }
+
+                //This is for saving the information about Home Run
+
+                if (model.IsHomerun)
+                {
+                    scorePlayer.HR++;
+                    scorePlayer.PA++;
+                    scorePlayer.AB++;
+                    inplay.PlayerBattingID = null;
+
+                }
+
+                //This is for saving the RBI´s
+
+                if (model.IsRBI > 0)
+                {
+                    scorePlayer.RBI += model.IsRBI;
+                    scorePlayer.H++;                   
+                    scorePlayer.PA++;
+                    scorePlayer.AB++;
+                    inplay.PlayerBattingID = null;
+                    inplay.Runs++;
 
                 }
 
