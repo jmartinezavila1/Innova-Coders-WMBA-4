@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -201,6 +202,7 @@ namespace WMBA_4.Controllers
                     .FirstOrDefault();
                 var inplay = new Inplay();
                 object inplayData = null;
+                string player = ""; 
 
                 if (existingInning != null)
                 {
@@ -212,8 +214,29 @@ namespace WMBA_4.Controllers
                         .Where(i => i.InningID == existingInning.ID)
                         .FirstOrDefault();
 
+                    if (inplay.PlayerBattingID == null)
+                    {
+                        inplay.PlayerBattingID = inplay.NextPlayer;
+                        await _context.SaveChangesAsync();
+
+                        player = _context.Players
+                           .Where(p => p.ID == inplay.NextPlayer)
+                           .Select(p => p.FullName)
+                           .FirstOrDefault();
+                    }
+                    else {
+                        player = _context.Players
+                           .Where(p => p.ID == inplay.PlayerBattingID)
+                           .Select(p => p.FullName)
+                           .FirstOrDefault();
+
+                    }
+
+
                     if (inplay != null)
                     {
+                        
+                       
                         // Actualizar la información de la vista y retornar
                         inplayData = new
                         {
@@ -224,7 +247,7 @@ namespace WMBA_4.Controllers
                             Fouls = inplay.Fouls,
                             Balls = inplay.Balls,
                             InningNumber = inplay.Inning.InningNumber,
-                            FirstPlayer = "No Player"
+                            FirstPlayer =player
 
                         };
 
@@ -304,11 +327,11 @@ namespace WMBA_4.Controllers
                         .Select(p => p.ID)
                         .ToList();
 
-                    foreach (var player in lineupPlayers)
+                    foreach (var p in lineupPlayers)
                     {
                         scoreplayer = new ScorePlayer
                         {
-                            GameLineUpID = player,
+                            GameLineUpID = p,
                         };
                         _context.ScorePlayers.Add(scoreplayer);
                         await _context.SaveChangesAsync();
@@ -349,10 +372,9 @@ namespace WMBA_4.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "Se debe seleccionar a un jugador."
+                    message = "Click on Next Player to continue."
                 });
-            }
-            else { }
+            }           
 
             var player = _context.Players
                      .Where(p => p.ID == inplay.PlayerBattingID)
@@ -418,6 +440,7 @@ namespace WMBA_4.Controllers
 
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
+                
 
                 inplay.NextPlayer = (int)inplay.PlayerBattingID;
 
@@ -450,16 +473,45 @@ namespace WMBA_4.Controllers
             object inplayData = null;
             // get the inplay record
             var inplay = await _context.Inplays.FindAsync(inplayId);
+            var inning = await _context.Innings.FindAsync(inplay.InningID);
             if (inplay == null)
             {
                 return NotFound();
             }
+            if (inplay.PlayerBattingID == null)
+            {
+                return Json(new
+                {
+                    success = false,
+                    message = "Click on Next Player to continue."
+                });
+            }
+
             inplay.Strikes++;
             var player = _context.Players
                      .Where(p => p.ID == inplay.PlayerBattingID)
                      .Select(p => p.FullName)
                      .FirstOrDefault();
 
+            //var inningNumber = _context.Innings
+            //          .Where(i => i.GameID == inplay.Inning.GameID && i.TeamID == inplay.Inning.TeamID)
+            //          .Select(i => i.InningNumber)
+            //          .FirstOrDefault();
+
+            var inningNumber = _context.Innings
+                      .Where(i => i.ID == inplay.InningID)
+                      .Select(i => i.InningNumber)
+                      .FirstOrDefault();
+
+            var nextBO = _context.GameLineUps
+           .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.PlayerID == inplay.NextPlayer)
+           .Select(g => g.BattingOrder)
+           .FirstOrDefault();
+
+            var nextPlayer = _context.GameLineUps
+                   .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.BattingOrder == nextBO + 1)
+                   .Select(g => g.Player)
+                   .FirstOrDefault();
 
 
             //if the strikes are less than 3, increment the strikes
@@ -469,10 +521,7 @@ namespace WMBA_4.Controllers
                 await _context.SaveChangesAsync();
 
 
-                var inningNumber = _context.Innings
-                      .Where(i => i.ID == inplay.InningID)
-                      .Select(i => i.InningNumber)
-                      .FirstOrDefault();
+                
                 inplayData = new
                 {
                     ID = inplay.ID,
@@ -488,8 +537,7 @@ namespace WMBA_4.Controllers
 
             //if the Strikes are 3, increment the PA and Strike Out in ScorePlayer
             else if (inplay.Strikes >= 3)
-            {
-                var inning = await _context.Innings.FindAsync(inplay.InningID);
+            {                
 
                 var lineupID = _context.GameLineUps
                     .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
@@ -509,28 +557,20 @@ namespace WMBA_4.Controllers
                 scorePlayer.PA++;
                 scorePlayer.StrikeOut++;
 
-                var nextBO = _context.GameLineUps
-               .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.PlayerID == inplay.NextPlayer)
-               .Select(g => g.BattingOrder)
-               .FirstOrDefault();
 
-                var nextPlayer = _context.GameLineUps
-                    .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.BattingOrder == nextBO + 1)
-                    .Select(g => g.Player)
-                    .FirstOrDefault();
-
-
-                inplay.PlayerBattingID = nextPlayer.ID;
+                inplay.PlayerBattingID = null;
                 inplay.Balls = 0;
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
                 inplay.Outs++;
                 inplay.NextPlayer = (int)inplay.PlayerBattingID;
 
-                var inningNumber = _context.Innings
-                       .Where(i => i.GameID == inplay.Inning.GameID && i.TeamID == inplay.Inning.TeamID)
-                       .Select(i => i.InningNumber)
-                       .FirstOrDefault();
+
+
+                // Guarda los cambios en la base de datos
+                await _context.SaveChangesAsync();
+
+
                 // Devuelve una respuesta
                 inplayData = new
                 {
@@ -541,11 +581,8 @@ namespace WMBA_4.Controllers
                     Fouls = inplay.Fouls,
                     Balls = inplay.Balls,
                     InningNumber = inningNumber,
-                    FirstPlayer = nextPlayer != null ? nextPlayer.FullName : "N/A"
+                    FirstPlayer = "No player"
                 };
-
-                // Guarda los cambios en la base de datos
-                await _context.SaveChangesAsync();
 
             }
 
@@ -823,6 +860,15 @@ namespace WMBA_4.Controllers
                 .Select(g => g.Player)
                 .FirstOrDefault();
 
+            // if nextPlayer es null, then get the first player in the lineup
+            if (nextPlayer == null)
+            {
+                nextPlayer = _context.GameLineUps
+                    .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID)
+                    .OrderBy(g => g.BattingOrder)
+                    .Select(g => g.Player)
+                    .FirstOrDefault();
+            }
 
             inplay.PlayerBattingID = nextPlayer.ID;
             inplay.Balls = 0;
@@ -928,6 +974,7 @@ namespace WMBA_4.Controllers
                 PlayerInBase1Base = inplay.PlayerInBase1ID.HasValue ? 1 : (int?)null,
                 PlayerInBase2Base = inplay.PlayerInBase2ID.HasValue ? 2 : (int?)null,
                 PlayerInBase3Base = inplay.PlayerInBase3ID.HasValue ? 3 : (int?)null,
+                
 
             };
 
@@ -937,63 +984,278 @@ namespace WMBA_4.Controllers
 
         // This is the method for the Save button in the popup
         [HttpPost]
-        public async Task<IActionResult> SaveInplayChanges(int playerInBase1Id, int playerInBase2Id, int playerInBase3Id, int inplayID)
+        public async Task<IActionResult> SaveInplayChanges([FromBody] JsonElement jsonElement)
         {
-
-            var inplay = await _context.Inplays.FindAsync(inplayID);
-
-            if (inplay == null)
-            {
-                return NotFound();
-            }
-
-            var inning = await _context.Innings.FindAsync(inplay.InningID);
-
-            //var nextPlayer = _context.GameLineUps
-            //    .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.PlayerID == inplay.PlayerBattingID + 1)
-            //    .Select(g => g.Player)
-            //    .FirstOrDefault();
-
-            // Actualiza los datos
-
-            inplay.Balls = 0;
-            //inplay.PlayerBattingID = nextPlayer.ID;
-            inplay.PlayerInBase1ID = playerInBase1Id == 0 ? null : playerInBase1Id;
-            inplay.PlayerInBase2ID = playerInBase2Id == 0 ? null : playerInBase2Id;
-            inplay.PlayerInBase3ID = playerInBase3Id == 0 ? null : playerInBase3Id;
-
-            // Guarda los cambios en la base de datos
             try
             {
-                await _context.SaveChangesAsync();
+                var model = System.Text.Json.JsonSerializer.Deserialize<InPlayMV>(jsonElement.GetRawText());
+
+                // Obtén el registro Inplay de la base de datos
+                var inplay = await _context.Inplays.FindAsync(model.InplayID);
+                var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+                //Information of the player batting
+                var lineupID = _context.GameLineUps
+                .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                .Select(g => g.ID)
+                .FirstOrDefault();
+
+                var scorePlayer = await _context.ScorePlayers
+                    .Where(sp => sp.GameLineUpID == lineupID)
+                    .FirstOrDefaultAsync();
+
+                int lineupIDP1;
+                int lineupIDP2;
+                int lineupIDP3;
+                int lIDP1;
+                int lIDP2;
+                int lIDP3;
+                ScorePlayer scorePlayerP1;
+                ScorePlayer scorePlayerP2;
+                ScorePlayer scorePlayerP3;
+                ScorePlayer sppP1;
+                ScorePlayer sppP2;
+                ScorePlayer sppP3;
+                int pb1=(int)model.PlayerInBase1Id;
+                int pb2= (int)model.PlayerInBase2Id;
+                int pb3 = (int)model.PlayerInBase3Id;
+
+                int baseNum = 0;
+
+                if (inplay == null)
+                {
+                    return NotFound();
+                }
+
+                //Saving infromation for Runs
+
+                if (model.IsRunPlayer1)
+                {
+                    lineupIDP1 = _context.GameLineUps
+                        .Where(g => g.PlayerID == inplay.PlayerInBase1ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                        .Select(g => g.ID)
+                        .FirstOrDefault();
+
+                    scorePlayerP1 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lineupIDP1)
+                          .FirstOrDefaultAsync();
+
+                    scorePlayerP1.Run++;
+                    inplay.Runs++;
+                    inplay.PlayerInBase1ID = null;
+                }
+                if (model.IsRunPlayer2)
+                {
+                    lineupIDP2 = _context.GameLineUps
+                       .Where(g => g.PlayerID == inplay.PlayerInBase2ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                       .Select(g => g.ID)
+                       .FirstOrDefault();
+
+                    scorePlayerP2 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lineupIDP2)
+                          .FirstOrDefaultAsync();
+
+                    scorePlayerP2.Run++;
+                    inplay.Runs++;
+                    inplay.PlayerInBase2ID = null;
+                }
+                if (model.IsRunPlayer3)
+                {
+                    lineupIDP3 = _context.GameLineUps
+                       .Where(g => g.PlayerID == inplay.PlayerInBase3ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                       .Select(g => g.ID)
+                       .FirstOrDefault();
+
+                    scorePlayerP3 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lineupIDP3)
+                          .FirstOrDefaultAsync();
+
+                    scorePlayerP3.Run++;
+                    inplay.Runs++;
+                    inplay.PlayerInBase3ID = null;
+                }
+
+
+
+                //Saving infromation for Outs
+
+                if (model.IsOutPlayer1)
+                {
+                    lIDP1 = _context.GameLineUps
+                        .Where(g => g.PlayerID == inplay.PlayerInBase1ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                        .Select(g => g.ID)
+                        .FirstOrDefault();
+
+                    sppP1 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lIDP1)
+                          .FirstOrDefaultAsync();
+
+                    sppP1.Out++;
+                    inplay.Outs++;
+                    inplay.PlayerInBase1ID = null;
+                }
+                if (model.IsOutPlayer2)
+                {
+                    lIDP2 = _context.GameLineUps
+                        .Where(g => g.PlayerID == inplay.PlayerInBase1ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                        .Select(g => g.ID)
+                        .FirstOrDefault();
+
+                    sppP2 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lIDP2)
+                          .FirstOrDefaultAsync();
+
+                    sppP2.Out++;
+                    inplay.Outs++;
+                    inplay.PlayerInBase2ID = null;
+                }
+                if (model.IsOutPlayer3)
+                {
+                    lIDP3 = _context.GameLineUps
+                        .Where(g => g.PlayerID == inplay.PlayerInBase1ID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                        .Select(g => g.ID)
+                        .FirstOrDefault();
+
+                    sppP3 = await _context.ScorePlayers
+                          .Where(sp => sp.GameLineUpID == lIDP3)
+                          .FirstOrDefaultAsync();
+
+                    sppP3.Out++;
+                    inplay.Outs++;
+                    inplay.PlayerInBase3ID = null;
+                }
+
+
+                //Saving options selected for players in base
+
+                if (model.PlayerInBase1Base == 1)
+                {
+                    inplay.PlayerInBase1ID = pb1;
+                }
+                else if (model.PlayerInBase1Base == 2)
+                {
+                    inplay.PlayerInBase2ID = pb1;
+                }
+                else if (model.PlayerInBase1Base == 3) 
+                {
+                    inplay.PlayerInBase3ID = pb1;
+                }
+
+
+
+
+                if (model.PlayerInBase2Base == 1) 
+                {
+                    inplay.PlayerInBase1ID = pb2;
+                }
+                else if (model.PlayerInBase2Base == 2)
+                {
+                    inplay.PlayerInBase2ID = pb2;
+                }
+                else if (model.PlayerInBase2Base == 3)
+                {
+                    inplay.PlayerInBase3ID = pb2;
+                }
+
+              
+
+                if (model.PlayerInBase3Base == 1)
+                {
+                    inplay.PlayerInBase1ID = pb3;
+                }
+                else if (model.PlayerInBase3Base == 2)
+                {
+                    inplay.PlayerInBase2ID = pb3;
+                }
+                else if (model.PlayerInBase3Base == 3)
+                {
+                    inplay.PlayerInBase3ID = pb3;
+                }
+
+                //Saving option selected for player batting
+
+                if (model.PlayerBattingBase == 1)
+                {
+                    inplay.PlayerInBase1ID = model.PlayerBattingId;
+                    baseNum = 1;
+                    inplay.NextPlayer = (int)model.PlayerBattingId;
+                    inplay.PlayerBattingID = null;
+                }
+                else if (model.PlayerBattingBase == 2)
+                {
+                    inplay.PlayerInBase2ID = model.PlayerBattingId;
+                    baseNum = 2;
+                    inplay.NextPlayer = (int)model.PlayerBattingId;
+                    inplay.PlayerBattingID = null;
+                }
+                else if (model.PlayerBattingBase == 3)
+                {
+                    inplay.PlayerInBase3ID = model.PlayerBattingId;
+                    baseNum = 3;
+                    inplay.NextPlayer = (int)model.PlayerBattingId;
+                    inplay.PlayerBattingID = null;
+                }
+
+                if (model.IsHit) 
+                {
+                    if(baseNum == 1)
+                    {
+                        scorePlayer.Singles++;
+                    }
+                    else if (baseNum == 2)
+                    {
+                        scorePlayer.Doubles++;
+                    }
+                    else if (baseNum == 3)
+                    {
+                        scorePlayer.Triples++;
+                    }
+                    scorePlayer.H++;
+                    scorePlayer.PA++;
+                    scorePlayer.AB++;
+                    
+                }
+
+                
+
+                inplay.Balls = 0;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+
+                 
+                    return Json(new { success = false });
+                }
+
+                //Obtiene los datos actualizados
+                object inplayData = null;
+                inplayData = new
+                {
+                    ID = inplay.ID,
+                    Runs = inplay.Runs,
+                    Strikes = inplay.Strikes,
+                    Outs = inplay.Outs,
+                    Fouls = inplay.Fouls,
+                    Balls = inplay.Balls,
+                    InningNumber = inning.InningNumber,
+                    FirstPlayer = "No Player",
+                };
+
+  
+                return Json(new { success = true, inplay = inplayData });
+             
             }
             catch (Exception ex)
             {
-
-                // Aquí puedes manejar el error como prefieras
-                return Json(new { success = false });
+                return StatusCode(500, $"Internal server error: {ex}");
             }
 
-            //Obtiene los datos actualizados
-            object inplayData = null;
-            inplayData = new
-            {
-                ID = inplay.ID,
-                Runs = inplay.Runs,
-                Strikes = inplay.Strikes,
-                Outs = inplay.Outs,
-                Fouls = inplay.Fouls,
-                Balls = inplay.Balls,
-                InningNumber = inning.InningNumber,
-                FirstPlayer = "No Player",
-            };
-
-            inplay.PlayerBattingID = null;
-            await _context.SaveChangesAsync();
-            return Json(new { success = true, inplay = inplayData });
-            //return View();
-
         }
+
+
 
         //Mothod to Close popup and update InPlay   
         [HttpPost]

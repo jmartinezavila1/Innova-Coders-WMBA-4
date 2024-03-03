@@ -8,7 +8,17 @@
         public int? PlayerInBase1Base { get; set; }
         public int? PlayerInBase2Base { get; set; }
         public int? PlayerInBase3Base { get; set; }
+        public int? PlayerBattingBase { get; set; }
+        public bool IsHit { get; set; }
 
+        public bool IsRunPlayer1 { get; set; }
+
+        public bool IsRunPlayer2 { get; set; }
+
+        public bool IsRunPlayer3 { get; set; }
+        public bool IsOutPlayer1 { get; set; }
+        public bool IsOutPlayer2 { get; set; }
+        public bool IsOutPlayer3 { get; set; }
         public int? PlayerBattingId { get; set; }
         public string PlayerBattingName { get; set; }
         public int? PlayerInBase1Id { get; set; }

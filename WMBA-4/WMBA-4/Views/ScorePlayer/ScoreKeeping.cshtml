@@ -106,7 +106,7 @@
                 </button>
             </div>
             <div class="modal-body" id="inplayModalBody">
-                <!-- Aquí se cargará la vista parcial -->
+               
             </div>
             <div class="modal-footer">
                 <button id="closeButtonInplay" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -157,17 +157,29 @@ Cierra popup  inplay *@
     $(document).ready(function () {
         $('#saveChangesButton').click(function () {
             var data = {
-                inplayID: $('#inplayId').val(),
-                playerBattingId: $('input[name="playerBattingId"]').val(),
-                playerInBase1Id: $('input[name="playerInBase1Id"]:checked').val(),
-                playerInBase2Id: $('input[name="playerInBase2Id"]:checked').val(),
-                playerInBase3Id: $('input[name="playerInBase3Id"]:checked').val(),
+                InplayID: Number($('#inplayId').val()),
+                PlayerInBase1Base: Number($('input[name="PlayerInBase1Base"]:checked').val()),
+                PlayerInBase2Base: Number($('input[name="PlayerInBase2Base"]:checked').val()),
+                PlayerInBase3Base: Number($('input[name="PlayerInBase3Base"]:checked').val()),
+                PlayerBattingBase: Number($('input[name="PlayerBattingBase"]:checked').val()),
+                PlayerInBase1Id: Number($('#playerInBase1Id').val()),
+                PlayerInBase2Id: Number($('#playerInBase2Id').val()),
+                PlayerInBase3Id: Number($('#playerInBase3Id').val()),
+                PlayerBattingId: Number($('#playerBattingId').val()),
+                IsHit: $('input[name="isHit"]').is(':checked'),
+                IsRunPlayer1: $('input[name="isRunPlayer1"]').is(':checked'),
+                IsRunPlayer2: $('input[name="isRunPlayer2"]').is(':checked'),
+                IsRunPlayer3: $('input[name="isRunPlayer3"]').is(':checked'),
+                IsOutPlayer1: $('input[name="isOutPlayer1"]').is(':checked'),
+                IsOutPlayer2: $('input[name="isOutPlayer2"]').is(':checked'),
+                IsOutPlayer3: $('input[name="isOutPlayer3"]').is(':checked'),
             };
-
+            
             $.ajax({
                 url: '/ScorePlayer/SaveInplayChanges',
                 type: 'POST',
-                data: data,
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function (response) {
                     console.log(response);
                     if (response.success) {
@@ -286,6 +298,10 @@ Cierra popup  inplay *@
                 type: 'POST',
                 data: { inplayId: inplayId },
                 success: function (data) {
+                    if (data.success === false) {
+                        alert(data.message);
+                        return;
+                    }
                     // Actualiza el contador de Balls en la vista
                     $('#ballsCount').text(data.inplay.balls);
                     $('#inplayId').val(data.inplay.id);
