@@ -61,6 +61,16 @@
             }
         });
 
+        el.addEventListener('click', function (event) {
+            var listItem = event.target.closest('.list-group-item');
+            if (listItem) {
+                var checkbox = listItem.querySelector('input[type="checkbox"]');
+                if (checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                }
+            }
+        });
+
         document.getElementById('saveButton').addEventListener('click', function () {
             var playerOrder = [];
             var listItems = el.children;
