@@ -1,6 +1,6 @@
 ﻿@model WMBA_4.ViewModels.InPlayMV
 
-<form method="post" action="@Url.Action("SaveInplayChanges", "ScorePlayer")">
+<form>
     <table class="table">
         <thead>
             <tr>
@@ -14,68 +14,79 @@
         </thead>
         <tbody>
 
-            <tr>
+            <tr class="player-in-base">
                 <td id="playerInBase1">@Model.PlayerInBase1Name</td>
-                <td><input type="radio" name="playerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="2" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 2 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="3" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi1" /></td>
+                <td><input type="radio" name="PlayerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase1Base" value="2" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 2 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase1Base" value="3" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 3 ? "checked" : "") /></td>
+                <td><input type="text" name="rbi1" maxlength="3" size="3" /></td>
                 <td>
-                    <button type="button" class="btn btn-success">Run</button>
-                    <button type="button" class="btn btn-danger">Out</button>
+                    <input type="checkbox" name="isRunPlayer1" /> Run
+                    <input type="checkbox" name="isOutPlayer1" /> Out
                 </td>
 
             </tr>
-            <tr>
+            <tr class="player-in-base">
                 <td id="playerInBase2">@Model.PlayerInBase2Name</td>
-                <td><input type="radio" name="playerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="2" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 2 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="3" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi" /></td>
+                <td><input type="radio" name="PlayerInBase2Base" value="1" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 1 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase2Base" value="2" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 2 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase2Base" value="3" @(Model.PlayerInBase2Base.HasValue && Model.PlayerInBase2Base.Value == 3 ? "checked" : "") /></td>
+                <td><input type="text" name="rbi" maxlength="3" size="3" /></td>
                 <td>
-                    <button type="button" class="btn btn-success">Run</button>
-                    <button type="button" class="btn btn-danger">Out</button>
+                    <input type="checkbox" name="isRunPlayer2" /> Run
+                    <input type="checkbox" name="isOutPlayer2" /> Out
                 </td>
             </tr>
-            <tr>
+            <tr class="player-in-base">
                 <td id="playerInBase3">@Model.PlayerInBase3Name</td>
-                <td><input type="radio" name="playerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="2" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 2 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerInBase1Base" value="3" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbi" /></td>
+                <td><input type="radio" name="PlayerInBase3Base" value="1" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 1 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase3Base" value="2" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 2 ? "checked" : "") /></td>
+                <td><input type="radio" name="PlayerInBase3Base" value="3" @(Model.PlayerInBase3Base.HasValue && Model.PlayerInBase3Base.Value == 3 ? "checked" : "") /></td>
+                <td><input type="text" name="rbi" maxlength="3" size="3" /></td>
                 <td>
-                    <button type="button" class="btn btn-success">Run</button>
-                    <button type="button" class="btn btn-danger">Out</button>
+                    <input type="checkbox" name="isRunPlayer3" /> Run
+                    <input type="checkbox" name="isOutPlayer3" /> Out
                 </td>
             </tr>
             <tr>
                 <td>
-                    <input type="hidden" name="inplayId" value="@Model.InplayID" />
-                    <input type="hidden" name="playerBattingId" value="@Model.PlayerBattingId" />
-                    <input type="hidden" name="playerInBase1Id" value="@Model.PlayerInBase1Id" />
-                    <input type="hidden" name="playerInBase2Id" value="@Model.PlayerInBase2Id" />
-                    <input type="hidden" name="playerInBase3Id" value="@Model.PlayerInBase3Id" />
-
+                    <input type="hidden" id="playerInBase1Id" value="@Model.PlayerInBase1Id" />
+                    <input type="hidden" id="playerInBase2Id" value="@Model.PlayerInBase2Id" />
+                    <input type="hidden" id="playerInBase3Id" value="@Model.PlayerInBase3Id" />
+                    <input type="hidden" id="playerBattingId" value="@Model.PlayerBattingId" />
                 </td>
-
-
+               
+            </tr>
             <tr>
-                <td id="playerInBase1">@Model.PlayerBattingName</td>
-                <td><input type="radio" name="playerbattingID" value="1" @(Model.PlayerBattingId.HasValue && Model.PlayerBattingId.Value == 1 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerbattingID" value="2" @(Model.PlayerBattingId.HasValue && Model.PlayerBattingId.Value == 2 ? "checked" : "") /></td>
-                <td><input type="radio" name="playerbattingID" value="3" @(Model.PlayerBattingId.HasValue && Model.PlayerBattingId.Value == 3 ? "checked" : "") /></td>
-                <td><input type="text" name="rbiBatting" /></td>
+                <th colspan="6">Player Batting</th>
+            </tr>
+            <tr>
+                <td id="playerBatting">@Model.PlayerBattingName</td>
+               
+                <td><input type="radio" name="PlayerBattingBase" value="1"/></td>
+                <td><input type="radio" name="PlayerBattingBase" value="2" /></td>
+                <td><input type="radio" name="PlayerBattingBase" value="3" /></td>
+                <td><input type="text" name="rbiBatting" maxlength="3" size="3" /></td>
                 <td>
-                    <button type="button" class="btn btn-success">Run</button>
-                    <button type="button" class="btn btn-danger">Out</button>
+                    <input type="checkbox" name="isHit" /> Hit
+                    <button type="button" class="btn btn-success">HR</button>
+                  
                 </td>
             </tr>
         </tbody>
     </table>
 </form>
+<script>
+    $('.player-in-base input[type="checkbox"]').change(function () {
+        if ($(this).is(':checked')) {
+            $(this).closest('tr').find('input[type="radio"]').prop('checked', false);
+        }
+    });
+</script>
+
 <style>
     .table td, .table th {
-        padding: 0.05rem;
+        padding: 0.02rem;
         margin: 0;
     }
 </style>
