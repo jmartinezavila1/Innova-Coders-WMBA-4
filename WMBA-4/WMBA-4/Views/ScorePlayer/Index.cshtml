@@ -14,7 +14,7 @@
             <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
                 Filter/Search @ViewData["numberFilters"]
             </button>
-            
+
         }
     </div>
 
@@ -35,7 +35,6 @@
                         </div>
                         <div class="form-group col-md-4">
                             <label class="control-label">Select GameType:</label>
-                            @* @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control" }) *@
                             @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control" })
                         </div>
                         <div class="form-group col-md-4 align-self-end">
@@ -54,7 +53,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Page Size: </span>
                         </div>
-                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center mx-1"})
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center mx-1" })
                         <div class="input-group-append">
                             <input type="submit" class="btn btn-kelly" value="Set Page Size" />
                         </div>
@@ -65,110 +64,63 @@
             @* Label Season: *@
             @if (Model.Any())
             {
-                <h2>Season: @Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
+                <h2>@Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
             }
             <table class="table giro-table table-bordered">
                 <thead>
                     <tr>
-                        <th>
-                            <input type="submit" name="actionButton" value="TeamGames" class="text-column" />
-                        </th>
-                        @*  <th>
-                        <input type="submit" name="actionButton" value="Status" class="text-column" />
-                        </th> *@
-                        <th>
-                            <input type="submit" name="actionButton" value="Division" class="text-column" />
+                        <th style="width: 8rem;">
+                            <input type="submit" name="actionButton" value="Game" class="text-column" />
                         </th>
                         <th>
                             <input type="submit" name="actionButton" value="Date" class="text-column" />
                         </th>
-                        @* <th>
-                            <input type="submit" name="actionButton" value="Location" class="text-column" />
-                        </th> *@
-                        @*                         <th>
-                        <input type="submit" name="actionButton" value="Season" class="text-column" />
-                        </th>   *@
                         <th>
-                            <input type="submit" name="actionButton" value="GameType" class="text-column" />
-                        </th>
-                        <th>
-                           @*  <input type="submit" value="Edit/Delete" class="text-column" /> *@
+                            <div class="t-in-flex"><span>Start Score</span></div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item2 in Model)
+                    @foreach (var item in Model)
                     {
                         <tr>
                             @{
-                                var teamGamesList = item2.TeamGames.ToList();
+                                var teamGamesList = item.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
                             }
                             <td>
-                                @* Location *@
-                                @item2.Location.LocationName <br /> <br />
-
-                                @foreach (var teamGame in teamGamesList)
-                                {
-                                    //First team in the list
-                                    if (teamGame != teamGamesList.Last())
+                                <div class="game-padding">
+                                    <div class="game-flex mb-2 pb-2 border-bottom">
+                                        <div class="pb-2"><span>@item.GameType.Description</span></div>
+                                        <div><span>@item.Location.LocationName</span></div>
+                                    </div>
+                                    @for (int i = 0; i < teamGamesList.Count; i++)
                                     {
-                                        @:@teamGame.Team.Name
-                                        @: <strong> @teamGame.score  </strong>
+                                        <div class="li-flex align-items-center p-2 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
+                                            <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
+                                            <div class="mx-2">@teamGamesList[i].Team.Name</div>
+                                            <div class="mx-2 text-bold">@teamGamesList[i].score</div>
+                                        </div>
                                     }
-                                    //Last team in the list
-                                    else
-                                    {
-                                        @: <strong>  -  </strong>
-                                        @: <strong>  @teamGame.score </strong>
-                                        @: @teamGame.Team.Name
-                                    }
-                                }
-                            </td>
-                            @*  <td>
-                        @foreach (var teamGame in teamGamesList)
-                        {
-                        @teamGame.Team.Name
-                        if (teamGame != teamGamesList.Last())
-                        {
-                        //@: <strong>  Vs  </strong>
-                        @: <br /> <strong>  Vs  </strong> <br />
-                        }
-                        }
-                        </td> *@
-                            <td>
-                                @foreach (var teamGame in teamGamesList)
-                                {
-                                    @Html.DisplayFor(modelItem => teamGame.Team.Division.DivisionName)
-                                    @*                                     if (teamGame != teamGamesList.Last())
-                            {
-                            @: <br />
-                            } *@
-                                }
+                                </div>
                             </td>
                             <td>
-                                @item2.Date.ToString("MMMM dd yyyy")
-                            </td>
-                           @*  <td>
-                                @Html.DisplayFor(modelItem => item2.Location.LocationName)
-                            </td> *@
-                            @*                             <td>
-                        @Html.DisplayFor(modelItem => item2.Season.SeasonName)
-                        </td>    *@
-                            <td>
-                                @Html.DisplayFor(modelItem => item2.GameType.Description)
+                                @item.Date.ToString("MMMM dd")
                             </td>
                             <td>
-                                <a asp-action="SelectTeam" asp-route-id="@item2.ID">
-                                    <span class="material-symbols-outlined ft-light-grey px-1">
-                                       Scoreboard
-                                    </span>
-                                </a>
-                               
+                                <div class="text-center">
+                                    <a asp-action="SelectTeam" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-2 fs-3">
+                                            Scoreboard
+                                        </span>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }
                 </tbody>
+
+
             </table>
         </div>
         <partial name="_PagingNavBar" />
