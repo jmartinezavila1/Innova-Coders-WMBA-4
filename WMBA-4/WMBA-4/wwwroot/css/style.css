@@ -523,14 +523,23 @@ div > .nav-hover:hover {
 }
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
-#sortableList {
+.zoom-player:hover {
+    color: inherit; 
+    text-decoration: none; 
+}
+
+#sortableList,
+#teamPlayerList {
     cursor: pointer;
 }
 
-    #sortableList .list-group-item {
+    #sortableList .list-group-item,
+    #teamPlayerList .list-goup-item {
         transition: transform 0.3s ease;
     }
 
-        #sortableList .list-group-item:hover {
+        #sortableList .list-group-item:hover,
+        #teamPlayerList .list-group-item:hover {
             transform: scale(1.02);
+            background: #80808036;
         }
