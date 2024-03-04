@@ -2,13 +2,13 @@
 
 <h1>@Model.Name</h1>
 <div class="f-in-flex">
-<p>
-    Division: @Model.Division.DivisionName | Coach: <span>@(ViewBag.Coach?.FirstName + " " + ViewBag.Coach?.LastName)</span> | City: Welland Minor Baseball
-</p>
-@using (Html.BeginForm("Create", "Player", FormMethod.Get))
-{
-     <button type="submit" class="btn btn-kelly">Add Player</button>
-}
+    <p>
+        Division: @Model.Division.DivisionName | Coach: <span>@(ViewBag.Coach?.FirstName + " " + ViewBag.Coach?.LastName)</span> | City: Welland Minor Baseball
+    </p>
+    @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+    {
+        <button type="submit" class="btn btn-kelly">Add Player</button>
+    }
 </div>
 
 @{
@@ -42,7 +42,7 @@
     <button class="collapsible active" style="background-color: #4CAF50;">
         <i class="arrow fas fa-chevron-up"></i> Scheduled Games
     </button>
-    <div class="content" style="display: block;">
+    <div class="content" style="display: block; overflow-y: auto; max-height: 300px;">
         @if (hasScheduledGames)
         {
             <table class="table giro-table table-bordered">
