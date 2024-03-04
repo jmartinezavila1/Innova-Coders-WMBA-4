@@ -132,14 +132,14 @@ namespace WMBA_4.Controllers
                     if (sortDirection == "asc")
                     {
                         games = games
-                            .OrderBy(d => d.Status)
-                            .ThenBy(d => d.Date); 
+                            .OrderByDescending(d => d.Status)
+                            .ThenBy(d => d.Date);
                     }
                     else
                     {
                         games = games
-                            .OrderByDescending(d => d.Date)
-                            .ThenBy(d => d.Date); ;
+                         .OrderByDescending(d => d.Status)
+                         .ThenByDescending(d => d.Date);
                     }
                 }
                 else

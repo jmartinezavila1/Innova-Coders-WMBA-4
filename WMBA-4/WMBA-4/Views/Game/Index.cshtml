@@ -15,12 +15,12 @@
                 Filter/Search @ViewData["numberFilters"]
             </button>
             <button type="submit" class="btn btn-kelly">Add Game</button>
-            @using (Html.BeginForm("Create", "Team", FormMethod.Get))
-            {
-                <button type="submit" class="btn btn-kelly">Add Team</button>
-            }
         }
-       
+
+        @using (Html.BeginForm("Create", "Team", FormMethod.Get))
+        {
+            <button type="submit" class="btn btn-kelly">Add Team</button>
+        }       
     </div>
 
   <form asp-action="Index" method="get">
@@ -243,13 +243,14 @@
                 <tbody>
                     @foreach (var item2 in Model)
                     {
+                        @*TeamGame Field*@
                         <tr class="@((item2.Status) ? "" : "inactive-game")">
                             @{
                                 var teamGamesList = item2.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
                             }
-                            <td>   
-                                @* Location *@
+                            @* Option 1 
+                             <td>
                                 @item2.Location.LocationName <br /> <br />
                              
                                 @foreach (var teamGame in teamGamesList)
@@ -268,26 +269,45 @@
                                         @: @teamGame.Team.Name
                                     }
                                 }
-                            </td>
-                           @*  <td>
+                            </td> *@
+                            @* <td> Option2
                                 @foreach (var teamGame in teamGamesList)
                                 {
                                     @teamGame.Team.Name
                                     if (teamGame != teamGamesList.Last())
                                     {
-                                        //@: <strong>  Vs  </strong>
                                         @: <br /> <strong>  Vs  </strong> <br />
                                     }
                                 }
                             </td> *@
+                            <td style="background: url('/images/vs.jpg') no-repeat center center; background-size: cover; width: max-content; padding: 10px;">
+                                @foreach (var teamGame in teamGamesList)
+                                {
+@*                                     @teamGame.Team.Name
+                                    if (teamGame != teamGamesList.Last())                                    
+                                    {
+                                        @: <strong>  VS  </strong>
+                                    } *@
+                                    if (teamGame != teamGamesList.Last())
+                                    {
+                                        <span style="float: left; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
+                                    }
+                                    else
+                                    {
+                                        <span style="float: right; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
+                                    }
+                                }
+                            </td>
+
+                            @*Division Field*@
                             <td>
                                 @foreach (var teamGame in teamGamesList)
                                 {
                                     @Html.DisplayFor(modelItem => teamGame.Team.Division.DivisionName)
                                     @*if (teamGame != teamGamesList.Last())
-                            {
-                            @: <br />
-                            } *@
+                                    {
+                                    @: <br />
+                                    } *@
                                 }
                             </td>
                             <td>                                
