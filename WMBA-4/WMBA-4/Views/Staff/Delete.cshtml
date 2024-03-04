@@ -1,0 +1,80 @@
+﻿@model WMBA_4.Models.Staff
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Status</h1>
+<h4 class="ft-grey">
+    @Model.FirstName @Model.LastName status is
+    @(Model.Status ? "Active" : "Inactive")
+</h4>
+
+<div>
+    <hr />
+    <dl class="row">
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        @*<dt class = "col-sm-2">
+        @Html.DisplayNameFor(model => model.Status)
+        </dt>
+        <dd class = "col-sm-10">
+        @Html.DisplayFor(model => model.Status)
+        </dd>*@
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Roles)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Roles.Description)
+        </dd>
+    </dl>
+
+    <form id="deleteForm" asp-action="Delete" class="form-group">
+        <input type="hidden" asp-for="ID" />
+        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+
+        @{
+            if (Model.Status) // If Staff is active
+            {
+                <button type="button" onclick="confirmDelete()" class="btn btn-danger mx-1">Inactive</button>
+            }
+            else // If Staff is inactive
+            {
+                <button type="button" onclick="confirmActivate()" class="btn btn-success mx-1">Activate</button>
+            }
+        }
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmDelete() {
+            if (confirm('Are you sure you want to inactive this Staff?')) {
+                document.getElementById("deleteForm").submit();
+            }
+        }
+
+        function confirmActivate() {
+            if (confirm('Are you sure you want to activate this Staff?')) {
+                location.href = '@Url.Action("Activate", "Staff", new { id = Model.ID })';
+            }
+        }
+    </script>
+}
