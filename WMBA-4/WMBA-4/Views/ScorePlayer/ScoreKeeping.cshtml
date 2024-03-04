@@ -61,7 +61,7 @@
                     <a id="foulButton" class="btn btn-kelly mx-1">Foul</a>
                     <a id="hbpButton" class="btn btn-kelly mx-1">HBP</a>
                     <a id="outButton" class="btn btn-kelly mx-1">Out</a>
-                    <a id="openPopupButton" data-inplayId=" ViewBag.Inplay.ID" class="btn btn-kelly mx-1">In Play</a>
+                    <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1">In Play</a>
                     <a id="nextBatterButton" class="btn btn-kelly mx-1">Next Batter</a>
 
                 </div>
@@ -71,7 +71,7 @@
 </div>
 <div class="d-flex justify-content-around mt-3">
     <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-secondary rounded-circle p-3">Start</a>
-    <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">New Ining</a>
+    <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID"  class="btn btn-secondary rounded-circle p-3">New Ining</a>
     <a href="#" id="lineupButton" class="btn btn-secondary rounded-circle p-3" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">LineUp</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">End Game</a>
     <a asp-action="Index" class="btn btn-secondary rounded-circle p-3">Back</a>
@@ -216,7 +216,7 @@ Cierra popup  inplay *@
         $('#startButton').click(function (e) {
             e.preventDefault();
 
-
+            var inplayId = $('#inplayId').val();
             var url = $(this).attr('href');
             url = url.replace('http://', 'https://');
 
@@ -243,6 +243,44 @@ Cierra popup  inplay *@
                 }
             });
         });
+
+        //Inning Button
+
+        $('#inningButton').click(function (e) {
+            e.preventDefault();
+            var teamId = $(this).data('team-id');
+            var gameId = $(this).data('game-id');
+            var inplayId = $('#inplayId').val();
+            console.log(teamId, gameId, inplayId);
+            $.ajax({
+                url: '/ScorePlayer/Inning',
+                type: 'GET',
+                data: {
+                    teamId: teamId,
+                    gameId: gameId,
+                    inplayId: inplayId
+                },
+                success: function (data) {
+                    if (data.inplay) {
+                        $('#inplayId').val(data.inplay.id);
+                        $('#strikesCount').text(data.inplay.strikes);
+                        $('#outs').text(data.inplay.outs);
+                        $('#fouls').text(data.inplay.fouls);
+                        $('#ballsCount').text(data.inplay.balls);
+                        $('#runs').text(data.inplay.runs);
+                        $('#inning').text('Inning: ' + data.inplay.inningNumber);
+                        $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    } else {
+                        console.log('inplay is undefined');
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+
+   
 
         // Ball Button
 
