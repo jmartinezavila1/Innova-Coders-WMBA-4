@@ -189,6 +189,97 @@ namespace WMBA_4.Controllers
             return View(model);
         }
 
+        // This method is for creating a new inning
+        public async Task<IActionResult> Inning(int teamId, int gameId, int inplayId)
+        {
+            var inplay = _context.Inplays.Include(i => i.Inning).FirstOrDefault(i => i.ID == inplayId);
+
+            var inning = new Inning
+            {
+                InningNumber = inplay.InningID+1,
+                TeamID = teamId,
+                GameID = gameId
+            };
+
+            // Add the inning to the context and save the changes
+            _context.Innings.Add(inning);
+            await _context.SaveChangesAsync();
+
+            // load the lineup data
+            var nextBO = _context.GameLineUps
+                 .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.PlayerID == inplay.NextPlayer)
+                 .Select(g => g.BattingOrder)
+                 .FirstOrDefault();
+
+            var nextPlayer = _context.GameLineUps
+                .Where(g => g.GameID == inplay.Inning.GameID && g.TeamID == inplay.Inning.TeamID && g.BattingOrder == nextBO + 1)
+                .Select(g => g.Player)
+                .FirstOrDefault();
+
+            //Refresh Inplay data           
+            inplay.Runs = 0;
+            inplay.Strikes = 0;
+            inplay.Outs = 0;
+            inplay.Fouls = 0;
+            inplay.Balls = 0;
+            inplay.InningID = inning.ID;
+            inplay.NextPlayer = 0;
+            inplay.PlayerBattingID = nextPlayer.ID;
+            inplay.PlayerInBase1ID = null;
+            inplay.PlayerInBase2ID = null;
+            inplay.PlayerInBase3ID = null;
+
+            _context.Inplays.Update(inplay);
+            await _context.SaveChangesAsync();
+
+            var inplay2 = _context.Inplays
+                        .Include(i => i.Inning).ThenInclude(inn => inn.Team)
+                        .Include(i => i.Inning).ThenInclude(inn => inn.Game)
+                        .Include(i => i.PlayerBatting)
+                        .Where(i => i.InningID == inning.ID)
+                        .FirstOrDefault();
+
+
+            if (inplay2 == null)
+            {
+                return NotFound();
+            }
+
+            var inplayData = new
+            {
+                ID = inplay2.ID,
+                Runs = inplay2.Runs,
+                Strikes = inplay2.Strikes,
+                Outs = inplay2.Outs,
+                Fouls = inplay2.Fouls,
+                Balls = inplay2.Balls,
+                InningNumber = inplay2.Inning.InningNumber,
+                FirstPlayer = nextPlayer != null ? nextPlayer.FullName : "N/A"
+            };
+
+
+            var lineupPlayers = _context.GameLineUps
+                .Where(g => g.GameID == gameId && g.TeamID == teamId)
+                .Select(p => p.ID)
+                .ToList();
+
+            foreach (var p in lineupPlayers)
+            {
+                var scoreplayer = new ScorePlayer
+                {
+                    GameLineUpID = p,
+                };
+                _context.ScorePlayers.Add(scoreplayer);
+               
+            }
+            await _context.SaveChangesAsync();
+
+            return Json(new { Inplay = inplayData});
+           
+
+        }
+
+
         // This method is for the Start Button
 
         public async Task<IActionResult> Start(int teamId, int gameId)
@@ -204,15 +295,18 @@ namespace WMBA_4.Controllers
                 object inplayData = null;
                 string player = "";
 
-                if (existingInning != null)
-                {
-                    // Si existe, obtener el último `Inning` y consultar la tabla `Inplay`
-                    inplay = _context.Inplays
-                        .Include(i => i.Inning).ThenInclude(inn => inn.Team)
-                        .Include(i => i.Inning).ThenInclude(inn => inn.Game)
-                        .Include(i => i.PlayerBatting)
-                        .Where(i => i.InningID == existingInning.ID)
-                        .FirstOrDefault();
+               
+                    //Si existe, obtener el último `Inning` y consultar la tabla `Inplay`
+                    if (existingInning != null)
+                    {
+                        inplay = _context.Inplays
+                            .Include(i => i.Inning).ThenInclude(inn => inn.Team)
+                            .Include(i => i.Inning).ThenInclude(inn => inn.Game)
+                            //.Include(i => i.PlayerBatting)
+                            .Where(i => i.InningID == existingInning.ID)
+                            .FirstOrDefault();
+                    
+                    //inplay = await _context.Inplays.FindAsync(inplayId);
 
                     if (inplay.PlayerBattingID == null)
                     {
