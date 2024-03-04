@@ -11,7 +11,7 @@
 <hr />
 <form asp-action="Edit" method="post" enctype="multipart/form-data">
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-4 mb-3">
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
                 <label asp-for="Name" class="control-label"></label>
@@ -19,11 +19,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
-                    <i class="fas fa-plus"></i> 
-                </button>
-                <label asp-for="TeamStaff" class="control-label"></label>
-                <select id="SelectedStaffIds" name="SelectedStaffIds" asp-for="TeamStaff" class="form-control" multiple>
+                <div class="mb-2">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <label asp-for="TeamStaff" class="control-label">Add Team Staff</label>
+                </div>
+
+                <select id="SelectedStaffIds" name="SelectedStaffIds" asp-for="TeamStaff" class="form-control mb-3" multiple>
                     @foreach (var item in ViewBag.StaffId as MultiSelectList)
                     {
                         var isSelected = ViewBag.SelectedStaffIds.Contains(item.Value) ? "selected" : null;
@@ -69,7 +72,6 @@
                         <label for="coachEmail">Email</label>
                         <input type="email" class="form-control" id="coachEmail" name="coachEmail" required>
                     </div>
-                   
                 </form>
             </div>
             <div class="modal-footer">
@@ -90,15 +92,15 @@
                 var firstName = $('#coachFirstName').val();
                 var lastName = $('#coachLastName').val();
                 var email = $('#coachEmail').val();
-               
+
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("AddCoach", "Team")',
                     data: { firstName: firstName, lastName: lastName, email: email },
                     success: function (data) {
-                        
+
                         $('#SelectedStaffIds').append('<option value="' + data.id + '">' + data.name + '</option>');
-                        
+
                         $('#addCoachModal').modal('hide');
                     },
                     error: function () {
@@ -109,4 +111,3 @@
         });
     </script>
 }
-

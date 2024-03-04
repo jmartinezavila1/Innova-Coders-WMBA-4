@@ -1,9 +1,15 @@
 ﻿@model WMBA_4.Models.Team
 
 <h1>@Model.Name</h1>
+<div class="f-in-flex">
 <p>
     Division: @Model.Division.DivisionName | Coach: <span>@(ViewBag.Coach?.FirstName + " " + ViewBag.Coach?.LastName)</span> | City: Welland Minor Baseball
 </p>
+@using (Html.BeginForm("Create", "Player", FormMethod.Get))
+{
+     <button type="submit" class="btn btn-kelly">Add Player</button>
+}
+</div>
 
 @{
     var playersList = ViewData["Players"] as List<WMBA_4.Models.Player> ?? new List<WMBA_4.Models.Player>();
