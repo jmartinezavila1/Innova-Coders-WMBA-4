@@ -15,12 +15,12 @@
                 Filter/Search @ViewData["numberFilters"]
             </button>
             <button type="submit" class="btn btn-kelly">Add Game</button>
-            @using (Html.BeginForm("Create", "Team", FormMethod.Get))
-            {
-                <button type="submit" class="btn btn-kelly">Add Team</button>
-            }
         }
-       
+
+        @using (Html.BeginForm("Create", "Team", FormMethod.Get))
+        {
+            <button type="submit" class="btn btn-kelly">Add Team</button>
+        }       
     </div>
 
   <form asp-action="Index" method="get">
