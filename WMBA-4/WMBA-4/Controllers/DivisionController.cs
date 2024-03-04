@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -23,11 +24,14 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Division
-        public async Task<IActionResult> Index(string SearchString, int? ClubID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchString, int? ClubID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Division")
         {
             var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
-            
+            //Count the number of filters applied - start by assuming no filters
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+
             var divisions = from d in _context.Divisions
                                       .Include(d => d.Club)
                                       .Where(s => s.Status == true)
@@ -41,57 +45,86 @@ namespace WMBA_4.Controllers
             if (ClubID.HasValue)
             {
                 divisions = divisions.Where(d => d.ClubID == ClubID);
+                numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchString))
             {
                 divisions = divisions.Where(d => d.DivisionName.ToUpper().Contains(SearchString.ToUpper()));
+                numberFilters++;
+            }
+            if (isActive == true)
+            {
+                divisions = divisions.Where(r => r.Status == true);
+                numberFilters++;
+            }
+            if (isInactive == true)
+            {
+                divisions = divisions.Where(r => r.Status == false);
+                numberFilters++;
+            }
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                //@ViewData["ShowFilter"] = " show";
             }
 
-            //sorting
+            divisions = divisions
+                .OrderByDescending(r => r.Status) // send all false status staff to the back in the list 
+                .ThenBy(r => r.DivisionName)
+                .ThenBy(r => r.Club.ClubName);
+
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
                 if (sortOptions.Contains(actionButton))//Change of sort is requested
                 {
                     page = 1;//Reset page to start
                              //sorting
-                    if (actionButton == sortField) //Reverse order on same field
+                    if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
                     {
-                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                        if (sortOptions.Contains(actionButton))//Change of sort is requested
+                        {
+                            if (actionButton == sortField) //Reverse order on same field
+                            {
+                                sortDirection = sortDirection == "asc" ? "desc" : "asc";
+                            }
+                            sortField = actionButton;//Sort by the button clicked
+                        }
                     }
-                    sortField = actionButton;//Sort by the button clicked
-                }
-            }
 
-            if (sortField == "Division")
-            {
-                if (sortDirection == "asc")
-                {
-                    divisions = divisions
-                        .OrderBy(d => d.DivisionName);
-                }
-                else
-                {
-                    divisions = divisions
-                        .OrderByDescending(d => d.DivisionName);
-                }
-            }
-            else
-            {
-                if (sortDirection == "asc")
-                {
-                    divisions = divisions
-                        .OrderBy(d => d.Club);
-                }
-                else
-                {
-                    divisions = divisions
-                        .OrderByDescending(d => d.Club);
+                    if (sortField == "Division")
+                    {
+                        if (sortDirection == "asc")
+                        {
+                            divisions = divisions.OrderBy(d => d.DivisionName);
+                        }
+                        else
+                        {
+                            divisions = divisions
+                            .OrderByDescending(d => d.DivisionName);
+                        }
+                    }
+                    else if (sortField == "Club")
+                    {
+                        if (sortDirection == "asc")
+                        {
+                            divisions = divisions.OrderBy(d => d.Club.ClubName);
+                        }
+                        else
+                        {
+                            divisions = divisions.OrderByDescending(d => d.Club.ClubName);
+                        }
+                    }
                 }
             }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "Name");
+            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "Name");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -119,11 +152,34 @@ namespace WMBA_4.Controllers
 
             return View(division);
         }
+        // GET: Division/Activate/5
+        public async Task<IActionResult> Activate(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var divisions = await _context.Divisions.FindAsync(id);
+            if (divisions == null)
+            {
+                return NotFound();
+            }
+
+            // Set the Division's status to active
+            divisions.Status = true;
+            _context.Divisions.Update(divisions);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
 
         // GET: Division/Create
         public IActionResult Create()
         {
-            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName");
+            ViewData["returnURL"] = Url.Action("Index");
+            ViewData["ControllerName"] = "Division";
+            ViewData["Club"] = new SelectList(_context.Clubs, "ID", "ClubName");
             return View();
         }
 
@@ -140,8 +196,11 @@ namespace WMBA_4.Controllers
                 {
                     _context.Add(division);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction("Details", new { division.ID });
+                    return RedirectToAction(nameof(Index));
                 }
+                ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
+
+                return View(division);
             }
             catch (DbUpdateException dex)
             {
@@ -154,7 +213,7 @@ namespace WMBA_4.Controllers
                     ModelState.AddModelError("", "An error occurred while saving. Retry a few times, and if the issue persists, seek assistance from your system administrator.");
                 }     
             }
-            ViewData["ClubID"] = new SelectList(_context.Clubs, "ID", "ClubName", division.ClubID);
+            ViewData["ClubID"] = new SelectList(_context.Clubs,"ID", "ClubName", division.ClubID);
             return View(division);
         }
 
@@ -255,15 +314,22 @@ namespace WMBA_4.Controllers
                 return Problem("Entity set 'WMBA_4_Context.Divisions'  is null.");
             }
             var division = await _context.Divisions.FindAsync(id);
-            if (division != null)
+
+            try
             {
-                division.Status = false;
-                _context.Divisions.Update(division);
-                
+
+                if (division != null)
+                {
+                    division.Status = false;
+                    _context.Divisions.Update(division);
+                    await _context.SaveChangesAsync();
+                }
             }
-            
-            await _context.SaveChangesAsync();
-            return Redirect(ViewData["returnURL"].ToString());
+            catch (DbUpdateException)
+            {
+                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+            }
+            return RedirectToAction(nameof(Index));
         }
 
         private bool DivisionExists(int id)
