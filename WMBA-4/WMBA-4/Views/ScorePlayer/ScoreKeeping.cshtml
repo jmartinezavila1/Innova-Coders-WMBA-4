@@ -12,7 +12,7 @@
                 <div class="card-header" style="display: flex; justify-content: space-between;">
                     @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
                     {
-                        <h3 style="text-align: left;">@ViewBag.Teams[0].Name</h3>
+                        <h3 style="text-align: left;">@ViewBag.Team1</h3>
                         @if (ViewBag.Inplay != null)
                         {
                             @* <h4 id="runs">Runs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Runs : "")</h4> *@
@@ -22,7 +22,7 @@
                         }
                         if (ViewBag.Teams.Count > 1)
                         {
-                            <h3 style="text-align: right;">@ViewBag.Teams[1].Name</h3>
+                            <h3 style="text-align: right;">@ViewBag.Team2</h3>
                         }
                     }
                 </div>
