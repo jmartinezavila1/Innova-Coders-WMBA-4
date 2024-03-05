@@ -771,7 +771,8 @@ namespace WMBA_4.Controllers
                     inplayData = new
                     {
                         ID = inplay.ID,
-                        Runs = inplay.Runs,
+                        Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                        Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
                         Strikes = inplay.Strikes,
                         Outs = inplay.Outs,
                         Fouls = inplay.Fouls,
@@ -1253,12 +1254,16 @@ namespace WMBA_4.Controllers
 
             // Get the scores for each team
             var scores = _context.TeamGame
+                .Include(t => t.Team)
                 .Where(tg => tg.GameID == GameID)
                 .ToList();
+
 
             // Store the scores in ViewBag
             ViewBag.Team1Score = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score;
             ViewBag.Team2Score = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score;
+            ViewBag.Team1 = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.Team.Name;
+            ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;
