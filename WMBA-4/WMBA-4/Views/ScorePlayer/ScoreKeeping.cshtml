@@ -15,7 +15,9 @@
                         <h3 style="text-align: left;">@ViewBag.Teams[0].Name</h3>
                         @if (ViewBag.Inplay != null)
                         {
-                            <h4 id="runs">Runs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Runs : "")</h4>
+                            @* <h4 id="runs">Runs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Runs : "")</h4> *@
+                            <h4 id="runs">@(ViewBag.Team1Score != null ? ViewBag.Team1Score : "")</h4>
+                            <h4 id="runs2">@(ViewBag.Team2Score != null ? ViewBag.Team2Score : "")</h4>
 
                         }
                         if (ViewBag.Teams.Count > 1)
@@ -184,13 +186,14 @@ Cierra popup  inplay *@
                 success: function (response) {
                     console.log(response);
                     if (response.success) {
-                        console.log('Los datos se guardaron correctamente');
+                        console.log('Los datos se guardaron correctamente..');
                         $('#inplayId').val(response.inplay.id);
                         $('#strikesCount').text(response.inplay.strikes);
                         $('#outs').text(response.inplay.outs);
                         $('#fouls').text(response.inplay.fouls);
                         $('#ballsCount').text(response.inplay.balls);
                         $('#runs').text(response.inplay.runs);
+                        $('#runs2').text(response.inplay.runs2);
                         $('#inning').text('Inning: ' + response.inplay.inningNumber);
                         $('#playerAtBat').text('Player at bat: ' + response.inplay.firstPlayer);
 
@@ -231,6 +234,7 @@ Cierra popup  inplay *@
                         $('#fouls').text(data.inplay.fouls);
                         $('#ballsCount').text(data.inplay.balls);
                         $('#runs').text(data.inplay.runs);
+                        $('#runs2').text(data.inplay.runs2);
                         $('#inning').text('Inning: ' + data.inplay.inningNumber);
                         $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                     } else {
@@ -267,6 +271,7 @@ Cierra popup  inplay *@
                         $('#fouls').text(data.inplay.fouls);
                         $('#ballsCount').text(data.inplay.balls);
                         $('#runs').text(data.inplay.runs);
+                        $('#runs2').text(data.inplay.runs2);
                         $('#inning').text('Inning: ' + data.inplay.inningNumber);
                         $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                     } else {
@@ -278,8 +283,7 @@ Cierra popup  inplay *@
                 }
             });
         });
-
-
+      
 
         // Ball Button
 
@@ -302,6 +306,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
 
@@ -348,6 +353,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -379,6 +385,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -410,6 +417,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
 
@@ -453,6 +461,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
                 },
@@ -479,6 +488,7 @@ Cierra popup  inplay *@
                     $('#outs').text(data.inplay.outs);
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
+                    $('#runs2').text(data.inplay.runs2);
                     $('#inning').text('Inning: ' + data.inplay.inningNumber);
                     $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
 
@@ -534,7 +544,6 @@ Cierra popup  inplay *@
         });
     </script>
 }
-
 
 @* Kim can you please change this to the loyout I dont want to move your code?, if you change de design its ok *@
 
