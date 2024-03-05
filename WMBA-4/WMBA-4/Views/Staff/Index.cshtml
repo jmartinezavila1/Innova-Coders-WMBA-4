@@ -133,7 +133,7 @@
                             </div>
                         </th>
                         <th>
-                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
+                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Detail |&nbsp;</span><span>Status</span></div>
                         </th>
                     </tr>
                 </thead>
@@ -156,9 +156,15 @@
                                             edit
                                         </span>
                                     </a>
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined ft-kelly px-2">
+                                            visibility
+                                        </span>
+                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined ft-kelly px-2">
                                             group
+
                                         </span>
                                     </a>
                                 }
@@ -169,6 +175,11 @@
                                             edit
                                         </span>
                                     </div>
+                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                        <span class="material-symbols-outlined px-2">
+                                            visibility
+                                        </span>
+                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined px-2">
                                             group_off

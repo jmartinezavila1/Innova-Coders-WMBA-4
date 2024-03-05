@@ -34,6 +34,7 @@ namespace WMBA_4.Controllers
             var staff = from r in _context.Staff
                                     .Include(r => r.Roles)
                                     .Where(s => s.Status == true)
+                                    .OrderBy(s => s.Roles.Description)
                                     .AsNoTracking()
                         select r;
 
@@ -74,10 +75,10 @@ namespace WMBA_4.Controllers
             }
 
             staff = staff
-                .OrderByDescending(r => r.Status) // send all false status staff to the back in the list 
+                .OrderBy(r => r.Status) // send all false status staff to the back in the list 
                 .ThenBy(r => r.FirstName)
                 .ThenBy(r => r.LastName)
-                .ThenBy(r => r.RoleId);
+                .ThenBy(r => r.Roles.Description);
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -113,11 +114,11 @@ namespace WMBA_4.Controllers
                 {
                     if (sortDirection == "asc")
                     {
-                        staff = staff.OrderBy(r => r.RoleId);
+                        staff = staff.OrderBy(r => r.Roles.Description);
                     }
                     else
                     {
-                        staff = staff.OrderByDescending(r => r.RoleId);
+                        staff = staff.OrderByDescending(r => r.Roles.Description);
                     }
                 }
             }
@@ -233,23 +234,28 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,FirstName,LastName,Email,Status,RoleId")] Staff staff)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id != staff.ID)
+            var staffToUpdate = await _context.Staff
+                .Include(s => s.Roles)
+                .FirstOrDefaultAsync(p => p.ID == id);
+
+            if (staffToUpdate == null)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            if (await TryUpdateModelAsync<Staff>(staffToUpdate, "", s => s.FirstName, s => s.LastName, s => s.Email, s => s.Status, s => s.RoleId))
             {
                 try
                 {
-                    _context.Update(staff);
+                    _context.Update(staffToUpdate);
                     await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StaffExists(staff.ID))
+                    if (!StaffExists(staffToUpdate.ID))
                     {
                         return NotFound();
                     }
@@ -258,10 +264,13 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                return RedirectToAction(nameof(Index));
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", "An error occurred while saving. Retry a few times, and if the issue persists, seek assistance from your system administrator.");
+                }
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "ID", "ID", staff.RoleId);
-            return View(staff);
+            ViewData["RoleId"] = new SelectList(_context.Roles, "ID", "ID", staffToUpdate.RoleId);
+            return View(staffToUpdate);
         }
 
         // GET: Staff/Delete/5
@@ -290,7 +299,7 @@ namespace WMBA_4.Controllers
         {
             if (_context.Staff == null)
             {
-                return Problem("Entity set 'WMBA_4_Context.Staff'  is null.");
+                return Problem("The staff data could not be retrieved. It may have been deleted or does not exist. If the issue persists, please contact support.");
             }
             var staff = await _context.Staff.FindAsync(id);
 
@@ -313,7 +322,7 @@ namespace WMBA_4.Controllers
 
         private bool StaffExists(int id)
         {
-          return _context.Staff.Any(e => e.ID == id);
+            return _context.Staff.Any(e => e.ID == id);
         }
     }
 }

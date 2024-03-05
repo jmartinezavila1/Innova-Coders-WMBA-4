@@ -32,6 +32,7 @@ namespace WMBA_4.Models
         [Display(Name = "Status")]
         public bool Status { get; set; } = true;
 
+        [Display(Name ="Role Description")]
         public int RoleId { get; set; }
         public Role Roles { get; set; }
         public ICollection<TeamStaff> TeamStaff { get; set; } = new HashSet<TeamStaff>();
