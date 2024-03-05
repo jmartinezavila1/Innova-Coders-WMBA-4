@@ -6,7 +6,7 @@
 
 <div class="p-in-flex">
     <div class="f-in-flex">
-        <h1>Division</h1>
+        <h1>Divisions</h1>
 
         @using (Html.BeginForm("Create", "Division", FormMethod.Get))
         {
@@ -32,11 +32,11 @@
                         <div class="form-group col-md-4 align-content-center">
                             <div class="d-flex my-2">
                                 @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
-                                <label class="control-label" for="isActiveCheckbox">Active Staff Only</label>
+                                <label class="control-label" for="isActiveCheckbox">Active Division Only</label>
                             </div>
                             <div class="d-flex my-2">
                                 @Html.CheckBox("isInactive", null, new { @class = "form-check form-switch me-2", id = "isInactiveCheckbox" })
-                                <label class="control-label" for="isInactiveCheckbox">Inactive Staff Only</label>
+                                <label class="control-label" for="isInactiveCheckbox">Inactive Division Only</label>
                             </div>
                         </div>
                         <div class="form-group col-md-4 align-self-end">
