@@ -178,7 +178,7 @@ namespace WMBA_4.Data
                 {
                     var seasons = new List<Season>
                     {
-                        new Season { ID = 1, SeasonCode = "2024", SeasonName = "Winter 2024" },
+                        new Season { ID = 1, SeasonCode = "2024", SeasonName = "Summer 2024" },
 
                     };
 
