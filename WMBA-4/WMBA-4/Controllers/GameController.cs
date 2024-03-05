@@ -382,7 +382,7 @@ namespace WMBA_4.Controllers
 
                     _context.Add(game);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
+                    return Redirect(ViewData["returnURL"].ToString());
                 }
                 catch (InvalidOperationException)
                 {
@@ -517,7 +517,7 @@ namespace WMBA_4.Controllers
 
                         // Commit the transaction
                         transaction.Commit();
-                        return RedirectToAction(nameof(Index));
+                        return Redirect(ViewData["returnURL"].ToString());
                     }
                     catch (DbUpdateConcurrencyException)
                     {
@@ -616,7 +616,7 @@ namespace WMBA_4.Controllers
             }
             await _context.SaveChangesAsync();
             //return RedirectToAction("RedirectToTeamList", new { teamId });
-            return RedirectToAction(nameof(Index));
+            return Redirect(ViewData["returnURL"].ToString());
 
         }
         [HttpPost]

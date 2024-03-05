@@ -140,7 +140,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr class="@((item.Status) ? "" : "inactive-staff") staff-row" onclick="redirectToDetails('@item.ID')">
+                        <tr class="@((item.Status) ? "" : "inactive-staff")">
 
                             <td>
                                 @Html.DisplayFor(modelItem => item.FullName)
@@ -162,8 +162,9 @@
                                         </span>
                                     </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            person
+                                        <span class="material-symbols-outlined ft-kelly px-2">
+                                            group
+
                                         </span>
                                     </a>
                                 }
@@ -181,7 +182,7 @@
                                     </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined px-2">
-                                            person_off
+                                            group_off
                                         </span>
                                     </a>
                                 }
@@ -195,11 +196,3 @@
     </form>
 </div>
 
-@* show a staff's' details view when click the row *@
-@section Scripts {
-    <script>
-        function redirectToDetails(staffId) {
-            window.location.href = '@Url.Action("Details", "Staff")/' + staffId;
-        }
-    </script>
-}

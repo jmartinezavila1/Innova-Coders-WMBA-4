@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.Utilities;
@@ -15,7 +16,7 @@ using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
-    public class ScorePlayerController : Controller
+    public class ScorePlayerController : CognizantController
     {
         private readonly WMBA_4_Context _context;
 

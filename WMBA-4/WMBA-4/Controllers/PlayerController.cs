@@ -222,7 +222,7 @@ namespace WMBA_4.Controllers
                     {
                         _context.Add(player);
                         await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction("Details", new { player.ID });
                     }
                 }
             }
@@ -309,7 +309,7 @@ namespace WMBA_4.Controllers
                     else
                     {
                         await _context.SaveChangesAsync();
-                        return RedirectToAction(nameof(Index));
+                        return RedirectToAction("Details", new { playerToUpdate.ID });
                     }
 
                 }
@@ -406,7 +406,7 @@ namespace WMBA_4.Controllers
             {
                 ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
             }
-            return RedirectToAction(nameof(Index));
+            return Redirect(ViewData["returnURL"].ToString());
         }
         private bool IsJerseyNumberDuplicate(Player player)
         {
