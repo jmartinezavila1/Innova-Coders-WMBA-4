@@ -28,7 +28,7 @@
                         <div class="form-group col-md-4">
                             <label class="control-label">Search Staff Name:</label>
                             @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                        </div>
+                        </div>                        
                         <div class="form-group col-md-4 align-content-center">
                             <div class="d-flex my-2">
                                 @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
@@ -146,18 +146,18 @@
                                 @Html.DisplayFor(modelItem => item.FullName)
                             </td>
                             <td>
-                                @Html.DisplayFor(modelItem => item.RoleId)
+                                @Html.DisplayFor(modelItem => item.Roles.Description)
                             </td>
                             <td>
                                 @if (item.Status == true)
                                 {
                                     <a asp-action="Edit" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
+                                        <span class="material-symbols-outlined ft-kelly px-2">
                                             edit
                                         </span>
                                     </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-light-grey px-1">
+                                        <span class="material-symbols-outlined ft-light-grey px-2">
                                             person
                                         </span>
                                     </a>
