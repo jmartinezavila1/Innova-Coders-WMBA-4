@@ -227,7 +227,10 @@ Cierra popup  inplay *@
                 type: 'GET',
 
                 success: function (data) {
-                    if (data.inplay) {
+                    if (data.success === false) {
+                        // Show the error message in an alert
+                        alert(data.message);
+                    } else if (data.inplay) {
                         $('#inplayId').val(data.inplay.id);
                         $('#strikesCount').text(data.inplay.strikes);
                         $('#outs').text(data.inplay.outs);

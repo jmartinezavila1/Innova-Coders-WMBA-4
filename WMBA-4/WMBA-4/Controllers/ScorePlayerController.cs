@@ -36,11 +36,7 @@ namespace WMBA_4.Controllers
                 .ThenInclude(t => t.Team)
                     .ThenInclude(d => d.Division)
             .Where(s => s.Status == true);
-
-            //if (!string.IsNullOrEmpty(seasonName))
-            //{
-            //    games = games.Where(g => g.Season.SeasonName.ToLower().Contains(seasonName.ToLower()));
-            //}
+          
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Division", "Location", "GameType", "Date" };
@@ -406,6 +402,14 @@ namespace WMBA_4.Controllers
                 }
                 else
                 {
+                    if (!_context.GameLineUps.Any(g => g.GameID == gameId && g.TeamID == teamId))
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = "It is necessary to make a lineup for this game."
+                        });
+                    }
 
                     // Creating a new inning cuando no existe
 
@@ -552,9 +556,8 @@ namespace WMBA_4.Controllers
             if (inplay.Balls <= 3)
             {
 
-                // Guarda los cambios en la base de datos
+                // save changes in the the database
                 await _context.SaveChangesAsync();
-
 
 
                 var inningNumber = _context.Innings
@@ -595,21 +598,16 @@ namespace WMBA_4.Controllers
                     .FirstOrDefaultAsync();
 
 
-
                 if (scorePlayer == null)
                 {
                     return NotFound();
                 }
 
-                //// Actualiza los campos PA y BB
+                //// Update fields PA y BB
                 scorePlayer.PA++;
                 scorePlayer.BB++;
-
-
-
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
-
 
                 inplay.NextPlayer = (int)inplay.PlayerBattingID;
 
