@@ -3,21 +3,29 @@
 @{
     ViewData["Title"] = "Index";
 }
-
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            ScoreKeeper
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
+<div class="f-in-flex">
+    @using (Html.BeginForm("Create", "Game", FormMethod.Get))
+    {
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
+    }
+</div>
 <div class="p-in-flex">
-    <div class="f-in-flex">
-        <h1>Upcoming Games</h1>
-
-        @using (Html.BeginForm("Create", "Game", FormMethod.Get))
-        {
-            //<button type="submit" class="btn btn-kelly">Create Match</button>
-            <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                Filter/Search @ViewData["numberFilters"]
-            </button>
-
-        }
-    </div>
-
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -26,16 +34,24 @@
                 <div class="card card-body bg-light">
                     <div class="row">
                         <div class="form-group col-md-4">
+                            <label class="control-label">Select Team:</label>
+                            @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control form-select" })
+                        </div>
+                        <div class="form-group col-md-4">
                             <label class="control-label">Select Division:</label>
-                            @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control" })
+                            @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control form-select" })
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="control-label">Search by Location:</label>
-                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                            <label class="control-label">Select by Location:</label>
+                            @Html.DropDownList("LocationID", null, "All Locations", htmlAttributes: new { @class = "form-control form-select" })
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="control-label">Select GameType:</label>
-                            @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control" })
+                            <label class="control-label">Select Game Type:</label>
+                            @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control form-select" })
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label class="control-label">Date:</label>
+                            @Html.TextBox("Date", @ViewData["GameDate"], new { @class = "form-control", type = "date" })
                         </div>
                         <div class="form-group col-md-4 align-self-end">
                             <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
@@ -45,6 +61,12 @@
                 </div>
             </div>
         </div>
+        <h1>Upcoming Games</h1>
+        @* Label Season: *@
+        @if (Model.Any())
+        {
+            <h3>@Html.DisplayFor(model => Model.First().Season.SeasonName)</h3>
+        }
         <div class="table-responsive mt-3">
             @* added from modal *@
             <div class="form-row" style="width: 280px;">
@@ -60,20 +82,44 @@
                     </div>
                 </div>
             </div>
-            <br />
-            @* Label Season: *@
-            @if (Model.Any())
-            {
-                <h2>@Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
-            }
             <table class="table giro-table table-bordered">
                 <thead>
                     <tr>
-                        <th style="width: 8rem;">
+                        <th style="width:10rem;">
                             <input type="submit" name="actionButton" value="Game" class="text-column" />
                         </th>
                         <th>
-                            <input type="submit" name="actionButton" value="Date" class="text-column" />
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Date" class="text-column" />
+                                @if (ViewData["sortField"].ToString() == "Date")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
                         </th>
                         <th>
                             <div class="t-in-flex"><span>Start Score</span></div>
@@ -81,7 +127,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var item in Model)
+                    @foreach (var item in Model.OrderBy(g => g.Date))
                     {
                         <tr>
                             @{
@@ -105,7 +151,7 @@
                                 </div>
                             </td>
                             <td>
-                                @item.Date.ToString("MMMM dd")
+                                @item.Date.ToString("MMMM dd hh:mm tt")
                             </td>
                             <td>
                                 <div class="text-center">
@@ -119,8 +165,6 @@
                         </tr>
                     }
                 </tbody>
-
-
             </table>
         </div>
         <partial name="_PagingNavBar" />

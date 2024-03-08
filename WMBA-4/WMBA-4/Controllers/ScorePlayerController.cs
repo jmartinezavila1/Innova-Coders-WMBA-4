@@ -25,23 +25,26 @@ namespace WMBA_4.Controllers
         }
 
         // GET: ScorePlayer
-        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? TeamID, int? divisionID, int? LocationID, int? GameTypeID, DateTime GameDate, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
             IQueryable<Game> games = _context.Games
-            .Include(g => g.GameType)
-            .Include(g => g.Location)
-            .Include(g => g.Season)
-            .Include(t => t.TeamGames)
-                .ThenInclude(t => t.Team)
-                    .ThenInclude(d => d.Division)
-            .Where(s => s.Status == true);
-          
+                .Include(g => g.GameType)
+                .Include(g => g.Location)
+                .Include(g => g.Season)
+                .Include(t => t.TeamGames)
+                    .ThenInclude(t => t.Team)
+                        .ThenInclude(d => d.Division)
+                .Where(s => s.Status == true);
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Division", "Location", "GameType", "Date" };
+            string[] sortOptions = new[] { "Location", "Game Type", "Date" };
 
             //filter
+            if (TeamID.HasValue)
+            {
+                games = games.Where(g => g.TeamGames.Any(t => t.TeamID == TeamID));
+            }
             if (divisionID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.Team.DivisionID == divisionID));
@@ -50,98 +53,58 @@ namespace WMBA_4.Controllers
             {
                 games = games.Where(g => g.GameTypeID == GameTypeID);
             }
-            if (!System.String.IsNullOrEmpty(SearchString))
+            if (LocationID.HasValue)
             {
-                games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
+                games = games.Where(g => g.LocationID == LocationID);
             }
 
-            if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            games = games.OrderByDescending(g => g.Status) // Active games first
+                .ThenBy(g => g.Date).Where(g=>g.Date >= DateTime.Today);
+
+            // Sorting
+            if (!string.IsNullOrEmpty(actionButton))
             {
-                page = 1;//Reset page to start
-                         //sorting
-                if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
+                page = 1; // Reset page to start
+
+                if (sortOptions.Contains(actionButton))
                 {
-                    if (sortOptions.Contains(actionButton))//Change of sort is requested
+                    if (actionButton == sortField)
                     {
-                        if (actionButton == sortField) //Reverse order on same field
-                        {
-                            sortDirection = sortDirection == "asc" ? "desc" : "asc";
-                        }
-                        sortField = actionButton;//Sort by the button clicked
+                        sortDirection = sortDirection == "asc" ? "desc" : "asc";
                     }
+                    sortField = actionButton;
                 }
-                if (sortField == "Division")
+
+                if (sortField == "Date")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
-                    }
+                    games = sortDirection == "asc" ? games.OrderBy(g => g.Date) : games.OrderByDescending(g => g.Date);
                 }
-                else
-                if (sortField == "Location")
+                else if (sortField == "Location")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(l => l.Location.LocationName);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(l => l.Location.LocationName);
-                    }
+                    games = sortDirection == "asc" ? games.OrderBy(g => g.Location.LocationName) : games.OrderByDescending(g => g.Location.LocationName);
                 }
-                else if (sortField == "GameType")
+                else if (sortField == "Game Type")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(g => g.GameType.Description);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(p => p.GameType.Description);
-                    }
-                }
-                else
-                {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(g => g.GameType.Description);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(g => g.GameType.Description);
-                    }
+                    games = sortDirection == "asc" ? games.OrderBy(g => g.GameType.Description) : games.OrderByDescending(g => g.GameType.Description);
                 }
             }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-            //ViewData["LocationID"] = new SelectList(_context.Teams, "ID", "LocationName");
-
+            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["SearchString"] = SearchString;
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
+            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
 
-            //Handle Paging
+
+            // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);
 
-
-            //return View(await games.ToListAsync());
             return View(pagedData);
         }
+
 
         // GET: ScorePlayer/Details/5
         public async Task<IActionResult> Details(int? id)
