@@ -1650,6 +1650,44 @@ namespace WMBA_4.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> RemovePlayer(int playerId)
+        {
+            var gameLineUp = await _context.GameLineUps
+                .Include(gl => gl.Game)
+                .Where(gl => gl.PlayerID == playerId)
+                .FirstOrDefaultAsync();
+
+            if (gameLineUp == null)
+            {
+                return NotFound(); 
+            }
+
+            try
+            {
+                
+                _context.GameLineUps.Remove(gameLineUp);
+                await _context.SaveChangesAsync();
+
+              
+                var remainingPlayers = await _context.GameLineUps
+                    .Where(gl => gl.GameID == gameLineUp.GameID && gl.TeamID == gameLineUp.TeamID && gl.BattingOrder > gameLineUp.BattingOrder)
+                    .ToListAsync();
+
+                foreach (var player in remainingPlayers)
+                {
+                    player.BattingOrder -= 1;
+                }
+
+                await _context.SaveChangesAsync();
+
+                return Ok(); 
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, "An error occurred while removing the player.");
+            }
+        }
 
 
         private bool ScorePlayerExists(int id)
