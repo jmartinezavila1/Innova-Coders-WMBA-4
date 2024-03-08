@@ -4,21 +4,36 @@
     ViewData["Title"] = "Index";
 }
 
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        @*  <li class="breadcrumb-item">
+        <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Player" asp-action="Index">Library</a>
+        </li> *@
+        <li class="breadcrumb-item active" aria-current="page">
+            Player
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
+<div class="f-in-flex">
+    @* <h1>Players</h1> *@
+
+    @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+    {
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
+        <button type="submit" class="btn btn-kelly">Add Player</button>
+    }
+</div>
 <div class="p-in-flex">
-    <div class="f-in-flex">
-        <h1>Players</h1>
-
-        @using (Html.BeginForm("Create", "Player", FormMethod.Get))
-        {
-            <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
-                Filter/Search @ViewData["numberFilters"]
-            </button>
-            <button type="submit" class="btn btn-kelly">Add Player</button>
-        }
-
-    </div>
     <form asp-action="Index" method="get">
-
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
@@ -62,7 +77,7 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Page Size: </span>
                         </div>
-                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control text-center mx-1" })
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control form-select text-center mx-1" })
                         <div class="input-group-append">
                             <input type="submit" class="btn btn-kelly" value="Set Page Size" />
                         </div>
@@ -241,7 +256,7 @@
 </div>
 
 @* show a player's details view when click the row *@
-@section Scripts{
+@section Scripts {
     <script>
         function redirectToDetails(playerId) {
             window.location.href = '@Url.Action("Details", "Player")/' + playerId;

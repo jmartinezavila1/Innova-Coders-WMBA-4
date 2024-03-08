@@ -40,6 +40,7 @@
     --bg-light-grey: #E4E4E4;
     --bg-light-grey2: #DADADA;
     --bg-dark-blue: #23314E;
+    --bg-breadcrumble: #80858585;
     /*////font colors////*/
     --ft-black: #000000;
     --ft-grey: #999999;
@@ -76,6 +77,28 @@ table tdoby tr td{
     display: table-cell;
 }
 
+/*/////////////////////////////Scroll/////////////////////////////////////*/
+
+.carousel-container {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch; /* 터치 스크롤을 지원합니다. */
+    scrollbar-width: none; /* 스크롤 막대를 숨깁니다. */
+    -ms-overflow-style: none; /* IE 및 Edge용 */
+}
+
+    .carousel-container::-webkit-scrollbar {
+        display: none; /* Webkit 기반 브라우저에서 스크롤 막대를 숨깁니다. */
+        overflow-x: auto;
+    }
+
+.card-wrapper {
+    flex: 1;
+}
+
+.card {
+    height: 100%;
+}
 /*/////////////////////////////Collapsible in Team Detail/////////////////////////////////////*/
 
 .collapsible {
@@ -222,8 +245,10 @@ table tdoby tr td{
 }
 
 @media (max-width: 391px) {
-    
-   
+    .card-wrapper {
+        max-width: 100%; /* 최대 너비를 100%로 설정하여 부모 요소의 너비에 따라 크기가 조정됩니다. */
+    }
+
     .t-in-flex {
         flex-direction: column;
     }
@@ -247,7 +272,13 @@ table tdoby tr td{
         padding-right: 2rem !important;
     }
 }
-
+@media (max-width: 523px) {
+    #prevButton,
+    #nextButton {
+        display: none;
+    }
+    }
+}
 @media (min-width: 524px) {
     .px-6 {
         padding-left: 3rem !important;
@@ -407,8 +438,9 @@ th:last-child {
 
 .f-in-flex {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .n-in-flex {
@@ -438,7 +470,6 @@ th:last-child {
 /*//////////////////////////////////classes///////////////////////////////////////////*/
 .logo {
     width: 7rem;
-    margin-left: 45px;
 }
 
 .btn-shadow {
