@@ -1,42 +1,40 @@
-﻿<div class="card mb-sm-3" style="min-width: 18rem;">
-    <h5 class="card-header" id="Team">Import Teams</h5>
-    <div class="card-body">
-        <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
-            <div class="row justify-content-evenly">
-                <div class="col-md-4">
-                    <div class="form-group">
-                        <label class="control-label custom-file-label">Upload Excel File:</label>
-                        <div class="input-group mb-3">
-                            <input type="file" class="form-control" name="theExcel" id="theExcel">
-                        </div>
-                        <div>
-                            Files must be less than 100 MB.<br />
-                            Allowed file types: .xls, .xlsx,
-                        </div>
+﻿<h5 class="card-header" id="Team">Import Teams</h5>
+<div class="card-body">
+    <form asp-action="ImportTeam" asp-controller="Team" method="post" enctype="multipart/form-data">
+        <div class="row justify-content-evenly">
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="control-label custom-file-label">Upload Excel File:</label>
+                    <div class="input-group mb-3">
+                        <input type="file" class="form-control" name="theExcel" id="theExcel">
                     </div>
-                    <div class="form-group">
-                        <button type="submit" class="btn btn-kelly d-flex my-2">
-                            <span class="material-symbols-outlined me-2">
-                                upload
-                            </span>
-                            <span>Upload File</span>
-                        </button>
+                    <div>
+                        Files must be less than 100 MB.<br />
+                        Allowed file types: .xls, .xlsx,
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <ul>
-                        <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
-                        <li>Begin entering the data from the second row of your spreadsheet.</li>
-                        <li>We recommend downloading the template to expedite your work.</li>
-                    </ul>
-                    <button type="submit" class="btn btn-outline-secondary d-flex my-2" asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate">
+                <div class="form-group">
+                    <button type="submit" class="btn btn-kelly d-flex my-2">
                         <span class="material-symbols-outlined me-2">
-                            download
+                            upload
                         </span>
-                        <span>Download Template</span>
+                        <span>Upload File</span>
                     </button>
                 </div>
             </div>
-        </form>
-    </div>
+            <div class="col-md-6">
+                <ul>
+                    <li>Start by placing all the data you're going to upload in the first columns of the Excel spreadsheet, including the headers "ID," "First Name," "Last Name," "Member ID," "Season," "Division," "Club," and "Team."</li>
+                    <li>Begin entering the data from the second row of your spreadsheet.</li>
+                    <li>We recommend downloading the template to expedite your work.</li>
+                </ul>
+                <button type="submit" class="btn btn-outline-secondary d-flex my-2" asp-area="" asp-controller="ExportTemplate" asp-action="DownloadTemplate">
+                    <span class="material-symbols-outlined me-2">
+                        download
+                    </span>
+                    <span>Download Template</span>
+                </button>
+            </div>
+        </div>
+    </form>
 </div>

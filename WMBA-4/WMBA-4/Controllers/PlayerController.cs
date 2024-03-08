@@ -75,8 +75,8 @@ namespace WMBA_4.Controllers
                 .OrderByDescending(p => p.Status) // send all false status players to the back in the list 
                 .ThenBy(p => p.FirstName)
                 .ThenBy(p => p.LastName)
-                .ThenBy(p=>p.Team.Name)
-                .ThenBy(p=>p.Team.Division.DivisionName);         
+                .ThenBy(p => p.Team.Name)
+                .ThenBy(p => p.Team.Division.DivisionName);
 
             if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -133,8 +133,8 @@ namespace WMBA_4.Controllers
                         players = players
                             .OrderByDescending(p => p.Team.Division.DivisionName);
                     }
-                } 
-                
+                }
+
             }
 
             ViewData["sortField"] = sortField;
@@ -150,26 +150,81 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
+
         // GET: Player/Details/5
+        // public async Task<IActionResult> Details(int? id)
+        // {
+        //     if (id == null || _context.Players == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     var player = await _context.Players
+        //.Include(p => p.Team) // 선수의 팀 정보를 가져옵니다.
+        //    .ThenInclude(t => t.Division) // 팀의 소속 디비전 정보를 가져옵니다.
+        //.Include(p => p.Team) // 선수의 팀 정보를 가져옵니다.
+        //    .ThenInclude(t => t.TeamGames) // 팀의 게임 정보를 가져옵니다.
+        //        .ThenInclude(tg => tg.Game) // 팀이 참여한 게임 정보를 가져옵니다.
+        //            .ThenInclude(g => g.TeamGames) // 게임에 참여한 팀 정보를 가져옵니다.
+        //                .ThenInclude(tg => tg.Team) // 게임에 참여한 팀 정보를 가져옵니다.
+        //                    .ThenInclude(t => t.Players) // 게임에 참여한 팀의 선수들의 정보를 가져옵니다.
+        //                        .ThenInclude(p => p.ScorePlayers) // 선수들의 경기 결과를 가져옵니다.
+        //.AsNoTracking()
+        //.FirstOrDefaultAsync(m => m.ID == id);
+
+        //     if (player == null)
+        //     {
+        //         return NotFound();
+        //     }
+
+        //     return View(player);
+        // }
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null || _context.Players == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
             var player = await _context.Players
                 .Include(p => p.Team)
-                .ThenInclude(d => d.Division)
-                .AsNoTracking()
+                    .ThenInclude(t => t.Division)
                 .FirstOrDefaultAsync(m => m.ID == id);
+
             if (player == null)
             {
                 return NotFound();
             }
 
+            // 선수가 속한 팀의 모든 게임 정보를 가져옵니다.
+            var teamGames = await _context.TeamGame
+                .Where(tg => tg.TeamID == player.TeamID)
+                .Include(tg => tg.Game)
+                    .ThenInclude(g => g.GameLineUps)
+                        .ThenInclude(gl => gl.ScoresPlayer)
+                .ToListAsync();
+
+            // 각 게임 라인업에 해당하는 scoreplayer 정보를 가져옵니다.
+            foreach (var game in teamGames.Select(tg => tg.Game))
+            {
+                foreach (var lineup in game.GameLineUps)
+                {
+                    await _context.Entry(lineup)
+                        .Collection(gl => gl.ScoresPlayer)
+                        .LoadAsync();
+                }
+            }
+
+            ViewData["TeamGames"] = teamGames;
+
+            // 선수가 참여한 게임 수를 계산합니다.
+            int totalGamesPlayed = teamGames.Count(tg => tg.Game.GameLineUps.Any(gl => gl.PlayerID == id && gl.ScoresPlayer.Any()));
+            ViewData["TotalGamesPlayed"] = totalGamesPlayed;
+
             return View(player);
         }
+
+
 
         // GET: Player/Activate/5
         public async Task<IActionResult> Activate(int? id)
@@ -294,10 +349,10 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-        
+
 
             if (await TryUpdateModelAsync<Player>(playerToUpdate, "", p => p.MemberID, p => p.FirstName, p => p.LastName,
-                p => p.JerseyNumber,p=>p.Status, p => p.TeamID))
+                p => p.JerseyNumber, p => p.Status, p => p.TeamID))
             {
                 try
                 {
@@ -428,5 +483,5 @@ namespace WMBA_4.Controllers
         }
     }
 
-    
+
 }

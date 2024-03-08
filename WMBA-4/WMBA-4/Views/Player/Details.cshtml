@@ -2,25 +2,106 @@
 
 @{
     ViewData["Title"] = "Details";
+    var totalGamesPlayed = (int)ViewData["TotalGamesPlayed"];
+
+    // 변수 초기화
+    int totalH = 0;
+    int totalRBI = 0;
+    int totalSingles = 0;
+    int totalDoubles = 0;
+    int totalTriples = 0;
+    int totalHR = 0;
+    int totalBB = 0;
+    int totalPA = 0;
+    int totalAB = 0;
+    int totalRun = 0;
+    int totalHBP = 0;
+    int totalStrikeout = 0;
+    int totalOut = 0;
+    double battingAverage = 0;
+    double onBasePercentage = 0;
+    double sluggingPercentage = 0;
+    double OPS = 0;
+
+    // 모든 게임에 대한 점수 합산
+    foreach (var teamGame in ViewData["TeamGames"] as List<TeamGame>)
+    {
+        var game = teamGame.Game;
+        var lineupWithScore = game.GameLineUps.FirstOrDefault(gl => gl.PlayerID == Model.ID && gl.ScoresPlayer.Any());
+
+        if (lineupWithScore != null)
+        {
+            foreach (var scorePlayer in lineupWithScore.ScoresPlayer)
+            {
+                totalH += scorePlayer.H;
+                totalRBI += scorePlayer.RBI;
+                totalSingles += scorePlayer.Singles;
+                totalDoubles += scorePlayer.Doubles;
+                totalTriples += scorePlayer.Triples;
+                totalHR += scorePlayer.HR;
+                totalBB += scorePlayer.BB;
+                totalPA += scorePlayer.PA;
+                totalAB += scorePlayer.AB;
+                totalRun += scorePlayer.Run;
+                totalHBP += scorePlayer.HBP;
+                totalStrikeout += scorePlayer.StrikeOut;
+                totalOut += scorePlayer.Out;
+            }
+        }
+    }
+
+    // Batting Average (AVG)
+    if (totalAB != 0)
+    {
+        battingAverage = Math.Round((double)totalH / totalAB, 3);
+    }
+
+    // On-Base Percentage (OBP)
+    int onBasePercentageDenominator = totalAB + totalBB + totalHBP + totalPA;
+    if (onBasePercentageDenominator != 0)
+    {
+        onBasePercentage = Math.Round((double)(totalH + totalBB + totalHBP) / onBasePercentageDenominator, 3);
+    }
+
+    // Slugging Percentage (SLG)
+    int sluggingPercentageDenominator = totalAB != 0 ? totalAB : 1; // To avoid division by zero
+    sluggingPercentage = Math.Round((double)(totalH + 2 * totalDoubles + 3 * totalTriples + 4 * totalHR) / sluggingPercentageDenominator, 3);
+
+    // OPS (On-base Plus Slugging)
+    OPS = onBasePercentage + sluggingPercentage;
 }
 
-<h1>@Model.FirstName @Model.LastName</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Player" asp-action="Index">Player</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Detail
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
+
+<div class="d-flex align-items-center">
+    <h1 class="me-3">@Model.FirstName @Model.LastName</h1>
+    <div class="form-group m-0">
+        @if (Model.Status == true)
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">Edit</a>
+        }
+    </div>
+</div>
 
 <div>
     <hr />
     <dl class="row">
-        @*  <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class="col-sm-2">
-        @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class="col-sm-10">
-        @Html.DisplayFor(model => model.LastName)
-        </dd> *@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Team)
         </dt>
@@ -47,10 +128,64 @@
         </dd>
     </dl>
 </div>
+
+<hr />
+<h3>Stats</h3>
+<h5>Total Games Played: @totalGamesPlayed</h5>
+<hr />
+<div class="d-flex">
+    <p class="fs-6 me-3">AVG (Batting Average) = H (Hits) / AB (At-bats)</p>
+    <p class="fs-6 me-3">OBP (On-Base Percentage) = (H + BB + HBP) / (AB + BB + HBP + SF)</p>
+    <p class="fs-6 me-3">SLG (Slugging Percentage) = (1B + 2B × 2 + 3B × 3 + HR × 4) / AB</p>
+    <p class="fs-6 me-3">OPS (On-base Plus Slugging) = OBP + SLG</p>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>H</th>
+            <th>RBI</th>
+            <th>Singles</th>
+            <th>Doubles</th>
+            <th>Triples</th>
+            <th>HR</th>
+            <th>BB</th>
+            <th>PA</th>
+            <th>AB</th>
+            <th>Run</th>
+            <th>HBP</th>
+            <th>Strikeout</th>
+            <th>Out</th>
+            <th>AVG</th>
+            <th>OBP</th>
+            <th>SLG</th>
+            <th>OPS</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>@totalH</td>
+            <td>@totalRBI</td>
+            <td>@totalSingles</td>
+            <td>@totalDoubles</td>
+            <td>@totalTriples</td>
+            <td>@totalHR</td>
+            <td>@totalBB</td>
+            <td>@totalPA</td>
+            <td>@totalAB</td>
+            <td>@totalRun</td>
+            <td>@totalHBP</td>
+            <td>@totalStrikeout</td>
+            <td>@totalOut</td>
+            <td>@battingAverage</td>
+            <td>@onBasePercentage</td>
+            <td>@sluggingPercentage</td>
+            <td>@OPS</td>
+        </tr>
+    </tbody>
+</table>
+
+
 <div class="form-group">
     <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-    @if (Model.Status == true)
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">Edit</a>
-    }
 </div>
