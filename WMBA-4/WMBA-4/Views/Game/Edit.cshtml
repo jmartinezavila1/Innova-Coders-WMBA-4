@@ -25,6 +25,12 @@
                 <input asp-for="Date" class="form-control" />
                 <span asp-validation-for="Date" class="text-danger"></span>
             </div>
+
+            @*  <div class="form-group form-check">
+            <label class="form-check-label">
+            <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+            </label>
+            </div> *@
             <div class="form-group">
                 <label asp-for="Team1ID" class="control-label"></label>
                 <select asp-for="Team1ID" class="form-control form-select" asp-items="ViewBag.Team1ID"></select>
@@ -33,23 +39,11 @@
                 <label asp-for="Team2ID" class="control-label "></label>
                 <select asp-for="Team2ID" class="form-control form-select" asp-items="ViewBag.Team2ID"></select>
             </div>
-            <div>
-                <div class="mb-2">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addLocationModal">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <label asp-for="Locations" class="control-label">Add Location</label>
-                </div>
-
-                <select id="SelectedLocationIds" name="LocationID" asp-for="Locations" class="form-control mb-3" multiple>
-                    @foreach (var item in ViewBag.LocationID as MultiSelectList)
-                    {
-                        var isSelected = ViewBag.SelectedLocationIds.Contains(item.Value) ? "selected" : null;
-                        <option value="@item.Value" selected="@isSelected">@item.Text</option>
-                    }
-                </select>
+            <div class="form-group">
+                <label asp-for="LocationID" class="control-label"></label>
+                <select asp-for="LocationID" class="form-control form-select" asp-items="ViewBag.LocationID"></select>
+                <span asp-validation-for="LocationID" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="SeasonID" class="control-label"></label>
                 <select asp-for="SeasonID" class="form-control form-select" asp-items="ViewBag.SeasonID"></select>
@@ -67,55 +61,3 @@
         <input type="submit" value="Edit and Save" class="btn btn-kelly mx-1" />
     </div>
 </form>
-
-@* Popup Modal *@
-<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocationModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="addLocationForm">
-                    <div class="form-group">
-                        <label for="LocationName">Location Name</label>
-                        <input type="text" class="form-control" id="LocationName" name="LocationName" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveLocationBtn">Save changes</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-
-@section Scripts {
-    @{
-        await Html.RenderPartialAsync("_ValidationScriptsPartial");
-    }
-    <script>
-        $(document).ready(function () {
-            $('#saveLocationBtn').click(function () {
-                var locationName = $('#LocationName').val();
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("AddLocation", "Game")',
-                    data: { locationName: locationName },
-                    success: function (data) {
-                        $('#SelectedLocationIds').append('<option value="' + data.id + '">' + data.name + '</option>');
-                        $('#addLocationModal').modal('hide');
-                    },
-                    error: function () {
-                        alert('Error occurred while adding location.');
-                    }
-                });                              
-            });
-        });
-    </script>
-}

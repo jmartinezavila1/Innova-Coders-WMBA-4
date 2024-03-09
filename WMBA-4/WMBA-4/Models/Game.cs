@@ -1,5 +1,4 @@
-﻿using Microsoft.Build.Evaluation;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WMBA_4.Models
 {
@@ -25,9 +24,14 @@ namespace WMBA_4.Models
 
         public Season Season { get; set; }
 
+
         [Display(Name = "GameType")]
         public int GameTypeID { get; set; }
         public GameType GameType { get; set; }
+
+        //public int DivisionID { get; set; }
+
+        //public Division Division { get; set; }
 
         public ICollection<TeamGame> TeamGames { get; set; } = new HashSet<TeamGame>();
 
@@ -35,7 +39,6 @@ namespace WMBA_4.Models
 
         public ICollection<ScorePlayer> ScorePlayers { get; set; } = new HashSet<ScorePlayer>();
 
-        
 
     }
 }
