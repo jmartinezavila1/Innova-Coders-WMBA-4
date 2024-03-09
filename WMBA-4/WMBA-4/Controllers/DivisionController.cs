@@ -34,7 +34,7 @@ namespace WMBA_4.Controllers
 
             var divisions = from d in _context.Divisions
                                       .Include(d => d.Club)
-                                      .Where(s => s.Status == true)
+                                      .OrderBy(s => s.Status == true)
                                       .AsNoTracking()
                             select d;
 

@@ -101,8 +101,8 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Role" class="text-column me-2" />
-                                @if (ViewData["sortField"].ToString() == "Role")
+                                <input type="submit" name="actionButton" value="Club" class="text-column me-2" />
+                                @if (ViewData["sortField"].ToString() == "Club")
                                 {
                                     <div>
                                         @if (ViewData["sortDirection"].ToString() == "asc")
@@ -133,14 +133,14 @@
                             </div>
                         </th>
                         <th>
-                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Detail |&nbsp;</span><span>Status</span></div>
+                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr class="@((item.Status) ? "" : "inactive-staff")">
+                        <tr class="@((item.Status) ? "" : "inactive-staff") staff-row" onclick="redirectToDetails('@item.ID')">
 
                             <td>
                                 @Html.DisplayFor(modelItem => item.FullName)
@@ -156,15 +156,9 @@
                                             edit
                                         </span>
                                     </a>
-                                    <a asp-action="Details" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined ft-kelly px-2">
-                                            visibility
-                                        </span>
-                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined ft-kelly px-2">
                                             group
-
                                         </span>
                                     </a>
                                 }
@@ -175,11 +169,6 @@
                                             edit
                                         </span>
                                     </div>
-                                    <a asp-action="Details" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined px-2">
-                                            visibility
-                                        </span>
-                                    </a>
                                     <a asp-action="Delete" asp-route-id="@item.ID">
                                         <span class="material-symbols-outlined px-2">
                                             group_off
@@ -194,5 +183,14 @@
         </div>
         <partial name="_PagingNavBar" />
     </form>
+
 </div>
 
+@* show a staff's' details view when click the row *@
+@section Scripts {
+    <script>
+        function redirectToDetails(staffId) {
+            window.location.href = '@Url.Action("Details", "Staff")/' + staffId;
+        }
+    </script>
+}
