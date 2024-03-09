@@ -29,23 +29,34 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
-       
         $(".table").on("click", ".removePlayerButton", function () {
             var playerId = $(this).data("playerid");
-            var confirmation = confirm("Are you sure you want to remove this player from the lineup?");
-            if (confirmation) {
-                $.ajax({
-                    url: '@Url.Action("RemovePlayer", "ScorePlayer")',
-                    type: "POST",
-                    data: { playerId: playerId },
-                    success: function (response) {
-                        location.reload();
-                    },
-                    error: function () {
-                        alert("An error occurred while removing the player.");
-                    }
-                });
-            }
+
+            
+            var row = $(this).closest("tr");
+
+           
+            $.ajax({
+                url: '@Url.Action("RemovePlayer", "ScorePlayer")',
+                type: "POST",
+                data: { playerId: playerId },
+                success: function (response) {
+                    
+                    row.remove();
+
+                    
+                    var rows = $(".table tbody tr");
+                    rows.each(function (index) {
+                        $(this).find("td:first-child").text(index + 1);
+                    });
+                },
+                error: function () {
+                    alert("An error occurred while removing the player.");
+                }
+            });
+
+            
+            return false;
         });
     });
 </script>
