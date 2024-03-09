@@ -33,8 +33,7 @@ namespace WMBA_4.Controllers
 
             var staff = from r in _context.Staff
                                     .Include(r => r.Roles)
-                                    .Where(s => s.Status == true)
-                                    .OrderBy(s => s.Roles.Description)
+                                    .OrderBy(s => s.Status == true)
                                     .AsNoTracking()
                         select r;
 
@@ -75,7 +74,7 @@ namespace WMBA_4.Controllers
             }
 
             staff = staff
-                .OrderBy(r => r.Status) // send all false status staff to the back in the list 
+                .OrderByDescending(r => r.Status) // send all false status staff to the back in the list 
                 .ThenBy(r => r.FirstName)
                 .ThenBy(r => r.LastName)
                 .ThenBy(r => r.Roles.Description);
