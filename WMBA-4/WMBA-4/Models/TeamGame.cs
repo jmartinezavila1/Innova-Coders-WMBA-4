@@ -12,7 +12,7 @@ namespace WMBA_4.Models
         public bool IsVisitorTeam { get; set; }
 
         [Display(Name = "Score")]
-        public int score { get; set; }
+        public int? score { get; set; }
 
         [Display(Name = "Team")]
         public int TeamID { get; set; }

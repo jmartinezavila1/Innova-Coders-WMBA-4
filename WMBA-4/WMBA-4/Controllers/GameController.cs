@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Math;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -310,7 +311,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId /*, string LocationName*/)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId , string LocationName)
         {
             if (!ModelState.IsValid)
             {
@@ -439,19 +440,33 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", divisionId1); // Set the selected DivisionID
             ViewData["Team1ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame1.TeamID); // Filter the teams by DivisionID
             ViewData["Team2ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame2.TeamID); // Filter the teams by DivisionID
-       
-            
-            ViewData["Score1"] = teamGame1.score;
-            ViewData["Score2"] = teamGame2.score;
+
+
+            //ViewData["Score1"] = teamGame1.score;
+            //ViewData["Score2"] = teamGame2.score;
             ViewBag.TeamID = team;
-            //return View(game);
+            
+            var locationMembers = _context.Locations.ToList();
+            var localtionSelectItems = locationMembers.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.LocationName}"
+            });
+
+            var selectedLocalIds = game.LocationID.ToString();
+               
+            ViewData["LocationID"] = new MultiSelectList(localtionSelectItems, "Value", "Text", selectedLocalIds);
+
+
+            ViewBag.SelectedLocationIds = selectedLocalIds;
+
 
             var viewModel = new GameEditVM
             {
                 Game = game,
                 DivisionID = divisionId1,
                 Team1ID = teamGame1.TeamID,
-                Team2ID = teamGame2.TeamID,
+                Team2ID = teamGame2.TeamID,                
                 Score1 = teamGame1.score,
                 Score2 = teamGame2.score
             };
@@ -512,13 +527,14 @@ namespace WMBA_4.Controllers
                         _context.TeamGame.Add(newTeamGame2);
 
                         // Update the game
+                        //game.LocationID = 1;
                         _context.Update(game);
                         await _context.SaveChangesAsync();
 
                         // Commit the transaction
                         transaction.Commit();
                         return Redirect(ViewData["returnURL"].ToString());
-                    }
+                    }                    
                     catch (DbUpdateConcurrencyException)
                     {
                         // Roll back the transaction
@@ -542,21 +558,75 @@ namespace WMBA_4.Controllers
                             "Try again, and if the problem persists, " +
                             "see your system administrator.");
                     }
+                    catch (DbUpdateException ex)
+                    {
+                        // Log or examine the inner exception here
+                        var innerException = ex.InnerException;
+                    }
                 }
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
-            //ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", game.DivisionID); 
-            //ViewData["DivisionID"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
+            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", team1Id);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", team2Id);
 
-            ViewData["Score1"] = score1;
-            ViewData["Score2"] = score2;
-            ViewBag.TeamID = team;
-            
+            //ViewData["Score1"] = score1;
+            //ViewData["Score2"] = score2;
+            ViewBag.TeamID = team;            
+
             return View(game);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddLocation(string locationName /*, string email*/)
+        {
+            try
+            {
+                var location = new Models.Location { LocationName = locationName, CityID=1 };
+                           _context.Locations.Add(location);
+                           await _context.SaveChangesAsync();
+            
+                        //return Ok(location.ID);                           
+                        return Ok(new { id = location.ID, name = location.LocationName});
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "An error occurred while adding the location.");
+                return BadRequest(ModelState);
+            }
+            
+            //try
+            //{
+
+            //    var coachRole = await _context.Roles.FirstOrDefaultAsync(r => r.Description == "Coach");
+            //    if (coachRole == null)
+            //    {
+            //        ModelState.AddModelError("", "The Coach role does not exist.");
+            //        return BadRequest(ModelState);
+            //    }
+
+
+            //    var coach = new Staff
+            //    {
+            //        FirstName = firstName,
+            //        LastName = lastName,
+            //        Email = email,
+            //        Status = true,
+            //        RoleId = coachRole.ID
+            //    };
+
+
+            //    _context.Staff.Add(coach);
+            //    await _context.SaveChangesAsync();
+
+            //    return Ok(new { id = coach.ID, name = $"{coach.FirstName} {coach.LastName}" });
+            //}
+            //catch (Exception)
+            //{
+            //    ModelState.AddModelError("", "An error occurred while adding the coach.");
+            //    return BadRequest(ModelState);
+            //}
         }
 
         // GET: Game/Delete/5
@@ -723,20 +793,20 @@ namespace WMBA_4.Controllers
             return Json(teams);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> CreateLocation(string name)
-        {
-            if (string.IsNullOrEmpty(name))
-            {
-                return BadRequest("Name is required.");
-            }
+        //[HttpPost]
+        //public async Task<IActionResult> CreateLocation(string name)
+        //{
+        //    if (string.IsNullOrEmpty(name))
+        //    {
+        //        return BadRequest("Name is required.");
+        //    }
 
-            var location = new Models.Location { LocationName = name };
-            _context.Locations.Add(location);
-            await _context.SaveChangesAsync();
-
-            return Ok(location.ID);
-        }
+        //    var location = new Models.Location { LocationName = name };
+        //    _context.Locations.Add(location);
+        //    await _context.SaveChangesAsync();
+                        
+        //    return Ok(new { id = location.ID, name = location.LocationName });
+        //}
 
         private bool GameExists(int id)
         {
