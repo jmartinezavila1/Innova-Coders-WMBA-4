@@ -1,4 +1,5 @@
-﻿@model IEnumerable<WMBA_4.Models.Staff>
+﻿<!--Edward-->
+@model IEnumerable<WMBA_4.Models.Staff>
 
 @{
     ViewData["Title"] = "Index";
@@ -101,8 +102,8 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Club" class="text-column me-2" />
-                                @if (ViewData["sortField"].ToString() == "Club")
+                                <input type="submit" name="actionButton" value="Role" class="text-column me-2" />
+                                @if (ViewData["sortField"].ToString() == "Role")
                                 {
                                     <div>
                                         @if (ViewData["sortDirection"].ToString() == "asc")
