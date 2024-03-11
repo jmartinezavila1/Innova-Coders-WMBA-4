@@ -25,8 +25,8 @@ namespace WMBA_4.Controllers
         }
 
         // GET: ScorePlayer
-        public async Task<IActionResult> Index(int? TeamID, int? divisionID, int? LocationID, int? GameTypeID, DateTime GameDate, int? page, int? pageSizeID,
-            string actionButton, string sortDirection = "asc", string sortField = "Location")
+        public async Task<IActionResult> Index(int? TeamID, int? divisionID, int? LocationID, int? GameTypeID, DateTime? GameDate, int? page, int? pageSizeID,
+     string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
             IQueryable<Game> games = _context.Games
                 .Include(g => g.GameType)
@@ -37,6 +37,8 @@ namespace WMBA_4.Controllers
                         .ThenInclude(d => d.Division)
                 .Where(s => s.Status == true);
 
+            int numberFilters = 0;
+
             //sorting sortoption array
             string[] sortOptions = new[] { "Location", "Game Type", "Date" };
 
@@ -44,18 +46,34 @@ namespace WMBA_4.Controllers
             if (TeamID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.TeamID == TeamID));
+                numberFilters++;
             }
             if (divisionID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.Team.DivisionID == divisionID));
+                numberFilters++;
             }
             if (GameTypeID.HasValue)
             {
                 games = games.Where(g => g.GameTypeID == GameTypeID);
+                numberFilters++;
             }
             if (LocationID.HasValue)
             {
                 games = games.Where(g => g.LocationID == LocationID);
+                numberFilters++;
+            }
+            if (GameDate != null)
+            {
+                games = games.Where(g => g.Date.Date >= GameDate.Value.Date); // 선택한 날짜 이후의 게임들만 필터링
+                numberFilters++;
+            }
+
+            if (numberFilters != 0)
+            {
+                // 필터가 적용된 경우
+                ViewData["Filtering"] = " btn-danger";
+                ViewData["numberFilters"] = "(" + numberFilters.ToString() + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
             }
 
             games = games.OrderByDescending(g => g.Status) // Active games first
@@ -64,7 +82,7 @@ namespace WMBA_4.Controllers
             // Sorting
             if (!string.IsNullOrEmpty(actionButton))
             {
-                page = 1; // Reset page to start
+                page = 1; // 페이지 초기화
 
                 if (sortOptions.Contains(actionButton))
                 {
@@ -95,15 +113,16 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
+            ViewData["GameDate"] = GameDate.HasValue ? GameDate.Value.ToString("yyyy-MM-dd") : null;
 
-
-            // Handle Paging
+            // 페이징 처리
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);
 
             return View(pagedData);
         }
+
 
         // GET: ScorePlayer/Details/5
         public async Task<IActionResult> Details(int? id)

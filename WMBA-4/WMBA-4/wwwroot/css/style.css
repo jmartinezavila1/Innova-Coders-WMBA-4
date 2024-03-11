@@ -77,18 +77,27 @@ table tdoby tr td{
     display: table-cell;
 }
 
-/*/////////////////////////////Scroll/////////////////////////////////////*/
 
+
+/*/////////////////////////////Scroll/////////////////////////////////////*/
+/*.table-container::-webkit-scrollbar {
+    display: none;
+}
+
+.table-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+}*/
 .carousel-container {
     display: flex;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* 터치 스크롤을 지원합니다. */
-    scrollbar-width: none; /* 스크롤 막대를 숨깁니다. */
-    -ms-overflow-style: none; /* IE 및 Edge용 */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
     .carousel-container::-webkit-scrollbar {
-        display: none; /* Webkit 기반 브라우저에서 스크롤 막대를 숨깁니다. */
+        display: none; 
         overflow-x: auto;
     }
 
@@ -113,8 +122,6 @@ table tdoby tr td{
     font-size: 15px;
     padding: 12px 36px;
     border-radius: 50px; /* Make it an oval shape */
-}
-
 }
 
 .collapsible:hover {
@@ -371,13 +378,13 @@ tbody > tr:hover {
     border-bottom: 1px solid var(--bg-light-grey) !important;
 }
 
-td:first-child,
-th:first-child {
+.giro-table td:first-child,
+.giro-table th:first-child {
     border-left: 1px solid var(--bg-light-grey) !important;
 }
 
-td:last-child,
-th:last-child {
+.giro-table td:last-child,
+.giro-table th:last-child {
     border-right: 1px solid var(--bg-light-grey) !important;
 }
 
@@ -438,7 +445,7 @@ th:last-child {
 
 .f-in-flex {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 20px;
     margin-top: 20px;
 }
@@ -468,6 +475,10 @@ th:last-child {
     margin-bottom: 1rem;
 }
 /*//////////////////////////////////classes///////////////////////////////////////////*/
+
+.form-row{
+    width: 300px;
+}
 .logo {
     width: 7rem;
 }
@@ -611,3 +622,7 @@ div > .nav-hover:hover {
             border: 1px solid var(--bg-light-grey);
             border-radius: 5px;
         }
+
+
+/*///////////////////////////////////////////////collapse////////////////// /////////////////////////*/
+

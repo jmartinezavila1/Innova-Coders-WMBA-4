@@ -196,15 +196,19 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            // 선수가 속한 팀의 모든 게임 정보를 가져옵니다.
+            // data related to teamgames
             var teamGames = await _context.TeamGame
                 .Where(tg => tg.TeamID == player.TeamID)
+                .Include(tg => tg.Game)
+                    .ThenInclude(tg => tg.GameType)
+                .Include(tg => tg.Game)
+                    .ThenInclude(tg => tg.Location)
                 .Include(tg => tg.Game)
                     .ThenInclude(g => g.GameLineUps)
                         .ThenInclude(gl => gl.ScoresPlayer)
                 .ToListAsync();
 
-            // 각 게임 라인업에 해당하는 scoreplayer 정보를 가져옵니다.
+            // data from scorekeeper
             foreach (var game in teamGames.Select(tg => tg.Game))
             {
                 foreach (var lineup in game.GameLineUps)
@@ -217,12 +221,13 @@ namespace WMBA_4.Controllers
 
             ViewData["TeamGames"] = teamGames;
 
-            // 선수가 참여한 게임 수를 계산합니다.
+            // counting for games
             int totalGamesPlayed = teamGames.Count(tg => tg.Game.GameLineUps.Any(gl => gl.PlayerID == id && gl.ScoresPlayer.Any()));
             ViewData["TotalGamesPlayed"] = totalGamesPlayed;
 
             return View(player);
         }
+
 
 
 
