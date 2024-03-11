@@ -73,22 +73,31 @@ table tbody tr {
     cursor: pointer;
 }
 
-table tdoby tr td{
+table tdoby tr td {
     display: table-cell;
 }
 
-/*/////////////////////////////Scroll/////////////////////////////////////*/
 
+
+/*/////////////////////////////Scroll/////////////////////////////////////*/
+/*.table-container::-webkit-scrollbar {
+    display: none;
+}
+
+.table-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none; 
+}*/
 .carousel-container {
     display: flex;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch; /* 터치 스크롤을 지원합니다. */
-    scrollbar-width: none; /* 스크롤 막대를 숨깁니다. */
-    -ms-overflow-style: none; /* IE 및 Edge용 */
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
 
     .carousel-container::-webkit-scrollbar {
-        display: none; /* Webkit 기반 브라우저에서 스크롤 막대를 숨깁니다. */
+        display: none;
         overflow-x: auto;
     }
 
@@ -115,11 +124,9 @@ table tdoby tr td{
     border-radius: 50px; /* Make it an oval shape */
 }
 
-}
-
-.collapsible:hover {
-    background-color: #46a049;
-}
+    .collapsible:hover {
+        background-color: #46a049;
+    }
 
 .content {
     padding: 12px 36px;
@@ -259,7 +266,7 @@ table tdoby tr td{
         padding-left: 0;
         padding-right: 0;
     }
-   
+
     .px-6 {
         padding-left: 1.4rem !important;
         padding-right: 1.5rem !important;
@@ -272,13 +279,16 @@ table tdoby tr td{
         padding-right: 2rem !important;
     }
 }
+
 @media (max-width: 523px) {
     #prevButton,
     #nextButton {
         display: none;
     }
-    }
 }
+
+}
+
 @media (min-width: 524px) {
     .px-6 {
         padding-left: 3rem !important;
@@ -288,7 +298,7 @@ table tdoby tr td{
 
 
 @media (min-width: 768px) {
-    
+
     .px-6 {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
@@ -371,13 +381,13 @@ tbody > tr:hover {
     border-bottom: 1px solid var(--bg-light-grey) !important;
 }
 
-td:first-child,
-th:first-child {
+.giro-table td:first-child,
+.giro-table th:first-child {
     border-left: 1px solid var(--bg-light-grey) !important;
 }
 
-td:last-child,
-th:last-child {
+.giro-table td:last-child,
+.giro-table th:last-child {
     border-right: 1px solid var(--bg-light-grey) !important;
 }
 
@@ -402,9 +412,10 @@ th:last-child {
 }
 
 @media (max-width: 390px) {
-    table tbody tr td{
+    table tbody tr td {
         display: table-cell;
     }
+
     .giro-table td:last-child {
         /*display: flex;
         flex-direction: column;*/
@@ -438,7 +449,7 @@ th:last-child {
 
 .f-in-flex {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-bottom: 20px;
     margin-top: 20px;
 }
@@ -459,6 +470,7 @@ th:last-child {
     display: flex;
     justify-content: space-between;
 }
+
 .game-flex {
     display: flex;
     justify-content: space-between;
@@ -468,6 +480,11 @@ th:last-child {
     margin-bottom: 1rem;
 }
 /*//////////////////////////////////classes///////////////////////////////////////////*/
+
+.form-row {
+    width: 300px;
+}
+
 .logo {
     width: 7rem;
 }
@@ -589,8 +606,8 @@ div > .nav-hover:hover {
 
 /*///////////////////////////////////////////////ids////////////////// /////////////////////////*/
 .zoom-player:hover {
-    color: inherit; 
-    text-decoration: none; 
+    color: inherit;
+    text-decoration: none;
 }
 
 #sortableList,
@@ -611,3 +628,7 @@ div > .nav-hover:hover {
             border: 1px solid var(--bg-light-grey);
             border-radius: 5px;
         }
+
+
+/*///////////////////////////////////////////////collapse////////////////// /////////////////////////*/
+
