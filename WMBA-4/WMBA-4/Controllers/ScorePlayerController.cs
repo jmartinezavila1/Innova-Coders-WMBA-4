@@ -259,6 +259,57 @@ namespace WMBA_4.Controllers
 
         // This method is for the Start Button
 
+        public async void NextInning(int teamId, int gameId, int inplayId)
+        {
+            var inplay = _context.Inplays.Include(i => i.Inning).FirstOrDefault(i => i.ID == inplayId);
+
+
+            var inning = new Inning
+            {
+                InningNumber = inplay.Inning.InningNumber + 1,
+                TeamID = teamId,
+                GameID = gameId
+            };
+
+            // Add the inning to the context and save the changes
+            _context.Innings.Add(inning);
+            await _context.SaveChangesAsync();
+
+
+            //Refresh Inplay data           
+            inplay.Runs = 0;
+            inplay.Strikes = 0;
+            inplay.Outs = 0;
+            inplay.Fouls = 0;
+            inplay.Balls = 0;
+            inplay.InningID = inning.ID;
+            inplay.NextPlayer = 0;
+            inplay.PlayerBattingID = inplay.PlayerBattingID;
+            inplay.PlayerInBase1ID = null;
+            inplay.PlayerInBase2ID = null;
+            inplay.PlayerInBase3ID = null;
+
+            _context.Inplays.Update(inplay);
+            await _context.SaveChangesAsync();
+
+
+            var lineupPlayers = _context.GameLineUps
+                .Where(g => g.GameID == gameId && g.TeamID == teamId)
+                .Select(p => p.ID)
+                .ToList();
+
+            foreach (var p in lineupPlayers)
+            {
+                var scoreplayer = new ScorePlayer
+                {
+                    GameLineUpID = p,
+                };
+                _context.ScorePlayers.Add(scoreplayer);
+
+            }
+            await _context.SaveChangesAsync();
+
+        }
         public async Task<IActionResult> Start(int teamId, int gameId)
         {
             try
@@ -554,8 +605,9 @@ namespace WMBA_4.Controllers
                     .FirstOrDefault();
 
                 var scorePlayer = await _context.ScorePlayers
-                    .Where(sp => sp.GameLineUpID == lineupID)
-                    .FirstOrDefaultAsync();
+                     .Where(sp => sp.GameLineUpID == lineupID)
+                     .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                     .FirstOrDefaultAsync();
 
 
                 if (scorePlayer == null)
@@ -566,6 +618,7 @@ namespace WMBA_4.Controllers
                 //// Update fields PA y BB
                 scorePlayer.PA++;
                 scorePlayer.BB++;
+                scorePlayer.Balls = inplay.Balls;
                 inplay.Strikes = 0;
                 inplay.Fouls = 0;
 
@@ -691,7 +744,11 @@ namespace WMBA_4.Controllers
 
                     var scorePlayer = await _context.ScorePlayers
                         .Where(sp => sp.GameLineUpID == lineupID)
+                        .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                         .FirstOrDefaultAsync();
+                    //var scorePlayer = await _context.ScorePlayers
+                    //    .Where(sp => sp.GameLineUpID == lineupID)
+                    //    .FirstOrDefaultAsync();
 
                     GetNextPlayer(inplayId);
 
@@ -720,18 +777,28 @@ namespace WMBA_4.Controllers
                     // save changes to the database
                     await _context.SaveChangesAsync();
 
+                    if (inplay.Outs == 3)
+                    {
+                        NextInning(inning.TeamID, inning.GameID, inplayId);
 
+                    }
+                    var inplay2 = await _context.Inplays.FindAsync(inplayId);
+
+                    var inningNumber2 = _context.Innings
+                           .Where(i => i.ID == inplay2.InningID)
+                           .Select(i => i.InningNumber)
+                           .FirstOrDefault();
                     //return a response
                     inplayData = new
                     {
-                        ID = inplay.ID,
+                        ID = inplay2.ID,
                         Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
                         Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
-                        Strikes = inplay.Strikes,
-                        Outs = inplay.Outs,
-                        Fouls = inplay.Fouls,
-                        Balls = inplay.Balls,
-                        InningNumber = inningNumber,
+                        Strikes = inplay2.Strikes,
+                        Outs = inplay2.Outs,
+                        Fouls = inplay2.Fouls,
+                        Balls = inplay2.Balls,
+                        InningNumber = inningNumber2,
                         FirstPlayer = playeratBat
                     };
 
@@ -773,9 +840,14 @@ namespace WMBA_4.Controllers
                         .Select(g => g.ID)
                         .FirstOrDefault();
 
+
                     var scorePlayer = await _context.ScorePlayers
                         .Where(sp => sp.GameLineUpID == lineupID)
+                        .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                         .FirstOrDefaultAsync();
+                    //var scorePlayer = await _context.ScorePlayers
+                    //    .Where(sp => sp.GameLineUpID == lineupID)
+                    //    .FirstOrDefaultAsync();
 
                     if (scorePlayer == null)
                     {
@@ -805,6 +877,17 @@ namespace WMBA_4.Controllers
                       .Select(p => p.FullName)
                       .FirstOrDefault();
 
+                    if (inplay.Outs == 3)
+                    {
+                        NextInning(inning.TeamID, inning.GameID, inplayId);
+
+                    }
+                    var inplay2 = await _context.Inplays.FindAsync(inplayId);
+
+                    var inningNumber2 = _context.Innings
+                           .Where(i => i.ID == inplay2.InningID)
+                           .Select(i => i.InningNumber)
+                           .FirstOrDefault();
 
                     // return a response
                     inplayData = new
@@ -840,14 +923,6 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            if (inplay.PlayerBattingID == null)
-            {
-                return Json(new
-                {
-                    success = false,
-                    message = "Click on Next Player to continue."
-                });
-            }
 
             var gameId = _context.Innings
                 .Where(i => i.ID == inplay.InningID)
@@ -859,6 +934,11 @@ namespace WMBA_4.Controllers
                 .Where(tg => tg.GameID == gameId)
                 .ToList();
 
+            var player = _context.Players
+                    .Where(p => p.ID == inplay.PlayerBattingID)
+                    .Select(p => p.FullName)
+                    .FirstOrDefault();
+
             //if the stikes are less than 2, increment the fouls
             if (inplay.Strikes < 2)
             {
@@ -867,15 +947,12 @@ namespace WMBA_4.Controllers
                 // Guarda los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                var player = _context.Players
-                      .Where(p => p.ID == inplay.PlayerBattingID)
-                      .Select(p => p.FullName)
-                      .FirstOrDefault();
 
                 var inningNumber = _context.Innings
                       .Where(i => i.ID == inplay.InningID)
                       .Select(i => i.InningNumber)
                       .FirstOrDefault();
+
                 inplayData = new
                 {
                     ID = inplay.ID,
@@ -897,11 +974,6 @@ namespace WMBA_4.Controllers
                 // Guarda los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
-                var player = _context.Players
-                      .Where(p => p.ID == inplay.PlayerBattingID)
-                      .Select(p => p.FullName)
-                      .FirstOrDefault();
-
                 var inningNumber = _context.Innings
                       .Where(i => i.ID == inplay.InningID)
                       .Select(i => i.InningNumber)
@@ -918,6 +990,20 @@ namespace WMBA_4.Controllers
                     InningNumber = inningNumber,
                     FirstPlayer = player,
                 };
+
+                var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+                var lineupID = _context.GameLineUps
+                     .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                     .Select(g => g.ID)
+                     .FirstOrDefault();
+
+                var scorePlayer = await _context.ScorePlayers
+                    .Where(sp => sp.GameLineUpID == lineupID)
+                    .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                    .FirstOrDefaultAsync();
+
+                scorePlayer.Fouls++;
                 // Guarda los cambios en la base de datos
                 await _context.SaveChangesAsync();
 
@@ -963,12 +1049,13 @@ namespace WMBA_4.Controllers
                 .ToList();
 
             var lineupID = _context.GameLineUps
-                .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
-                .Select(g => g.ID)
-                .FirstOrDefault();
+                 .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                 .Select(g => g.ID)
+                 .FirstOrDefault();
 
             var scorePlayer = await _context.ScorePlayers
                 .Where(sp => sp.GameLineUpID == lineupID)
+                .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                 .FirstOrDefaultAsync();
 
             if (scorePlayer == null)
@@ -1060,8 +1147,9 @@ namespace WMBA_4.Controllers
                 .FirstOrDefault();
 
             var scorePlayer = await _context.ScorePlayers
-                .Where(sp => sp.GameLineUpID == lineupID)
-                .FirstOrDefaultAsync();
+                 .Where(sp => sp.GameLineUpID == lineupID)
+                 .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                 .FirstOrDefaultAsync();
 
             if (scorePlayer == null)
             {
@@ -1073,16 +1161,13 @@ namespace WMBA_4.Controllers
             scorePlayer.Out++;
 
 
-            inplay.NextPlayer = (int)inplay.PlayerBattingID;
+            //inplay.NextPlayer = (int)inplay.PlayerBattingID;
             inplay.Balls = 0;
             inplay.Strikes = 0;
             inplay.Fouls = 0;
             inplay.Outs++;
+            await _context.SaveChangesAsync();
 
-            var inningNumber = _context.Innings
-                   .Where(i => i.GameID == inplay.Inning.GameID && i.TeamID == inplay.Inning.TeamID)
-                   .Select(i => i.InningNumber)
-                   .FirstOrDefault();
 
             GetNextPlayer(inplayId);
 
@@ -1091,20 +1176,32 @@ namespace WMBA_4.Controllers
               .Select(p => p.FullName)
               .FirstOrDefault();
 
+            if (inplay.Outs == 3)
+            {
+                NextInning(inning.TeamID, inning.GameID, inplayId);
+
+            }
+
+            var inplay2 = await _context.Inplays.FindAsync(inplayId);
+
+            var inningNumber = _context.Innings
+                   .Where(i => i.ID == inplay2.InningID)
+                   .Select(i => i.InningNumber)
+                   .FirstOrDefault();
             // Devuelve una respuesta
             inplayData = new
             {
-                ID = inplay.ID,
+                ID = inplay2.ID,
                 Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
                 Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
-                Strikes = inplay.Strikes,
-                Outs = inplay.Outs,
-                Fouls = inplay.Fouls,
-                Balls = inplay.Balls,
+                Strikes = inplay2.Strikes,
+                Outs = inplay2.Outs,
+                Fouls = inplay2.Fouls,
+                Balls = inplay2.Balls,
                 InningNumber = inningNumber,
                 FirstPlayer = playeratBat
             };
-            inplay.Strikes = 0;
+            //inplay.Strikes = 0;
             // Guarda los cambios en la base de datos
             await _context.SaveChangesAsync();
 
@@ -1140,6 +1237,7 @@ namespace WMBA_4.Controllers
 
             var scorePlayer = await _context.ScorePlayers
                 .Where(sp => sp.GameLineUpID == lineupID)
+                .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                 .FirstOrDefaultAsync();
 
             if (scorePlayer == null)
@@ -1311,8 +1409,9 @@ namespace WMBA_4.Controllers
                 .FirstOrDefault();
 
                 var scorePlayer = await _context.ScorePlayers
-                    .Where(sp => sp.GameLineUpID == lineupID)
-                    .FirstOrDefaultAsync();
+                .Where(sp => sp.GameLineUpID == lineupID)
+                .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                .FirstOrDefaultAsync();
 
                 int lineupIDP1;
                 int lineupIDP2;
@@ -1352,6 +1451,7 @@ namespace WMBA_4.Controllers
 
                     scorePlayerP1 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lineupIDP1)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
 
@@ -1369,6 +1469,7 @@ namespace WMBA_4.Controllers
 
                     scorePlayerP2 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lineupIDP2)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
                     scorePlayerP2.Run++;
@@ -1385,6 +1486,7 @@ namespace WMBA_4.Controllers
 
                     scorePlayerP3 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lineupIDP3)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
                     scorePlayerP3.Run++;
@@ -1406,6 +1508,7 @@ namespace WMBA_4.Controllers
 
                     sppP1 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lIDP1)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
                     sppP1.Out++;
@@ -1421,6 +1524,7 @@ namespace WMBA_4.Controllers
 
                     sppP2 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lIDP2)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
                     sppP2.Out++;
@@ -1436,6 +1540,7 @@ namespace WMBA_4.Controllers
 
                     sppP3 = await _context.ScorePlayers
                           .Where(sp => sp.GameLineUpID == lIDP3)
+                          .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                           .FirstOrDefaultAsync();
 
                     sppP3.Out++;
@@ -1558,7 +1663,7 @@ namespace WMBA_4.Controllers
                     //scorePlayer.PA++;
                     //scorePlayer.AB++;
                     inplay.PlayerBattingID = null;
-                    //inplay.Runs++;
+                    inplay.Runs++;
 
                 }
 
@@ -1583,17 +1688,35 @@ namespace WMBA_4.Controllers
                     .Where(tg => tg.GameID == inning.GameID)
                     .ToList();
 
+                var playeratBat = _context.Players
+              .Where(p => p.ID == inplay.PlayerBattingID)
+              .Select(p => p.FullName)
+              .FirstOrDefault();
+
+                //validate if there is more than 3 outs
+                if (inplay.Outs == 3)
+                {
+                    NextInning(inning.TeamID, inning.GameID, inplay.ID);
+
+                }
+                var inplay2 = await _context.Inplays.FindAsync(inplay.ID);
+
+                var inningNumber2 = _context.Innings
+                       .Where(i => i.ID == inplay2.InningID)
+                       .Select(i => i.InningNumber)
+                       .FirstOrDefault();
+
                 inplayData = new
                 {
-                    ID = inplay.ID,
+                    ID = inplay2.ID,
                     Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
                     Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
-                    Strikes = inplay.Strikes,
-                    Outs = inplay.Outs,
-                    Fouls = inplay.Fouls,
-                    Balls = inplay.Balls,
-                    InningNumber = inning.InningNumber,
-                    FirstPlayer = "No Player",
+                    Strikes = inplay2.Strikes,
+                    Outs = inplay2.Outs,
+                    Fouls = inplay2.Fouls,
+                    Balls = inplay2.Balls,
+                    InningNumber = inningNumber2,
+                    FirstPlayer = playeratBat,
                 };
 
 
@@ -1759,6 +1882,383 @@ namespace WMBA_4.Controllers
 
 
         [HttpPost]
+        public async Task<IActionResult> Hit(int id, string hitType)
+        {
+            var inplay = await _context.Inplays.FindAsync(id);
+
+            if (inplay == null)
+            {
+                return NotFound();
+            }
+            bool needUserDecision = false;
+            string message = "";
+
+            int? pb1 = (int?)inplay.PlayerInBase1ID;
+            int? pb2 = (int?)inplay.PlayerInBase2ID;
+            int? pb3 = (int?)inplay.PlayerInBase3ID;
+            int? pb = (int?)inplay.PlayerBattingID;
+
+            int? newP1 = null;
+            int? newP2 = null;
+            int? newP3 = null;
+            int? newPb = null;
+
+            var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+            var teamGameScore = await _context.TeamGame
+                  .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                  .FirstOrDefaultAsync();
+
+            if (hitType == "Single")
+            {
+                if (pb3.HasValue)
+                {
+                    var player = _context.Players
+                     .Where(p => p.ID == pb3)
+                     .Select(p => p.FullName)
+                     .FirstOrDefault();
+
+                    needUserDecision = true;
+                    message = player + " was in base 3.What do you want to register?";
+
+                }
+                // Move the players
+                newP3 = pb2;
+                newP2 = pb1;
+                newP1 = pb;
+                newPb = null;
+
+                var lineupID = _context.GameLineUps
+                .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                .Select(g => g.ID)
+                .FirstOrDefault();
+
+                var scorePlayer = await _context.ScorePlayers
+               .Where(sp => sp.GameLineUpID == lineupID)
+                .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                .FirstOrDefaultAsync();
+
+                scorePlayer.Singles++;
+                scorePlayer.H++;
+                scorePlayer.PA++;
+                scorePlayer.AB++;
+
+                int? playerInBase3 = pb3;
+
+            }
+            if (hitType == "Double")
+            {
+                // If there's a player on base 3, ask the user if they score a run or are out
+                if (pb3.HasValue)
+                {
+
+                    var lineupID2 = _context.GameLineUps
+                  .Where(g => g.PlayerID == pb3 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                  .Select(g => g.ID)
+                  .FirstOrDefault();
+
+                    var scorePlayer2 = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID2)
+                    .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                    .FirstOrDefaultAsync();
+
+                    scorePlayer2.Run++;
+                    inplay.Runs++;
+                    teamGameScore.score++;
+
+                }
+
+                // If there's a player on base 2, they move to base 3
+                if (pb2.HasValue)
+                {
+                    if (pb1.HasValue)
+                    {
+                        var lineupID2 = _context.GameLineUps
+                         .Where(g => g.PlayerID == pb2 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                         .Select(g => g.ID)
+                         .FirstOrDefault();
+
+                        var scorePlayer2 = await _context.ScorePlayers
+                       .Where(sp => sp.GameLineUpID == lineupID2)
+                       .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                       .FirstOrDefaultAsync();
+
+                        scorePlayer2.Run++;
+                        inplay.Runs++;
+                        teamGameScore.score++;
+
+                    }
+                    else
+                    {
+                        newP3 = pb2;
+                    }
+
+                }
+
+                // If there's a player on base 1, they move to base 3
+                if (pb1.HasValue)
+                {
+                    newP3 = pb1;
+                }
+                // The batter moves to base 2
+                newP2 = pb;
+
+                var lineupID3 = _context.GameLineUps
+                    .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                    .Select(g => g.ID)
+                    .FirstOrDefault();
+
+                var scorePlayer3 = await _context.ScorePlayers
+               .Where(sp => sp.GameLineUpID == lineupID3)
+               .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+               .FirstOrDefaultAsync();
+
+                scorePlayer3.Doubles++;
+                scorePlayer3.H++;
+                scorePlayer3.PA++;
+                scorePlayer3.AB++;
+
+            }
+
+            if (hitType == "Triple")
+            {
+                // If there's a player on base 3, they score a run
+                if (pb3.HasValue)
+                {
+                    var lineupID4 = _context.GameLineUps
+                     .Where(g => g.PlayerID == pb3 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                     .Select(g => g.ID)
+                     .FirstOrDefault();
+
+                    var scorePlayer4 = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID4)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                   .FirstOrDefaultAsync();
+
+                    teamGameScore.score++;
+                    scorePlayer4.Run++;
+                    inplay.Runs++;
+
+                }
+
+                // If there's a player on base 2, they score a run
+                if (pb2.HasValue)
+                {
+                    var lineupID4 = _context.GameLineUps
+                    .Where(g => g.PlayerID == pb2 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                    .Select(g => g.ID)
+                    .FirstOrDefault();
+
+                    var scorePlayer4 = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID4)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                   .FirstOrDefaultAsync();
+
+                    teamGameScore.score++;
+                    scorePlayer4.Run++;
+                    inplay.Runs++;
+                }
+
+                // If there's a player on base 1, they move to base 3
+                // You'll need to ask the user if they score a run or stay on base 3
+                if (pb1.HasValue)
+                {
+                    var lineupID4 = _context.GameLineUps
+                    .Where(g => g.PlayerID == pb3 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                    .Select(g => g.ID)
+                    .FirstOrDefault();
+
+                    var scorePlayer4 = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID4)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                    .FirstOrDefaultAsync();
+
+                    teamGameScore.score++;
+                    scorePlayer4.Run++;
+                    inplay.Runs++;
+                }
+
+                // The batter moves to base 3
+                newP3 = pb;
+
+                var lineupID3 = _context.GameLineUps
+                      .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                      .Select(g => g.ID)
+                      .FirstOrDefault();
+
+                var scorePlayer3 = await _context.ScorePlayers
+               .Where(sp => sp.GameLineUpID == lineupID3)
+               .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                .FirstOrDefaultAsync();
+
+                scorePlayer3.Triples++;
+                scorePlayer3.H++;
+                scorePlayer3.PA++;
+                scorePlayer3.AB++;
+            }
+
+            if (hitType == "HomeRun")
+            {
+                // If there's a player on base 3, they score a run
+                if (pb3.HasValue)
+                {
+                    var lineupID = _context.GameLineUps
+                      .Where(g => g.PlayerID == pb3 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                      .Select(g => g.ID)
+                      .FirstOrDefault();
+
+                    var scorePlayer = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                    .FirstOrDefaultAsync();
+
+                    scorePlayer.Run++;
+                    teamGameScore.score++;
+                    inplay.Runs++;
+                }
+
+                // If there's a player on base 2, they score a run
+                if (pb2.HasValue)
+                {
+                    var lineupID = _context.GameLineUps
+                      .Where(g => g.PlayerID == pb2 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                      .Select(g => g.ID)
+                      .FirstOrDefault();
+
+                    var scorePlayer = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                    .FirstOrDefaultAsync();
+
+                    scorePlayer.Run++;
+                    teamGameScore.score++;
+                    inplay.Runs++;
+                }
+
+                // If there's a player on base 1, they score a run
+                if (pb1.HasValue)
+                {
+                    var lineupID4 = _context.GameLineUps
+                      .Where(g => g.PlayerID == pb1 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                      .Select(g => g.ID)
+                      .FirstOrDefault();
+
+                    var scorePlayer4 = await _context.ScorePlayers
+                   .Where(sp => sp.GameLineUpID == lineupID4)
+                   .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                   .FirstOrDefaultAsync();
+
+                    scorePlayer4.Run++;
+                    teamGameScore.score++;
+                    inplay.Runs++;
+                }
+
+                var lineupID3 = _context.GameLineUps
+                           .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                           .Select(g => g.ID)
+                           .FirstOrDefault();
+
+                var scorePlayer3 = await _context.ScorePlayers
+               .Where(sp => sp.GameLineUpID == lineupID3)
+               .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                .FirstOrDefaultAsync();
+
+                scorePlayer3.HR++;
+                scorePlayer3.PA++;
+                scorePlayer3.AB++;
+                scorePlayer3.Run++;
+                inplay.Runs++;
+                teamGameScore.score++;
+
+                // Clear the bases
+                newP1 = null;
+                newP2 = null;
+                newP3 = null;
+            }
+
+            GetNextPlayer(id);
+
+            inplay.PlayerInBase1ID = newP1;
+            inplay.PlayerInBase2ID = newP2;
+            inplay.PlayerInBase3ID = newP3;
+            await _context.SaveChangesAsync();
+
+            object inplayData = null;
+
+            // Get the scores for each team
+            var scores = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID)
+                .ToList();
+
+            var playeratBat = _context.Players
+              .Where(p => p.ID == inplay.PlayerBattingID)
+              .Select(p => p.FullName)
+              .FirstOrDefault();
+
+            inplayData = new
+            {
+                ID = inplay.ID,
+                Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                Strikes = inplay.Strikes,
+                Outs = inplay.Outs,
+                Fouls = inplay.Fouls,
+                Balls = inplay.Balls,
+                InningNumber = inning.InningNumber,
+                FirstPlayer = playeratBat,
+            };
+
+            return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, Inplay = inplayData });
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> HandleUserDecision(int id, string decision, int player)
+        {
+
+            var inplay = await _context.Inplays.FindAsync(id);
+            if (inplay == null)
+            {
+                return NotFound();
+            }
+
+            var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+            //Information of the player batting
+            var lineupID = _context.GameLineUps
+            .Where(g => g.PlayerID == player && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+            .Select(g => g.ID)
+            .FirstOrDefault();
+
+            var scorePlayer = await _context.ScorePlayers
+                .Where(sp => sp.GameLineUpID == lineupID)
+                .FirstOrDefaultAsync();
+
+            var teamGameScore = await _context.TeamGame
+                      .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                      .FirstOrDefaultAsync();
+
+            if (decision == "Out")
+            {
+                inplay.Outs++;
+                scorePlayer.Out++;
+
+
+            }
+            else if (decision == "Run")
+            {
+                inplay.Runs++;
+                scorePlayer.Run++;
+                teamGameScore.score++;
+
+            }
+
+            await _context.SaveChangesAsync();
+            return Json(new { success = true });
+
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemovePlayer(int playerId)
         {
             var gameLineUp = await _context.GameLineUps
@@ -1799,7 +2299,7 @@ namespace WMBA_4.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPlayersForDivision(int gameId)
         {
-            
+
             var game = await _context.Games
                                      .Include(g => g.TeamGames)
                                          .ThenInclude(tg => tg.Team)
@@ -1807,55 +2307,54 @@ namespace WMBA_4.Controllers
 
             if (game == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
 
-            
+
             var teamIds = game.TeamGames.Select(tg => tg.TeamID).ToList();
 
-          
+
             var divisionIds = await _context.Teams
                                              .Where(t => teamIds.Contains(t.ID))
                                              .Select(t => t.DivisionID)
                                              .ToListAsync();
 
-            
+
             var players = await _context.Players
                                          .Where(p => !teamIds.Contains(p.TeamID) && (p.Team.DivisionID == divisionIds[0] || p.Team.DivisionID == divisionIds[0] - 1))
                                          .ToListAsync();
 
-          
+
             var playersDto = players.Select(p => new { id = p.ID, fullName = p.FullName });
 
             return Json(playersDto);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> AddPlayerToLineup(int playerId, int gameId, int teamId)
         {
-            
+
             var player = await _context.Players.FindAsync(playerId);
             if (player == null)
             {
                 return NotFound("Player not found.");
             }
 
-            
+
             var game = await _context.Games.FindAsync(gameId);
             if (game == null)
             {
                 return NotFound("Game not found.");
             }
 
-           
+
             var team = await _context.Teams.FindAsync(teamId);
             if (team == null)
             {
                 return NotFound("Team not found.");
             }
 
-            
+
             var existingLineup = await _context.GameLineUps
                 .FirstOrDefaultAsync(gl => gl.PlayerID == playerId && gl.GameID == gameId && gl.TeamID == teamId);
 
@@ -1864,16 +2363,16 @@ namespace WMBA_4.Controllers
                 return BadRequest("Player is already in the lineup.");
             }
 
-           
+
             var maxBattingOrder = await _context.GameLineUps
                 .Where(gl => gl.GameID == gameId && gl.TeamID == teamId)
                 .Select(gl => (int?)gl.BattingOrder)
                 .MaxAsync();
 
-           
+
             var newBattingOrder = maxBattingOrder.GetValueOrDefault() + 1;
 
-            
+
             var newLineup = new GameLineUp
             {
                 PlayerID = playerId,
@@ -1882,13 +2381,13 @@ namespace WMBA_4.Controllers
                 BattingOrder = newBattingOrder
             };
 
-            
+
             player.TeamID = teamId;
 
             _context.GameLineUps.Add(newLineup);
             await _context.SaveChangesAsync();
 
-           
+
             return Ok(new
             {
                 battingOrder = newLineup.BattingOrder,
@@ -1896,6 +2395,7 @@ namespace WMBA_4.Controllers
                 playerId = newLineup.PlayerID
             });
         }
+
         private bool ScorePlayerExists(int id)
         {
             return _context.ScorePlayers.Any(e => e.ID == id);

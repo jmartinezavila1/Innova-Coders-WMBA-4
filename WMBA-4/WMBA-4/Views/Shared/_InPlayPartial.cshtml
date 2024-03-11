@@ -4,7 +4,7 @@
     <table class="table">
         <thead>
             <tr>
-                <th>Players in Base</th>
+                <th></th>
                 <th>1B</th>
                 <th>2B</th>
                 <th>3B</th>
@@ -12,7 +12,23 @@
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <th colspan="5">Player Batting</th>
+            </tr>
+            <tr>
+                <td id="playerBatting">@Model.PlayerBattingName</td>
 
+                <td><input type="radio" name="PlayerBattingBase" value="1" /></td>
+                <td><input type="radio" name="PlayerBattingBase" value="2" /></td>
+                <td><input type="radio" name="PlayerBattingBase" value="3" /></td>
+                <td>
+                    RBI: <input type="text" name="isRBI" maxlength="3" size="3" />
+
+                </td>
+            </tr>
+            <tr>
+                <th colspan="5">Players in Base</th>
+            </tr>
             <tr class="player-in-base">
                 <td id="playerInBase1">@Model.PlayerInBase1Name</td>
                 <td><input type="radio" name="PlayerInBase1Base" value="1" @(Model.PlayerInBase1Base.HasValue && Model.PlayerInBase1Base.Value == 1 ? "checked" : "") /></td>
@@ -53,22 +69,7 @@
                 </td>
 
             </tr>
-            <tr>
-                <th colspan="5">Player Batting</th>
-            </tr>
-            <tr>
-                <td id="playerBatting">@Model.PlayerBattingName</td>
 
-                <td><input type="radio" name="PlayerBattingBase" value="1" /></td>
-                <td><input type="radio" name="PlayerBattingBase" value="2" /></td>
-                <td><input type="radio" name="PlayerBattingBase" value="3" /></td>
-                <td>
-                    RBI: <input type="text" name="isRBI" maxlength="3" size="3" />
-                    <input type="checkbox" name="isHit" /> Hit
-                    <input type="checkbox" name="isHomerun" /> HomeRun
-
-                </td>
-            </tr>
         </tbody>
     </table>
 </form>
