@@ -71,6 +71,14 @@
             }
         });
 
+        // Checkbox toggle functionality
+        el.addEventListener('click', function (event) {
+            var checkbox = event.target.closest('input[type="checkbox"]');
+            if (checkbox) {
+                checkbox.checked = !checkbox.checked;
+            }
+        });
+
         document.getElementById('saveButton').addEventListener('click', function () {
             var playerOrder = [];
             var listItems = el.children;
