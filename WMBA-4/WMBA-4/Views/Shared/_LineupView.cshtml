@@ -2,7 +2,7 @@
 
 <div class="lineup-container">
     <h3>Lineup</h3>
-    <button id="addPlayerButton" class="btn btn-primary">Add Temporary Player</button>
+    <button id="addPlayerButton" class="btn btn-primary">Choose a Temporary Player</button>
     <table class="table">
         <thead>
             <tr>
@@ -25,6 +25,8 @@
         </tbody>
     </table>
 </div>
+<select id="playerListBox" class="form-control" multiple></select>
+<button id="addButton" class="btn btn-primary">Add</button>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -54,9 +56,96 @@
                     alert("An error occurred while removing the player.");
                 }
             });
+                        
+            return false;
+        });
+        // Function to get query parameter from URL
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Function to populate players in the list box
+        function populatePlayers(response) {
+            var players = response["$values"]; 
+            var listBox = $("#playerListBox");
+            listBox.empty(); 
+
+            // Add players to the list box
+            players.forEach(function (player) {
+                listBox.append($('<option>', {
+                    value: player.id,
+                    text: player.fullName
+                }));
+            });
+        }
+
+        // Function to handle adding temporary player
+        $("#addPlayerButton").click(function () {
+          
+            var gameId = getParameterByName('GameID');
+
+          
 
             
-            return false;
+            $.ajax({
+                url: '@Url.Action("GetPlayersForDivision", "ScorePlayer")',
+                type: "GET",
+                data: { gameId: gameId }, 
+                success: function (response) {
+                   
+                    console.log('Response:', response);
+                    populatePlayers(response);
+                },
+                error: function () {
+                    
+                }
+            });
+        });
+
+        // Function to handle adding player to lineup
+        $("#addButton").click(function () {
+            
+            var selectedPlayerIds = $('#playerListBox').val();
+
+          
+            if (!selectedPlayerIds || selectedPlayerIds.length === 0) {
+                alert("Please select a player to add to the lineup.");
+                return;
+            }
+
+            var gameId = getParameterByName('GameID');
+
+           
+            var teamId = getParameterByName('TeamID');
+
+           
+            $.ajax({
+                url: '@Url.Action("AddPlayerToLineup", "ScorePlayer")',
+                type: "POST",
+                data: { playerId: selectedPlayerIds[0], gameId: gameId, teamId: teamId }, 
+                success: function (response) {
+                    
+                    alert("Player successfully added to the lineup."); 
+
+                 
+                    var newRow = '<tr><td>' + response.battingOrder + '</td><td>' + response.fullName + '</td><td><button class="removePlayerButton btn btn-danger" data-playerid="' + response.playerId + '">Remove</button></td></tr>';
+
+                    
+                    $('.table tbody').append(newRow);
+
+                    $('#playerListBox option:selected').remove();
+                },
+                error: function () {
+                   
+                    alert("The player was already added to the lineup");
+                }
+            });
         });
     });
 </script>

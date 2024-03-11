@@ -1796,6 +1796,106 @@ namespace WMBA_4.Controllers
                 return StatusCode(500, "An error occurred while removing the player.");
             }
         }
+        [HttpGet]
+        public async Task<IActionResult> GetPlayersForDivision(int gameId)
+        {
+            
+            var game = await _context.Games
+                                     .Include(g => g.TeamGames)
+                                         .ThenInclude(tg => tg.Team)
+                                     .FirstOrDefaultAsync(g => g.ID == gameId);
+
+            if (game == null)
+            {
+                return NotFound(); 
+            }
+
+            
+            var teamIds = game.TeamGames.Select(tg => tg.TeamID).ToList();
+
+          
+            var divisionIds = await _context.Teams
+                                             .Where(t => teamIds.Contains(t.ID))
+                                             .Select(t => t.DivisionID)
+                                             .ToListAsync();
+
+            
+            var players = await _context.Players
+                                         .Where(p => !teamIds.Contains(p.TeamID) && (p.Team.DivisionID == divisionIds[0] || p.Team.DivisionID == divisionIds[0] - 1))
+                                         .ToListAsync();
+
+          
+            var playersDto = players.Select(p => new { id = p.ID, fullName = p.FullName });
+
+            return Json(playersDto);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddPlayerToLineup(int playerId, int gameId, int teamId)
+        {
+            
+            var player = await _context.Players.FindAsync(playerId);
+            if (player == null)
+            {
+                return NotFound("Player not found.");
+            }
+
+            
+            var game = await _context.Games.FindAsync(gameId);
+            if (game == null)
+            {
+                return NotFound("Game not found.");
+            }
+
+           
+            var team = await _context.Teams.FindAsync(teamId);
+            if (team == null)
+            {
+                return NotFound("Team not found.");
+            }
+
+            
+            var existingLineup = await _context.GameLineUps
+                .FirstOrDefaultAsync(gl => gl.PlayerID == playerId && gl.GameID == gameId && gl.TeamID == teamId);
+
+            if (existingLineup != null)
+            {
+                return BadRequest("Player is already in the lineup.");
+            }
+
+           
+            var maxBattingOrder = await _context.GameLineUps
+                .Where(gl => gl.GameID == gameId && gl.TeamID == teamId)
+                .Select(gl => (int?)gl.BattingOrder)
+                .MaxAsync();
+
+           
+            var newBattingOrder = maxBattingOrder.GetValueOrDefault() + 1;
+
+            
+            var newLineup = new GameLineUp
+            {
+                PlayerID = playerId,
+                GameID = gameId,
+                TeamID = teamId,
+                BattingOrder = newBattingOrder
+            };
+
+            
+            player.TeamID = teamId;
+
+            _context.GameLineUps.Add(newLineup);
+            await _context.SaveChangesAsync();
+
+           
+            return Ok(new
+            {
+                battingOrder = newLineup.BattingOrder,
+                fullName = player.FullName,
+                playerId = newLineup.PlayerID
+            });
+        }
         private bool ScorePlayerExists(int id)
         {
             return _context.ScorePlayers.Any(e => e.ID == id);
