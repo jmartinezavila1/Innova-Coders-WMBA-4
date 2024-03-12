@@ -37,6 +37,9 @@ namespace WMBA_4.Controllers
                         .ThenInclude(d => d.Division)
                 .Where(s => s.Status == true);
 
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+
             //sorting sortoption array
             string[] sortOptions = new[] { "Location", "Game Type", "Date" };
 
@@ -44,18 +47,33 @@ namespace WMBA_4.Controllers
             if (TeamID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.TeamID == TeamID));
+                numberFilters++;
             }
             if (divisionID.HasValue)
             {
                 games = games.Where(g => g.TeamGames.Any(t => t.Team.DivisionID == divisionID));
+                numberFilters++;
             }
             if (GameTypeID.HasValue)
             {
                 games = games.Where(g => g.GameTypeID == GameTypeID);
+                numberFilters++;
             }
             if (LocationID.HasValue)
             {
                 games = games.Where(g => g.LocationID == LocationID);
+                numberFilters++;
+            }
+
+            if (numberFilters != 0)
+            {
+                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                ViewData["Filtering"] = " btn-danger";
+                //Show how many filters have been applied
+                ViewData["numberFilters"] = "(" + numberFilters.ToString()
+                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
+                //Keep the Bootstrap collapse open
+                //@ViewData["ShowFilter"] = " show";
             }
 
             games = games.OrderByDescending(g => g.Status) // Active games first

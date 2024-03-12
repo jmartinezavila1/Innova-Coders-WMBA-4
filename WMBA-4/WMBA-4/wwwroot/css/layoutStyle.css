@@ -1979,6 +1979,47 @@ progress {
     }
 }
 
+.table-two, .datatable-table-two {
+    --bs-table-color: var(--bs-body-color);
+    --bs-table-bg: transparent;
+    --bs-table-border-color: var(--bs-border-color);
+    --bs-table-accent-bg: transparent;
+    --bs-table-striped-color: var(--bs-body-color);
+    --bs-table-striped-bg: rgba(0, 0, 0, 0.05);
+    --bs-table-active-color: var(--bs-body-color);
+    --bs-table-active-bg: rgba(0, 0, 0, 0.1);
+    --bs-table-hover-color: var(--bs-body-color);
+    --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
+    width: 100%;
+    table-layout: fixed;
+    margin-bottom: 1rem;
+    color: var(--bs-table-color);
+    vertical-align: top;
+    border-color: var(--bs-table-border-color);
+}
+
+    .table-two > :not(caption) > * > *, .datatable-table-two > :not(caption) > * > * {
+        padding: 0.5rem 0.5rem;
+        background-color: var(--bs-table-bg);
+        border-bottom-width: 1px;
+        box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
+    }
+
+    .table-two > tbody, .datatable-table-two > tbody {
+        vertical-align: inherit;
+    }
+
+    .table-two > thead, .datatable-table-two > thead {
+        vertical-align: bottom;
+    }
+
+table-two th, table-two td {
+    width: 5rem; /* 예제에서는 각 열의 폭을 5rem로 설정하였습니다. */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .table, .datatable-table {
     --bs-table-color: var(--bs-body-color);
     --bs-table-bg: transparent;
@@ -2015,7 +2056,7 @@ progress {
 
 table th, table td {
     width: 5rem; /* 예제에서는 각 열의 폭을 5rem로 설정하였습니다. */
-    white-space: nowrap;
+    white-space: normal;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -5072,7 +5113,7 @@ textarea.form-control-lg {
 .breadcrumb {
     --bs-breadcrumb-padding-x: 0;
     --bs-breadcrumb-padding-y: 0;
-    --bs-breadcrumb-margin-bottom: 3rem;
+    --bs-breadcrumb-margin-bottom: 1rem;
     --bs-breadcrumb-bg:;
     --bs-breadcrumb-border-radius:;
     --bs-breadcrumb-divider-color: #6c757d;
