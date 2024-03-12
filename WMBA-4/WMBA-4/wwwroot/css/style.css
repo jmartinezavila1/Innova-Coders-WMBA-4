@@ -77,17 +77,7 @@ table tdoby tr td {
     display: table-cell;
 }
 
-
-
 /*/////////////////////////////Scroll/////////////////////////////////////*/
-/*.table-container::-webkit-scrollbar {
-    display: none;
-}
-
-.table-container {
-    -ms-overflow-style: none;
-    scrollbar-width: none; 
-}*/
 .carousel-container {
     display: flex;
     overflow-x: auto;
@@ -240,7 +230,7 @@ table tdoby tr td {
 }
 
 .py-6 {
-    padding-top: 6rem !important;
+    padding-top: 5rem !important;
     padding-bottom: 3rem !important;
 }
 
@@ -254,10 +244,6 @@ table tdoby tr td {
 @media (max-width: 391px) {
     .card-wrapper {
         max-width: 100%; /* 최대 너비를 100%로 설정하여 부모 요소의 너비에 따라 크기가 조정됩니다. */
-    }
-
-    .t-in-flex {
-        flex-direction: column;
     }
 }
 
@@ -287,15 +273,17 @@ table tdoby tr td {
     }
 }
 
-}
-
 @media (min-width: 524px) {
     .px-6 {
         padding-left: 3rem !important;
         padding-right: 3rem !important;
     }
 }
-
+@media (max-width: 541px){
+    .t-in-flex {
+        flex-direction: column;
+    }
+}
 
 @media (min-width: 768px) {
 
@@ -303,6 +291,8 @@ table tdoby tr td {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
     }
+
+    
 }
 
 @media (min-width: 960px) {
@@ -348,6 +338,8 @@ table tdoby tr td {
     background: none;
     text-align: center;
     margin-right: 0.5rem;
+    white-space:normal !important;
+    color: var(--ft-black) !important;
 }
 
 tbody > tr:hover {

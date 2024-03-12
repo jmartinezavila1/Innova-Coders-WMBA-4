@@ -20,7 +20,7 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Player
-        public async Task<IActionResult> Index(int? id, string SearchString, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(int? id, string SearchString, int? TeamID, int? DivisionID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
@@ -41,6 +41,11 @@ namespace WMBA_4.Controllers
             if (TeamID.HasValue)
             {
                 players = players.Where(p => p.TeamID == TeamID);
+                numberFilters++;
+            }
+            if (DivisionID.HasValue)
+            {
+                players = players.Where(p => p.Team.DivisionID == DivisionID);
                 numberFilters++;
             }
             if (!String.IsNullOrEmpty(SearchString))
@@ -140,6 +145,7 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
