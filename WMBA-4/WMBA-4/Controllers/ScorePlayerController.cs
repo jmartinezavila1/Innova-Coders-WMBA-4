@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using SQLitePCL;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.Utilities;
@@ -1339,6 +1340,11 @@ namespace WMBA_4.Controllers
                 .Where(tg => tg.GameID == GameID)
                 .ToList();
 
+            var TeamScoring = _context.Teams
+                .Where(t => t.ID == TeamID)
+                .Select(t => t.Name)
+                .FirstOrDefault();
+
 
             // Store the scores in ViewBag
             ViewBag.Team1Score = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score;
@@ -1350,6 +1356,7 @@ namespace WMBA_4.Controllers
             ViewData["InPlay"] = inPlay;
             ViewBag.Inplay = new Inplay();
             ViewBag.TeamID = TeamID;
+            ViewBag.TeamScoring = TeamScoring;
             ViewBag.GameID = GameID;
 
             return View();
@@ -1920,6 +1927,7 @@ namespace WMBA_4.Controllers
             int? newP2 = null;
             int? newP3 = null;
             int? newPb = null;
+            int rbi = 0;
 
             var inning = await _context.Innings.FindAsync(inplay.InningID);
 
@@ -1963,6 +1971,7 @@ namespace WMBA_4.Controllers
 
                 int? playerInBase3 = pb3;
 
+
             }
             if (hitType == "Double")
             {
@@ -1983,6 +1992,9 @@ namespace WMBA_4.Controllers
                     scorePlayer2.Run++;
                     inplay.Runs++;
                     teamGameScore.score++;
+                    rbi++;
+
+
 
                 }
 
@@ -2004,6 +2016,7 @@ namespace WMBA_4.Controllers
                         scorePlayer2.Run++;
                         inplay.Runs++;
                         teamGameScore.score++;
+                        rbi++;
 
                     }
                     else
@@ -2035,6 +2048,8 @@ namespace WMBA_4.Controllers
                 scorePlayer3.H++;
                 scorePlayer3.PA++;
                 scorePlayer3.AB++;
+                scorePlayer3.RBI += rbi;
+
 
             }
 
@@ -2056,6 +2071,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    rbi++;
 
                 }
 
@@ -2075,6 +2091,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    rbi++;
                 }
 
                 // If there's a player on base 1, they move to base 3
@@ -2094,6 +2111,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    rbi++;
                 }
 
                 // The batter moves to base 3
@@ -2113,6 +2131,7 @@ namespace WMBA_4.Controllers
                 scorePlayer3.H++;
                 scorePlayer3.PA++;
                 scorePlayer3.AB++;
+                scorePlayer3.RBI += rbi;
             }
 
             if (hitType == "HomeRun")
@@ -2133,6 +2152,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    rbi++;
                 }
 
                 // If there's a player on base 2, they score a run
@@ -2151,6 +2171,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    rbi++;
                 }
 
                 // If there's a player on base 1, they score a run
@@ -2169,6 +2190,7 @@ namespace WMBA_4.Controllers
                     scorePlayer4.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    rbi++;
                 }
 
                 var lineupID3 = _context.GameLineUps
@@ -2187,6 +2209,10 @@ namespace WMBA_4.Controllers
                 scorePlayer3.Run++;
                 inplay.Runs++;
                 teamGameScore.score++;
+                rbi++;
+                scorePlayer3.RBI += rbi;
+
+
 
                 // Clear the bases
                 newP1 = null;
@@ -2226,12 +2252,12 @@ namespace WMBA_4.Controllers
                 FirstPlayer = playeratBat,
             };
 
-            return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, Inplay = inplayData });
+            return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, playerBatting = pb, Inplay = inplayData });
         }
 
 
         [HttpPost]
-        public async Task<IActionResult> HandleUserDecision(int id, string decision, int player)
+        public async Task<IActionResult> HandleUserDecision(int id, string decision, int batter, int player)
         {
 
             var inplay = await _context.Inplays.FindAsync(id);
@@ -2242,15 +2268,24 @@ namespace WMBA_4.Controllers
 
             var inning = await _context.Innings.FindAsync(inplay.InningID);
 
-            //Information of the player batting
+
             var lineupID = _context.GameLineUps
             .Where(g => g.PlayerID == player && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+            .Select(g => g.ID)
+            .FirstOrDefault();
+
+            var lineupIDB = _context.GameLineUps
+            .Where(g => g.PlayerID == batter && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
             .Select(g => g.ID)
             .FirstOrDefault();
 
             var scorePlayer = await _context.ScorePlayers
                 .Where(sp => sp.GameLineUpID == lineupID)
                 .FirstOrDefaultAsync();
+
+            var scorePlayer2 = await _context.ScorePlayers
+               .Where(sp => sp.GameLineUpID == lineupIDB)
+               .FirstOrDefaultAsync();
 
             var teamGameScore = await _context.TeamGame
                       .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
@@ -2267,7 +2302,9 @@ namespace WMBA_4.Controllers
             {
                 inplay.Runs++;
                 scorePlayer.Run++;
+                scorePlayer2.RBI++;
                 teamGameScore.score++;
+
 
             }
 
