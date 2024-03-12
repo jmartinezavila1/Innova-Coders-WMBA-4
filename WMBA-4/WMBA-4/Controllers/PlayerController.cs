@@ -64,7 +64,6 @@ namespace WMBA_4.Controllers
                 players = players.Where(p => p.Status == false);
                 numberFilters++;
             }
-
             if (numberFilters != 0)
             {
                 //Toggle the Open/Closed state of the collapse depending on if we are filtering
@@ -98,48 +97,47 @@ namespace WMBA_4.Controllers
                         sortField = actionButton;//Sort by the button clicked
                     }
                 }
-                if (sortField == "Player")
+            }
+            if (sortField == "Player")
+            {
+                if (sortDirection == "asc")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        players = players
-                            .OrderBy(p => p.FirstName)
-                            .ThenBy(p => p.LastName);
-                    }
-                    else
-                    {
-                        players = players
-                            .OrderByDescending(p => p.FirstName)
-                            .ThenByDescending(p => p.LastName);
-                    }
+                    players = players
+                        .OrderBy(p => p.FirstName)
+                        .ThenBy(p => p.LastName);
                 }
-                else if (sortField == "Team")
+                else
                 {
-                    if (sortDirection == "asc")
-                    {
-                        players = players
-                            .OrderBy(p => p.Team.Name);
-                    }
-                    else
-                    {
-                        players = players
-                            .OrderByDescending(p => p.Team.Name);
-                    }
+                    players = players
+                        .OrderByDescending(p => p.FirstName)
+                        .ThenByDescending(p => p.LastName);
                 }
-                else if (sortField == "Division")
+            }
+            else if (sortField == "Team")
+            {
+                if (sortDirection == "asc")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        players = players
-                            .OrderBy(p => p.Team.Division.DivisionName);
-                    }
-                    else
-                    {
-                        players = players
-                            .OrderByDescending(p => p.Team.Division.DivisionName);
-                    }
+                    players = players
+                        .OrderBy(p => p.Team.Name);
                 }
-
+                else
+                {
+                    players = players
+                        .OrderByDescending(p => p.Team.Name);
+                }
+            }
+            else if (sortField == "Division")
+            {
+                if (sortDirection == "asc")
+                {
+                    players = players
+                        .OrderBy(p => p.Team.Division.DivisionName);
+                }
+                else
+                {
+                    players = players
+                        .OrderByDescending(p => p.Team.Division.DivisionName);
+                }
             }
 
             ViewData["sortField"] = sortField;
