@@ -80,8 +80,8 @@
                         <div class="d-flex carousel-container align-items-center mx-2 p-3 ps-0" style="scroll-behavior: smooth;">
                             @foreach (var game in Model.Where(g => g.Date >= today))
                             {
-                                <div class="col-md-4 mb-3 mb-sm-0 mx-2 card-wrapper ">
-                                    <div class="card card-hover shadow-sm" >
+                                <div class="game-wrapper">
+                                    <div class="mx-3 card-hover shadow-sm border border-1 rounded-3" style="width: 15rem; height:18rem;">
                                         <div class="card-header">
                                             @game.GameType.Description
                                         </div>
@@ -124,7 +124,7 @@
 </main>
 <script>
     $(document).ready(function () {
-        var cardWidth = $('.card-wrapper').outerWidth() + 15; // 각 카드의 가로 크기에 20px를 더합니다.
+        var cardWidth = $('.game-wrapper').outerWidth() + 15; // 각 카드의 가로 크기에 20px를 더합니다.
 
         $('#prevButton').click(function () {
             $('.carousel-container').animate({
@@ -139,4 +139,3 @@
         });
     });
 </script>
-
