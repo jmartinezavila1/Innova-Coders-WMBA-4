@@ -36,13 +36,14 @@ namespace WMBA_4.Controllers
                 .Include(t => t.TeamGames)
                     .ThenInclude(t => t.Team)
                         .ThenInclude(d => d.Division)
-                .Where(s => s.Status == true);
+                .Where(s => s.Status == true && s.Date >= DateTime.Today)
+                 .OrderBy(a => a.Date);
 
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Location", "Game Type", "Date" };
+            string[] sortOptions = new[] { "Date" };
 
             //filter
             if (TeamID.HasValue)
@@ -65,7 +66,13 @@ namespace WMBA_4.Controllers
                 games = games.Where(g => g.LocationID == LocationID);
                 numberFilters++;
             }
-
+            if (GameDate >= DateTime.Today)
+            {
+                games = games.Where(g => g.Date >= GameDate);
+                ViewData["GameDate"] = "03/02/2024";
+                //ViewData["GameDate"] = DateTime.Now.ToString("yyyy-MM-dd");
+                numberFilters++;
+            }
             if (numberFilters != 0)
             {
                 //Toggle the Open/Closed state of the collapse depending on if we are filtering
@@ -76,9 +83,6 @@ namespace WMBA_4.Controllers
                 //Keep the Bootstrap collapse open
                 //@ViewData["ShowFilter"] = " show";
             }
-
-            games = games.OrderByDescending(g => g.Status) // Active games first
-                .ThenBy(g => g.Date).Where(g => g.Date >= DateTime.Today);
 
             // Sorting
             if (!string.IsNullOrEmpty(actionButton))
@@ -93,28 +97,19 @@ namespace WMBA_4.Controllers
                     }
                     sortField = actionButton;
                 }
-
-                if (sortField == "Date")
-                {
-                    games = sortDirection == "asc" ? games.OrderBy(g => g.Date) : games.OrderByDescending(g => g.Date);
-                }
-                else if (sortField == "Location")
-                {
-                    games = sortDirection == "asc" ? games.OrderBy(g => g.Location.LocationName) : games.OrderByDescending(g => g.Location.LocationName);
-                }
-                else if (sortField == "Game Type")
-                {
-                    games = sortDirection == "asc" ? games.OrderBy(g => g.GameType.Description) : games.OrderByDescending(g => g.GameType.Description);
-                }
+            }
+            if (sortField == "Date")
+            {
+                games = sortDirection == "asc" ? games.OrderBy(g => g.Date) : games.OrderByDescending(g => g.Date);
             }
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
+
             ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
-
 
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -162,7 +157,6 @@ namespace WMBA_4.Controllers
 
             var model = new GameLineUp();
 
-
             return View(model);
         }
 
@@ -170,7 +164,6 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> Inning(int teamId, int gameId, int inplayId)
         {
             var inplay = _context.Inplays.Include(i => i.Inning).FirstOrDefault(i => i.ID == inplayId);
-
 
             var inning = new Inning
             {
@@ -182,7 +175,6 @@ namespace WMBA_4.Controllers
             // Add the inning to the context and save the changes
             _context.Innings.Add(inning);
             await _context.SaveChangesAsync();
-
 
             //Refresh Inplay data           
             inplay.Runs = 0;
@@ -207,7 +199,6 @@ namespace WMBA_4.Controllers
                         .Where(i => i.InningID == inning.ID)
                         .FirstOrDefault();
 
-
             if (inplay2 == null)
             {
                 return NotFound();
@@ -217,7 +208,6 @@ namespace WMBA_4.Controllers
             var scores = _context.TeamGame
                 .Where(tg => tg.GameID == gameId)
                 .ToList();
-
 
             var playeratBat = _context.Players
               .Where(p => p.ID == inplay.PlayerBattingID)
@@ -237,7 +227,6 @@ namespace WMBA_4.Controllers
                 FirstPlayer = playeratBat
             };
 
-
             var lineupPlayers = _context.GameLineUps
                 .Where(g => g.GameID == gameId && g.TeamID == teamId)
                 .Select(p => p.ID)
@@ -255,8 +244,6 @@ namespace WMBA_4.Controllers
             await _context.SaveChangesAsync();
 
             return Json(new { Inplay = inplayData });
-
-
         }
 
         //This method is for End Game
