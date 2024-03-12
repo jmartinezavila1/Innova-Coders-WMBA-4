@@ -254,13 +254,38 @@ namespace WMBA_4.Controllers
 
 
         // GET: Player/Create
+        //public IActionResult Create()
+        //{
+        //    ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
+        //    ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+
+        //    return View();
+        //}
         public IActionResult Create()
         {
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            var teamsByDivision = _context.Teams.OrderBy(t => t.DivisionID).ThenBy(t => t.Name).ToList();
+            var teamSelectList = new List<SelectListItem>();
+
+            int? currentDivisionID = null;
+            foreach (var team in teamsByDivision)
+            {
+                if (team.DivisionID != currentDivisionID)
+                {
+                    // Add separator for new division
+                    var division = _context.Divisions.Find(team.DivisionID);
+                    teamSelectList.Add(new SelectListItem { Disabled = true, Text = $"-------------------------{division.DivisionName}-------------------------" });
+                    currentDivisionID = team.DivisionID;
+                }
+
+                // Add team to select list
+                teamSelectList.Add(new SelectListItem { Value = team.ID.ToString(), Text = team.Name });
+            }
+            ViewData["TeamID"] = teamSelectList;
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
 
             return View();
         }
+
 
         // POST: Player/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -312,7 +337,7 @@ namespace WMBA_4.Controllers
 
             var player = await _context.Players
                 .Include(p => p.Team)
-                .ThenInclude(d => d.Division)
+                    .ThenInclude(d => d.Division)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.ID == id);
 
@@ -321,20 +346,43 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
-            var playerTeamDivisionId = player.Team.DivisionID;
+            var currentDivisionId = player.Team.DivisionID;
 
-            var teamsInBiggerDivision = await _context.Teams
+            // 현재 선수가 속한 디비전과 그 위 디비전의 ID
+            var divisionIds = new List<int?> { currentDivisionId, currentDivisionId + 1 }; // 위 디비전도 포함
+
+            // 해당 디비전과 그 위 디비전의 팀들을 가져옴
+            var teams = await _context.Teams
                 .Include(t => t.Division)
-                .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
-                .OrderBy(t => t.Name)
+                .Where(t => divisionIds.Contains(t.DivisionID))
+                .OrderBy(t => t.DivisionID == currentDivisionId ? 0 : 1) // 현재 디비전이 먼저 나오도록 정렬
+                .ThenBy(t => t.Division.DivisionName)
+                .ThenBy(t => t.Name)
                 .AsNoTracking()
                 .ToListAsync();
 
-            ViewData["TeamID"] = new SelectList(teamsInBiggerDivision, "ID", "Name", player.TeamID);
+            var teamSelectList = new List<SelectListItem>();
+            string currentDivisionName = null;
+
+            foreach (var team in teams)
+            {
+                if (team.Division.DivisionName != currentDivisionName)
+                {
+                    // Add separator for new division
+                    teamSelectList.Add(new SelectListItem { Disabled = true, Text = $"-------------------------{team.Division.DivisionName}-------------------------" });
+                    currentDivisionName = team.Division.DivisionName;
+                }
+
+                // Add team to select list
+                teamSelectList.Add(new SelectListItem { Value = team.ID.ToString(), Text = team.Name });
+            }
+
+            ViewData["TeamID"] = new SelectList(teamSelectList, "Value", "Text", player.TeamID);
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", player.Team.DivisionID);
 
             return View(player);
         }
+
 
         // POST: Player/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
