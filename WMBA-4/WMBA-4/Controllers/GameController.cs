@@ -361,6 +361,7 @@ namespace WMBA_4.Controllers
                         IsHomeTeam = true,
                         IsVisitorTeam = false,
                         TeamID = Team1,
+                        score=0,
                         GameID = game.ID
                     };
                     if (!_context.TeamGame.Local.Any(e => e.GameID == teamGame1.GameID && e.TeamID == teamGame1.TeamID))
@@ -374,6 +375,7 @@ namespace WMBA_4.Controllers
                         IsHomeTeam = false,
                         IsVisitorTeam = true,
                         TeamID = Team2,
+                        score=0,
                         GameID = game.ID
                     };
                     if (!_context.TeamGame.Local.Any(e => e.GameID == teamGame2.GameID && e.TeamID == teamGame2.TeamID))
