@@ -200,9 +200,30 @@ namespace WMBA_4.Controllers
                 return NotFound();
             }
 
+            // 선수가 속한 팀의 코치를 가져옵니다.
+            var coach = await _context.TeamStaff
+                .Where(ts => ts.TeamID == player.TeamID && ts.Staff.Roles.Description == "Coach")
+                .Select(ts => ts.Staff.FullName)
+                .FirstOrDefaultAsync();
+
+            var team = await _context.Teams
+                .Include(t => t.Division)
+                .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff).ThenInclude(s => s.Roles)
+                .Include(t => t.TeamGames)
+                    .ThenInclude(tg => tg.Game)
+                        .ThenInclude(g => g.TeamGames)
+                            .ThenInclude(tg => tg.Team)
+                .FirstOrDefaultAsync(t => t.ID == player.TeamID);
+
             // 선수가 속한 팀의 모든 게임 정보를 가져옵니다.
             var teamGames = await _context.TeamGame
                 .Where(tg => tg.TeamID == player.TeamID)
+                .Include(tg => tg.Game) // Game 엔터티 로드
+                    .ThenInclude(g => g.Location) // Location 속성 로드
+                .Include(tg => tg.Game)
+                    .ThenInclude(g => g.GameType)
+                .Include(tg => tg.Game)
+                    .ThenInclude(g => g.Season)
                 .Include(tg => tg.Game)
                     .ThenInclude(g => g.GameLineUps)
                         .ThenInclude(gl => gl.ScoresPlayer)
@@ -219,16 +240,15 @@ namespace WMBA_4.Controllers
                 }
             }
 
-            ViewData["TeamGames"] = teamGames;
-
-            // 선수가 참여한 게임 수를 계산합니다.
             int totalGamesPlayed = teamGames.Count(tg => tg.Game.GameLineUps.Any(gl => gl.PlayerID == id && gl.ScoresPlayer.Any()));
             ViewData["TotalGamesPlayed"] = totalGamesPlayed;
+            ViewData["TeamGames"] = teamGames;
+            ViewData["Coach"] = coach;
+
+            // 선수가 참여한 게임 수를 계산합니다.
 
             return View(player);
         }
-
-
 
         // GET: Player/Activate/5
         public async Task<IActionResult> Activate(int? id)

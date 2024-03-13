@@ -238,10 +238,13 @@
 
                             if (lineupWithScore != null)
                             {
+                                var playedTeam = teamGame.Game.GameLineUps.FirstOrDefault(gl => gl.PlayerID == Model.ID)?.Team;
+                                var opponentTeam = teamGame.Game.GameLineUps.FirstOrDefault(gl => gl.PlayerID != Model.ID)?.Team; //find a way to show opponent team name later
+
                                 foreach (var scorePlayer in lineupWithScore.ScoresPlayer)
                                 {
                                     <tr class="game-row">
-                                        <td>@game.Date</td>
+                                        <td>@game.Date.ToString("MMMM dd")</td>
                                         <td>@scorePlayer.H</td>
                                         <td>@scorePlayer.RBI</td>
                                         <td>@scorePlayer.Singles</td>
@@ -258,17 +261,24 @@
                                     </tr>
                                     <tr class="game-details" style="display: none;">
                                         <td colspan="14">
-                                            <p>Date: <span>@game.Date.ToString("MMMM dd, yyyy hh:mm tt")</span></p>
-                                            <p>Location: <span>@game.Location.LocationName</span></p>
-                                            <p>Game Type: <span>@game.GameType.Description</span></p>
-                                            @* <p>Opponent: <span>@(game.TeamGames.FirstOrDefault(tg => tg.IsVisitorTeam)?.Team.Name ?? "Opponent Team Name Not Found")</span></p> *@
+                                            <div class="row">
+                                                <p class="col-sm-3">
+                                                    <span><strong>Date: </strong>@game.Date.ToString("MMMM dd, yyyy hh:mm tt")</span>
+                                                </p>
+                                                <p class="col-sm-3"><strong>Location: </strong><span>@game.Location.LocationName</span></p>
+                                                <p class="col-sm-3"><strong>Game Type:</strong> <span>@game.GameType.Description</span></p>
+                                                <p class="col-sm-3"><strong>Coach:</strong> <span>@ViewData["Coach"]</span></p>
+                                                <p class="col-sm-3"><strong>Played Team:</strong> <span>@(playedTeam != null ? playedTeam.Name : "Unknown Team")</span></p>
+                                                <p class="col-sm-3"><strong>Oppponent Team:</strong> <span>@(opponentTeam != null ? opponentTeam.Name : "Unknown Team")</span></p>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
                             }
                         }
-
                     </tbody>
+
+
                 </table>
             </div>
         </div>
