@@ -93,32 +93,32 @@ namespace WMBA_4.Data
                     new Team { ID = 6, Name = "Iron Birds", DivisionID = 1 },
     
                     // DivisionID 2
-                    new Team { ID = 7, Name = "Blue Jays Bambinos", DivisionID = 2 },
-                    new Team { ID = 8, Name = "Raptors Rookies", DivisionID = 2 },
-                    new Team { ID = 9, Name = "Falcons Freshmen", DivisionID = 2 },
-                    new Team { ID = 10, Name = "Cubs Cadets", DivisionID = 2 },
-                    new Team { ID = 11, Name = "Mariners Minors", DivisionID = 2 },
+                    new Team { ID = 7, Name = "Bambinos", DivisionID = 2 },
+                    new Team { ID = 8, Name = "Raptors", DivisionID = 2 },
+                    new Team { ID = 9, Name = "Falcons", DivisionID = 2 },
+                    new Team { ID = 10, Name = "Cadets", DivisionID = 2 },
+                    new Team { ID = 11, Name = "Mariners", DivisionID = 2 },
     
                     // DivisionID 3
-                    new Team { ID = 12, Name = "Thunderbirds T-Ballers", DivisionID = 3 },
-                    new Team { ID = 13, Name = "Bears Beginners", DivisionID = 3 },
-                    new Team { ID = 14, Name = "Rockies Rookies", DivisionID = 3 },
-                    new Team { ID = 15, Name = "Hawks Hitters", DivisionID = 3 },
-                    new Team { ID = 16, Name = "Wildcats Whiz Kids", DivisionID = 3 },
+                    new Team { ID = 12, Name = "Thunderbirds", DivisionID = 3 },
+                    new Team { ID = 13, Name = "Bears", DivisionID = 3 },
+                    new Team { ID = 14, Name = "Rockies", DivisionID = 3 },
+                    new Team { ID = 15, Name = "Hawks", DivisionID = 3 },
+                    new Team { ID = 16, Name = "Wildcats", DivisionID = 3 },
     
                     // DivisionID 4
-                    new Team { ID = 17, Name = "Wolves Wildcats", DivisionID = 4 },
-                    new Team { ID = 18, Name = "Panthers Prospects", DivisionID = 4 },
-                    new Team { ID = 19, Name = "Polar Bears Pups", DivisionID = 4 },
-                    new Team { ID = 20, Name = "Penguins Pitchers", DivisionID = 4 },
-                    new Team { ID = 21, Name = "Eagles Eagles", DivisionID = 4 },
+                    new Team { ID = 17, Name = "Wolves", DivisionID = 4 },
+                    new Team { ID = 18, Name = "Panthers", DivisionID = 4 },
+                    new Team { ID = 19, Name = "Polar Bears", DivisionID = 4 },
+                    new Team { ID = 20, Name = "Penguins", DivisionID = 4 },
+                    new Team { ID = 21, Name = "Eagles", DivisionID = 4 },
     
                     // DivisionID 5
-                    new Team { ID = 22, Name = "Lions Little Leaguers", DivisionID = 5 },
-                    new Team { ID = 23, Name = "Mustangs Minors", DivisionID = 5 },
-                    new Team { ID = 24, Name = "Huskies Hitters", DivisionID = 5 },
-                    new Team { ID = 25, Name = "Dolphins Dugout Dwellers", DivisionID = 5 },
-                    new Team { ID = 26, Name = "Sharks Sluggers", DivisionID = 5 }
+                    new Team { ID = 22, Name = "Lions", DivisionID = 5 },
+                    new Team { ID = 23, Name = "Mustangs", DivisionID = 5 },
+                    new Team { ID = 24, Name = "Huskies", DivisionID = 5 },
+                    new Team { ID = 25, Name = "Dolphins", DivisionID = 5 },
+                    new Team { ID = 26, Name = "Sharks", DivisionID = 5 }
                     };
 
                     context.Teams.AddRange(teams);
