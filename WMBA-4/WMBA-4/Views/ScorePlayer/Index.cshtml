@@ -53,7 +53,7 @@
                             @Html.DropDownList("GameTypeID", null, "All GameTypes", htmlAttributes: new { @class = "form-control form-select" })
                         </div>
                         <div class="form-group col-md-4">
-                            <label class="control-label">End Date:</label>
+                            <label class="control-label">Game Date:</label>
                             @Html.TextBox("GameDate", @ViewData["GameDate"], htmlAttributes: new { @class = "form-control", type = "date" })
                         </div>
                         <div class="form-group col-md-4 align-self-end">
@@ -87,7 +87,7 @@
             </div>
             <table class="table giro-table table-bordered">
                 <thead>
-                    <tr>
+                    <tr >
                         <th style="width:10rem;">
                             <input type="submit" name="actionButton" value="Game" class="text-column" />
                         </th>
@@ -132,7 +132,7 @@
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr>
+                        <tr onclick="redirectToDetails('@item.ID')">
                             @{
                                 var teamGamesList = item.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
@@ -147,7 +147,11 @@
                                     {
                                         <div class="li-flex align-items-center p-2 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
                                             <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
-                                            <div class="mx-2">@teamGamesList[i].Team.Name</div>
+                                            <div class="mx-2">
+                                                <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
+                                                    @teamGamesList[i].Team.Name
+                                                </a>
+                                            </div>
                                             <div class="mx-2 text-bold">@teamGamesList[i].score</div>
                                         </div>
                                     }
@@ -174,8 +178,11 @@
     </form>
 </div>
 
-<script>
-    $(document).ready(function () {
-        $('#endDatePicker').datepicker(); 
-    });
-</script>
+@* show a scorekeeper view when click the row *@
+@section Scripts {
+    <script>
+        function redirectToDetails(gameID) {
+            window.location.href = '@Url.Action("SelectTeam", "ScorePlayer")/' + gameID;
+        }
+    </script>
+}

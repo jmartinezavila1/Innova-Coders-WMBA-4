@@ -196,6 +196,14 @@ table tdoby tr td {
 .text-bold {
     font-weight: bold;
 }
+
+.text-hover:hover{
+    color: var(--ft-dark-blue);
+}
+
+.text-underline{
+    text-decoration: underline !important;
+}
 /*/////////////////////////////border color/////////////////////////////////////*/
 .border-kelly {
     border: 0.8px solid var(--bg-kelly);
