@@ -106,7 +106,7 @@
             @* Label Season: *@
             @if (Model.Any())
             {
-                <h2>Season: @Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
+                <h2>@Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
             }
             <table class="table giro-table table-bordered">
                 <thead>
