@@ -18,7 +18,7 @@
     </ol>
 </nav>
 
-<div class="f-in-flex justify-content-end">
+    <div class="f-in-flex justify-content-end">
             @using (Html.BeginForm("Create", "Game", FormMethod.Get))
             {
                 //<button type="submit" class="btn btn-kelly">Create Match</button>
@@ -32,7 +32,7 @@
             {
                 <button type="submit" class="btn btn-kelly ms-2">Add Team</button>
             }
-        </div>
+    </div>
 
 
     <form asp-action="Index" method="get">
@@ -405,4 +405,3 @@
         </div>
         <partial name="_PagingNavBar" />
     </form>
-</div>
