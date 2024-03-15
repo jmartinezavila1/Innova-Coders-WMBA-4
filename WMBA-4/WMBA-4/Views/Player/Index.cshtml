@@ -20,6 +20,7 @@
         </li> *@
     </ol>
 </nav>
+
 @* page navigation *@
 <div class="f-in-flex justify-content-end">
     @* <h1>Players</h1> *@
@@ -32,6 +33,7 @@
         <button type="submit" class="btn btn-kelly">Add Player</button>
     }
 </div>
+
 <div class="p-in-flex">
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
