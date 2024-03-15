@@ -256,7 +256,7 @@
                     @foreach (var item2 in Model)
                     {
                         @*TeamGame Field*@
-                        <tr class="@((item2.Status) ? "" : "inactive-game")">
+                    <tr class="@((item2.Status) ? "" : "inactive-game") player-row" onclick="redirectToDetails('@item2.ID')">
                             @{
                                 var teamGamesList = item2.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
@@ -405,3 +405,12 @@
         </div>
         <partial name="_PagingNavBar" />
     </form>
+
+@* show a Game Assigment's Edit view when click the row *@
+@section Scripts {
+    <script>
+        function redirectToDetails(gameid) {
+            window.location.href = '@Url.Action("Edit", "Game")/' + gameid;
+        }
+    </script>
+}
