@@ -142,7 +142,7 @@ namespace WMBA_4.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
 
             //Handle Paging
@@ -154,35 +154,6 @@ namespace WMBA_4.Controllers
             return View(pagedData); ;
         }
 
-
-        // GET: Player/Details/5
-        // public async Task<IActionResult> Details(int? id)
-        // {
-        //     if (id == null || _context.Players == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     var player = await _context.Players
-        //.Include(p => p.Team) // 선수의 팀 정보를 가져옵니다.
-        //    .ThenInclude(t => t.Division) // 팀의 소속 디비전 정보를 가져옵니다.
-        //.Include(p => p.Team) // 선수의 팀 정보를 가져옵니다.
-        //    .ThenInclude(t => t.TeamGames) // 팀의 게임 정보를 가져옵니다.
-        //        .ThenInclude(tg => tg.Game) // 팀이 참여한 게임 정보를 가져옵니다.
-        //            .ThenInclude(g => g.TeamGames) // 게임에 참여한 팀 정보를 가져옵니다.
-        //                .ThenInclude(tg => tg.Team) // 게임에 참여한 팀 정보를 가져옵니다.
-        //                    .ThenInclude(t => t.Players) // 게임에 참여한 팀의 선수들의 정보를 가져옵니다.
-        //                        .ThenInclude(p => p.ScorePlayers) // 선수들의 경기 결과를 가져옵니다.
-        //.AsNoTracking()
-        //.FirstOrDefaultAsync(m => m.ID == id);
-
-        //     if (player == null)
-        //     {
-        //         return NotFound();
-        //     }
-
-        //     return View(player);
-        // }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -245,8 +216,6 @@ namespace WMBA_4.Controllers
             ViewData["TeamGames"] = teamGames;
             ViewData["Coach"] = coach;
 
-            // 선수가 참여한 게임 수를 계산합니다.
-
             return View(player);
         }
 
@@ -272,15 +241,6 @@ namespace WMBA_4.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-
-        // GET: Player/Create
-        //public IActionResult Create()
-        //{
-        //    ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
-        //    ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-
-        //    return View();
-        //}
         public IActionResult Create()
         {
             var teamsByDivision = _context.Teams.OrderBy(t => t.DivisionID).ThenBy(t => t.Name).ToList();
@@ -420,9 +380,6 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-
-
-
             if (await TryUpdateModelAsync<Player>(playerToUpdate, "", p => p.MemberID, p => p.FirstName, p => p.LastName,
                 p => p.JerseyNumber, p => p.Status, p => p.TeamID))
             {
@@ -438,7 +395,6 @@ namespace WMBA_4.Controllers
                         await _context.SaveChangesAsync();
                         return RedirectToAction("Details", new { playerToUpdate.ID });
                     }
-
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -465,7 +421,6 @@ namespace WMBA_4.Controllers
             }
 
             var playerTeamDivisionId = playerToUpdate.Team.DivisionID;
-
             var teamsInBiggerDivision = await _context.Teams
                 .Include(t => t.Division)
                 .Where(t => t.DivisionID == playerTeamDivisionId - 1 || t.DivisionID == playerTeamDivisionId + 1 || t.DivisionID == playerTeamDivisionId)
@@ -541,19 +496,16 @@ namespace WMBA_4.Controllers
             //if (_context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber))
             //    isDuplicated = true;
             //return isDuplicated;
-            if (player.JerseyNumber == null)
+            if (player.JerseyNumber == null || player.JerseyNumber == "0")
             {
                 return false;
             }
 
             return _context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber);
-
         }
         private bool PlayerExists(int id)
         {
             return _context.Players.Any(e => e.ID == id);
         }
     }
-
-
 }
