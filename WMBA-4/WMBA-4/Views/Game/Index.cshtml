@@ -4,10 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-<div class="p-in-flex">
-    <div class="f-in-flex">
-        <h1>Game Assignment</h1>
-        <div class="d-flex">
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Game" asp-action="Index">Game Assignment</a>
+        </li>        
+    </ol>
+</nav>
+
+    <div class="f-in-flex justify-content-end">
             @using (Html.BeginForm("Create", "Game", FormMethod.Get))
             {
                 //<button type="submit" class="btn btn-kelly">Create Match</button>
@@ -21,8 +32,8 @@
             {
                 <button type="submit" class="btn btn-kelly ms-2">Add Team</button>
             }
-        </div>
     </div>
+
 
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
@@ -95,7 +106,7 @@
             @* Label Season: *@
             @if (Model.Any())
             {
-                <h2>Season: @Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
+                <h2>@Html.DisplayFor(model => Model.First().Season.SeasonName)</h2>
             }
             <table class="table giro-table table-bordered">
                 <thead>
@@ -205,7 +216,7 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Game Type" class="text-column" />
+                                <input type="submit" name="actionButton" value="GameType" class="text-column" />
                                 @if (ViewData["sortField"].ToString() == "GameType")
                                 {
                                     <div>
@@ -250,7 +261,7 @@
                                 var teamGamesList = item2.TeamGames.ToList();
                                 var firstTeamId = teamGamesList.FirstOrDefault()?.Team.ID; // Variable to store First Team ID
                             }
-                            @* Option 1
+                        @*  Option 1 *@
                         <td>
                         @item2.Location.LocationName <br /> <br />
 
@@ -270,8 +281,10 @@
                         @: @teamGame.Team.Name
                         }
                         }
-                        </td> *@
-                            @* <td> Option2
+                        </td>
+
+                        @*Option2*@
+                        @* <td> 
                         @foreach (var teamGame in teamGamesList)
                         {
                         @teamGame.Team.Name
@@ -281,24 +294,26 @@
                         }
                         }
                         </td> *@
-                            <td style="background: url('/images/vs.jpg') no-repeat center center; background-size: cover; width: max-content; padding: 10px;">
-                                @foreach (var teamGame in teamGamesList)
-                                {
-                                    @*                                     @teamGame.Team.Name
-                            if (teamGame != teamGamesList.Last())
+
+                        @*Option3*@
+                        @* <td style="background: url('/images/vs.jpg') no-repeat center center; background-size: cover; width: max-content; padding: 10px;">
+                            @foreach (var teamGame in teamGamesList)
                             {
-                            @: <strong>  VS  </strong>
-                            } *@
-                                    if (teamGame != teamGamesList.Last())
-                                    {
-                                        <span style="float: left; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
-                                    }
-                                    else
-                                    {
-                                        <span style="float: right; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
-                                    }
+                                @teamGame.Team.Name
+                                if (teamGame != teamGamesList.Last())
+                                {
+                                @: <strong>  VS  </strong>
+                                } 
+                                if (teamGame != teamGamesList.Last())
+                                {
+                                    <span style="float: left; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
                                 }
-                            </td>
+                                else
+                                {
+                                    <span style="float: right; font-weight: bold; font-style: italic;">@teamGame.Team.Name</span>
+                                }
+                            }
+                        </td> *@
 
                             @*Division Field*@
                             <td>
@@ -390,4 +405,3 @@
         </div>
         <partial name="_PagingNavBar" />
     </form>
-</div>

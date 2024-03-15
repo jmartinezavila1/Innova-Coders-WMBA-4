@@ -120,12 +120,12 @@ namespace WMBA_4.Controllers
                     if (sortDirection == "asc")
                     {
                         games = games
-                            .OrderBy(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
+                            .OrderBy(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
                     }
                     else
                     {
                         games = games
-                            .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.Division.DivisionName);
+                            .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
                     }
                 }
                 if (sortField == "Date")
@@ -266,7 +266,7 @@ namespace WMBA_4.Controllers
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
+            //ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
 
             // Actualizar la alineación del juego
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
@@ -383,6 +383,7 @@ namespace WMBA_4.Controllers
                         game.TeamGames.Add(teamGame2);
                     }
 
+                    game.SeasonID = 1;
                     _context.Add(game);
                     await _context.SaveChangesAsync();
                     return Redirect(ViewData["returnURL"].ToString());
@@ -413,10 +414,11 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
-                .Include(tg => tg.TeamGames)
+                .Include(tg => tg.TeamGames)                
                     .ThenInclude(t => t.Team)
                         .Include(tg => tg.TeamGames)
                             .ThenInclude(t => t.Team.Division)
+                .Include(g => g.Season)
                 .FirstOrDefaultAsync(g => g.ID == id);
 
             if (game == null)
@@ -434,11 +436,13 @@ namespace WMBA_4.Controllers
             var teamGame2 = teamGames[1];
 
             var divisionId1 = teamGame1.Team.DivisionID; // Get the DivisionID from Team1 of the teams
+            var teamName1 = teamGame1.Team.Name;
+            var teamName2 = teamGame2.Team.Name;
             
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
+            //ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", divisionId1); // Set the selected DivisionID
             ViewData["Team1ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame1.TeamID); // Filter the teams by DivisionID
             ViewData["Team2ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame2.TeamID); // Filter the teams by DivisionID
@@ -462,7 +466,10 @@ namespace WMBA_4.Controllers
 
             ViewBag.SelectedLocationIds = selectedLocalIds;
 
-
+            // Assign the Date and GameTypeID to the Game model
+            game.Date = game.Date;
+            game.GameTypeID = game.GameTypeID;
+            
             var viewModel = new GameEditVM
             {
                 Game = game,
@@ -470,7 +477,14 @@ namespace WMBA_4.Controllers
                 Team1ID = teamGame1.TeamID,
                 Team2ID = teamGame2.TeamID,                
                 Score1 = teamGame1.score,
-                Score2 = teamGame2.score
+                Score2 = teamGame2.score,
+                Team1Name= teamName1,
+                Team2Name= teamName2,
+                Date = game.Date,
+                LocationID = game.LocationID,   
+                SeasonID = game.SeasonID,
+                GameTypeID = game.GameTypeID
+
             };
 
             return View(viewModel);
@@ -481,7 +495,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,Status,LocationID,SeasonID,GameTypeID")] Game game, int team, int team1Id, int team2Id, int score1, int score2)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Date,Status,LocationID,SeasonID,GameTypeID")] Game game, int team, int team1Id, int team2Id, int score1, int score2, int seasonid)
         {
             if (id != game.ID)
             {
@@ -528,8 +542,8 @@ namespace WMBA_4.Controllers
                         };
                         _context.TeamGame.Add(newTeamGame2);
 
-                        // Update the game
-                        //game.LocationID = 1;
+                        // Update the game                        
+                        game.SeasonID = 1;
                         _context.Update(game);
                         await _context.SaveChangesAsync();
 
@@ -569,7 +583,7 @@ namespace WMBA_4.Controllers
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
+            //ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", team1Id);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", team2Id);
 

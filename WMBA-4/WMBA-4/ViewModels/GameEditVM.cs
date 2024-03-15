@@ -12,6 +12,8 @@ namespace WMBA_4.ViewModels
         public int Team1ID { get; set; }
         [Display(Name = "Visitor Team")]
         public int Team2ID { get; set; }
+        public string Team1Name { get; set; }
+        public string Team2Name { get; set; }
         public int? Score1 { get; set; }
         public int? Score2 { get; set; }
         [Display(Name = "Date")]
@@ -25,5 +27,10 @@ namespace WMBA_4.ViewModels
 
         [Display(Name = "Location")]
         public ICollection<Location> Locations { get; set; } = new HashSet<Location>();
+        public ICollection<Division> Divisions { get; set; } = new HashSet<Division>();
+        public ICollection<Team> Teams { get; set; } = new HashSet<Team>();
+        public ICollection<Season> Seasons { get; set; } = new HashSet<Season>();
+        public ICollection<GameType> GameTypes { get; set; } = new HashSet<GameType>();
+        
 }
 }

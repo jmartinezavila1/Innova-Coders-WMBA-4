@@ -4,10 +4,28 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Game" asp-action="Index">Game Assignment</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Edit
+        </li>
+    </ol>
+</nav>
 
-<h4>Game</h4>
 <hr />
+<h2 class="text-black">@Model.Team1Name VS @Model.Team2Name</h2>
+@* Label Season: *@
+<h4>@Html.DisplayFor(model => Model.Game.Season.SeasonName)</h4>
+
 <form asp-action="Edit">
     <div class="row">
         <div class="col-md-4 mb-3">
@@ -30,8 +48,18 @@
                 <select asp-for="Team1ID" class="form-control form-select" asp-items="ViewBag.Team1ID"></select>
             </div>
             <div class="form-group">
+                <label asp-for="Score1" class="control-label">Home Team Score</label>
+                <input asp-for="Score1" class="form-control" />
+                <span asp-validation-for="Score1" class="text-danger"></span>
+            </div>
+            <div class="form-group">
                 <label asp-for="Team2ID" class="control-label "></label>
                 <select asp-for="Team2ID" class="form-control form-select" asp-items="ViewBag.Team2ID"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Score2" class="control-label">Visitor Team Score</label>
+                <input asp-for="Score2" class="form-control" />
+                <span asp-validation-for="Score2" class="text-danger"></span>
             </div>
             <div>
                 <div class="mb-2">
@@ -50,11 +78,11 @@
                 </select>
             </div>
 
-            <div class="form-group">
+@*             <div class="form-group">
                 <label asp-for="SeasonID" class="control-label"></label>
                 <select asp-for="SeasonID" class="form-control form-select" asp-items="ViewBag.SeasonID"></select>
                 <span asp-validation-for="SeasonID" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-group">
                 <label asp-for="GameTypeID" class="control-label"></label>
                 <select asp-for="GameTypeID" class="form-control form-select" asp-items="ViewBag.GameTypeID"></select>

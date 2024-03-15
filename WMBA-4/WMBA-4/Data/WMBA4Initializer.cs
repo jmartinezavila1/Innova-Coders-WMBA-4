@@ -242,13 +242,13 @@ namespace WMBA_4.Data
                         new Location { ID = 8, LocationName = "Stade Canac", CityID = 8 },
                         new Location { ID = 9, LocationName = "Tim Hortons Field", CityID = 9 },
                         new Location { ID = 10, LocationName = "Scotiabank Centre", CityID = 10 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 1)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 2)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 3)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 4)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 5)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 6)", CityID = 1 },
-                        new Location { ID = 9, LocationName = "Memorial Park (Diamond 7)", CityID = 1 }
+                        new Location { ID = 11, LocationName = "Memorial Park (Diamond 1)", CityID = 1 },
+                        new Location { ID = 12, LocationName = "Memorial Park (Diamond 2)", CityID = 1 },
+                        new Location { ID = 13, LocationName = "Memorial Park (Diamond 3)", CityID = 1 },
+                        new Location { ID = 14, LocationName = "Memorial Park (Diamond 4)", CityID = 1 },
+                        new Location { ID = 15, LocationName = "Memorial Park (Diamond 5)", CityID = 1 },
+                        new Location { ID = 16, LocationName = "Memorial Park (Diamond 6)", CityID = 1 },
+                        new Location { ID = 17, LocationName = "Memorial Park (Diamond 7)", CityID = 1 }
                     };
 
                     context.Locations.AddRange(locations);
