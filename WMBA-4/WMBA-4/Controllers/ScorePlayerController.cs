@@ -1843,7 +1843,7 @@ namespace WMBA_4.Controllers
             int? newP2 = null;
             int? newP3 = null;
 
-            var inning = await _context.Innings.FindAsync(inplay.ID);
+            var inning = await _context.Innings.FindAsync(inplay.InningID);
 
             //Information of the player at 3er base
             var lineupID = _context.GameLineUps
@@ -1892,6 +1892,57 @@ namespace WMBA_4.Controllers
 
         }
 
+        [HttpPost]
+        public async Task<IActionResult> Exit(int id, string exitType)
+        {
+            var inplay = await _context.Inplays.FindAsync(id);
+            
+            var GameID = await _context.Innings
+                .Where(i => i.ID == inplay.InningID)
+                .Select(i => i.GameID)
+                .FirstOrDefaultAsync(); 
+
+            var Game = await _context.Games.FindAsync(GameID);
+
+            if (inplay == null)
+            {
+                return NotFound();
+            }
+
+            if (exitType == "End Game")
+            {
+                //Mark the Inplay for deletion
+
+                _context.Inplays.Remove(inplay);
+                Game.Status = false;
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+            }
+            if (exitType == "Cancel Game")
+            {
+                var scoreplayers = await _context.ScorePlayers
+                    .Where(sp => sp.GameLineUp.GameID == GameID)
+                    .ToListAsync();
+
+                var innings = await _context.Innings
+                    .Where(i => i.GameID == GameID)
+                    .ToListAsync();
+
+
+                _context.Inplays.Remove(inplay);
+                _context.ScorePlayers.RemoveRange(scoreplayers);
+                _context.Innings.RemoveRange(innings);
+                Game.Status = false;
+
+                // Save changes to the database
+                await _context.SaveChangesAsync();
+
+                // Redirect to the Index view of the ScorePlayer controller
+                return RedirectToAction("Index", "ScorePlayer");
+            }
+            return Json(new {  });
+        }
 
         [HttpPost]
         public async Task<IActionResult> Hit(int id, string hitType)
@@ -1933,7 +1984,7 @@ namespace WMBA_4.Controllers
 
                     needUserDecision = true;
                     message = player + " was in base 3.What do you want to register?";
-
+                    
                 }
                 // Move the players
                 newP3 = pb2;
@@ -1955,8 +2006,6 @@ namespace WMBA_4.Controllers
                 scorePlayer.H++;
                 scorePlayer.PA++;
                 scorePlayer.AB++;
-
-                int? playerInBase3 = pb3;
 
 
             }
@@ -2086,7 +2135,7 @@ namespace WMBA_4.Controllers
                 if (pb1.HasValue)
                 {
                     var lineupID4 = _context.GameLineUps
-                    .Where(g => g.PlayerID == pb3 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                    .Where(g => g.PlayerID == pb1 && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
                     .Select(g => g.ID)
                     .FirstOrDefault();
 

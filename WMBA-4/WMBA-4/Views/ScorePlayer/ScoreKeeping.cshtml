@@ -89,7 +89,15 @@
         <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn btn-secondary">Start Game</a>
         <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
         <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
-        <a asp-action="Index" class="btn btn btn-outline-secondary">End Game</a>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+               Exit Game
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item exit-game-option" href="#">End Game</a>
+                <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -269,6 +277,48 @@ Cierra popup  inplay *@
             });
         });
 
+        //Exit Button
+        $(document).ready(function () {
+            $('.exit-game-option').click(function (e) {
+            e.preventDefault();
+                var exitType = $(this).text();
+                var inplayId = parseInt($('#inplayId').val(), 10);
+
+                // if user click on "End Game"
+                if ($(this).text() === 'End Game') {
+                    // shows an alert to confirm the action
+                    if (confirm('Are you sure you want to end the game?')) {
+
+                        $.ajax({
+                            url: '/ScorePlayer/Exit',
+                            type: 'POST',
+                            data: { id: inplayId, exitType: exitType },
+                            success: function (data) { }
+                        });
+                    } else {
+                        
+                    }
+                }
+                // if the user clicked "Cancel Game"
+                if ($(this).text() === 'Cancel Game') {
+                    // shows the alert to confirm the action
+                    if (confirm('Are you sure you want to cancel this game?')) {
+
+                        $.ajax({
+                            url: '/ScorePlayer/Exit',
+                            type: 'POST',
+                            data: { id: inplayId, exitType: exitType },
+                            success: function (data) { }
+                        });
+                    } else {
+                       
+                    }
+                }
+
+         
+        });
+        });
+
         //Hits Button
         $(document).ready(function () {
             $('.dropdown-item').click(function (e) {
@@ -276,8 +326,7 @@ Cierra popup  inplay *@
 
                 var hitType = $(this).text();
                 var inplayId = parseInt($('#inplayId').val(), 10);
-                var playerInBase3 = parseInt($('#playerInBase3').val(), 10);
-
+               
                 $.ajax({
                     url: '/ScorePlayer/Hit',
                     type: 'POST',
@@ -304,7 +353,7 @@ Cierra popup  inplay *@
                             swal({
                                 title: data.message,
                                 text: "Choose one option:",
-                                icon: "question",
+                                icon: "warning",
                                 buttons: {
                                     cancel: "Out",
                                     confirm: "Run"
@@ -312,10 +361,10 @@ Cierra popup  inplay *@
                             }).then((isConfirm) => {
                                 if (isConfirm) {
                                     // El usuario eligió "Run"
-                                    handleUserDecision(inplayId, "Run", data.playerBatting, data.playerInBase3);
+                                    handleUserDecision(inplayId, "Run", data.playerBatting,data.playerInBase3);
                                 } else {
                                     // El usuario eligió "Out"
-                                    handleUserDecision(inplayId, "Out", data.playerBatting, data.playerInBase3);
+                                    handleUserDecision(inplayId, "Out", data.playerBatting,data.playerInBase3);
                                 }
                             });
                         }
@@ -327,12 +376,12 @@ Cierra popup  inplay *@
             });
         });
 
-        function handleUserDecision(inplayId, decision, player) {
+        function handleUserDecision(inplayId, decision,batter, player) {
 
             $.ajax({
                 url: '/ScorePlayer/HandleUserDecision',
                 type: 'POST',
-                data: { id: inplayId, decision: decision, player: player },
+                data: { id: inplayId, decision: decision, batter: batter,player: player },
                 success: function (data) {
 
                     console.log(data);
