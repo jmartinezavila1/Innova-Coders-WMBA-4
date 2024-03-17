@@ -90,7 +90,7 @@
         <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
         <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
         <div class="dropdown">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <button class="btn btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                Exit Game
             </button>
             <div class="dropdown-menu">
@@ -293,7 +293,11 @@ Cierra popup  inplay *@
                             url: '/ScorePlayer/Exit',
                             type: 'POST',
                             data: { id: inplayId, exitType: exitType },
-                            success: function (data) { }
+                            success: function (data) {
+                                if (data.redirectTo) {
+                                    window.location.href = data.redirectTo;
+                                }
+                            }
                         });
                     } else {
                         
@@ -308,7 +312,11 @@ Cierra popup  inplay *@
                             url: '/ScorePlayer/Exit',
                             type: 'POST',
                             data: { id: inplayId, exitType: exitType },
-                            success: function (data) { }
+                            success: function (data) {
+                                if (data.redirectTo) {
+                                    window.location.href = data.redirectTo;
+                                }
+                            }
                         });
                     } else {
                        

@@ -246,22 +246,6 @@ namespace WMBA_4.Controllers
             return Json(new { Inplay = inplayData });
         }
 
-        //This method is for End Game
-        //public async Task<IActionResult> EndGame(int teamId, int gameId, int inplayId)
-        //{
-        //    var inplay = _context.Inplays.FirstOrDefault(i => i.ID == inplayId);
-
-        //    if (inplay != null)
-        //    {
-        //        // Mark the Inplay for deletion
-        //        _context.Inplays.Remove(inplay);
-
-        //        // Save changes to the database
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    return RedirectToAction("Index", "Scorekeeper");
-
-        //}
 
         // This method is for the Start Button
 
@@ -558,12 +542,43 @@ namespace WMBA_4.Controllers
                 .Select(i => i.GameID)
                 .FirstOrDefault();
 
-
             // Get the scores for each team
             var scores = _context.TeamGame
                 .Where(tg => tg.GameID == gameId)
                 .ToList();
 
+            var team = _context.Players
+                .Include(p => p.Team).ThenInclude(d => d.Division)
+                .Where(p => p.ID == inplay.PlayerBattingID)
+                .Select(p => p.Team)
+                .FirstOrDefault();
+
+            var inningNumber = _context.Innings
+                      .Where(i => i.ID == inplay.InningID)
+                      .Select(i => i.InningNumber)
+                      .FirstOrDefault();
+
+            if (team.Division.DivisionName == "9U")
+            {
+                var playeratBat = _context.Players
+               .Where(p => p.ID == inplay.PlayerBattingID)
+               .Select(p => p.FullName)
+               .FirstOrDefault();
+
+                inplayData = new
+                {
+                    ID = inplay.ID,
+                    Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                    Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                    Strikes = inplay.Strikes,
+                    Outs = inplay.Outs,
+                    Fouls = inplay.Fouls,
+                    Balls = inplay.Balls,
+                    InningNumber = inningNumber,
+                    FirstPlayer = playeratBat,
+                };
+                return Json(new { Inplay = inplayData });
+            }
 
             inplay.Balls++;
             //if the balls are less than 4, increment the balls
@@ -574,7 +589,7 @@ namespace WMBA_4.Controllers
                 await _context.SaveChangesAsync();
 
 
-                var inningNumber = _context.Innings
+                inningNumber = _context.Innings
                       .Where(i => i.ID == inplay.InningID)
                       .Select(i => i.InningNumber)
                       .FirstOrDefault();
@@ -945,76 +960,147 @@ namespace WMBA_4.Controllers
                     .Select(p => p.FullName)
                     .FirstOrDefault();
 
-            //if the stikes are less than 2, increment the fouls
-            if (inplay.Strikes < 2)
+            var inningNumber = _context.Innings
+                 .Where(i => i.ID == inplay.InningID)
+                 .Select(i => i.InningNumber)
+                 .FirstOrDefault();
+
+            //For 9U teams
+            var team = _context.Players
+                .Include(p => p.Team).ThenInclude(d => d.Division)
+                .Where(p => p.ID == inplay.PlayerBattingID)
+                .Select(p => p.Team)
+                .FirstOrDefault();
+
+            if (team.Division.DivisionName == "9U")
             {
-                inplay.Strikes++;
-                inplay.Fouls++;
-                // Guarda los cambios en la base de datos
-                await _context.SaveChangesAsync();
-
-
-                var inningNumber = _context.Innings
-                      .Where(i => i.ID == inplay.InningID)
-                      .Select(i => i.InningNumber)
-                      .FirstOrDefault();
-
-                inplayData = new
+                // Si el equipo está en la división 9U y los strikes son menos de 4, incrementa los fouls y los strikes
+                if (inplay.Strikes < 4)
                 {
-                    ID = inplay.ID,
-                    Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
-                    Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
-                    Strikes = inplay.Strikes,
-                    Outs = inplay.Outs,
-                    Fouls = inplay.Fouls,
-                    Balls = inplay.Balls,
-                    InningNumber = inningNumber,
-                    FirstPlayer = player,
-                };
-            }
+                    inplay.Strikes++;
+                    inplay.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
 
-            //if the Strikes are more than 2, just increment the fouls
-            else if (inplay.Strikes >= 2)
+                    inplayData = new
+                    {
+                        ID = inplay.ID,
+                        Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                        Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                        Strikes = inplay.Strikes,
+                        Outs = inplay.Outs,
+                        Fouls = inplay.Fouls,
+                        Balls = inplay.Balls,
+                        InningNumber = inningNumber,
+                        FirstPlayer = player,
+                    };
+                }
+                // Si los strikes son 4 o más, solo incrementa los fouls
+                else
+                {
+                    inplay.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                    inplayData = new
+                    {
+                        ID = inplay.ID,
+                        Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                        Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                        Strikes = inplay.Strikes,
+                        Outs = inplay.Outs,
+                        Fouls = inplay.Fouls,
+                        Balls = inplay.Balls,
+                        InningNumber = inningNumber,
+                        FirstPlayer = player,
+                    };
+                    var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+                    var lineupID = _context.GameLineUps
+                         .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                         .Select(g => g.ID)
+                         .FirstOrDefault();
+
+                    var scorePlayer = await _context.ScorePlayers
+                        .Where(sp => sp.GameLineUpID == lineupID)
+                        .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                        .FirstOrDefaultAsync();
+
+                    scorePlayer.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                }
+            }
+            else
             {
-                inplay.Fouls++;
-                // Guarda los cambios en la base de datos
-                await _context.SaveChangesAsync();
 
-                var inningNumber = _context.Innings
-                      .Where(i => i.ID == inplay.InningID)
-                      .Select(i => i.InningNumber)
-                      .FirstOrDefault();
-                inplayData = new
+                //For the rest of the divisions
+                //if the stikes are less than 2, increment the fouls
+                if (inplay.Strikes < 2)
                 {
-                    ID = inplay.ID,
-                    Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
-                    Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
-                    Strikes = inplay.Strikes,
-                    Outs = inplay.Outs,
-                    Fouls = inplay.Fouls,
-                    Balls = inplay.Balls,
-                    InningNumber = inningNumber,
-                    FirstPlayer = player,
-                };
+                    inplay.Strikes++;
+                    inplay.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
 
-                var inning = await _context.Innings.FindAsync(inplay.InningID);
+                    inplayData = new
+                    {
+                        ID = inplay.ID,
+                        Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                        Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                        Strikes = inplay.Strikes,
+                        Outs = inplay.Outs,
+                        Fouls = inplay.Fouls,
+                        Balls = inplay.Balls,
+                        InningNumber = inningNumber,
+                        FirstPlayer = player,
+                    };
+                }
 
-                var lineupID = _context.GameLineUps
-                     .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
-                     .Select(g => g.ID)
-                     .FirstOrDefault();
+                //if the Strikes are more than 2, just increment the fouls
+                else if (inplay.Strikes >= 2)
+                {
+                    inplay.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
 
-                var scorePlayer = await _context.ScorePlayers
-                    .Where(sp => sp.GameLineUpID == lineupID)
-                    .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
-                    .FirstOrDefaultAsync();
+                    //var inningNumber = _context.Innings
+                    //      .Where(i => i.ID == inplay.InningID)
+                    //      .Select(i => i.InningNumber)
+                    //      .FirstOrDefault();
+                    inplayData = new
+                    {
+                        ID = inplay.ID,
+                        Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                        Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                        Strikes = inplay.Strikes,
+                        Outs = inplay.Outs,
+                        Fouls = inplay.Fouls,
+                        Balls = inplay.Balls,
+                        InningNumber = inningNumber,
+                        FirstPlayer = player,
+                    };
 
-                scorePlayer.Fouls++;
-                // Guarda los cambios en la base de datos
-                await _context.SaveChangesAsync();
+                    var inning = await _context.Innings.FindAsync(inplay.InningID);
+
+                    var lineupID = _context.GameLineUps
+                         .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
+                         .Select(g => g.ID)
+                         .FirstOrDefault();
+
+                    var scorePlayer = await _context.ScorePlayers
+                        .Where(sp => sp.GameLineUpID == lineupID)
+                        .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+                        .FirstOrDefaultAsync();
+
+                    scorePlayer.Fouls++;
+                    // Guarda los cambios en la base de datos
+                    await _context.SaveChangesAsync();
+
+                }
 
             }
-
 
             return Json(new { Inplay = inplayData });
 
@@ -1896,11 +1982,11 @@ namespace WMBA_4.Controllers
         public async Task<IActionResult> Exit(int id, string exitType)
         {
             var inplay = await _context.Inplays.FindAsync(id);
-            
+
             var GameID = await _context.Innings
                 .Where(i => i.ID == inplay.InningID)
                 .Select(i => i.GameID)
-                .FirstOrDefaultAsync(); 
+                .FirstOrDefaultAsync();
 
             var Game = await _context.Games.FindAsync(GameID);
 
@@ -1938,10 +2024,10 @@ namespace WMBA_4.Controllers
                 // Save changes to the database
                 await _context.SaveChangesAsync();
 
-                // Redirect to the Index view of the ScorePlayer controller
-                return RedirectToAction("Index", "ScorePlayer");
+
             }
-            return Json(new {  });
+
+            return Json(new { redirectTo = Url.Action("Index", "ScorePlayer") });
         }
 
         [HttpPost]
@@ -1984,7 +2070,7 @@ namespace WMBA_4.Controllers
 
                     needUserDecision = true;
                     message = player + " was in base 3.What do you want to register?";
-                    
+
                 }
                 // Move the players
                 newP3 = pb2;
