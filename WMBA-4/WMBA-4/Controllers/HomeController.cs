@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using WMBA_4.Data;
@@ -6,6 +7,7 @@ using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
+    [AllowAnonymous]
     public class HomeController : Controller
     {
         private readonly WMBA_4_Context _context;
