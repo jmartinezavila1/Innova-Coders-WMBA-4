@@ -80,8 +80,13 @@
                 @if (hasScheduledGames)
                 {
                     var today = DateTime.Today;
-                    var futureGames = Model.TeamGames.Where(tg => tg.Game.Date >= today).OrderBy(tg => tg.Game.Date);
-                    var pastGames = Model.TeamGames.Where(tg => tg.Game.Date < today).OrderBy(tg => tg.Game.Date);
+                    var futureGames = Model.TeamGames
+                    .Where(tg => tg.Game.Date >= today && tg.Game.Status == true)
+                    .OrderBy(tg => tg.Game.Date);
+
+                    var pastGames = Model.TeamGames
+                    .Where(tg => tg.Game.Date < today && tg.Game.Status == true)
+                    .OrderBy(tg => tg.Game.Date);
 
                     var allGames = futureGames.Concat(pastGames);
 

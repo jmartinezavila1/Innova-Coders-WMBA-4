@@ -170,13 +170,13 @@ namespace WMBA_4.Controllers
         public IActionResult Details(int id)
         {
             var team = _context.Teams
-                .Include(t => t.Division)
-                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff).ThenInclude(s => s.Roles)
-                .Include(t => t.TeamGames)
-                    .ThenInclude(tg => tg.Game)
-                        .ThenInclude(g => g.TeamGames)
-                            .ThenInclude(tg => tg.Team)
-                .FirstOrDefault(t => t.ID == id);
+     .Include(t => t.Division)
+     .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff).ThenInclude(s => s.Roles)
+     .Include(t => t.TeamGames)
+         .ThenInclude(tg => tg.Game)
+             .ThenInclude(g => g.TeamGames)
+                 .ThenInclude(tg => tg.Team)
+     .FirstOrDefault(t => t.ID == id && t.TeamGames.Any(tg => tg.Game.Status == true));
 
             var players = from p in _context.Players
             .Include(p => p.Team)
