@@ -267,4 +267,16 @@
             window.location.href = '@Url.Action("Details", "Player")/' + playerId;
         }
     </script>
+
+    <script>
+        // Input 요소와 클리어 버튼을 가져옵니다.
+        const searchInput = document.getElementById('searchInput');
+        const clearSearchButton = document.getElementById('clearSearchButton');
+
+        // 클리어 버튼에 클릭 이벤트 리스너를 추가합니다.
+        clearSearchButton.addEventListener('click', function () {
+            // 입력 요소의 값을 비웁니다.
+            searchInput.value = '';
+        });
+    </script>
 }

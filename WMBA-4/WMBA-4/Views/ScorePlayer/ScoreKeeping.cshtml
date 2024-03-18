@@ -5,7 +5,7 @@
 }
 
 <div class="row">
-    <div class="col-xl-5">
+    <div class="col-xl-6">
         <form asp-action="ScoreKeeping">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="card">
@@ -25,7 +25,6 @@
                             <h3 style="text-align: right;">@ViewBag.Team2</h3>
                         }
                     }
-
                 </div>
                 <div class="d-flex justify-content-around bg-light p-3 border-bottom">
                     @if (ViewBag.Inplay != null)
@@ -46,9 +45,30 @@
                         <h4 id="outsText">O: <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
                     }
                 </div>
-
                 <div class="p-3">
-                    <img src="/images/baseball-diamond.png" class="card-img-top mx-auto d-block" alt="diamond baseball">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                {
+                                    <th>@inningNumber</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var team in ViewBag.Teams)
+                            {
+                                <tr>
+                                    <td>@team.Name</td>
+                                    @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                    {
+                                        <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
+                                    }
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
                 </div>
                 <div>
                     @if (ViewBag.Inplay != null)
@@ -84,14 +104,14 @@
         </form>
     </div>
 </div>
-<div class="col-xl-5">
+<div class="col-xl-6">
     <div class="d-flex justify-content-around mt-3">
         <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn btn-secondary">Start Game</a>
         <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
         <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
         <div class="dropdown">
             <button class="btn btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-               Exit Game
+                Exit Game
             </button>
             <div class="dropdown-menu">
                 <a class="dropdown-item exit-game-option" href="#">End Game</a>
@@ -280,7 +300,7 @@ Cierra popup  inplay *@
         //Exit Button
         $(document).ready(function () {
             $('.exit-game-option').click(function (e) {
-            e.preventDefault();
+                e.preventDefault();
                 var exitType = $(this).text();
                 var inplayId = parseInt($('#inplayId').val(), 10);
 
@@ -300,7 +320,7 @@ Cierra popup  inplay *@
                             }
                         });
                     } else {
-                        
+
                     }
                 }
                 // if the user clicked "Cancel Game"
@@ -319,12 +339,12 @@ Cierra popup  inplay *@
                             }
                         });
                     } else {
-                       
+
                     }
                 }
 
-         
-        });
+
+            });
         });
 
         //Hits Button
@@ -334,7 +354,7 @@ Cierra popup  inplay *@
 
                 var hitType = $(this).text();
                 var inplayId = parseInt($('#inplayId').val(), 10);
-               
+
                 $.ajax({
                     url: '/ScorePlayer/Hit',
                     type: 'POST',
@@ -369,10 +389,10 @@ Cierra popup  inplay *@
                             }).then((isConfirm) => {
                                 if (isConfirm) {
                                     // El usuario eligió "Run"
-                                    handleUserDecision(inplayId, "Run", data.playerBatting,data.playerInBase3);
+                                    handleUserDecision(inplayId, "Run", data.playerBatting, data.playerInBase3);
                                 } else {
                                     // El usuario eligió "Out"
-                                    handleUserDecision(inplayId, "Out", data.playerBatting,data.playerInBase3);
+                                    handleUserDecision(inplayId, "Out", data.playerBatting, data.playerInBase3);
                                 }
                             });
                         }
@@ -384,12 +404,12 @@ Cierra popup  inplay *@
             });
         });
 
-        function handleUserDecision(inplayId, decision,batter, player) {
+        function handleUserDecision(inplayId, decision, batter, player) {
 
             $.ajax({
                 url: '/ScorePlayer/HandleUserDecision',
                 type: 'POST',
-                data: { id: inplayId, decision: decision, batter: batter,player: player },
+                data: { id: inplayId, decision: decision, batter: batter, player: player },
                 success: function (data) {
 
                     console.log(data);

@@ -106,10 +106,10 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
-            ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt=>gt.Description), "ID", "Description");
+            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l=>l.LocationName), "ID", "LocationName");
 
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -246,9 +246,7 @@ namespace WMBA_4.Controllers
             return Json(new { Inplay = inplayData });
         }
 
-
         // This method is for the Start Button
-
         public async void NextInning(int teamId, int gameId, int inplayId)
         {
             var inplay = _context.Inplays.Include(i => i.Inning).FirstOrDefault(i => i.ID == inplayId);
@@ -1418,12 +1416,37 @@ namespace WMBA_4.Controllers
                 .Select(t => t.Name)
                 .FirstOrDefault();
 
+            var innings = await _context.Innings
+                .Where(i => i.GameID == GameID)
+                .OrderBy(i => i.InningNumber)
+                .ToListAsync();
+
+            // 이닝별 팀별 점수 계산하기
+            var inningScores = new Dictionary<int, Dictionary<int, int>>();
+
+            foreach (var inning in innings)
+            {
+                var inningScoreByTeam = new Dictionary<int, int>();
+
+                foreach (var team in teams)
+                {
+                    var teamScore = await _context.Inplays
+                        .Where(ip => ip.InningID == inning.ID && ip.Inning.TeamID == team.ID)
+                        .SumAsync(ip => ip.Runs);
+
+                    inningScoreByTeam[team.ID] = teamScore;
+                }
+
+                inningScores[inning.InningNumber] = inningScoreByTeam;
+            }
 
             // Store the scores in ViewBag
             ViewBag.Team1Score = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score;
             ViewBag.Team2Score = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score;
             ViewBag.Team1 = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.Team.Name;
             ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
+            ViewBag.Innings = innings;
+            ViewBag.InningScores = inningScores;
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;
