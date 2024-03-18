@@ -2326,6 +2326,7 @@ namespace WMBA_4.Controllers
                 .FirstOrDefaultAsync();
 
                 scorePlayer3.HR++;
+                scorePlayer3.H++;
                 scorePlayer3.PA++;
                 scorePlayer3.AB++;
                 scorePlayer3.Run++;
