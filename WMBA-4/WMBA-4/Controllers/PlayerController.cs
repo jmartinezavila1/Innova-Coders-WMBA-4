@@ -201,7 +201,7 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             // 각 게임 라인업에 해당하는 scoreplayer 정보를 가져옵니다.
-            foreach (var game in teamGames.Select(tg => tg.Game))
+            foreach (var game in teamGames.Select(tg => tg.Game).OrderBy(g => g.Date))
             {
                 foreach (var lineup in game.GameLineUps)
                 {
@@ -218,6 +218,7 @@ namespace WMBA_4.Controllers
 
             return View(player);
         }
+
 
         // GET: Player/Activate/5
         public async Task<IActionResult> Activate(int? id)

@@ -107,7 +107,7 @@
             @Html.DisplayNameFor(model => model.Team)
         </dt>
         @* <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.Team.Name)
+        @Html.DisplayFor(model => model.Team.Name)
         </dd> *@
         <dd class="col-sm-10">
             <a href="@Url.Action("Details", "Team", new { id = Model.Team.ID} )" class="ft-kelly text-bold text-hover text-underline">@Html.DisplayFor(model => model.Team.Name)</a>
@@ -148,7 +148,7 @@
                 <span>Year Stats</span>
             </div>
         </button>
-        <div class="content mt-2 me-4 ms-2 py-2" style="display: none; overflow-y: auto;">
+        <div class="content mt-2 me-2 ms-2 py-2" style="display: none; overflow-y: auto;">
             <div class="d-flex">
                 <p class="col-sm-3 fs-6 me-3"><strong>AVG</strong> (Batting Average) = H (Hits) / AB (At-bats)</p>
                 <p class="col-sm-3 fs-6 me-3"><strong>OBP</strong> (On-Base Percentage) = (H + BB + HBP) / (AB + BB + HBP + SF)</p>
@@ -212,7 +212,7 @@
                 <span>Game Stats</span>
             </div>
         </button>
-        <div class="content mt-2 me-4 ms-2 py-2" style="overflow-y: auto;">
+        <div class="content mt-2 me-2 ms-2 py-2" style="overflow-y: auto;">
             <div class="table-container" style="overflow-x: auto; width: 100%;">
                 <table class="table-two" id="gameTable">
                     <thead>
@@ -234,53 +234,52 @@
                         </tr>
                     </thead>
                     <tbody class="table-group-divider">
-                        @foreach (var teamGame in ViewData["TeamGames"] as List<TeamGame>)
+                        @{
+                            var sortedTeamGames = (ViewData["TeamGames"] as List<TeamGame>)?.OrderBy(tg => tg.Game.Date);
+                        }
+                        @foreach (var teamGame in sortedTeamGames)
                         {
                             var game = teamGame.Game;
                             var lineupWithScore = game.GameLineUps.FirstOrDefault(gl => gl.PlayerID == Model.ID && gl.ScoresPlayer.Any());
 
                             if (lineupWithScore != null)
                             {
-                                var playedTeam = teamGame.Game.GameLineUps.FirstOrDefault(gl => gl.PlayerID == Model.ID)?.Team;
-                                var opponentTeam = teamGame.Game.GameLineUps.FirstOrDefault(gl => gl.PlayerID != Model.ID)?.Team; //find a way to show opponent team name later
+                                var playedTeam = teamGame.Game.TeamGames.FirstOrDefault(gl => gl.TeamID == Model.TeamID)?.Team;
+                                var opponentTeam = teamGame.Game.TeamGames.FirstOrDefault(gl => gl.TeamID != Model.TeamID)?.Team;
 
-                                foreach (var scorePlayer in lineupWithScore.ScoresPlayer)
-                                {
-                                    <tr class="game-row">
-                                        <td>@game.Date.ToString("MMMM dd")</td>
-                                        <td>@scorePlayer.H</td>
-                                        <td>@scorePlayer.RBI</td>
-                                        <td>@scorePlayer.Singles</td>
-                                        <td>@scorePlayer.Doubles</td>
-                                        <td>@scorePlayer.Triples</td>
-                                        <td>@scorePlayer.HR</td>
-                                        <td>@scorePlayer.BB</td>
-                                        <td>@scorePlayer.PA</td>
-                                        <td>@scorePlayer.AB</td>
-                                        <td>@scorePlayer.Run</td>
-                                        <td>@scorePlayer.HBP</td>
-                                        <td>@scorePlayer.StrikeOut</td>
-                                        <td>@scorePlayer.Out</td>
-                                    </tr>
-                                    <tr class="game-details" style="display: none;">
-                                        <td colspan="14">
-                                            <div class="row">
-                                                <p class="col-sm-3">
-                                                    <span><strong>Date: </strong>@game.Date.ToString("MMMM dd, yyyy hh:mm tt")</span>
-                                                </p>
-                                                <p class="col-sm-3"><strong>Location: </strong><span>@game.Location.LocationName</span></p>
-                                                <p class="col-sm-3"><strong>Game Type:</strong> <span>@game.GameType.Description</span></p>
-                                                <p class="col-sm-3"><strong>Coach:</strong> <span>@ViewData["Coach"]</span></p>
-                                                <p class="col-sm-3"><strong>Played Team:</strong> <span>@(playedTeam != null ? playedTeam.Name : "Unknown Team")</span></p>
-                                                <p class="col-sm-3"><strong>Oppponent Team:</strong> <span>@(opponentTeam != null ? opponentTeam.Name : "Unknown Team")</span></p>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                }
+                                <tr class="game-row">
+                                    <td>@game.Date.ToString("MMMM dd")</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.H)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.RBI)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.Singles)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.Doubles)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.Triples)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.HR)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.BB)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.PA)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.AB)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.Run)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.HBP)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.StrikeOut)</td>
+                                    <td>@lineupWithScore.ScoresPlayer.Sum(sp => sp.Out)</td>
+                                </tr>
+                                <tr class="game-details" style="display: none;">
+                                    <td colspan="14">
+                                        <div class="row">
+                                            <p class="col-sm-3">
+                                                <span><strong>Date: </strong>@game.Date.ToString("MMMM dd, yyyy hh:mm tt")</span>
+                                            </p>
+                                            <p class="col-sm-3"><strong>Location: </strong><span>@game.Location.LocationName</span></p>
+                                            <p class="col-sm-3"><strong>Game Type:</strong> <span>@game.GameType.Description</span></p>
+                                            <p class="col-sm-3"><strong>Coach:</strong> <span>@ViewData["Coach"]</span></p>
+                                            <p class="col-sm-3"><strong>Played Team:</strong> <span>@(playedTeam != null ? playedTeam.Name : "Unknown Team")</span></p>
+                                            <p class="col-sm-3"><strong>Opponent Team:</strong> <span>@(opponentTeam != null ? opponentTeam.Name : "Unknown Team")</span></p>
+                                        </div>
+                                    </td>
+                                </tr>
                             }
                         }
                     </tbody>
-
 
                 </table>
             </div>
