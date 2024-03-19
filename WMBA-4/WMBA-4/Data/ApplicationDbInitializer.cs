@@ -4,87 +4,74 @@ using System.Diagnostics;
 
 namespace WMBA_4.Data
 {
-    public static class ApplicationDbInitializer
-    {
-        public static async void Seed(IApplicationBuilder applicationBuilder)
+   
+        public static class ApplicationDbInitializer
         {
-            ApplicationDbContext context = applicationBuilder.ApplicationServices.CreateScope()
-                .ServiceProvider.GetRequiredService<ApplicationDbContext>();
-            try
+            public static async void Seed(IApplicationBuilder applicationBuilder)
             {
-                //Create the database if it does not exist and apply the Migration
-                context.Database.Migrate();
-                //Create Roles
-                var RoleManager = applicationBuilder.ApplicationServices.CreateScope()
-                    .ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                string[] roleNames = { "Admin", "Convenor", "Coach", "Scorekeeper" };
-                IdentityResult roleResult;
-                foreach (var roleName in roleNames)
+                ApplicationDbContext context = applicationBuilder.ApplicationServices.CreateScope()
+                    .ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                try
                 {
-                    var roleExist = await RoleManager.RoleExistsAsync(roleName);
-                    if (!roleExist)
+                    // Create the database if it does not exist and apply the Migration
+                    context.Database.Migrate();
+
+                    // Create Roles
+                    var roleManager = applicationBuilder.ApplicationServices.CreateScope()
+                        .ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                    string[] roleNames = { "Admin", "Coach", "Scorekeeper", "RookieConvenor", "IntermediateConvenor", "SeniorConvenor" };
+                    IdentityResult roleResult;
+                    foreach (var roleName in roleNames)
                     {
-                        roleResult = await RoleManager.CreateAsync(new IdentityRole(roleName));
+                        var roleExist = await roleManager.RoleExistsAsync(roleName);
+                        if (!roleExist)
+                        {
+                            roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+                        }
+                    }
+
+                    // Create Users and Assign Roles
+                    var userManager = applicationBuilder.ApplicationServices.CreateScope()
+                        .ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+                    var users = new[]
+                    {
+                    new { Email = "admin@outlook.com", Role = "Admin" },
+                    new { Email = "michael.brown@example.com", Role = "Coach" },
+                    new { Email = "alexander.taylor@example.com", Role = "Scorekeeper" },
+                    new { Email = "rookie@outlook.com", Role = "RookieConvenor" },
+                    new { Email = "intermediate@outlook.com", Role = "IntermediateConvenor" },
+                    new { Email = "senior@outlook.com", Role = "SeniorConvenor" }
+                    // Add more users as needed
+                };
+
+                    foreach (var user in users)
+                    {
+                        var existingUser = await userManager.FindByEmailAsync(user.Email);
+                        if (existingUser == null)
+                        {
+                            var newUser = new IdentityUser
+                            {
+                                UserName = user.Email,
+                                Email = user.Email
+                            };
+                            var createUserResult = await userManager.CreateAsync(newUser, "Ba55eb@ll");
+                            if (createUserResult.Succeeded)
+                            {
+                                await userManager.AddToRoleAsync(newUser, user.Role);
+                            }
+                            else
+                            {
+                                throw new Exception($"Error creating user: {user.Email}");
+                            }
+                        }
                     }
                 }
-                //Create Users
-                var userManager = applicationBuilder.ApplicationServices.CreateScope()
-                    .ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
-                if (userManager.FindByEmailAsync("admin@outlook.com").Result == null)
+                catch (Exception ex)
                 {
-                    IdentityUser user = new IdentityUser
-                    {
-                        UserName = "admin@outlook.com",
-                        Email = "admin@outlook.com"
-                    };
-                    IdentityResult result = userManager.CreateAsync(user, "Ba55eb@ll").Result;
-                    if (result.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(user, "Admin").Wait();
-                    }
+                    Debug.WriteLine(ex.GetBaseException().Message);
                 }
-                if (userManager.FindByEmailAsync("convenor@outlook.com").Result == null)
-                {
-                    IdentityUser user = new IdentityUser
-                    {
-                        UserName = "convenor@outlook.com",
-                        Email = "convenor@outlook.com"
-                    };
-                    IdentityResult result = userManager.CreateAsync(user, "Ba55eb@ll").Result;
-                    if (result.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(user, "Convenor").Wait();
-                    }
-                }
-                if (userManager.FindByEmailAsync("coach@outlook.com").Result == null)
-                {
-                    IdentityUser user = new IdentityUser
-                    {
-                        UserName = "coach@outlook.com",
-                        Email = "coach@outlook.com"
-                    };
-                    IdentityResult result = userManager.CreateAsync(user, "Ba55eb@ll").Result;
-                    
-                }
-                if (userManager.FindByEmailAsync("scorekeeper@outlook.com").Result == null)
-                {
-                    IdentityUser user = new IdentityUser
-                    {
-                        UserName = "scorekeeper@outlook.com",
-                        Email = "scorekeeper@outlook.com"
-                    };
-                    IdentityResult result = userManager.CreateAsync(user, "Ba55eb@ll").Result;
-                    if (result.Succeeded)
-                    {
-                        userManager.AddToRoleAsync(user, "Scorekeeper").Wait();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.GetBaseException().Message);
             }
         }
-    }
 
-}
+    }
