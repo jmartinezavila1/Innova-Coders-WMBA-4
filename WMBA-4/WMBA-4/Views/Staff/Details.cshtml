@@ -4,7 +4,33 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>@Model.FirstName @Model.LastName</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Staff" asp-action="Index">Staff</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Details
+        </li>
+    </ol>
+</nav>
+
+<div class="d-flex align-items-center">
+    <h1 class="me-3">@Model.FirstName @Model.LastName</h1>
+    <div class="form-group m-0">
+        @if (Model.Status == true)
+        {
+            <a asp-action="Edit" asp-route-id="@Model?.ID" class="btn btn-warning">Edit</a>
+        }
+    </div>
+</div>
+
 
 <div>
     <hr />
