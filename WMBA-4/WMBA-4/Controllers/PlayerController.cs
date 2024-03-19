@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using System.Numerics;
@@ -8,15 +9,18 @@ using WMBA_4.Models;
 using WMBA_4.Utilities;
 using WMBA_4.ViewModels;
 
+
 namespace WMBA_4.Controllers
 {
     public class PlayerController : ElephantController
     {
         private readonly WMBA_4_Context _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public PlayerController(WMBA_4_Context context)
+        public PlayerController(WMBA_4_Context context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Player
@@ -24,15 +28,45 @@ namespace WMBA_4.Controllers
             string actionButton, string sortDirection = "asc", string sortField = "Player")
         {
             var wMBA_4_Context = _context.Players.Include(p => p.Team);
+
+
+            var userEmail = User.Identity.Name;
+
+            List<int> teamIds = new List<int>();
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (await _userManager.IsInRoleAsync(user, "Coach"))
+            {
+                teamIds = await GetCoachTeamsAsync(userEmail);
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Scorekeeper"))
+            {
+                teamIds = await GetScorekeeperTeamsAsync(userEmail);
+            }
+            else
+            {
+                var convenorDivisions = await GetConvenorTeamIdsAsync(userEmail);
+
+                 teamIds = await _context.TeamStaff
+                .Where(ts => convenorDivisions.Contains(ts.Team.Division.ID))
+                .Select(ts => ts.TeamID)
+                .Distinct()
+                .ToListAsync();
+            }
+
+            var players = _context.Players
+                .Include(p => p.Team)
+                .ThenInclude(t => t.Division)
+                .OrderBy(s => s.Status == true)
+                .Where(p => teamIds.Contains(p.TeamID));
+
+
+
             //Count the number of filters applied - start by assuming no filters
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
-            var players = from p in _context.Players
-                                    .Include(p => p.Team).ThenInclude(d => d.Division)
-                                    .OrderBy(s => s.Status == true)
-                                    .AsNoTracking()
-                          select p;
+            
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Player", "Team", "Division" };
@@ -504,6 +538,79 @@ namespace WMBA_4.Controllers
 
             return _context.Players.Any(p => p.TeamID == player.TeamID && p.ID != player.ID && p.JerseyNumber == player.JerseyNumber);
         }
+        private async Task<List<int>> GetCoachTeamsAsync(string coachEmail)
+        {
+            var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
+            if (staff != null)
+            {
+                var teamIds = await _context.TeamStaff
+                    .Where(ts => ts.StaffID == staff.ID)
+                    .Select(ts => ts.TeamID)
+                    .ToListAsync();
+
+                return teamIds;
+            }
+            return new List<int>();
+        }
+
+        private async Task<List<int>> GetScorekeeperTeamsAsync(string scorekeeperEmail)
+        {
+            var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == scorekeeperEmail);
+            if (staff != null)
+            {
+                var teamIds = await _context.TeamStaff
+                    .Where(ts => ts.StaffID == staff.ID)
+                    .Select(ts => ts.TeamID)
+                    .ToListAsync();
+
+                return teamIds;
+            }
+            return new List<int>();
+        }
+        private async Task<List<int>> GetConvenorTeamIdsAsync(string convenorEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(convenorEmail);
+            if (user != null)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                var teamIds = new List<int>();
+
+                foreach (var role in roles)
+                {
+                    switch (role)
+                    {
+                        case "RookieConvenor":
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("9U"));
+                            break;
+                        case "IntermediateConvenor":
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("11U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("13U"));
+                            break;
+                        case "SeniorConvenor":
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("15U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("18U"));
+                            break;
+                        default:
+                            break;
+                    }
+                }
+
+                return teamIds.Distinct().ToList();
+            }
+            return new List<int>();
+        }
+
+        private async Task<List<int>> GetTeamIdsByDivisionAsync(string divisionName)
+        {
+            var teamIds = await _context.Teams
+                .Where(t => t.Division.DivisionName == divisionName)
+                .Select(t => t.ID)
+                .ToListAsync();
+
+            return teamIds;
+        }
+
         private bool PlayerExists(int id)
         {
             return _context.Players.Any(e => e.ID == id);
