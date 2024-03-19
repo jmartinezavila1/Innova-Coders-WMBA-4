@@ -214,9 +214,16 @@ namespace WMBA_4.Controllers
 
             if (team == null)
             {
-                return NotFound();
-            }
+                team = _context.Teams
+                    .Include(t => t.Division)
+                    .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff).ThenInclude(s => s.Roles)
+                    .FirstOrDefault(t => t.ID == id);
 
+                if (team == null)
+                {
+                    return NotFound();
+                }
+            }
 
             var opponentTeams = new Dictionary<int, string>();
 
