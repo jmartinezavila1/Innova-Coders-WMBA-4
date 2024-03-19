@@ -17,36 +17,63 @@ using WMBA_4.Utilities;
 using WMBA_4.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
+using Microsoft.AspNetCore.Identity;
 
 namespace WMBA_4.Controllers
 {
     public class TeamController : ElephantController
     {
         private readonly WMBA_4_Context _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public TeamController(WMBA_4_Context context)
+        public TeamController(WMBA_4_Context context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
-
         // GET: Team
         public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, bool isActive, bool isInactive,int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Team")
         {
-            PopulateDropDownLists();
+            var userEmail = User.Identity.Name; 
 
-            //Count the number of filters applied - start by assuming no filters
-            ViewData["Filtering"] = "btn-outline-secondary";
-            int numberFilters = 0;
-            //Then in each "test" for filtering, add to the count of Filters applied
+            List<int> teamIds = new List<int>();
 
-            var teams = from t in _context.Teams
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (await _userManager.IsInRoleAsync(user, "Coach"))
+            {
+                
+                teamIds = await GetCoachTeamsAsync(userEmail);
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Scorekeeper"))
+            {
+                
+                teamIds = await GetScorekeeperTeamsAsync(userEmail);
+            }
+            else
+            {
+                
+                var convenorDivisions = await GetConvenorDivisionsAsync(userEmail);
+
+                
+                teamIds = await _context.Teams
+                    .Where(t => convenorDivisions.Contains(t.Division.DivisionName))
+                    .Select(t => t.ID)
+                    .ToListAsync();
+            }
+
+           
+            var teams = _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
-                .OrderBy(t => t.Division)
-                .AsNoTracking()
-                        select t;
-            //sorting sortoption array
+                .Where(t => teamIds.Contains(t.ID)); 
+
+            PopulateDropDownLists();
+
+           
+            ViewData["Filtering"] = "btn-outline-secondary";
+            int numberFilters = 0;
+            
             string[] sortOptions = new[] { "Team", "Division", "Coach" };
 
             //Filter
@@ -73,33 +100,32 @@ namespace WMBA_4.Controllers
             }
             if (numberFilters != 0)
             {
-                //Toggle the Open/Closed state of the collapse depending on if we are filtering
+                
                 ViewData["Filtering"] = " btn-danger";
-                //Show how many filters have been applied
+               
                 ViewData["numberFilters"] = "(" + numberFilters.ToString()
                     + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
-                //Keep the Bootstrap collapse open
-                //@ViewData["ShowFilter"] = " show";
+             
             }
 
-            teams = teams.OrderByDescending(p => p.Status) // Active players first
+            teams = teams.OrderByDescending(p => p.Status) 
                     .ThenBy(p => p.Name)     
-                    .ThenBy(p => p.Division.DivisionName); // Order by last name
+                    .ThenBy(p => p.Division.DivisionName); 
 
 
-            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+            if (!String.IsNullOrEmpty(actionButton)) 
             {
-                page = 1;//Reset page to start
-                         //sorting
-                if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+                page = 1;
+                         
+                if (!String.IsNullOrEmpty(actionButton)) 
                 {
-                    if (sortOptions.Contains(actionButton))//Change of sort is requested
+                    if (sortOptions.Contains(actionButton))
                     {
-                        if (actionButton == sortField) //Reverse order on same field
+                        if (actionButton == sortField) 
                         {
                             sortDirection = sortDirection == "asc" ? "desc" : "asc";
                         }
-                        sortField = actionButton;//Sort by the button clicked
+                        sortField = actionButton;
                     }
                 }
                 if (sortField == "Team")
@@ -743,6 +769,72 @@ namespace WMBA_4.Controllers
         {
             return _context.Teams.Any(e => e.ID == id);
         }
+
+        private async Task<List<string>> GetConvenorDivisionsAsync(string convenorEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(convenorEmail);
+            if (user != null)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+                
+                switch (roles.FirstOrDefault())
+                {
+                    case "RookieConvenor":
+                        return new List<string> { "9U" };
+                    case "IntermediateConvenor":
+                        return new List<string> { "11U", "13U" };
+                    case "SeniorConvenor":
+                        return new List<string> { "15U", "18U" };
+                    default:
+                        return new List<string> { "9U", "11U", "13U", "15U", "18U" }; 
+                }
+            }
+            return new List<string>(); 
+        }
+
+        private async Task<List<int>> GetCoachTeamsAsync(string coachEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(coachEmail);
+            if (user != null)
+            {
+               
+                var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
+                if (staff != null)
+                {
+                    
+                    var teamIds = await _context.TeamStaff
+                        .Where(ts => ts.StaffID == staff.ID)
+                        .Select(ts => ts.TeamID)
+                        .ToListAsync();
+
+                    return teamIds;
+                }
+            }
+            return new List<int>(); 
+        }
+
+        private async Task<List<int>> GetScorekeeperTeamsAsync(string coachEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(coachEmail);
+            if (user != null)
+            {
+                
+                var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
+                if (staff != null)
+                {
+                    
+                    var teamIds = await _context.TeamStaff
+                        .Where(ts => ts.StaffID == staff.ID)
+                        .Select(ts => ts.TeamID)
+                        .ToListAsync();
+
+                    return teamIds;
+                }
+            }
+            return new List<int>(); 
+        }
+
+        
 
     }
 
