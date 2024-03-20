@@ -218,15 +218,22 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
             //ViewData["LocationID"] = new SelectList(_context.Teams, "ID", "LocationName");
-            
+
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["SearchString"] = SearchString;            
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
-            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t => t.Name), "ID", "Name");
+            ViewData["SearchString"] = SearchString;
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");            
+            
+            //Filter by DivisionName - TeamName
+            ViewBag.TeamID = new SelectList(_context.Teams
+                .Include(t => t.Division)
+                .Select(t => new { 
+                    t.ID, 
+                    TeamName = t.Division.DivisionName + " - " + t.Name 
+                }), "ID", "TeamName");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
-            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);            
+            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
             var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);           
 
 
