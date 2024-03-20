@@ -26,8 +26,8 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, bool isActive, bool isInactive, int? page, int? pageSizeID, int? year, int? month, int? day,
-            string actionButton, string sortDirection = "asc", string sortField = "Location")
+        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID, int? year, int? month, int? day,
+            string actionButton, string sortDirection = "asc", string sortField = "Date")
         {
       
             var userEmail = User.Identity.Name;
@@ -78,16 +78,21 @@ namespace WMBA_4.Controllers
                 games = games.Where(g => g.GameTypeID == GameTypeID);
                 numberFilters++;
             }
+            if (TeamID.HasValue)
+            {
+                games = games.Where(g => g.TeamGames.Any(tg => tg.TeamID == TeamID));
+                numberFilters++;
+            }
             if (!System.String.IsNullOrEmpty(SearchString))
             {
                 games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
                 numberFilters++;
             }    
-            if (year.HasValue)
-            {
-                games = games.Where(g => g.Date.Year == year.Value);
-                numberFilters++;
-            }
+            //if (year.HasValue)
+            //{
+            //    games = games.Where(g => g.Date.Year == year.Value);
+            //    numberFilters++;
+            //}
             if (month.HasValue)
             {
                 games = games.Where(g => g.Date.Month == month.Value);
@@ -217,6 +222,7 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["SearchString"] = SearchString;            
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
+            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
