@@ -497,7 +497,7 @@ tbody > tr:hover {
     padding: 0.45rem 0.9rem;
     border: none;
     background-color: var(--bg-kelly);
-    border-radius: 10px;
+    border-radius: 5px;
 }
 
     .btn-kelly:hover {
