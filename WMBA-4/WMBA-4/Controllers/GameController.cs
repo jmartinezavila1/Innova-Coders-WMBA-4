@@ -542,8 +542,18 @@ namespace WMBA_4.Controllers
                         };
                         _context.TeamGame.Add(newTeamGame2);
 
-                        // Update the game                        
                         game.SeasonID = 1;
+                        // Get the current game status
+                        var currentGame = await _context.Games.AsNoTracking().FirstOrDefaultAsync(g => g.ID == id);
+                        if (currentGame == null)
+                        {
+                            return NotFound();
+                        }
+
+                        // Keep the current status
+                        game.Status = currentGame.Status;
+                        
+                        // Update the game                                                
                         _context.Update(game);
                         await _context.SaveChangesAsync();
 
