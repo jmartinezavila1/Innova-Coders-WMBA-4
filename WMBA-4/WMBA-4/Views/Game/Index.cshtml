@@ -181,7 +181,7 @@
                                 }
                             </div>
                         </th>
-                        <th>
+@*                         <th>
                             <div class="d-flex justify-content-center">
                                 <input type="submit" name="actionButton" value="Location" class="text-column" />
                                 @if (ViewData["sortField"].ToString() == "Location")
@@ -213,8 +213,8 @@
                                     </div>
                                 }
                             </div>
-                        </th>
-                        <th>
+                        </th> *@                        
+                        @* <th>
                             <div class="d-flex justify-content-center">
                                 <input type="submit" name="actionButton" value="GameType" class="text-column" />
                                 @if (ViewData["sortField"].ToString() == "GameType")
@@ -246,7 +246,7 @@
                                     </div>
                                 }
                             </div>
-                        </th>
+                        </th> *@
                         <th>
                             <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
                         </th>
@@ -270,17 +270,19 @@
                         //First team in the list
                         if (teamGame != teamGamesList.Last())
                         {
-                        @:@teamGame.Team.Name
-                        @: <strong> @teamGame.score  </strong>
+                        @:  <strong> @teamGame.Team.Name
+                        @:          @teamGame.score  </strong>
                         }
                         //Last team in the list
                         else
                         {
                         @: <strong>  -  </strong>
-                        @: <strong>  @teamGame.score </strong>
-                        @: @teamGame.Team.Name
+                        @: <strong>  @teamGame.score 
+                        @: @teamGame.Team.Name </strong>
                         }
                         }
+                        <br /> <br />
+                        @item2.GameType.Description
                         </td>
 
                         @*Option2*@
@@ -331,12 +333,12 @@
                                 @item2.Date.ToString("MMMM dd hh:mm tt")
 
                             </td>
-                            <td>
+@*                             <td>
                                 @Html.DisplayFor(modelItem => item2.Location.LocationName)
-                            </td>
-                            <td>
+                            </td> *@
+@*                             <td>
                                 @Html.DisplayFor(modelItem => item2.GameType.Description)
-                            </td>
+                            </td> *@
 
                             @*                             <td>
                         <a asp-action="Edit" asp-route-id="@item2.ID">
