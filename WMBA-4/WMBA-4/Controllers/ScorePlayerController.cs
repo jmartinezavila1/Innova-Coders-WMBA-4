@@ -1421,7 +1421,7 @@ namespace WMBA_4.Controllers
                 .Include(t => t.Team)
                 .Include(tg => tg.Game).ThenInclude(tm => tm.TeamGames)
                 .Where(t => t.GameID == GameID)
-                .Select(t => new { t.Team.ID, t.Team.Name })
+                .Select(t => new { t.Team.ID, t.Team.Name})
                 .Distinct()
                 .ToListAsync();
 
@@ -1472,6 +1472,7 @@ namespace WMBA_4.Controllers
             ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
             ViewBag.Innings = innings;
             ViewBag.InningScores = inningScores;
+         
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;

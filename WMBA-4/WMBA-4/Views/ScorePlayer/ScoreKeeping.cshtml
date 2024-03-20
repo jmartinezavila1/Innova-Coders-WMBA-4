@@ -12,17 +12,15 @@
                 <div class="card-header" style="display: flex; justify-content: space-between;">
                     @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
                     {
-                        <h3 style="text-align: left;">@ViewBag.Team1</h3>
-                        @if (ViewBag.Inplay != null)
+                        @if (ViewBag.Teams.Count > 1)
                         {
-                            @* <h4 id="runs">Runs: @(ViewBag.Inplay != null ? ViewBag.Inplay.Runs : "")</h4> *@
-                            <h4 id="runs">@(ViewBag.Team1Score != null ? ViewBag.Team1Score : "")</h4>
-                            <h4 id="runs2">@(ViewBag.Team2Score != null ? ViewBag.Team2Score : "")</h4>
+                            <div>Home</div>
+                            <h3 style="text-align: right;">@ViewBag.Team1</h3>
+                            <h4 style="text-align: right;">@ViewBag.Team1Score</h4>
 
-                        }
-                        if (ViewBag.Teams.Count > 1)
-                        {
-                            <h3 style="text-align: right;">@ViewBag.Team2</h3>
+                            <div>Visitor</div>
+                            <h4 style="text-align: left;">@ViewBag.Team2Score</h4>
+                            <h3 style="text-align: left;">@ViewBag.Team2</h3>
                         }
                     }
                 </div>
@@ -39,14 +37,14 @@
                 <div class="d-flex justify-content-around bg-light p-3 border-bottom">
                     @if (ViewBag.Inplay != null)
                     {
-                        <h4 id="ballsText">B: <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
-                        <h4 id="strikeText">S: <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
+                        <h4 id="ballsText">B <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
+                        <h4 id="strikeText">S <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
                         @* <h4 id="foulsText"> <span id="fouls">@(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</span></h4> *@
-                        <h4 id="outsText">O: <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
+                        <h4 id="outsText">O <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
                     }
                 </div>
                 <div class="p-3">
-                    <table class="table">
+                    <table class="table-three">
                         <thead>
                             <tr>
                                 <th></th>
@@ -59,13 +57,26 @@
                         <tbody>
                             @foreach (var team in ViewBag.Teams)
                             {
-                                <tr>
-                                    <td>@team.Name</td>
-                                    @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                    {
-                                        <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
-                                    }
-                                </tr>
+                                @if (ViewBag.IsHomeTeam != null && ViewBag.IsHomeTeam && ViewBag.TeamID == team.ID)
+                                {
+                                    <tr>
+                                        <td><strong>@team.Name</strong></td>
+                                        @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                        {
+                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
+                                        }
+                                    </tr>
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td>@team.Name</td>
+                                        @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                        {
+                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
+                                        }
+                                    </tr>
+                                }
                             }
                         </tbody>
                     </table>
