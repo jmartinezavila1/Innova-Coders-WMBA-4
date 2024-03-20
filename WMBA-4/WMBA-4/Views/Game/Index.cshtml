@@ -270,15 +270,19 @@
                         //First team in the list
                         if (teamGame != teamGamesList.Last())
                         {
-                        @:  <strong> @teamGame.Team.Name
-                        @:          @teamGame.score  </strong>
+                            @: <a href="@Url.Action("Details", "Team", new { id = teamGame.Team.ID })" class="ft-kelly text-bold text-hover text-underline">
+                            @:     <strong>@teamGame.Team.Name</strong>
+                            @: </a>
+                            @: <strong>@teamGame.score</strong>
                         }
                         //Last team in the list
                         else
                         {
-                        @: <strong>  -  </strong>
-                        @: <strong>  @teamGame.score 
-                        @: @teamGame.Team.Name </strong>
+                            @: <strong> - </strong>
+                            @: <strong>@teamGame.score</strong>
+                            @: <a href="@Url.Action("Details", "Team", new { id = teamGame.Team.ID })" class="ft-kelly text-bold text-hover text-underline">
+                            @:     <strong>@teamGame.Team.Name</strong>
+                            @: </a>
                         }
                         }
                         <br /> <br />
