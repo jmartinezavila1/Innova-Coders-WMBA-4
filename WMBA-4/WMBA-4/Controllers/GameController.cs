@@ -222,7 +222,7 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["SearchString"] = SearchString;            
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t => t.Name), "ID", "Name");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
