@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml.FormulaParsing.Excel.Functions.Text;
 using System.Numerics;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
@@ -45,20 +46,15 @@ namespace WMBA_4.Controllers
             }
             else
             {
-                var convenorDivisions = await GetConvenorTeamIdsAsync(userEmail);
-
-                 teamIds = await _context.TeamStaff
-                .Where(ts => convenorDivisions.Contains(ts.Team.Division.ID))
-                .Select(ts => ts.TeamID)
-                .Distinct()
-                .ToListAsync();
+                var convenorTeams = await GetConvenorTeamIdsAsync(userEmail);
+                teamIds = convenorTeams;
             }
 
             var players = _context.Players
-                .Include(p => p.Team)
-                .ThenInclude(t => t.Division)
-                .OrderBy(s => s.Status == true)
-                .Where(p => teamIds.Contains(p.TeamID));
+               .Include(p => p.Team)
+               .ThenInclude(t => t.Division)
+               .OrderBy(s => s.Status == true)
+               .Where(p => teamIds.Contains(p.TeamID));
 
 
 
@@ -591,12 +587,19 @@ namespace WMBA_4.Controllers
                             teamIds.AddRange(await GetTeamIdsByDivisionAsync("15U"));
                             teamIds.AddRange(await GetTeamIdsByDivisionAsync("18U"));
                             break;
+                        case "Admin":
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("9U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("11U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("13U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("15U"));
+                            teamIds.AddRange(await GetTeamIdsByDivisionAsync("18U"));
+                            break;
                         default:
                             break;
                     }
                 }
 
-                return teamIds.Distinct().ToList();
+                return teamIds.ToList();
             }
             return new List<int>();
         }
