@@ -3,77 +3,128 @@
 @{
     ViewData["Title"] = "ScoreKeeping";
 }
-
-<div class="row">
-    <div class="col-xl-6">
-        <form asp-action="ScoreKeeping">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="card">
-                <div class="card-header" style="display: flex; justify-content: space-between;">
+<div class="container">
+    <div style="background: green;">
+        <div class="p-2">
+            <div class="border p-3">
+                @* Team Info *@
+                <div class="team-area">
                     @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
                     {
                         @if (ViewBag.Teams.Count > 1)
                         {
-                            <div>Home</div>
-                            <h3 style="text-align: right;">@ViewBag.Team1</h3>
-                            <h4 style="text-align: right;">@ViewBag.Team1Score</h4>
-
-                            <div>Visitor</div>
-                            <h4 style="text-align: left;">@ViewBag.Team2Score</h4>
-                            <h3 style="text-align: left;">@ViewBag.Team2</h3>
+                            <div class="f-in-flex align-items-center">
+                                @* Home Team *@
+                                <div class="w-50">
+                                    <div class="d-flex flex-column team-box me-2 p-2">
+                                        <div class="my-1 text-danger">Home</div>
+                                        <h3 class="text-danger">@ViewBag.Team1</h3>
+                                        <div class="text-danger">@ViewBag.Team1Division</div>
+                                    </div>
+                                </div>
+                                @* Team Scores *@
+                                <div class="w-25">
+                                    <div class="d-flex justify-content-center">
+                                        <div class="score-box me-1">
+                                            <h4 class="fs-1 text-danger">@ViewBag.Team1Score</h4>
+                                        </div>
+                                        <div class="score-box ms-1">
+                                            <h4 class="fs-1 text-warning">@ViewBag.Team2Score</h4>
+                                        </div>
+                                    </div>
+                                </div>
+                                @* Away Team *@
+                                <div class="w-50">
+                                    <div class="d-flex flex-column team-box ms-2 p-2">
+                                        <div class="my-1 text-warning">Away</div>
+                                        <h3 class="text-warning">@ViewBag.Team2</h3>
+                                        <div class="text-warning">@ViewBag.Team2Division</div>
+                                    </div>
+                                </div>
+                            </div>
                         }
                     }
                 </div>
-                <div class="d-flex justify-content-around bg-light p-3 border-bottom">
+                @* Inning and AB Info *@
+                <div class="d-flex justify-content-around p-3">
                     @if (ViewBag.Inplay != null)
                     {
                         <h5 id="inning" class="card-title">Inning: @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "N/A")</h5>
                         <h5 id="playerAtBat" class="card-title">Player at bat: @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "N/A")</h5>
                     }
                 </div>
-                <div class="d-flex  bg-light p-3 border-bottom">
-                    <h5 style="text-align: left;">Team Scoring: @ViewBag.TeamScoring</h5>
-                </div>
-                <div class="d-flex justify-content-around bg-light p-3 border-bottom">
+                <div class="d-flex justify-content-center p-3">
                     @if (ViewBag.Inplay != null)
                     {
-                        <h4 id="ballsText">B <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
-                        <h4 id="strikeText">S <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
-                        @* <h4 id="foulsText"> <span id="fouls">@(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</span></h4> *@
-                        <h4 id="outsText">O <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="fs-2 m-0">B</h4>
+                            <div class="ball-box mx-2">
+                                <h4 class="fs-2 text-info" id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="fs-2 m-0">S</h4>
+                            <div class="ball-box mx-2">
+                                <h4 class="fs-2 text-info" id="strikesCount"> @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center ">
+                            <h4 id="ballsText" class="fs-2 m-0">O</h4>
+                            <div class="ball-box mx-2">
+                                <h4 class="fs-2 text-info" id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
+                            </div>
+                        </div>
                     }
                 </div>
-                <div class="p-3">
-                    <table class="table-three">
+                @* Inning Table Info *@
+                <div class="inning-area">
+                    <table class="table-four">
                         <thead>
                             <tr>
                                 <th></th>
                                 @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
                                 {
-                                    <th>@inningNumber</th>
+                                    <th class="fs-4 text-black text-center">@inningNumber</th>
                                 }
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var team in ViewBag.Teams)
                             {
-                                @if (ViewBag.IsHomeTeam != null && ViewBag.IsHomeTeam && ViewBag.TeamID == team.ID)
+                                @if (ViewBag.TeamID != team.ID)
                                 {
                                     <tr>
-                                        <td><strong>@team.Name</strong></td>
+                                        <td class="inning-box">
+                                            <div class="inning-box text-warning text-center m-auto"><strong>A</strong></div>
+                                        </td>
+                                        @* <td class="text-warning">@team.Name</td> *@
                                         @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
                                         {
-                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
+                                            <td class="p-1">
+                                                <div class="inning-box text-warning text-center m-auto">
+                                                    @(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")
+                                                </div>
+                                            </td>
                                         }
                                     </tr>
                                 }
-                                else
+                            }
+                            @foreach (var team in ViewBag.Teams)
+                            {
+                                @if (ViewBag.TeamID == team.ID)
                                 {
                                     <tr>
-                                        <td>@team.Name</td>
+                                        <td class="inning-box">
+                                            <div class="inning-box text-danger text-center m-auto"><strong>H</strong></div>
+                                        </td>
+                                        @* <td class="text-danger"><strong>@team.Name</strong></td> *@
                                         @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
                                         {
-                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
+                                            <td class="p-1 ">
+                                                <div class="inning-box text-danger text-center m-auto">
+                                                    @(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")
+                                                </div>
+                                            </td>
                                         }
                                     </tr>
                                 }
@@ -81,57 +132,66 @@
                         </tbody>
                     </table>
                 </div>
-                <div>
-                    @if (ViewBag.Inplay != null)
-                    {
-                        <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
-                    }
+                <div class="button-area">
                 </div>
-                <div class="card-body p-0">
-                    <div class="d-flex justify-content-around bg-light p-3">
-                        <a id="ballsButton" class="btn btn-kelly mx-1 col">Ball</a>
-                        <a id="strikeButton" class="btn btn-kelly mx-1 col">Strike</a>
-                        <a id="foulButton" class="btn btn-kelly mx-1 col">Foul</a>
-                        <a id="outButton" class="btn btn-kelly mx-1 col">Out</a>
-                    </div>
-                    <div class="d-flex justify-content-around bg-light p-3 rounded-bottom">
-                        <a id="hbpButton" class="btn btn-kelly mx-1 col">HBP</a>
-                        @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
-
-                        <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Hit
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Single</a>
-                            <a class="dropdown-item" href="#">Double</a>
-                            <a class="dropdown-item" href="#">Triple</a>
-                            <a class="dropdown-item" href="#">HomeRun</a>
-                        </div>
-
-                        <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col">In Play</a>
-                    </div>
-                </div>
-            </div>
-        </form>
-    </div>
-</div>
-<div class="col-xl-6">
-    <div class="d-flex justify-content-around mt-3">
-        <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn btn-secondary">Start Game</a>
-        <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
-        <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
-        <div class="dropdown">
-            <button class="btn btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Exit Game
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item exit-game-option" href="#">End Game</a>
-                <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
             </div>
         </div>
     </div>
-</div>
+    <div>
+        @if (ViewBag.Inplay != null)
+        {
+            <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
+        }
+    </div>
+    <div class="card-body p-0">
+        <div class="d-flex justify-content-around bg-light p-3">
+            <a id="ballsButton" class="btn btn-kelly mx-1 col">Ball</a>
+            <a id="strikeButton" class="btn btn-kelly mx-1 col">Strike</a>
+            <a id="foulButton" class="btn btn-kelly mx-1 col">Foul</a>
+            <a id="outButton" class="btn btn-kelly mx-1 col">Out</a>
+        </div>
+        <div class="d-flex justify-content-around bg-light p-3 rounded-bottom">
+            <a id="hbpButton" class="btn btn-kelly mx-1 col">HBP</a>
+            @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
 
+            <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Hit
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Single</a>
+                <a class="dropdown-item" href="#">Double</a>
+                <a class="dropdown-item" href="#">Triple</a>
+                <a class="dropdown-item" href="#">HomeRun</a>
+            </div>
+
+            <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col">In Play</a>
+        </div>
+    </div>
+
+    <div class="d-flex">
+       <div class="w-25 p-2">
+            <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID">Start Game</a>
+       </div>
+       <div class="w-25 p-2">
+           <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
+       </div>
+       <div class="w-25 p-2">
+            <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
+       </div>
+       <div class="w-25 p-2">
+            <div class="dropdown">
+                <button class="btn btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Exit Game
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item exit-game-option" href="#">End Game</a>
+                    <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
+                </div>
+            </div>
+
+       </div>
+    </div>
+</div>
 
 @* This is for LineUp Popup *@
 <div id="lineupPopup" class="popup-container" style="display: none;">
@@ -171,7 +231,7 @@
 
 @*
 
-Cierra popup  inplay *@
+    Cierra popup  inplay *@
 <script>
     $('#closeButtonInplay').click(function () {
         // Solo cierra el popup

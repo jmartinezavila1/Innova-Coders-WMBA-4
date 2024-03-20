@@ -250,6 +250,9 @@ table tdoby tr td {
 }
 
 @media (max-width: 391px) {
+    footer{
+        visibility:hidden;
+    }
     .card-wrapper {
         max-width: 100%; /* 최대 너비를 100%로 설정하여 부모 요소의 너비에 따라 크기가 조정됩니다. */
     }
@@ -524,7 +527,7 @@ tbody > tr:hover {
 }
 
 .text-no-deco {
-    text-decoration: none;
+    text-decoration: none;@
 }
 
 .side-bar-grid {

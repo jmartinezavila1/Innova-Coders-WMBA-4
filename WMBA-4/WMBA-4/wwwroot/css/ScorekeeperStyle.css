@@ -26,3 +26,46 @@
     fill: black;
     text-anchor: middle;
 }
+
+.score-box {
+    width: 3rem;
+    height: 3.2rem;
+    background: black;
+    text-align: center;
+}
+
+.ball-box {
+    width: 3rem;
+    height: 2.6rem;
+    background: black;
+    text-align: center;
+}
+
+.team-box {
+    background: black;
+    text-align:center;
+}
+
+.inning-box {
+    width: 3rem;
+    height: 2rem;
+    background: black;
+    text-align: center;
+}
+
+
+@media (max-width: 570px) {
+    .inning-box {
+        width: 1.5rem;
+        height: 2rem;
+        background: black;
+        text-align: center;
+    }
+}
+
+@media (min-width: 571px) {
+    .inning-box {
+        width: 2rem;
+        height: 2rem;
+        background: black;
+    }
