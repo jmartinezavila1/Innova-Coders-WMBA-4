@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,25 +20,49 @@ namespace WMBA_4.Controllers
     public class ScorePlayerController : Controller
     {
         private readonly WMBA_4_Context _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public ScorePlayerController(WMBA_4_Context context)
+        public ScorePlayerController(WMBA_4_Context context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: ScorePlayer
         public async Task<IActionResult> Index(int? TeamID, int? divisionID, int? LocationID, int? GameTypeID, DateTime GameDate, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Location")
         {
+            var userEmail = User.Identity.Name;
+
+            List<int> teamIds = new List<int>();
+
+            var user = await _userManager.FindByEmailAsync(userEmail);
+            if (await _userManager.IsInRoleAsync(user, "Coach"))
+            {
+                teamIds = await GetCoachTeamsAsync(userEmail);
+            }
+            else if (await _userManager.IsInRoleAsync(user, "Scorekeeper"))
+            {
+                teamIds = await GetScorekeeperTeamsAsync(userEmail);
+            }
+            else
+            {
+                var convenorDivisions = await GetConvenorDivisionsAsync(userEmail);
+                teamIds = await _context.Teams
+                    .Where(t => convenorDivisions.Contains(t.Division.DivisionName))
+                    .Select(t => t.ID)
+                    .ToListAsync();
+            }
+
             IQueryable<Game> games = _context.Games
                 .Include(g => g.GameType)
                 .Include(g => g.Location)
                 .Include(g => g.Season)
-                .Include(t => t.TeamGames)
+                .Include(tg => tg.TeamGames)
                     .ThenInclude(t => t.Team)
                         .ThenInclude(d => d.Division)
-                .Where(s => s.Status == true && s.Date >= DateTime.Today)
-                 .OrderBy(a => a.Date);
+                .Where(s => s.Status == true && s.Date >= DateTime.Today && s.TeamGames.Any(tg => teamIds.Contains(tg.TeamID)))
+                .OrderBy(a => a.Date);
 
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
@@ -2600,6 +2625,69 @@ namespace WMBA_4.Controllers
         private bool ScorePlayerExists(int id)
         {
             return _context.ScorePlayers.Any(e => e.ID == id);
+        }
+        private async Task<List<string>> GetConvenorDivisionsAsync(string convenorEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(convenorEmail);
+            if (user != null)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                switch (roles.FirstOrDefault())
+                {
+                    case "RookieConvenor":
+                        return new List<string> { "9U" };
+                    case "IntermediateConvenor":
+                        return new List<string> { "11U", "13U" };
+                    case "SeniorConvenor":
+                        return new List<string> { "15U", "18U" };
+                    default:
+                        return new List<string> { "9U", "11U", "13U", "15U", "18U" };
+                }
+            }
+            return new List<string>();
+        }
+
+        private async Task<List<int>> GetCoachTeamsAsync(string coachEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(coachEmail);
+            if (user != null)
+            {
+
+                var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
+                if (staff != null)
+                {
+
+                    var teamIds = await _context.TeamStaff
+                        .Where(ts => ts.StaffID == staff.ID)
+                        .Select(ts => ts.TeamID)
+                        .ToListAsync();
+
+                    return teamIds;
+                }
+            }
+            return new List<int>();
+        }
+
+        private async Task<List<int>> GetScorekeeperTeamsAsync(string coachEmail)
+        {
+            var user = await _userManager.FindByEmailAsync(coachEmail);
+            if (user != null)
+            {
+
+                var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
+                if (staff != null)
+                {
+
+                    var teamIds = await _context.TeamStaff
+                        .Where(ts => ts.StaffID == staff.ID)
+                        .Select(ts => ts.TeamID)
+                        .ToListAsync();
+
+                    return teamIds;
+                }
+            }
+            return new List<int>();
         }
     }
 }
