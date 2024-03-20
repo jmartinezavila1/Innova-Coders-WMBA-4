@@ -226,6 +226,8 @@ namespace WMBA_4.Controllers
             //Filter by DivisionName - TeamName
             ViewBag.TeamID = new SelectList(_context.Teams
                 .Include(t => t.Division)
+                .OrderBy(t => t.Division.ID)
+                .ThenBy(t => t.Name)
                 .Select(t => new { 
                     t.ID, 
                     TeamName = t.Division.DivisionName + " - " + t.Name 
