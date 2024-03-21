@@ -253,6 +253,13 @@ table tdoby tr td {
 }
 
 /*//////////////////////////////////padding//////////////////////////////////////////*/
+.main-padding-scorekeeper {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
 .main-padding {
     padding-left: 1rem;
     padding-right: 1rem;
@@ -324,13 +331,10 @@ table tdoby tr td {
 
 
 @media (min-width: 768px) {
-
     .main-padding {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
     }
-
-    
 }
 
 @media (min-width: 960px) {
