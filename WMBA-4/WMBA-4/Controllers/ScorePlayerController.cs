@@ -1452,6 +1452,13 @@ namespace WMBA_4.Controllers
                 .OrderBy(i => i.InningNumber)
                 .ToListAsync();
 
+            var lineup = _context.GameLineUps
+                .Include(gl => gl.Team)
+                .ThenInclude(t=>t.Players)
+                .Include(gl => gl.Game)
+                .Where(gl => gl.TeamID == TeamID && gl.GameID == GameID)
+                .ToList();
+
             // 이닝별 팀별 점수 계산하기
             var inningScores = new Dictionary<int, Dictionary<int, int>>();
 
@@ -1468,6 +1475,7 @@ namespace WMBA_4.Controllers
                 inningScores[inning.InningNumber] = inningScoreByTeam;
             }
 
+            var playerCount = lineup.Sum(gl => gl.Team.Players.Count);
             // Store the scores in ViewBag
             ViewBag.Team1Score = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score;
             ViewBag.Team2Score = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score;
@@ -1477,7 +1485,7 @@ namespace WMBA_4.Controllers
             ViewBag.Team2Division = teamDivision.FirstOrDefault(t => t.TeamID != TeamID)?.Team.Division.DivisionName;
             ViewBag.Innings = innings;
             ViewBag.InningScores = inningScores;
-
+            ViewBag.PlayerCount = playerCount;
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;

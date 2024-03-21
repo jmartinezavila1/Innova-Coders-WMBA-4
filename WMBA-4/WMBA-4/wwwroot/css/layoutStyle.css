@@ -1997,7 +1997,7 @@ progress {
 }
 
     .table-four > :not(caption) > * > *, .datatable-table-four > :not(caption) > * > * {
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 0.1rem;
         background-color: var(--bs-table-bg);
         box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
     }
@@ -2022,7 +2022,7 @@ table-four th, table-four td {
 }
 
 .table-four tbody td {
-    padding: 5px;
+    padding: 0px;
 }
 
 .table-three, .datatable-table-three {
@@ -3403,6 +3403,23 @@ textarea.form-control-lg {
     --bs-btn-disabled-border-color: #0d6efd;
 }
 
+.btn-blue {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bg-dark-blue);
+    --bs-btn-border-color: var(--bg-dark-blue);
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #23b51c;
+    --bs-btn-hover-border-color: #23b51c;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--bg-dark-blue);
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0d6efd;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+
 .btn-secondary {
     --bs-btn-color: #fff;
     --bs-btn-bg: #6c757d;
@@ -3760,7 +3777,7 @@ textarea.form-control-lg {
         border-right: 0.3em solid transparent;
         border-bottom: 0;
         border-left: 0.3em solid transparent;
-        color: var(--ft-kelly);
+        color: var(--ft-white);
     }
 
     .dropdown-toggle:empty::after {
