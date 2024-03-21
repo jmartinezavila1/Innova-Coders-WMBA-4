@@ -131,10 +131,10 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
+            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t => t.Name), "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt=>gt.Description), "ID", "Description");
-            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l=>l.LocationName), "ID", "LocationName");
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt => gt.Description), "ID", "Description");
+            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l => l.LocationName), "ID", "LocationName");
 
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -1416,14 +1416,20 @@ namespace WMBA_4.Controllers
         // GET: First screen of ScorePlayer
         public async Task<IActionResult> ScoreKeeping(int GameID, int TeamID)
         {
-
             var teams = await _context.GameLineUps
                 .Include(t => t.Team)
                 .Include(tg => tg.Game).ThenInclude(tm => tm.TeamGames)
                 .Where(t => t.GameID == GameID)
-                .Select(t => new { t.Team.ID, t.Team.Name})
+                .Select(t => new { t.Team.ID, t.Team.Name })
                 .Distinct()
                 .ToListAsync();
+
+            var teamDivision = _context.TeamGame
+                .Include(tg=>tg.Game)
+                .Include(t => t.Team)
+                .ThenInclude(t => t.Division)
+                .Where(t=>t.GameID == GameID)
+                .ToList();
 
             var inPlay = await _context.Inplays
                 .Include(i => i.Inning)
@@ -1452,16 +1458,13 @@ namespace WMBA_4.Controllers
             foreach (var inning in innings)
             {
                 var inningScoreByTeam = new Dictionary<int, int>();
-
                 foreach (var team in teams)
                 {
                     var teamScore = await _context.Inplays
                         .Where(ip => ip.InningID == inning.ID && ip.Inning.TeamID == team.ID)
                         .SumAsync(ip => ip.Runs);
-
                     inningScoreByTeam[team.ID] = teamScore;
                 }
-
                 inningScores[inning.InningNumber] = inningScoreByTeam;
             }
 
@@ -1470,9 +1473,11 @@ namespace WMBA_4.Controllers
             ViewBag.Team2Score = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score;
             ViewBag.Team1 = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.Team.Name;
             ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
+            ViewBag.Team1Division = teamDivision.FirstOrDefault(t => t.TeamID == TeamID)?.Team.Division.DivisionName;
+            ViewBag.Team2Division = teamDivision.FirstOrDefault(t => t.TeamID != TeamID)?.Team.Division.DivisionName;
             ViewBag.Innings = innings;
             ViewBag.InningScores = inningScores;
-         
+
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;
