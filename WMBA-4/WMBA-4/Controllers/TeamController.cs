@@ -32,48 +32,48 @@ namespace WMBA_4.Controllers
             _userManager = userManager;
         }
         // GET: Team
-        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, bool isActive, bool isInactive,int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchString, int? DivisionID, int? CoachID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Team")
         {
-            var userEmail = User.Identity.Name; 
+            var userEmail = User.Identity.Name;
 
             List<int> teamIds = new List<int>();
 
             var user = await _userManager.FindByEmailAsync(userEmail);
             if (await _userManager.IsInRoleAsync(user, "Coach"))
             {
-                
+
                 teamIds = await GetCoachTeamsAsync(userEmail);
             }
             else if (await _userManager.IsInRoleAsync(user, "Scorekeeper"))
             {
-                
+
                 teamIds = await GetScorekeeperTeamsAsync(userEmail);
             }
             else
             {
-                
+
                 var convenorDivisions = await GetConvenorDivisionsAsync(userEmail);
 
-                
+
                 teamIds = await _context.Teams
                     .Where(t => convenorDivisions.Contains(t.Division.DivisionName))
                     .Select(t => t.ID)
                     .ToListAsync();
             }
 
-           
+
             var teams = _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
-                .Where(t => teamIds.Contains(t.ID)); 
+                .Where(t => teamIds.Contains(t.ID));
 
             PopulateDropDownLists();
 
-           
+
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
-            
+
             string[] sortOptions = new[] { "Team", "Division", "Coach" };
 
             //Filter
@@ -100,28 +100,28 @@ namespace WMBA_4.Controllers
             }
             if (numberFilters != 0)
             {
-                
+
                 ViewData["Filtering"] = " btn-danger";
-               
+
                 ViewData["numberFilters"] = "(" + numberFilters.ToString()
                     + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
-             
+
             }
 
-            teams = teams.OrderByDescending(p => p.Status) 
-                    .ThenBy(p => p.Name)     
-                    .ThenBy(p => p.Division.DivisionName); 
+            teams = teams.OrderByDescending(p => p.Status)
+                    .ThenBy(p => p.Name)
+                    .ThenBy(p => p.Division.DivisionName);
 
 
-            if (!String.IsNullOrEmpty(actionButton)) 
+            if (!String.IsNullOrEmpty(actionButton))
             {
                 page = 1;
-                         
-                if (!String.IsNullOrEmpty(actionButton)) 
+
+                if (!String.IsNullOrEmpty(actionButton))
                 {
                     if (sortOptions.Contains(actionButton))
                     {
-                        if (actionButton == sortField) 
+                        if (actionButton == sortField)
                         {
                             sortDirection = sortDirection == "asc" ? "desc" : "asc";
                         }
@@ -252,10 +252,9 @@ namespace WMBA_4.Controllers
 
             ViewBag.OpponentTeams = opponentTeams;
             ViewData["Players"] = players.ToList();
-           
+
             return View(team);
         }
-
 
         // GET: Team/Create
         public IActionResult Create()
@@ -651,8 +650,8 @@ namespace WMBA_4.Controllers
                             {
                                 transaction.Rollback();
                                 errorCount++;
-                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected because the Season value is not the current year."
-                                        +"</span>"+"<br />";
+                                feedBack += "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected because the Season value is not the current year."
+                                        + "</span>" + "<br />";
                                 continue; // Salta al siguiente registro
                             }
                             Player existingPlayer = _context.Players.FirstOrDefault(p => p.MemberID == pl.MemberID);
@@ -696,8 +695,8 @@ namespace WMBA_4.Controllers
                                 // El jugador ya existe, por lo que no lo agregamos
                                 transaction.Rollback();
                                 errorCount++;
-                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
-                                        +"</span>"+"<br />";
+                                feedBack += "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        + "</span>" + "<br />";
                             }
                         }
                         catch (DbUpdateException dex)
@@ -706,12 +705,12 @@ namespace WMBA_4.Controllers
                             errorCount++;
                             if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                             {
-                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
-                                        +"</span>"+"<br />";
+                                feedBack += "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + " " + pl.LastName + " was rejected as a duplicate."
+                                        + "</span>" + "<br />";
                             }
                             else
                             {
-                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + " " + pl.LastName + " caused an error."
+                                feedBack += "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + " " + pl.LastName + " caused an error."
                                         + "</span>" + "<br />";
                             }
                         }
@@ -721,12 +720,12 @@ namespace WMBA_4.Controllers
                             errorCount++;
                             if (ex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
                             {
-                                feedBack += "<span class=\"text-danger\">"+ "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + pl.LastName + " was rejected because the Team name is duplicated."
-                                        +"</span>"+ "<br />";
+                                feedBack += "<span class=\"text-danger\">" + "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + pl.LastName + " was rejected because the Team name is duplicated."
+                                        + "</span>" + "<br />";
                             }
                             else
                             {
-                                feedBack += "<span class=\"text-danger\">"+ "Error: Record " + pl.FirstName + pl.LastName + " caused and error."
+                                feedBack += "<span class=\"text-danger\">" + "Error: Record " + pl.FirstName + pl.LastName + " caused and error."
                                         + "</span>" + "<br />";
                             }
                         }
@@ -749,7 +748,7 @@ namespace WMBA_4.Controllers
                 " Records with " + "<span class=\"text-bold text-primary\">" + successCount.ToString() + "</span>" + " inserted and " +
                 "<span class=\"text-bold text-danger\">" + errorCount.ToString() + "</span>" + " rejected";
                 }
-               
+
             }
             else
             {
@@ -757,8 +756,6 @@ namespace WMBA_4.Controllers
             }
             return feedBack;
         }
-
-
 
         private SelectList DivisionList(int? selectedId)
         {
@@ -783,7 +780,7 @@ namespace WMBA_4.Controllers
             if (user != null)
             {
                 var roles = await _userManager.GetRolesAsync(user);
-                
+
                 switch (roles.FirstOrDefault())
                 {
                     case "RookieConvenor":
@@ -793,10 +790,10 @@ namespace WMBA_4.Controllers
                     case "SeniorConvenor":
                         return new List<string> { "15U", "18U" };
                     default:
-                        return new List<string> { "9U", "11U", "13U", "15U", "18U" }; 
+                        return new List<string> { "9U", "11U", "13U", "15U", "18U" };
                 }
             }
-            return new List<string>(); 
+            return new List<string>();
         }
 
         private async Task<List<int>> GetCoachTeamsAsync(string coachEmail)
@@ -804,11 +801,11 @@ namespace WMBA_4.Controllers
             var user = await _userManager.FindByEmailAsync(coachEmail);
             if (user != null)
             {
-               
+
                 var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
                 if (staff != null)
                 {
-                    
+
                     var teamIds = await _context.TeamStaff
                         .Where(ts => ts.StaffID == staff.ID)
                         .Select(ts => ts.TeamID)
@@ -817,7 +814,7 @@ namespace WMBA_4.Controllers
                     return teamIds;
                 }
             }
-            return new List<int>(); 
+            return new List<int>();
         }
 
         private async Task<List<int>> GetScorekeeperTeamsAsync(string coachEmail)
@@ -825,11 +822,11 @@ namespace WMBA_4.Controllers
             var user = await _userManager.FindByEmailAsync(coachEmail);
             if (user != null)
             {
-                
+
                 var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
                 if (staff != null)
                 {
-                    
+
                     var teamIds = await _context.TeamStaff
                         .Where(ts => ts.StaffID == staff.ID)
                         .Select(ts => ts.TeamID)
@@ -838,10 +835,10 @@ namespace WMBA_4.Controllers
                     return teamIds;
                 }
             }
-            return new List<int>(); 
+            return new List<int>();
         }
 
-        
+
 
     }
 
