@@ -2168,6 +2168,7 @@ namespace WMBA_4.Controllers
                     scorePlayer2.Run++;
                     inplay.Runs++;
                     teamGameScore.score++;
+                    inning.ScorePerInning++;
                     rbi++;
 
 
@@ -2192,6 +2193,7 @@ namespace WMBA_4.Controllers
                         scorePlayer2.Run++;
                         inplay.Runs++;
                         teamGameScore.score++;
+                        inning.ScorePerInning++;
                         rbi++;
 
                     }
@@ -2247,6 +2249,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
 
                 }
@@ -2267,6 +2270,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2287,6 +2291,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2328,6 +2333,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2347,6 +2353,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2366,6 +2373,7 @@ namespace WMBA_4.Controllers
                     scorePlayer4.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2385,6 +2393,7 @@ namespace WMBA_4.Controllers
                 scorePlayer3.AB++;
                 scorePlayer3.Run++;
                 inplay.Runs++;
+                inning.ScorePerInning++;
                 teamGameScore.score++;
                 rbi++;
                 scorePlayer3.RBI += rbi;
@@ -2481,6 +2490,7 @@ namespace WMBA_4.Controllers
                 scorePlayer.Run++;
                 scorePlayer2.RBI++;
                 teamGameScore.score++;
+                inning.ScorePerInning++;
 
 
             }
