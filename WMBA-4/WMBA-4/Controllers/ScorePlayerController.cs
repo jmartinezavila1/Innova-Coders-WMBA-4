@@ -131,10 +131,10 @@ namespace WMBA_4.Controllers
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
 
-            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
+            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t => t.Name), "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt=>gt.Description), "ID", "Description");
-            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l=>l.LocationName), "ID", "LocationName");
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt => gt.Description), "ID", "Description");
+            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l => l.LocationName), "ID", "LocationName");
 
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -213,6 +213,7 @@ namespace WMBA_4.Controllers
             inplay.PlayerInBase1ID = null;
             inplay.PlayerInBase2ID = null;
             inplay.PlayerInBase3ID = null;
+            
 
             _context.Inplays.Update(inplay);
             await _context.SaveChangesAsync();
@@ -249,7 +250,8 @@ namespace WMBA_4.Controllers
                 Fouls = inplay2.Fouls,
                 Balls = inplay2.Balls,
                 InningNumber = inplay2.Inning.InningNumber,
-                FirstPlayer = playeratBat
+                FirstPlayer = playeratBat,
+                Inning = inning.ScorePerInning
             };
 
             var lineupPlayers = _context.GameLineUps
@@ -532,9 +534,7 @@ namespace WMBA_4.Controllers
 
         }
 
-
         //Method to count Balls
-
         [HttpPost]
         public async Task<IActionResult> CountBalls(int inplayId)
         {
@@ -701,7 +701,6 @@ namespace WMBA_4.Controllers
         }
 
         //Method to count Strikes
-
         [HttpPost]
         public async Task<IActionResult> CountStrikes(int inplayId)
         {
@@ -956,7 +955,6 @@ namespace WMBA_4.Controllers
         }
 
         //Method to count Fouls
-
         [HttpPost]
         public async Task<IActionResult> CountFouls(int inplayId)
         {
@@ -1129,9 +1127,7 @@ namespace WMBA_4.Controllers
 
         }
 
-
         //Method for recording Hit by Pitch
-
         [HttpPost]
         public async Task<IActionResult> HitByPitch(int inplayId)
         {
@@ -1226,9 +1222,7 @@ namespace WMBA_4.Controllers
 
         }
 
-
         //Method to record an Out
-
         [HttpPost]
         public async Task<IActionResult> Out(int inplayId)
         {
@@ -1411,19 +1405,23 @@ namespace WMBA_4.Controllers
 
         }
 
-
-
         // GET: First screen of ScorePlayer
         public async Task<IActionResult> ScoreKeeping(int GameID, int TeamID)
         {
-
             var teams = await _context.GameLineUps
                 .Include(t => t.Team)
                 .Include(tg => tg.Game).ThenInclude(tm => tm.TeamGames)
                 .Where(t => t.GameID == GameID)
-                .Select(t => new { t.Team.ID, t.Team.Name})
+                .Select(t => new { t.Team.ID, t.Team.Name })
                 .Distinct()
                 .ToListAsync();
+
+            var teamDivision = _context.TeamGame
+                .Include(tg=>tg.Game)
+                .Include(t => t.Team)
+                .ThenInclude(t => t.Division)
+                .Where(t=>t.GameID == GameID)
+                .ToList();
 
             var inPlay = await _context.Inplays
                 .Include(i => i.Inning)
@@ -1446,33 +1444,33 @@ namespace WMBA_4.Controllers
                 .OrderBy(i => i.InningNumber)
                 .ToListAsync();
 
-            // 이닝별 팀별 점수 계산하기
-            var inningScores = new Dictionary<int, Dictionary<int, int>>();
+            var lineup = _context.GameLineUps
+                .Include(gl => gl.Team)
+                .ThenInclude(t=>t.Players)
+                .Include(gl => gl.Game)
+                .Where(gl => gl.TeamID == TeamID && gl.GameID == GameID)
+                .ToList();
 
-            foreach (var inning in innings)
-            {
-                var inningScoreByTeam = new Dictionary<int, int>();
+            var inningScore = await _context.Innings
+                .Where(i => i.GameID == GameID)
+                .OrderBy(i => i.InningNumber)
+                .ToListAsync();
 
-                foreach (var team in teams)
-                {
-                    var teamScore = await _context.Inplays
-                        .Where(ip => ip.InningID == inning.ID && ip.Inning.TeamID == team.ID)
-                        .SumAsync(ip => ip.Runs);
+            var teamInnings = await _context.Innings
+                   .Where(i => i.GameID == GameID)
+                   .OrderBy(i => i.InningNumber)
+                   .ToListAsync();
 
-                    inningScoreByTeam[team.ID] = teamScore;
-                }
-
-                inningScores[inning.InningNumber] = inningScoreByTeam;
-            }
-
+            var playerCount = lineup.Sum(gl => gl.Team.Players.Count);
             // Store the scores in ViewBag
             ViewBag.Team1Score = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score;
             ViewBag.Team2Score = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score;
             ViewBag.Team1 = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.Team.Name;
             ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
-            ViewBag.Innings = innings;
-            ViewBag.InningScores = inningScores;
-         
+            ViewBag.Team1Division = teamDivision.FirstOrDefault(t => t.TeamID == TeamID)?.Team.Division.DivisionName;
+            ViewBag.Team2Division = teamDivision.FirstOrDefault(t => t.TeamID != TeamID)?.Team.Division.DivisionName;
+            ViewBag.InningScores = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+            ViewBag.PlayerCount = playerCount;
 
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;
@@ -1495,8 +1493,6 @@ namespace WMBA_4.Controllers
 
             return PartialView("_LineupView", lineup);
         }
-
-
 
         // Method to load the inplay partial view
         public async Task<IActionResult> LoadInplayPartial(int inplayId)
@@ -1535,7 +1531,6 @@ namespace WMBA_4.Controllers
 
             return PartialView("_InplayPartial", inplayData);
         }
-
 
         // This is the method for the Save button in the popup
         [HttpPost]
@@ -1877,7 +1872,6 @@ namespace WMBA_4.Controllers
 
         }
 
-
         //Mothod to Close popup and update InPlay   
         [HttpPost]
         public async Task<IActionResult> UpdateInplay(int inplayId)
@@ -2163,6 +2157,7 @@ namespace WMBA_4.Controllers
                     scorePlayer2.Run++;
                     inplay.Runs++;
                     teamGameScore.score++;
+                    inning.ScorePerInning++;
                     rbi++;
 
 
@@ -2187,6 +2182,7 @@ namespace WMBA_4.Controllers
                         scorePlayer2.Run++;
                         inplay.Runs++;
                         teamGameScore.score++;
+                        inning.ScorePerInning++;
                         rbi++;
 
                     }
@@ -2242,6 +2238,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
 
                 }
@@ -2262,6 +2259,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2282,6 +2280,7 @@ namespace WMBA_4.Controllers
                     teamGameScore.score++;
                     scorePlayer4.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2323,6 +2322,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2342,6 +2342,7 @@ namespace WMBA_4.Controllers
                     scorePlayer.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2361,6 +2362,7 @@ namespace WMBA_4.Controllers
                     scorePlayer4.Run++;
                     teamGameScore.score++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     rbi++;
                 }
 
@@ -2380,6 +2382,7 @@ namespace WMBA_4.Controllers
                 scorePlayer3.AB++;
                 scorePlayer3.Run++;
                 inplay.Runs++;
+                inning.ScorePerInning++;
                 teamGameScore.score++;
                 rbi++;
                 scorePlayer3.RBI += rbi;
@@ -2426,7 +2429,6 @@ namespace WMBA_4.Controllers
 
             return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, playerBatting = pb, Inplay = inplayData });
         }
-
 
         [HttpPost]
         public async Task<IActionResult> HandleUserDecision(int id, string decision, int batter, int player)
@@ -2476,6 +2478,7 @@ namespace WMBA_4.Controllers
                 scorePlayer.Run++;
                 scorePlayer2.RBI++;
                 teamGameScore.score++;
+                inning.ScorePerInning++;
 
 
             }

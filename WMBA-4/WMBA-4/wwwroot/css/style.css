@@ -3,7 +3,26 @@
 
 /*/////////////////////////////////////////font//////////////////////////////////////////*/
 @import url("https://p.typekit.net/p.css?s=1&k=igy8ywi&ht=tk&f=32897.32904&a=39545793&app=typekit&e=css");
-
+@font-face {
+    font-family: 'scoreboard';
+    src: url('../fonts/scoreboard.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'jdled3regular-1xg2';
+    src: url('../fonts/jd-led3-font/jdled3regular-1xg2.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'cursedtimerulil-aznm';
+    src: url('../fonts/cursed-timer-ulil-font/cursedtimerulil-aznm.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'sfdigitalreadoutmedium-q3rq';
+    src: url('../fonts/sf-digital-readout-font/sfdigitalreadoutmedium-q3rq.ttf') format('truetype');
+}
+@font-face {
+    font-family: 'digital display tfb';
+    src: url('../fonts/digital display/digital display tfb.ttf') format('truetype');
+}
 @font-face {
     font-family: "proxima-soft";
     src: url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
@@ -12,7 +31,6 @@
     font-weight: 400;
     font-stretch: normal;
 }
-
 @font-face {
     font-family: "proxima-soft";
     src: url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff2"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("woff"),url("https://use.typekit.net/af/2657d4/00000000000000003b9b3038/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n7&v=3") format("opentype");
@@ -51,9 +69,10 @@
     --ft-dark-blue: #23314E;
     /*////font sizes////*/
     /*px*/
-    --ft-l: 25px;
-    --ft-m: 20px;
-    --ft-s: 15px;
+    --scorekeeper: 3rem;
+    --ft-3: 3rem;
+    --ft-2: 2rem;
+    --ft-1-5: 1.5rem;
     /*////rem size////*/
     --ft-r-l: 2rem;
     --ft-r-m: 1.8rem;
@@ -69,7 +88,9 @@ a[disabled] {
     pointer-events: none; /* 링크 클릭 이벤트 비활성화 */
 }
 
-table tbody tr {
+.table-one tbody tr,
+.table-two tbody tr,
+.table-three tbody tr {
     cursor: pointer;
 }
 
@@ -232,6 +253,20 @@ table tdoby tr td {
 }
 
 /*//////////////////////////////////padding//////////////////////////////////////////*/
+.main-padding-scorekeeper {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+
+.main-padding {
+    padding-left: 1rem;
+    padding-right: 1rem;
+    padding-top: 5rem;
+    padding-bottom: 3rem;
+}
+
 .px-6 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -250,6 +285,7 @@ table tdoby tr td {
 }
 
 @media (max-width: 391px) {
+   
     .card-wrapper {
         max-width: 100%; /* 최대 너비를 100%로 설정하여 부모 요소의 너비에 따라 크기가 조정됩니다. */
     }
@@ -261,16 +297,16 @@ table tdoby tr td {
         padding-right: 0;
     }
 
-    .px-6 {
-        padding-left: 1.4rem !important;
-        padding-right: 1.5rem !important;
+    .main-padding {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
     }
 }
 
 @media (min-width: 427px) {
-    .px-6 {
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
+    .main-padding {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
     }
 }
 
@@ -282,7 +318,7 @@ table tdoby tr td {
 }
 
 @media (min-width: 524px) {
-    .px-6 {
+    .main-padding {
         padding-left: 3rem !important;
         padding-right: 3rem !important;
     }
@@ -293,18 +329,16 @@ table tdoby tr td {
     }
 }
 
-@media (min-width: 768px) {
 
-    .px-6 {
+@media (min-width: 768px) {
+    .main-padding {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
     }
-
-    
 }
 
 @media (min-width: 960px) {
-    .px-6 {
+    .main-padding {
         padding-left: 7rem !important;
         padding-right: 7rem !important;
     }
@@ -317,21 +351,21 @@ table tdoby tr td {
 }
 
 @media (min-width: 1280px) {
-    .px-6 {
+    .main-padding {
         padding-left: 9rem !important;
         padding-right: 9rem !important;
     }
 }
 
 @media (min-width: 1380px) {
-    .px-6 {
+    .main-padding {
         padding-left: 11rem !important;
         padding-right: 11rem !important;
     }
 }
 
 @media (min-width: 1420px) {
-    .px-6 {
+    .main-padding {
         padding-left: 13rem !important;
         padding-right: 13rem !important;
     }
@@ -350,7 +384,9 @@ table tdoby tr td {
     color: var(--ft-black) !important;
 }
 
-tbody > tr:hover {
+.table-one tbody > tr:hover,
+.table-two tbody > tr:hover,
+.table-three tbody > tr:hover {
     background-color: var(--bg-hover-grey);
 }
 
@@ -524,7 +560,7 @@ tbody > tr:hover {
 }
 
 .text-no-deco {
-    text-decoration: none;
+    text-decoration: none;@
 }
 
 .side-bar-grid {

@@ -2,136 +2,238 @@
 
 @{
     ViewData["Title"] = "ScoreKeeping";
+    Layout = "~/Views/Shared/_AllLinks.cshtml";
 }
-
-<div class="row">
-    <div class="col-xl-6">
-        <form asp-action="ScoreKeeping">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="card">
-                <div class="card-header" style="display: flex; justify-content: space-between;">
+@* Start Row *@
+<div class="">
+    <div style="background: green;">
+        <div class="p-2 mb-3">
+            <div class="border border-4 p-2">
+                @* Team Info *@
+                <div class="team-area">
                     @if (ViewBag.Teams != null && ViewBag.Teams.Count > 0)
                     {
                         @if (ViewBag.Teams.Count > 1)
                         {
-                            <div>Home</div>
-                            <h3 style="text-align: right;">@ViewBag.Team1</h3>
-                            <h4 style="text-align: right;">@ViewBag.Team1Score</h4>
-
-                            <div>Visitor</div>
-                            <h4 style="text-align: left;">@ViewBag.Team2Score</h4>
-                            <h3 style="text-align: left;">@ViewBag.Team2</h3>
+                            <div class="f-in-flex align-items-center my-2">
+                                @* Home Team *@
+                                <div class="w-50">
+                                    <div class="d-flex flex-column team-box me-2 p-2">
+                                        <div class="my-1 text-danger">Home</div>
+                                        <h3 class="text-danger m-0">@ViewBag.Team1</h3>
+                                        <div class="text-danger">@ViewBag.Team1Division</div>
+                                    </div>
+                                </div>
+                                @* Team Scores *@
+                                <div class="w-25">
+                                    <div class="d-flex justify-content-center">
+                                        @if (ViewBag.Inplay != null)
+                                        {
+                                            <div class="score-box me-1">
+                                                <h4 id="runs" class="score-size text-danger p-2 m-0 h-100 d-flex justify-content-center align-items-center">@(ViewBag.Team1Score != null ? ViewBag.Team1Score : "-")</h4>
+                                            </div>
+                                            <div class="score-box ms-1">
+                                                <h4 id="runs2" class="score-size text-warning p-2 m-0 h-100 d-flex justify-content-center align-items-center">@(ViewBag.Team2Score != null ? ViewBag.Team2Score : "")</h4>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                @* Away Team *@
+                                <div class="w-50">
+                                    <div class="d-flex flex-column team-box ms-2 p-2">
+                                        <div class="my-1 text-warning">Away</div>
+                                        <h3 class="text-warning m-0">@ViewBag.Team2</h3>
+                                        <div class="text-warning">@ViewBag.Team2Division</div>
+                                    </div>
+                                </div>
+                            </div>
                         }
                     }
                 </div>
-                <div class="d-flex justify-content-around bg-light p-3 border-bottom">
+                @* Inning and AB Info *@
+                <div class="d-flex justify-content-around p-2">
                     @if (ViewBag.Inplay != null)
                     {
-                        <h5 id="inning" class="card-title">Inning: @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "N/A")</h5>
-                        <h5 id="playerAtBat" class="card-title">Player at bat: @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "N/A")</h5>
-                    }
-                </div>
-                <div class="d-flex  bg-light p-3 border-bottom">
-                    <h5 style="text-align: left;">Team Scoring: @ViewBag.TeamScoring</h5>
-                </div>
-                <div class="d-flex justify-content-around bg-light p-3 border-bottom">
-                    @if (ViewBag.Inplay != null)
-                    {
-                        <h4 id="ballsText">B <span id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</span></h4>
-                        <h4 id="strikeText">S <span id="strikesCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</span></h4>
-                        @* <h4 id="foulsText"> <span id="fouls">@(ViewBag.Inplay != null ? ViewBag.Inplay.Fouls : "")</span></h4> *@
-                        <h4 id="outsText">O <span id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</span></h4>
-                    }
-                </div>
-                <div class="p-3">
-                    <table class="table-three">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                {
-                                    <th>@inningNumber</th>
-                                }
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var team in ViewBag.Teams)
-                            {
-                                @if (ViewBag.IsHomeTeam != null && ViewBag.IsHomeTeam && ViewBag.TeamID == team.ID)
-                                {
-                                    <tr>
-                                        <td><strong>@team.Name</strong></td>
-                                        @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                        {
-                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
-                                        }
-                                    </tr>
-                                }
-                                else
-                                {
-                                    <tr>
-                                        <td>@team.Name</td>
-                                        @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                        {
-                                            <td>@(ViewBag.InningScores.ContainsKey(inningNumber) && ViewBag.InningScores[inningNumber].ContainsKey(team.ID) ? ViewBag.InningScores[inningNumber][team.ID] : "-")</td>
-                                        }
-                                    </tr>
-                                }
-                            }
-                        </tbody>
-                    </table>
-                </div>
-                <div>
-                    @if (ViewBag.Inplay != null)
-                    {
-                        <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
-                    }
-                </div>
-                <div class="card-body p-0">
-                    <div class="d-flex justify-content-around bg-light p-3">
-                        <a id="ballsButton" class="btn btn-kelly mx-1 col">Ball</a>
-                        <a id="strikeButton" class="btn btn-kelly mx-1 col">Strike</a>
-                        <a id="foulButton" class="btn btn-kelly mx-1 col">Foul</a>
-                        <a id="outButton" class="btn btn-kelly mx-1 col">Out</a>
-                    </div>
-                    <div class="d-flex justify-content-around bg-light p-3 rounded-bottom">
-                        <a id="hbpButton" class="btn btn-kelly mx-1 col">HBP</a>
-                        @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
-
-                        <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Hit
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item" href="#">Single</a>
-                            <a class="dropdown-item" href="#">Double</a>
-                            <a class="dropdown-item" href="#">Triple</a>
-                            <a class="dropdown-item" href="#">HomeRun</a>
+                        <div class="d-flex flex-column">
+                            <h5 class="fs-3 text-white card-title mb-2 text-center">Inning </h5>
+                            <div class="score-box text-warning text-center m-auto px-3 py-2">
+                                <h6 id="inning" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                    @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "-")
+                                </h6>
+                            </div>
                         </div>
-
-                        <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col">In Play</a>
+                        <div class="d-flex flex-column">
+                            <h5 class="fs-3 text-white card-title mb-2 text-center">At Bat </h5>
+                            <div class="score-box text-warning text-center m-auto px-3 py-2">
+                                <h6 id="playerAtBat" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                    @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "-")
+                                </h6>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @* Ball Strike Out *@
+                <div class="d-flex justify-content-center py-2 mb-2">
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">B</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">S</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="strikesCount"> @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center ">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">O</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @* Inning Table Info *@
+                <div class="inning-area">
+                    <div class="w-100">
+                        <table class="table-four">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                    {
+                                        <th class="text-white fs-4 p-0 text-center">@inningNumber</th>
+                                    }
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var team in ViewBag.Teams)
+                                {
+                                    @if (ViewBag.TeamID != team.ID)
+                                    {
+                                        <tr>
+                                            <td class="p-1">
+                                                <div class="inning-box text-warning text-center m-auto">
+                                                    <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                                        A
+                                                    </h6>
+                                                </div>
+                                            </td>
+                                            @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                            {
+                                                <td class="py-1">
+                                                    <div class="inning-box text-warning text-center m-auto">
+                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="#InningScore">
+                                                            @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
+                                                        </h6>
+                                                    </div>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                                @foreach (var team in ViewBag.Teams)
+                                {
+                                    @if (ViewBag.TeamID == team.ID)
+                                    {
+                                        <tr>
+                                            <td class="p-1">
+                                                <div class="inning-box text-danger text-center m-auto py-2">
+                                                    <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                                        H
+                                                    </h6>
+                                                </div>
+                                            </td>
+                                            @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                            {
+                                                <td class="py-1">
+                                                    <div class="inning-box text-danger text-center m-auto">
+                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                                            @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
+                                                        </h6>
+                                                    </div>
+                                                </td>
+                                            }
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>
-        </form>
+        </div>
     </div>
-</div>
-<div class="col-xl-6">
-    <div class="d-flex justify-content-around mt-3">
-        <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn btn-secondary">Start Game</a>
-        <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn btn-outline-secondary">Next Inning</a>
-        <a href="#" id="lineupButton" class="btn btn btn-outline-secondary" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">Line Up</a>
-        <div class="dropdown">
-            <button class="btn btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                Exit Game
-            </button>
-            <div class="dropdown-menu">
-                <a class="dropdown-item exit-game-option" href="#">End Game</a>
-                <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
+    @* Buttons *@
+    <div>
+        <div>
+            @if (ViewBag.Inplay != null)
+            {
+                <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
+            }
+        </div>
+        <div class="card-body p-0 mb-4">
+            <div class="d-flex justify-content-around mb-3">
+                <a id="ballsButton" class="btn btn-kelly mx-1 col py-3">
+                    <span>Ball</span>
+                </a>
+                <a id="strikeButton" class="btn btn-kelly mx-1 col py-3">
+                    <span>Strike</span>
+                </a>
+                <a id="foulButton" class="btn btn-kelly mx-1 col py-3">
+                    <span>Foul</span>
+                </a>
+                <a id="outButton" class="btn btn-kelly mx-1 col py-3">
+                    <span>Out</span>
+                </a>
+            </div>
+            <div class="d-flex justify-content-around rounded-bottom">
+                <a id="hbpButton" class="btn btn-kelly mx-1 col py-3">
+                    <span>HBP</span>
+                </a>
+                @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
+                <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span>Hit</span>
+                </button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="#">Single</a>
+                    <a class="dropdown-item" href="#">Double</a>
+                    <a class="dropdown-item" href="#">Triple</a>
+                    <a class="dropdown-item" href="#">HomeRun</a>
+                </div>
+                <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col py-3">
+                    <span>In Play</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-3 bg-light-grey d-flex align-content-center justify-content-center">
+            <div class="d-flex justify-content-around">
+                <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span>Start Game</span>
+                </a>
+                <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span>Next Inning</span>
+                </a>
+                <a href="#" id="lineupButton" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span style="white-space: normal;">Line Up</span>
+                </a>
+                <div class="dropdown d-flex btn-group dropup">
+                    <button class="btn btn-blue mx-1 col py-3 dropdown-toggle d-flex align-items-center justify-content-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span style="white-space: normal;">Exit Game</span>
+                    </button>
+                    <div class="dropdown-menu">
+                        <a class="dropdown-item exit-game-option" href="#">End Game</a>
+                        <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
-
+@* End Row *@
 
 @* This is for LineUp Popup *@
 <div id="lineupPopup" class="popup-container" style="display: none;">
@@ -169,9 +271,9 @@
     </div>
 </div>
 
-@*
+<script src="~/js/Scorekeeper.js" asp-append-version="true"></script>
 
-Cierra popup  inplay *@
+@*Cierra popup  inplay *@
 <script>
     $('#closeButtonInplay').click(function () {
         // Solo cierra el popup
@@ -187,8 +289,6 @@ Cierra popup  inplay *@
         $('#inplayModal').modal('hide');
     });
 </script>
-
-
 
 
 @* For the Modal Inplay *@
@@ -252,8 +352,8 @@ Cierra popup  inplay *@
                         $('#ballsCount').text(response.inplay.balls);
                         $('#runs').text(response.inplay.runs);
                         $('#runs2').text(response.inplay.runs2);
-                        $('#inning').text('Inning: ' + response.inplay.inningNumber);
-                        $('#playerAtBat').text('Player at bat: ' + response.inplay.firstPlayer);
+                        $('#inning').text(response.inplay.inningNumber);
+                        $('#playerAtBat').text(response.inplay.firstPlayer);
 
                         // Cierra el popup
                         $('#inplayModal').modal('hide');
@@ -265,8 +365,6 @@ Cierra popup  inplay *@
         });
     });
 </script>
-
-
 
 @* Script for Button´s action *@
 <script>
@@ -296,8 +394,8 @@ Cierra popup  inplay *@
                         $('#ballsCount').text(data.inplay.balls);
                         $('#runs').text(data.inplay.runs);
                         $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                        $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                        $('#inning').text(data.inplay.inningNumber);
+                        $('#playerAtBat').text(data.inplay.firstPlayer);
                     } else {
                         console.log('inplay is undefined');
                     }
@@ -383,8 +481,8 @@ Cierra popup  inplay *@
                             $('#ballsCount').text(data.inplay.balls);
                             $('#runs').text(data.inplay.runs);
                             $('#runs2').text(data.inplay.runs2);
-                            $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                            $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                            $('#inning').text(data.inplay.inningNumber);
+                            $('#playerAtBat').text(data.inplay.firstPlayer);
                         } else {
                             console.log('inplay is undefined');
                         }
@@ -457,8 +555,10 @@ Cierra popup  inplay *@
                         $('#ballsCount').text(data.inplay.balls);
                         $('#runs').text(data.inplay.runs);
                         $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                        $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                        $('#inning').text(data.inplay.inningNumber);
+                        $('#playerAtBat').text(data.inplay.firstPlayer);
+                        $('#InningScore').text(data.inplay.inning);
+
                     } else {
                         console.log('inplay is undefined');
                     }
@@ -493,8 +593,8 @@ Cierra popup  inplay *@
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
                     $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    $('#inning').text(data.inplay.inningNumber);
+                    $('#playerAtBat').text(data.inplay.firstPlayer);
 
                     // Check if the ball count is 4, then open the modal
                     if (data.inplay.balls === 4) {
@@ -544,8 +644,8 @@ Cierra popup  inplay *@
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
                     $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    $('#inning').text(data.inplay.inningNumber);
+                    $('#playerAtBat').text(data.inplay.firstPlayer);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -576,8 +676,8 @@ Cierra popup  inplay *@
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
                     $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    $('#inning').text(data.inplay.inningNumber);
+                    $('#playerAtBat').text(data.inplay.firstPlayer);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -608,8 +708,8 @@ Cierra popup  inplay *@
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
                     $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    $('#inning').text(data.inplay.inningNumber);
+                    $('#playerAtBat').text(data.inplay.firstPlayer);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -640,8 +740,8 @@ Cierra popup  inplay *@
                     $('#fouls').text(data.inplay.fouls);
                     $('#runs').text(data.inplay.runs);
                     $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text('Inning: ' + data.inplay.inningNumber);
-                    $('#playerAtBat').text('Player at bat: ' + data.inplay.firstPlayer);
+                    $('#inning').text(data.inplay.inningNumber);
+                    $('#playerAtBat').text(data.inplay.firstPlayer);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);

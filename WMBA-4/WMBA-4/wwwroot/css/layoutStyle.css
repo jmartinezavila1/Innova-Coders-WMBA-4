@@ -1994,13 +1994,11 @@ progress {
     margin-bottom: 1rem;
     color: var(--bs-table-color);
     vertical-align: top;
-    border-color: var(--bs-table-border-color);
 }
 
     .table-four > :not(caption) > * > *, .datatable-table-four > :not(caption) > * > * {
-        padding: 0.5rem 0.5rem;
+        padding: 0.5rem 0.1rem;
         background-color: var(--bs-table-bg);
-        border-bottom-width: 1px;
         box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
     }
 
@@ -2013,10 +2011,18 @@ progress {
     }
 
 table-four th, table-four td {
-    width: 5rem; /* 예제에서는 각 열의 폭을 5rem로 설정하였습니다. */
+    width: 3rem; /* 예제에서는 각 열의 폭을 5rem로 설정하였습니다. */
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.table-four tbody tr {
+    margin-bottom: 10px;
+}
+
+.table-four tbody td {
+    padding: 0px;
 }
 
 .table-three, .datatable-table-three {
@@ -3384,6 +3390,23 @@ textarea.form-control-lg {
     --bs-btn-color: #fff;
     --bs-btn-bg: var(--bg-kelly);
     --bs-btn-border-color: #149c21;
+    --bs-btn-hover-color: #fff;
+    --bs-btn-hover-bg: #23b51c;
+    --bs-btn-hover-border-color: #23b51c;
+    --bs-btn-focus-shadow-rgb: 49, 132, 253;
+    --bs-btn-active-color: #fff;
+    --bs-btn-active-bg: var(--bg-dark-blue);
+    --bs-btn-active-border-color: #0a53be;
+    --bs-btn-active-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+    --bs-btn-disabled-color: #fff;
+    --bs-btn-disabled-bg: #0d6efd;
+    --bs-btn-disabled-border-color: #0d6efd;
+}
+
+.btn-blue {
+    --bs-btn-color: #fff;
+    --bs-btn-bg: var(--bg-dark-blue);
+    --bs-btn-border-color: var(--bg-dark-blue);
     --bs-btn-hover-color: #fff;
     --bs-btn-hover-bg: #23b51c;
     --bs-btn-hover-border-color: #23b51c;
