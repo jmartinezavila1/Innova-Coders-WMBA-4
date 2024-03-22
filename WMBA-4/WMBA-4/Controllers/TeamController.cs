@@ -18,9 +18,11 @@ using WMBA_4.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using String = System.String;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize]
     public class TeamController : ElephantController
     {
         private readonly WMBA_4_Context _context;

@@ -53,7 +53,8 @@ namespace WMBA_4.Data
                             var newUser = new IdentityUser
                             {
                                 UserName = user.Email,
-                                Email = user.Email
+                                Email = user.Email,
+                                EmailConfirmed = true
                             };
                             var createUserResult = await userManager.CreateAsync(newUser, "Ba55eb@ll");
                             if (createUserResult.Succeeded)

@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\jamar\\source\\repos\\version48\\WMBA-4\\WMBA-4\\WMBA-4.csproj": {}
+    "C:\\Users\\jamar\\source\\repos\\ver22march\\WMBA-4\\WMBA-4\\WMBA-4.csproj": {}
   },
   "projects": {
-    "C:\\Users\\jamar\\source\\repos\\version48\\WMBA-4\\WMBA-4\\WMBA-4.csproj": {
+    "C:\\Users\\jamar\\source\\repos\\ver22march\\WMBA-4\\WMBA-4\\WMBA-4.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\jamar\\source\\repos\\version48\\WMBA-4\\WMBA-4\\WMBA-4.csproj",
+        "projectUniqueName": "C:\\Users\\jamar\\source\\repos\\ver22march\\WMBA-4\\WMBA-4\\WMBA-4.csproj",
         "projectName": "WMBA-4",
-        "projectPath": "C:\\Users\\jamar\\source\\repos\\version48\\WMBA-4\\WMBA-4\\WMBA-4.csproj",
+        "projectPath": "C:\\Users\\jamar\\source\\repos\\ver22march\\WMBA-4\\WMBA-4\\WMBA-4.csproj",
         "packagesPath": "C:\\Users\\jamar\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\jamar\\source\\repos\\version48\\WMBA-4\\WMBA-4\\obj\\",
+        "outputPath": "C:\\Users\\jamar\\source\\repos\\ver22march\\WMBA-4\\WMBA-4\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -48,6 +48,10 @@
             "EPPlus": {
               "target": "Package",
               "version": "[4.5.3.3, )"
+            },
+            "MailKit": {
+              "target": "Package",
+              "version": "[4.4.0, )"
             },
             "Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore": {
               "target": "Package",
