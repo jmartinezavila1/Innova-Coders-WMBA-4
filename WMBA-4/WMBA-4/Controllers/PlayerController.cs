@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize]
     public class PlayerController : ElephantController
     {
         private readonly WMBA_4_Context _context;
