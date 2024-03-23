@@ -3,9 +3,25 @@
 @{
     ViewData["Title"] = "Index";
 }
-<div class="p-in-flex">
-    <div class="f-in-flex">
-        <h1>Teams</h1>
+
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Team" asp-action="Index">Team</a>
+        </li>
+        @* <li class="breadcrumb-item active" aria-current="page">
+        Player
+        </li> *@
+    </ol>
+</nav>
+
+<div class="f-in-flex justify-content-end">
 
         @using (Html.BeginForm("Create", "Team", FormMethod.Get))
         {
@@ -15,6 +31,8 @@
             <button type="submit" class="btn btn-kelly">Add Team</button>
         }
     </div>
+
+<div class="p-in-flex">
     <form asp-action="Index" method="get">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
@@ -194,5 +212,6 @@
         <partial name="_PagingNavBar" />
     </form>
 </div>
+
 
 
