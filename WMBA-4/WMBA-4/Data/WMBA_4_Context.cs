@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Numerics;
 using WMBA_4.Models;
+using WMBA_4.ViewModels;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace WMBA_4.Data
@@ -46,7 +47,7 @@ namespace WMBA_4.Data
 
         public DbSet<TeamStaff> TeamStaff { get; set; }
 
-
+        public DbSet<PlayerStatsVM> PlayerStats { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ///Prevent Cascade Delete from Game to GameType
@@ -218,14 +219,15 @@ namespace WMBA_4.Data
                 .HasForeignKey(f => f.RoleId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            //For stats
+
+            modelBuilder
+             .Entity<PlayerStatsVM>()
+             .ToView(nameof(PlayerStats))
+             .HasNoKey();
+
 
         }
-
-
-
-
-
-
 
 
     }

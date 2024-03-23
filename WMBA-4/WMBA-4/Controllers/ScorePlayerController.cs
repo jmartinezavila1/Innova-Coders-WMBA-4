@@ -5,7 +5,6 @@ using System.Numerics;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -18,7 +17,6 @@ using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
-    [Authorize]
     public class ScorePlayerController : Controller
     {
         private readonly WMBA_4_Context _context;
@@ -215,7 +213,7 @@ namespace WMBA_4.Controllers
             inplay.PlayerInBase1ID = null;
             inplay.PlayerInBase2ID = null;
             inplay.PlayerInBase3ID = null;
-            
+
 
             _context.Inplays.Update(inplay);
             await _context.SaveChangesAsync();
@@ -810,6 +808,7 @@ namespace WMBA_4.Controllers
                     //// update fields PA ad StrikeOut
                     scorePlayer.PA++;
                     scorePlayer.StrikeOut++;
+                    scorePlayer.AB++;
 
                     inplay.Balls = 0;
                     inplay.Strikes = 0;
@@ -902,6 +901,7 @@ namespace WMBA_4.Controllers
                     //// update fields PA ad StrikeOut
                     scorePlayer.PA++;
                     scorePlayer.StrikeOut++;
+                    scorePlayer.AB++;
 
 
 
@@ -1187,9 +1187,9 @@ namespace WMBA_4.Controllers
             inplay.Fouls = 0;
 
             var inningNumber = _context.Innings
-                   .Where(i => i.GameID == inplay.Inning.GameID && i.TeamID == inplay.Inning.TeamID)
-                   .Select(i => i.InningNumber)
-                   .FirstOrDefault();
+                       .Where(i => i.ID == inplay.InningID)
+                       .Select(i => i.InningNumber)
+                       .FirstOrDefault();
 
             MovePlayer(inplay);
 
@@ -1270,6 +1270,7 @@ namespace WMBA_4.Controllers
             //// update fields PA ad StrikeOut
             scorePlayer.PA++;
             scorePlayer.Out++;
+            scorePlayer.AB++;
 
 
             //inplay.NextPlayer = (int)inplay.PlayerBattingID;
@@ -1419,10 +1420,10 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             var teamDivision = _context.TeamGame
-                .Include(tg=>tg.Game)
+                .Include(tg => tg.Game)
                 .Include(t => t.Team)
                 .ThenInclude(t => t.Division)
-                .Where(t=>t.GameID == GameID)
+                .Where(t => t.GameID == GameID)
                 .ToList();
 
             var inPlay = await _context.Inplays
@@ -1448,7 +1449,7 @@ namespace WMBA_4.Controllers
 
             var lineup = _context.GameLineUps
                 .Include(gl => gl.Team)
-                .ThenInclude(t=>t.Players)
+                .ThenInclude(t => t.Players)
                 .Include(gl => gl.Game)
                 .Where(gl => gl.TeamID == TeamID && gl.GameID == GameID)
                 .ToList();
@@ -1603,6 +1604,7 @@ namespace WMBA_4.Controllers
                     inplay.Runs++;
                     teamGameScore.score++;
                     inplay.PlayerInBase1ID = null;
+                    inning.ScorePerInning++;
                 }
                 if (model.IsRunPlayer2)
                 {
@@ -1620,6 +1622,7 @@ namespace WMBA_4.Controllers
                     inplay.Runs++;
                     teamGameScore.score++;
                     inplay.PlayerInBase2ID = null;
+                    inning.ScorePerInning++;
                 }
                 if (model.IsRunPlayer3)
                 {
@@ -1635,6 +1638,7 @@ namespace WMBA_4.Controllers
 
                     scorePlayerP3.Run++;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
                     teamGameScore.score++;
                     inplay.PlayerInBase3ID = null;
                 }
@@ -1808,6 +1812,7 @@ namespace WMBA_4.Controllers
                     //scorePlayer.AB++;
                     inplay.PlayerBattingID = null;
                     inplay.Runs++;
+                    inning.ScorePerInning++;
 
                 }
 
@@ -1983,8 +1988,9 @@ namespace WMBA_4.Controllers
             .FirstOrDefault();
 
             var scorePlayer = await _context.ScorePlayers
-                   .Where(sp => sp.GameLineUpID == lineupID)
-                   .FirstOrDefaultAsync();
+            .Where(sp => sp.GameLineUpID == lineupID)
+            .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
+            .FirstOrDefaultAsync();
 
 
             var teamGameScore = await _context.TeamGame
@@ -2009,6 +2015,7 @@ namespace WMBA_4.Controllers
                 teamGameScore.score++;
                 //register runs
                 scorePlayer.Run++;
+                inning.ScorePerInning++;
 
             }
             else if (p3.HasValue)
@@ -2457,10 +2464,12 @@ namespace WMBA_4.Controllers
 
             var scorePlayer = await _context.ScorePlayers
                 .Where(sp => sp.GameLineUpID == lineupID)
+                .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                 .FirstOrDefaultAsync();
 
             var scorePlayer2 = await _context.ScorePlayers
                .Where(sp => sp.GameLineUpID == lineupIDB)
+               .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                .FirstOrDefaultAsync();
 
             var teamGameScore = await _context.TeamGame
