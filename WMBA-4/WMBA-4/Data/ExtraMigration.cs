@@ -42,7 +42,7 @@ namespace WMBA_4.Data
                     WHEN g.Status = 0 THEN 'Inactive'
                     WHEN g.Status = 1 THEN 'Active'
                     ELSE 'Desconocido'
-                END as Status_
+                END as Status
             FROM
                 Games g
             JOIN Locations l ON l.ID = g.LocationID

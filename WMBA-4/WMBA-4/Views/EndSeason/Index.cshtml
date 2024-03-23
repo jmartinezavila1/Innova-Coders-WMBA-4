@@ -1,0 +1,42 @@
+﻿@model IEnumerable<WMBA_4.ViewModels.PlayerEndSeasonVM>
+
+@{
+    ViewData["Title"] = "End Season";
+}
+
+<div class="card">
+    <div class="card-header">
+        Important Information
+    </div>
+    <div class="card-body">
+        <h5 class="card-title">End of Season</h5>
+        <div class="card-text">
+            <ul>
+                <li>
+                    Once the season has ended and you wish to start a new one,
+                    you should clean up all the information in the application.
+                </li>
+                <li>
+                    By clicking on "End Season," all the information from the past season will be deleted, and a new season will be created, ready to import teams, players, and games.
+                </li>
+                <li>
+                    If you are sure you want to delete all the information from the past season and start a new one, please click on the "End Season" button.
+                </li>
+            </ul>
+            <a asp-action="EndSeason" id="endSeasonButton" class="btn btn-kelly mx-1">End Season</a>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        $('#endSeasonButton').click(function (e) {
+            e.preventDefault();
+
+            // shows an alert to confirm the action
+            if (confirm('Are you sure you want to end the season?')) {
+                window.location.href = this.href;
+            }
+        });
+    });
+</script>
+

@@ -48,6 +48,10 @@ namespace WMBA_4.Data
         public DbSet<TeamStaff> TeamStaff { get; set; }
 
         public DbSet<PlayerStatsVM> PlayerStats { get; set; }
+
+        public DbSet<PlayerEndSeasonVM> PlayersEndSeason { get; set; }
+
+        public DbSet<GameEndSeasonVM> GamesEndSeason { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ///Prevent Cascade Delete from Game to GameType
@@ -225,6 +229,17 @@ namespace WMBA_4.Data
              .Entity<PlayerStatsVM>()
              .ToView(nameof(PlayerStats))
              .HasNoKey();
+
+            //For End of Season
+            modelBuilder
+             .Entity<PlayerEndSeasonVM>()
+             .ToView(nameof(PlayersEndSeason))
+             .HasKey(p => p.ID);
+
+            modelBuilder
+                .Entity<GameEndSeasonVM>()
+                .ToView(nameof(GamesEndSeason))
+                .HasKey(p => p.ID);
 
         }
 
