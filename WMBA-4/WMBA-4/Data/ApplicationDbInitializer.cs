@@ -34,18 +34,37 @@ namespace WMBA_4.Data
                     var userManager = applicationBuilder.ApplicationServices.CreateScope()
                         .ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
 
-                    var users = new[]
-                    {
-                    new { Email = "admin@outlook.com", Role = "Admin" },
-                    new { Email = "michael.brown@example.com", Role = "Coach" },
-                    new { Email = "alexander.taylor@example.com", Role = "Scorekeeper" },
-                    new { Email = "rookie@outlook.com", Role = "RookieConvenor" },
-                    new { Email = "intermediate@outlook.com", Role = "IntermediateConvenor" },
-                    new { Email = "senior@outlook.com", Role = "SeniorConvenor" }
-                    // Add more users as needed
-                };
+                var users = new[]
+{
+    new { Email = "admin@outlook.com", Role = "Admin" },
+    new { Email = "michael.brown@example.com", Role = "Coach" },
+    new { Email = "alexander.taylor@example.com", Role = "Scorekeeper" },
+    new { Email = "rookie@outlook.com", Role = "RookieConvenor" },
+    new { Email = "intermediate@outlook.com", Role = "IntermediateConvenor" },
+    new { Email = "senior@outlook.com", Role = "SeniorConvenor" },
 
-                    foreach (var user in users)
+    // Add more users as needed
+    new { Email = "john.doe@example.com", Role = "Coach" },
+    new { Email = "jane.smith@example.com", Role = "Coach" },
+    new { Email = "robert.johnson@example.com", Role = "Coach" },
+    new { Email = "emily.williams@example.com", Role = "Coach" },
+    new { Email = "olivia.miller@example.com", Role = "Coach" },
+    new { Email = "william.davis@example.com", Role = "Coach" },
+    new { Email = "sophia.garcia@example.com", Role = "Coach" },
+    new { Email = "james.martinez@example.com", Role = "Coach" },
+    new { Email = "emma.jackson@example.com", Role = "Coach" },
+    new { Email = "ava.anderson@example.com", Role = "Scorekeeper" },
+    new { Email = "daniel.thomas@example.com", Role = "Scorekeeper" },
+    new { Email = "mia.moore@example.com", Role = "Scorekeeper" },
+    new { Email = "ethan.clark@example.com", Role = "Scorekeeper" },
+    new { Email = "isabella.lewis@example.com", Role = "Scorekeeper" },
+    new { Email = "benjamin.hill@example.com", Role = "Scorekeeper" },
+    new { Email = "avery.king@example.com", Role = "Scorekeeper" },
+    new { Email = "ryan.cooper@example.com", Role = "Scorekeeper" },
+    new { Email = "nora.baker@example.com", Role = "Scorekeeper" }
+};
+
+                foreach (var user in users)
                     {
                         var existingUser = await userManager.FindByEmailAsync(user.Email);
                         if (existingUser == null)
