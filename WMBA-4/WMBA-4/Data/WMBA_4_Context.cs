@@ -226,7 +226,6 @@ namespace WMBA_4.Data
              .ToView(nameof(PlayerStats))
              .HasNoKey();
 
-
         }
 
 

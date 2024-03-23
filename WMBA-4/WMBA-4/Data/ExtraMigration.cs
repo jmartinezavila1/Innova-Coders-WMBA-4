@@ -25,7 +25,6 @@ namespace WMBA_4.Data
 			    JOIN Divisions d ON d.ID = t.DivisionID
 			    JOIN Clubs c ON c.ID= d.ClubID
             ");
-
             migrationBuilder.Sql(
                                @"
                 Drop View IF EXISTS [GamesEndSeason];

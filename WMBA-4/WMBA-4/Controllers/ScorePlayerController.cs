@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -17,6 +18,7 @@ using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize]
     public class ScorePlayerController : Controller
     {
         private readonly WMBA_4_Context _context;
