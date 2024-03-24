@@ -36,42 +36,18 @@
         <!-- Navbar Brand-->
         <a class="navbar-brand d-flex justify-content-center" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
         <!-- Setting-->
-        @await Html.PartialAsync("_LoginPartial")
         <div class="me-5">
             <div class="flex-shrink-0 dropdown">
                 
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Settings">
-                    <i class="fa-solid fa-gear ft-kelly"></i>
+                   @*  <i class="fa-solid fa-gear ft-kelly"></i> *@
+                    <svg class="svg-inline--fa fa-user fa-fw ft-kelly" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path></svg>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg-end mt-3">
-                    @* <li><a class="dropdown-item" href="#">Manage City</a></li>
-                    <li><a class="dropdown-item" href="#">Manage Location</a></li> *@
-                    <li><a class="dropdown-item" asp-controller="Staff" asp-action="Index">Manage Staff</a></li> @* staff link*@
-                    <li><a class="dropdown-item" asp-controller="UserRole" asp-action="Index">Manage User Roles</a></li>
-                    @* <li><hr class="dropdown-divider"></li> *@
-                    @* <li><a class="dropdown-item" href="#">Sign out</a></li> *@
+                    @await Html.PartialAsync("_LoginPartial")
                 </ul>
             </div>
         </div>
-        @*
-        <div class="mb-0">
-        <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
-        <li class="nav-item dropdown d-flex">
-        <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false"><i class="fa-solid fa-gear ft-kelly"></i></a>
-        <ul class="dropdown-menu dropdown-menu-end " aria-labelledby="navbarDropdown">
-        <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">City</a>
-        </li>
-        <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Divicsion" asp-action="Index">Division</a>
-        </li>
-        <li class="nav-item no-list-decor dropdown-item">
-        <a class="nav-link text-dark" asp-area="" asp-controller="Team" asp-action="Index">Season Game</a>
-        </li>
-        </ul>
-        </li>
-        </ul>
-        </div> *@
     </nav>
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">

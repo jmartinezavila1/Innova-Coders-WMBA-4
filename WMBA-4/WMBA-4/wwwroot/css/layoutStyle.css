@@ -12851,6 +12851,19 @@ body {
                 font-weight: 500;
             }
 
+            .sb-sidenav .sb-sidenav-menu .nav .nav-link-sub {
+                display: flex;
+                align-items: center;
+                padding-top: 0.75rem;
+                padding-bottom: 0.75rem;
+                position: relative;
+                color: #c1c1c1;
+                font-size: 1rem;
+                margin-left: 10px;
+                padding-left: 40px;
+                font-weight: 400;
+            }
+
                 .sb-sidenav .sb-sidenav-menu .nav .nav-link:hover {
                     color: var(--ft-white);
                 }

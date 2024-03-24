@@ -172,9 +172,19 @@ namespace WMBA_4.Controllers
                 }
             }
 
+            //Filter by DivisionName - TeamName
+            ViewBag.TeamID = new SelectList(_context.Teams
+                .Include(t => t.Division)
+                .OrderBy(t => t.Division.ID)
+                .ThenBy(t => t.Name)
+                .Select(t => new {
+                    t.ID,
+                    TeamName = t.Division.DivisionName + " - " + t.Name
+                }), "ID", "TeamName");
+
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-            ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
+            //ViewData["TeamID"] = new SelectList(_context.Teams.OrderBy(t=>t.Name), "ID", "Name");
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
 
             //Handle Paging

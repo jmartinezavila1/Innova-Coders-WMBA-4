@@ -3,6 +3,24 @@
     ViewData["Title"] = "Details";
 }
 
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Team" asp-action="Index">Team</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            Detail
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
+
 <div class="f-in-flex">
     <h1>@Model.Name</h1>
     <div class="d-flex">
