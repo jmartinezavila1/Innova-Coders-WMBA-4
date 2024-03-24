@@ -4,7 +4,23 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Team" asp-action="Index">Team</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Edit
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
 
 <h3>@Model.Name</h3>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
