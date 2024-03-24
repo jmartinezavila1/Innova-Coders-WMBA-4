@@ -124,10 +124,11 @@
                                             </td>
                                             @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
                                             {
+
                                                 <td class="py-1">
                                                     <div class="inning-box text-warning text-center m-auto">
-                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="#InningScore">
-                                                            @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
+                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="inningScoreA@(inningNumber)">
+                                                            @(ViewBag.InningScoresA.ContainsKey(inningNumber) ? ViewBag.InningScoresA[inningNumber] : "-")
                                                         </h6>
                                                     </div>
                                                 </td>
@@ -151,8 +152,8 @@
                                             {
                                                 <td class="py-1">
                                                     <div class="inning-box text-danger text-center m-auto">
-                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
-                                                            @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
+                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="inningScoreH@(inningNumber)">
+                                                            @(ViewBag.InningScoresH.ContainsKey(inningNumber) ? ViewBag.InningScoresH[inningNumber] : "-")
                                                         </h6>
                                                     </div>
                                                 </td>
@@ -483,9 +484,32 @@
                             $('#runs2').text(data.inplay.runs2);
                             $('#inning').text(data.inplay.inningNumber);
                             $('#playerAtBat').text(data.inplay.firstPlayer);
+
+                            // Actualiza las celdas de la tabla para el equipo "A"
+                            var inningScoresTeam1 = data.inningScoresTeam1;
+                            for (var key in inningScoresTeam1) {
+                                if (key !== "$id") {  // Ignora la clave "$id"
+                                    var score = inningScoresTeam1[key];
+                                    console.log($('#inningScoreA' + key));
+                                    $('#inningScoreA' + key).text(score);
+                                }
+                            }
+
+                            // Actualiza las celdas de la tabla para el equipo "H"
+                            var inningScoresTeam2 = data.inningScoresTeam2;
+                            for (var key in inningScoresTeam2) {
+                                if (key !== "$id") {  // Ignora la clave "$id"
+                                    var score = inningScoresTeam2[key];
+                                    console.log($('#inningScoreH' + key));
+                                    $('#inningScoreH' + key).text(score);
+                                }
+                            }
+
+
                         } else {
                             console.log('inplay is undefined');
                         }
+
                         if (data.needUserDecision) {
                             swal({
                                 title: data.message,
@@ -520,8 +544,45 @@
                 type: 'POST',
                 data: { id: inplayId, decision: decision, batter: batter, player: player },
                 success: function (data) {
-
                     console.log(data);
+                    if (data.success === false) {
+                        // Show the error message in an alert
+                        alert(data.message);
+                    } else if (data.inplay) {
+                        $('#inplayId').val(data.inplay.id);
+                        $('#strikesCount').text(data.inplay.strikes);
+                        $('#outs').text(data.inplay.outs);
+                        $('#fouls').text(data.inplay.fouls);
+                        $('#ballsCount').text(data.inplay.balls);
+                        $('#runs').text(data.inplay.runs);
+                        $('#runs2').text(data.inplay.runs2);
+                        $('#inning').text(data.inplay.inningNumber);
+                        $('#playerAtBat').text(data.inplay.firstPlayer);
+
+                        // Actualiza las celdas de la tabla para el equipo "A"
+                        var inningScoresTeam1 = data.inningScoresTeam1;
+                        for (var key in inningScoresTeam1) {
+                            if (key !== "$id") {  // Ignora la clave "$id"
+                                var score = inningScoresTeam1[key];
+                                console.log($('#inningScoreA' + key));
+                                $('#inningScoreA' + key).text(score);
+                            }
+                        }
+
+                        // Actualiza las celdas de la tabla para el equipo "H"
+                        var inningScoresTeam2 = data.inningScoresTeam2;
+                        for (var key in inningScoresTeam2) {
+                            if (key !== "$id") {  // Ignora la clave "$id"
+                                var score = inningScoresTeam2[key];
+                                console.log($('#inningScoreH' + key));
+                                $('#inningScoreH' + key).text(score);
+                            }
+                        }
+
+
+                    } else {
+                        console.log('inplay is undefined');
+                    }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -558,6 +619,26 @@
                         $('#inning').text(data.inplay.inningNumber);
                         $('#playerAtBat').text(data.inplay.firstPlayer);
                         $('#InningScore').text(data.inplay.inning);
+
+                        // Actualiza las celdas de la tabla para el equipo "A"
+                        var inningScoresTeam1 = data.inningScoresTeam1;
+                        for (var key in inningScoresTeam1) {
+                            if (key !== "$id") {  // Ignora la clave "$id"
+                                var score = inningScoresTeam1[key];
+                                console.log($('#inningScoreA' + key));
+                                $('#inningScoreA' + key).text(score);
+                            }
+                        }
+
+                        // Actualiza las celdas de la tabla para el equipo "H"
+                        var inningScoresTeam2 = data.inningScoresTeam2;
+                        for (var key in inningScoresTeam2) {
+                            if (key !== "$id") {  // Ignora la clave "$id"
+                                var score = inningScoresTeam2[key];
+                                console.log($('#inningScoreH' + key));
+                                $('#inningScoreH' + key).text(score);
+                            }
+                        }
 
                     } else {
                         console.log('inplay is undefined');
@@ -596,24 +677,26 @@
                     $('#inning').text(data.inplay.inningNumber);
                     $('#playerAtBat').text(data.inplay.firstPlayer);
 
-                    // Check if the ball count is 4, then open the modal
-                    if (data.inplay.balls === 4) {
 
-                        $.ajax({
-                            url: '/ScorePlayer/LoadInplayPartial',
-                            data: {
-                                inplayId: inplayId
-                            },
-                            success: function (response) {
-                                $('#inplayModalBody').html(response);
-                                $('#inplayModal').modal('show');
-                            },
-                            error: function (jqXHR, textStatus, errorThrown) {
-                                console.log(textStatus, errorThrown);
-                            }
-                        });
+                    // Actualiza las celdas de la tabla para el equipo "A"
+                    var inningScoresTeam1 = data.inningScoresTeam1;
+                    for (var key in inningScoresTeam1) {
+                        if (key !== "$id") {  // Ignora la clave "$id"
+                            var score = inningScoresTeam1[key];
+                            console.log($('#inningScoreA' + key));
+                            $('#inningScoreA' + key).text(score);
+                        }
                     }
 
+                    // Actualiza las celdas de la tabla para el equipo "H"
+                    var inningScoresTeam2 = data.inningScoresTeam2;
+                    for (var key in inningScoresTeam2) {
+                        if (key !== "$id") {  // Ignora la clave "$id"
+                            var score = inningScoresTeam2[key];
+                            console.log($('#inningScoreH' + key));
+                            $('#inningScoreH' + key).text(score);
+                        }
+                    }
 
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
@@ -710,6 +793,27 @@
                     $('#runs2').text(data.inplay.runs2);
                     $('#inning').text(data.inplay.inningNumber);
                     $('#playerAtBat').text(data.inplay.firstPlayer);
+
+                    // Actualiza las celdas de la tabla para el equipo "A"
+                    var inningScoresTeam1 = data.inningScoresTeam1;
+                    for (var key in inningScoresTeam1) {
+                        if (key !== "$id") {  // Ignora la clave "$id"
+                            var score = inningScoresTeam1[key];
+                            console.log($('#inningScoreA' + key));
+                            $('#inningScoreA' + key).text(score);
+                        }
+                    }
+
+                    // Actualiza las celdas de la tabla para el equipo "H"
+                    var inningScoresTeam2 = data.inningScoresTeam2;
+                    for (var key in inningScoresTeam2) {
+                        if (key !== "$id") {  // Ignora la clave "$id"
+                            var score = inningScoresTeam2[key];
+                            console.log($('#inningScoreH' + key));
+                            $('#inningScoreH' + key).text(score);
+                        }
+                    }
+
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
@@ -742,6 +846,7 @@
                     $('#runs2').text(data.inplay.runs2);
                     $('#inning').text(data.inplay.inningNumber);
                     $('#playerAtBat').text(data.inplay.firstPlayer);
+                    $('#inningScore').text(data.inplay.inningScore);
                 },
                 error: function (jqXHR, textStatus, errorThrown) {
                     console.log(textStatus, errorThrown);
