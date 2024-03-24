@@ -318,7 +318,8 @@ namespace WMBA_4.Controllers
 
             return RedirectToAction("Details", "Game", new { gameid = gameid, team = team });
         }
-        
+
+        [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
         // GET: Game/Create
         public IActionResult Create(int id)
         {

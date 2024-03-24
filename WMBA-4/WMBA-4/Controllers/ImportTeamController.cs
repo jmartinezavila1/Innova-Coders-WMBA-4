@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using WMBA_4.Data;
 using WMBA_4.Controllers;
 using static System.Net.Mime.MediaTypeNames;
@@ -10,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
     public class ImportTeamController : Controller
     {
         private readonly WMBA_4_Context _context;
