@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using WMBA_4.Utilities;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StaffController : ElephantController
     {
         private readonly WMBA_4_Context _context;
