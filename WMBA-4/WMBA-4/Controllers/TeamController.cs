@@ -535,7 +535,7 @@ namespace WMBA_4.Controllers
         {
             return View("ImportTeam");
         }
-
+        [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
         [HttpPost]
         public async Task<IActionResult> ImportTeam(IFormFile theExcel)
         {

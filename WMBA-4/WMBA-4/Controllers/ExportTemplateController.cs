@@ -4,9 +4,12 @@ using OfficeOpenXml;
 using System.Drawing;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
     public class ExportTemplateController : CognizantController
     {
         private readonly WMBA_4_Context _context;
