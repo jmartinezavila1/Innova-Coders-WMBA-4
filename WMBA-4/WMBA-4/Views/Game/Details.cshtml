@@ -12,7 +12,7 @@
     <form asp-action="Save" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div>
-            <ul id="sortableList" class="list-group my-4">
+            <ul id="sortableList" class="list-group my-4" data-toggle="tooltip" data-placement="top" title=" Click and drag to select player pisition">
                 @{
                     List<WMBA_4.ViewModels.CheckOptionVM> checkboxes = ViewBag.PlayersOptions;
                     @for (int i = 0; i < checkboxes.Count; i++)
