@@ -544,6 +544,8 @@ namespace WMBA_4.Controllers
             object inplayData = null;
             // get the inplay record
             var inplay = await _context.Inplays.FindAsync(inplayId);
+            var inning = await _context.Innings.FindAsync(inplay.InningID);
+
             if (inplay == null)
             {
                 return NotFound();
@@ -589,6 +591,8 @@ namespace WMBA_4.Controllers
                .Where(p => p.ID == inplay.PlayerBattingID)
                .Select(p => p.FullName)
                .FirstOrDefault();
+
+
 
                 inplayData = new
                 {
@@ -643,7 +647,7 @@ namespace WMBA_4.Controllers
             //if the balls are 4, increment the PA and BB in ScorePlayer
             else
             {
-                var inning = await _context.Innings.FindAsync(inplay.InningID);
+
 
                 var lineupID = _context.GameLineUps
                     .Where(g => g.PlayerID == inplay.PlayerBattingID && g.GameID == inning.GameID && g.TeamID == inning.TeamID)
@@ -695,8 +699,31 @@ namespace WMBA_4.Controllers
                     FirstPlayer = playeratBat,
                 };
 
+                var innings = await _context.Innings
+                  .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+                  .OrderBy(i => i.InningNumber)
+                  .ToListAsync();
 
-                return Json(new { Inplay = inplayData });
+                var defTeam = _context.TeamGame
+                 .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                 .Select(tg => tg.IsHomeTeam)
+                 .FirstOrDefault();
+                if (defTeam)
+                {
+                    ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                    ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+                }
+                else
+                {
+                    ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                    ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+                }
+
+
+
+                return Json(new { Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
 
             }
 
@@ -1138,6 +1165,7 @@ namespace WMBA_4.Controllers
             object inplayData = null;
             // get the inplay record
             var inplay = await _context.Inplays.FindAsync(inplayId);
+
             if (inplay == null)
             {
                 return NotFound();
@@ -1217,12 +1245,36 @@ namespace WMBA_4.Controllers
                 FirstPlayer = playeratBat
             };
 
+
+            var innings = await _context.Innings
+              .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+              .OrderBy(i => i.InningNumber)
+              .ToListAsync();
+
+            var defTeam = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                .Select(tg => tg.IsHomeTeam)
+                .FirstOrDefault();
+            if (defTeam)
+            {
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            else
+            {
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+
+
             // Guarda los cambios en la base de datos
             await _context.SaveChangesAsync();
 
 
 
-            return Json(new { Inplay = inplayData });
+            return Json(new { Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
 
         }
 
@@ -1313,7 +1365,7 @@ namespace WMBA_4.Controllers
                 Fouls = inplay2.Fouls,
                 Balls = inplay2.Balls,
                 InningNumber = inningNumber,
-                FirstPlayer = playeratBat
+                FirstPlayer = playeratBat,
             };
             //inplay.Strikes = 0;
             // Guarda los cambios en la base de datos
@@ -1463,9 +1515,14 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             var teamInnings = await _context.Innings
-                .Where(i => i.GameID == GameID)
-                .OrderBy(i => i.InningNumber)
-                .ToListAsync();
+                   .Where(i => i.GameID == GameID && i.TeamID == TeamID)
+                   .OrderBy(i => i.InningNumber)
+                   .ToListAsync();
+
+            var defTeam = _context.TeamGame
+            .Where(tg => tg.GameID == GameID && tg.TeamID == TeamID)
+            .Select(tg => tg.IsHomeTeam)
+            .FirstOrDefault();
 
             var playerCount = lineup.Sum(gl => gl.Team.Players.Count);
             // Store the scores in ViewBag
@@ -1475,7 +1532,19 @@ namespace WMBA_4.Controllers
             ViewBag.Team2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.Team.Name;
             ViewBag.Team1Division = teamDivision.FirstOrDefault(t => t.TeamID == TeamID)?.Team.Division.DivisionName;
             ViewBag.Team2Division = teamDivision.FirstOrDefault(t => t.TeamID != TeamID)?.Team.Division.DivisionName;
-            ViewBag.InningScores = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+
+            if (defTeam)
+            {
+                ViewBag.InningScoresH = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresA = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+            }
+            else
+            {
+                ViewBag.InningScoresA = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresH = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            //ViewBag.InningScores = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
             ViewBag.PlayerCount = playerCount;
 
             ViewData["AllTeams"] = scores;
@@ -2111,6 +2180,12 @@ namespace WMBA_4.Controllers
 
             var inning = await _context.Innings.FindAsync(inplay.InningID);
 
+            var innings = await _context.Innings
+             .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+             .OrderBy(i => i.InningNumber)
+             .ToListAsync();
+
+
             var teamGameScore = await _context.TeamGame
                   .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
                   .FirstOrDefaultAsync();
@@ -2427,6 +2502,24 @@ namespace WMBA_4.Controllers
               .Select(p => p.FullName)
               .FirstOrDefault();
 
+            var defTeam = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                .Select(tg => tg.IsHomeTeam)
+                .FirstOrDefault();
+
+            if (defTeam)
+            {
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            else
+            {
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+
             inplayData = new
             {
                 ID = inplay.ID,
@@ -2440,7 +2533,7 @@ namespace WMBA_4.Controllers
                 FirstPlayer = playeratBat,
             };
 
-            return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, playerBatting = pb, Inplay = inplayData });
+            return Json(new { needUserDecision = needUserDecision, message = message, playerInBase3 = pb3, playerBatting = pb, Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
         }
 
         [HttpPost]
@@ -2497,9 +2590,57 @@ namespace WMBA_4.Controllers
 
 
             }
+            object inplayData = null;
+
+            // Get the scores for each team
+            var scores = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID)
+                .ToList();
+            var playeratBat = _context.Players
+             .Where(p => p.ID == inplay.PlayerBattingID)
+             .Select(p => p.FullName)
+             .FirstOrDefault();
+
+            var innings = await _context.Innings
+           .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+           .OrderBy(i => i.InningNumber)
+           .ToListAsync();
+
+            var defTeam = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                .Select(tg => tg.IsHomeTeam)
+                .FirstOrDefault();
+
+            if (defTeam)
+            {
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            else
+            {
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+
+            inplayData = new
+            {
+                ID = inplay.ID,
+                Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                Strikes = inplay.Strikes,
+                Outs = inplay.Outs,
+                Fouls = inplay.Fouls,
+                Balls = inplay.Balls,
+                InningNumber = inning.InningNumber,
+                FirstPlayer = playeratBat,
+            };
 
             await _context.SaveChangesAsync();
-            return Json(new { success = true });
+
+            return Json(new { Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
+
 
         }
 
