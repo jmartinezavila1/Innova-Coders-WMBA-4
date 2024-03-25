@@ -1488,7 +1488,7 @@ namespace WMBA_4.Controllers
             // Get the scores for each team
             var scores = _context.TeamGame
                 .Include(tg => tg.Team)
-                .ThenInclude(t=>t.Division)
+                .ThenInclude(t => t.Division)
                 .Where(tg => tg.GameID == GameID)
                 .ToList();
 
@@ -1498,9 +1498,9 @@ namespace WMBA_4.Controllers
                 .FirstOrDefault();
 
             var innings = await _context.Innings
-                .Where(i => i.GameID == GameID)
-                .OrderBy(i => i.InningNumber)
-                .ToListAsync();
+               .Where(i => i.GameID == GameID && i.TeamID == TeamID)
+               .OrderBy(i => i.InningNumber)
+               .ToListAsync();
 
             var lineup = _context.GameLineUps
                 .Include(gl => gl.Team)
@@ -1558,6 +1558,97 @@ namespace WMBA_4.Controllers
             return View();
         }
 
+
+        //Method for recording Score to the Opponent Team
+        [HttpPost]
+        public async Task<IActionResult> OpponentScore(int inplayId, int teamId, int gameId)
+        {
+            object inplayData = null;
+            // get the inplay record
+            var inplay = await _context.Inplays.FindAsync(inplayId);
+
+            if (inplay == null)
+            {
+                return NotFound();
+            }
+
+            var inning = await _context.Innings
+               .Where(i => i.TeamID == teamId && i.GameID == gameId && i.ID < inplay.InningID)
+               .OrderByDescending(i => i.ID)
+               .FirstOrDefaultAsync();
+
+            string error = null;
+
+            if (inning == null)
+            {
+                error = "You will be able to score the opponent team when you finish scoring Inning #1 for your team";
+            }
+            else
+            {
+                inning.ScorePerInningOpponent++;
+                await _context.SaveChangesAsync();
+
+            }
+            // Get the scores for each team
+            var scores = _context.TeamGame
+                .Where(tg => tg.GameID == gameId)
+                .ToList();
+
+
+            var inningNumber = _context.Innings
+                       .Where(i => i.ID == inplay.InningID)
+                       .Select(i => i.InningNumber)
+                       .FirstOrDefault();
+
+
+            var playeratBat = _context.Players
+              .Where(p => p.ID == inplay.PlayerBattingID)
+              .Select(p => p.FullName)
+              .FirstOrDefault();
+
+            // Devuelve una respuesta
+            inplayData = new
+            {
+                ID = inplay.ID,
+                Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                Strikes = inplay.Strikes,
+                Outs = inplay.Outs,
+                Fouls = inplay.Fouls,
+                Balls = inplay.Balls,
+                InningNumber = inningNumber,
+                FirstPlayer = playeratBat
+            };
+
+
+            var innings = await _context.Innings
+              .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+              .OrderBy(i => i.InningNumber)
+              .ToListAsync();
+
+            var defTeam = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                .Select(tg => tg.IsHomeTeam)
+                .FirstOrDefault();
+
+            if (defTeam)
+            {
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            else
+            {
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+
+
+
+            return Json(new { Error = error, Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
+
+        }
 
         // GET: Lineup
         public async Task<IActionResult> GetLineup(int gameId, int teamId)
