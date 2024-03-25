@@ -27,10 +27,11 @@
 
     @using (Html.BeginForm("Create", "Player", FormMethod.Get))
     {
-        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" aria-controls="collapseFilter">
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" 
+        aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
             Filter/Search @ViewData["numberFilters"]
         </button>
-        <button type="submit" class="btn btn-kelly">Add Player</button>
+        <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new player">Add Player</button>
     }
 </div>
 
@@ -42,15 +43,15 @@
             <div class="collapse" id="collapseFilter">
                 <div class="card card-body bg-light">
                     <div class="row">
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the player's name you want to search for">
                             <label class="control-label">Search Player Name:</label>
                             @Html.TextBox("SearchString", null, new { @class = "form-control" })
                         </div>
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Select the pleyer's team">
                             <label class="control-label">Select Team:</label>
                             @Html.DropDownList("TeamID", null, "All Teams", htmlAttributes: new { @class = "form-control form-control form-select" })
                         </div> 
-                        <div class="form-group col-md-4">
+                        <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Select the player's division">
                             <label class="control-label">Select Division:</label>
                             @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control form-control form-select" })
                         </div>
@@ -64,9 +65,9 @@
                                 <label class="control-label" for="isInactiveCheckbox">Inactive Players Only</label>
                             </div>
                         </div>
-                        <div class="form-group col-md-4 align-self-end">
+                        <div class="form-group col-md-4 align-self-end" data-toggle="tooltip" data-placement="top" title="Click to apply the filter">
                             <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
-                            <a asp-action="Index" class="btn btn-outline-dark">Clear</a>
+                            <a asp-action="Index" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Click to clear filter">Clear</a>
                         </div>
                         <div class="form-group">
                         </div>
@@ -83,8 +84,14 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text">Page Size: </span>
                         </div>
-                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new { @class = "form-control form-select text-center mx-1" })
-                        <div class="input-group-append">
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new 
+                        {
+                            @class = "form-control form-select text-center mx-1",
+                            @data_toggle = "tooltip",
+                            @data_placement = "top",
+                            @title = "Select the page size"
+                        })
+                        <div class="input-group-append" data-toggle="tooltip" data-placement="top" title="Click to set page size">
                             <input type="submit" class="btn btn-kelly" value="Set Page Size" />
                         </div>
                     </div>
@@ -96,19 +103,19 @@
                     <tr>
                         <th style="width: 7rem;">
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Player" class="text-column me-2" />
+                                <input type="submit" name="actionButton" value="Player" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Player" />
                                 @if (ViewData["sortField"].ToString() == "Player")
                                 {
                                     <div>
                                         @if (ViewData["sortDirection"].ToString() == "asc")
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
                                                 <i class="fa-solid fa-sort-up"></i>
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
                                                 <i class="fa-solid fa-sort-down"></i>
                                             </span>
                                         }
@@ -117,10 +124,10 @@
                                 else
                                 {
                                     <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
                                             <i class="fa-solid fa-sort-up"></i>
                                         </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
                                             <i class="fa-solid fa-sort-down" style="display: none;"></i>
                                         </span>
                                     </div>
@@ -129,19 +136,19 @@
                         </th>
                         <th>
                             <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Team" class="text-column me-2" />
+                                <input type="submit" name="actionButton" value="Team" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Team" />
                                 @if (ViewData["sortField"].ToString() == "Team")
                                 {
                                     <div>
                                         @if (ViewData["sortDirection"].ToString() == "asc")
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
                                                 <i class="fa-solid fa-sort-up"></i>
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
                                                 <i class="fa-solid fa-sort-down"></i>
                                             </span>
                                         }
@@ -150,10 +157,10 @@
                                 else
                                 {
                                     <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
                                             <i class="fa-solid fa-sort-up"></i>
                                         </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
                                             <i class="fa-solid fa-sort-down" style="display: none;"></i>
                                         </span>
                                     </div>
@@ -161,20 +168,20 @@
                             </div>
                         </th>
                         <th>
-                            <div class="d-flex justify-content-center">
+                            <div class="d-flex justify-content-center" data-toggle="tooltip" data-placement="top" title="Click to sort by division">
                                 <input type="submit" name="actionButton" value="Division" class="text-column me-2" />
                                 @if (ViewData["sortField"].ToString() == "Division")
                                 {
                                     <div>
                                         @if (ViewData["sortDirection"].ToString() == "asc")
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
                                                 <i class="fa-solid fa-sort-up"></i>
                                             </span>
                                         }
                                         else
                                         {
-                                            <span class="material-icons-outlined ms-1 ft-kelly">
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
                                                 <i class="fa-solid fa-sort-down"></i>
                                             </span>
                                         }
@@ -183,10 +190,10 @@
                                 else
                                 {
                                     <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
                                             <i class="fa-solid fa-sort-up"></i>
                                         </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly">
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
                                             <i class="fa-solid fa-sort-down" style="display: none;"></i>
                                         </span>
                                     </div>
@@ -215,17 +222,17 @@
                                 @if (item.Status == true)
                                 {
                                     <div class="t-in-flex">
-                                        <a asp-action="Edit" asp-route-id="@item.ID">
+                                        <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit player">
                                             <span class="material-symbols-outlined ft-kelly px-2">
                                                 edit
                                             </span>
                                         </a>
-                                        <a asp-action="Details" asp-route-id="@item.ID">
+                                        <a asp-action="Details" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" View player's details">
                                             <span class="material-symbols-outlined ft-kelly px-2">
                                                 visibility
                                             </span>
                                         </a>
-                                        <a asp-action="Delete" asp-route-id="@item.ID">
+                                        <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Inactive player">
                                             <span class="material-symbols-outlined ft-kelly px-2">
                                                 person
                                             </span>
@@ -239,12 +246,12 @@
                                             edit
                                         </span>
                                     </div>
-                                    <a asp-action="Details" asp-route-id="@item.ID">
+                                    <a asp-action="Details" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" View player's details">
                                         <span class="material-symbols-outlined px-2">
                                             visibility
                                         </span>
                                     </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ID">
+                                    <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Active player">
                                         <span class="material-symbols-outlined px-2">
                                             person_off
                                         </span>
