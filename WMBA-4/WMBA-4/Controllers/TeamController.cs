@@ -54,9 +54,7 @@ namespace WMBA_4.Controllers
             }
             else
             {
-
                 var convenorDivisions = await GetConvenorDivisionsAsync(userEmail);
-
 
                 teamIds = await _context.Teams
                     .Where(t => convenorDivisions.Contains(t.Division.DivisionName))
@@ -64,14 +62,12 @@ namespace WMBA_4.Controllers
                     .ToListAsync();
             }
 
-
             var teams = _context.Teams
                 .Include(t => t.Division)
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
                 .Where(t => teamIds.Contains(t.ID));
 
             PopulateDropDownLists();
-
 
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
@@ -97,23 +93,19 @@ namespace WMBA_4.Controllers
             if (isInactive == true)
             {
                 teams = teams.Where(p => p.Status == false);
-
                 numberFilters++;
             }
             if (numberFilters != 0)
             {
-
                 ViewData["Filtering"] = " btn-danger";
 
                 ViewData["numberFilters"] = "(" + numberFilters.ToString()
                     + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
-
             }
 
             teams = teams.OrderByDescending(p => p.Status)
                     .ThenBy(p => p.Name)
                     .ThenBy(p => p.Division.DivisionName);
-
 
             if (!String.IsNullOrEmpty(actionButton))
             {
@@ -136,7 +128,6 @@ namespace WMBA_4.Controllers
                     {
                         teams = teams
                             .OrderBy(p => p.Name);
-
                     }
                     else
                     {
@@ -157,12 +148,21 @@ namespace WMBA_4.Controllers
                             .OrderByDescending(p => p.Division);
                     }
                 }
-
             }
+
+            //Filter by DivisionName - TeamName
+            ViewBag.TeamID = new SelectList(_context.Teams
+                .Include(t => t.Division)
+                .OrderBy(t => t.Division.ID)
+                .ThenBy(t => t.Name)
+                .Select(t => new {
+                    t.ID,
+                    TeamName = t.Division.DivisionName + " - " + t.Name
+                }), "ID", "TeamName");
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-            ViewData["TeamID"] = new SelectList(_context.Teams, "ID", "Name");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
@@ -637,11 +637,6 @@ namespace WMBA_4.Controllers
                         Player pl = new Player();
                         try
                         {
-                            if (errorCount > 0)
-                            {
-                                feedBack += "There was a problem with the data you tried to import. The errors listed below." + "<br/>";
-                            }
-
                             pl.FirstName = workSheet.Cells[row, 2].Text;
                             pl.LastName = workSheet.Cells[row, 3].Text;
                             pl.MemberID = workSheet.Cells[row, 4].Text;
@@ -757,7 +752,6 @@ namespace WMBA_4.Controllers
                 " Records with " + "<span class=\"text-bold text-primary\">" + successCount.ToString() + "</span>" + " inserted and " +
                 "<span class=\"text-bold text-danger\">" + errorCount.ToString() + "</span>" + " rejected";
                 }
-
             }
             else
             {
@@ -765,7 +759,6 @@ namespace WMBA_4.Controllers
             }
             return feedBack;
         }
-
 
         private SelectList DivisionList(int? selectedId)
         {
