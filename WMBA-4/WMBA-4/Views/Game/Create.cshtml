@@ -4,8 +4,25 @@
     ViewData["Title"] = "Create";
 }
 
-<h1>Add New Game</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Game" asp-action="Index">Game Assignment</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Create
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
 
+<h1>Add New Game</h1>
 <hr />
 
 <form asp-action="Create" method="post" enctype="multipart/form-data">

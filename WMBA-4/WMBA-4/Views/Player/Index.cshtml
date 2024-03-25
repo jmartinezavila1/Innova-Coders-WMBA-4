@@ -15,16 +15,11 @@
          <li class="breadcrumb-item">
         <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Player" asp-action="Index">Player</a>
         </li>
-        @* <li class="breadcrumb-item active" aria-current="page">
-            Player
-        </li> *@
     </ol>
 </nav>
 @* page navigation *@
 
 <div class="f-in-flex justify-content-end">
-    @* <h1>Players</h1> *@
-
     @using (Html.BeginForm("Create", "Player", FormMethod.Get))
     {
         <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" 
