@@ -67,11 +67,11 @@ namespace WMBA_4.Data
                 {
                     var divisions = new List<Division>
                     {
-                        new Division { ID = 1, DivisionName = "9U",ClubID = 1},
-                        new Division { ID = 2, DivisionName = "11U",ClubID = 1},
-                        new Division { ID = 3, DivisionName = "13U",ClubID = 1},
-                        new Division { ID = 4, DivisionName = "15U",ClubID = 1},
-                        new Division { ID = 5, DivisionName = "18U",ClubID = 1},
+                        new Division { ID = 1, DivisionName = "9U", DivisionNumber = 9, ClubID = 1},
+                        new Division { ID = 2, DivisionName = "11U", DivisionNumber = 11, ClubID = 1},
+                        new Division { ID = 3, DivisionName = "13U", DivisionNumber = 13, ClubID = 1},
+                        new Division { ID = 4, DivisionName = "15U", DivisionNumber = 15, ClubID = 1},
+                        new Division { ID = 5, DivisionName = "18U", DivisionNumber = 18, ClubID = 1},
                     };
 
                     context.Divisions.AddRange(divisions);

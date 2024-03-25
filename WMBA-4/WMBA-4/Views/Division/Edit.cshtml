@@ -5,14 +5,31 @@
     ViewData["Title"] = "Edit";
 }
 
-<h1>Edit</h1>
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Division" asp-action="Index">Division</a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+            Edit
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
 
-<h4>Division</h4>
+<h4>Division @Model.DivisionName</h4>
+<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <hr />
+
 <form asp-action="Edit">
     <div class="row">
-        <div class="col-md-4">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-4 mb-3">
             <input type="hidden" asp-for="ID" />
             <div class="form-group">
                 <label asp-for="DivisionName" class="control-label"></label>
@@ -25,13 +42,12 @@
                 <span asp-validation-for="ClubID" class="text-danger"></span>
             </div>
         </div>
-    </div>
-    <div class="form-group">
-        <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-        <input type="submit" value="Edit and Save" class="btn btn-kelly mx-1" />
+        <div class="form-group">
+            <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
+            <input type="submit" value="Edit and Save" class="btn btn-kelly mx-1" />
+        </div>
     </div>
 </form>
-
 
 @section Scripts {
     @{

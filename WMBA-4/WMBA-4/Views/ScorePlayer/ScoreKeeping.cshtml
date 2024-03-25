@@ -124,131 +124,120 @@
                                             </td>
                                             @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
                                             {
-
                                                 <td class="py-1">
                                                     <div class="inning-box text-warning text-center m-auto">
-                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="inningScoreA@(inningNumber)">
-                                                            @(ViewBag.InningScoresA.ContainsKey(inningNumber) ? ViewBag.InningScoresA[inningNumber] : "-")
-
+                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="#InningScore">
+                                                            @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
                                                         </h6>
                                                     </div>
                                                 </td>
-                                                @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                                {
-                                                    <td class="py-1">
-                                                        <div class="inning-box text-warning text-center m-auto">
-                                                            <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="#InningScore">
-                                                                @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
-                                                            </h6>
-                                                        </div>
-                                                    </td>
-                                                }
-                                            </tr>
-                                        }
+                                            }
+                                        </tr>
                                     }
-                                    @foreach (var team in ViewBag.Teams)
-                                    {
-
-                                        <tr>
-                                            <td class="p-1">
-                                                <div class="inning-box text-danger text-center m-auto py-2">
+                                }
+                                @foreach (var team in ViewBag.Teams)
+                                {
+                                    <tr>
+                                        <td class="p-1">
+                                            <div class="inning-box text-danger text-center m-auto py-2">
+                                                <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                                    H
+                                                </h6>
+                                            </div>
+                                        </td>
+                                        @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
+                                        {
+                                            <td class="py-1">
+                                                <div class="inning-box text-danger text-center m-auto">
                                                     <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
-                                                        H
+                                                        @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
                                                     </h6>
                                                 </div>
                                             </td>
-                                            @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                            {
-                                                <td class="py-1">
-                                                    <div class="inning-box text-danger text-center m-auto">
-                                                        <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center" id="inningScoreH@(inningNumber)">
-                                                            @(ViewBag.InningScoresH.ContainsKey(inningNumber) ? ViewBag.InningScoresH[inningNumber] : "-")
-                                                        </h6>
-                                                    </div>
-                                                </td>
-                                                @for (int inningNumber = 1; inningNumber <= 9; inningNumber++)
-                                                {
-                                                    <td class="py-1">
-                                                        <div class="inning-box text-danger text-center m-auto">
-                                                            <h6 class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
-                                                                @(ViewBag.InningScores.ContainsKey(inningNumber) ? ViewBag.InningScores[inningNumber] : "-")
-                                                            </h6>
-                                                        </div>
-                                                    </td>
-                                                }
-                                            </tr>
                                         }
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
                     </div>
-                    @* Inning Table Info *@
-                    @* Inning and AB Info *@
-                    <div class="d-flex justify-content-around p-2">
-                        @if (ViewBag.Inplay != null)
-                        {
-                            <div class="d-flex flex-column">
-                                <h5 class="fs-3 text-white card-title mb-2 text-center">Inning </h5>
-                                <div class="score-box text-info text-center m-auto px-3 py-2">
-                                    <h6 id="inning" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
-                                        @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "-")
-                                    </h6>
-                                </div>
-                            </div>
-                            <div class="d-flex flex-column">
-                                <h5 class="fs-3 text-white card-title mb-2 text-center">At Bat </h5>
-                                <div class="score-box text-info text-center m-auto px-3 py-2">
-                                    <h6 id="playerAtBat" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
-                                        @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "-")
-                                    </h6>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    @* Inning and AB Info *@
-
-                    @* Ball Strike Out *@
-                    <div class="d-flex justify-content-center py-2 mb-2">
-                        @if (ViewBag.Inplay != null)
-                        {
-                            <div class="d-flex align-items-center me-4">
-                                <h4 id="ballsText" class="text-white fs-1 m-0">B</h4>
-                                <div class="ball-box mx-2 px-3 py-2">
-                                    <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</h4>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center me-4">
-                                <h4 id="ballsText" class="text-white fs-1 m-0">S</h4>
-                                <div class="ball-box mx-2 px-3 py-2">
-                                    <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="strikesCount"> @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
-                                </div>
-                            </div>
-                            <div class="d-flex align-items-center ">
-                                <h4 id="ballsText" class="text-white fs-1 m-0">O</h4>
-                                <div class="ball-box mx-2 px-3 py-2">
-                                    <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                    @* Ball Strike Out *@
-
-                   
-
                 </div>
+                @* Inning Table Info *@
+                @* Inning and AB Info *@
+                <div class="d-flex justify-content-around p-2">
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <div class="d-flex flex-column">
+                            <h5 class="fs-3 text-white card-title mb-2 text-center">Inning </h5>
+                            <div class="score-box text-info text-center m-auto px-3 py-2">
+                                <h6 id="inning" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                    @(ViewBag.Inplay.Inning != null ? ViewBag.Inplay.Inning.InningNumber : "-")
+                                </h6>
+                            </div>
+                        </div>
+                        <div class="d-flex flex-column">
+                            <h5 class="fs-3 text-white card-title mb-2 text-center">At Bat </h5>
+                            <div class="score-box text-info text-center m-auto px-3 py-2">
+                                <h6 id="playerAtBat" class="m-0 h-100 lh-base d-flex justify-content-center align-items-center">
+                                    @(ViewBag.Inplay.PlayerBatting != null ? ViewBag.Inplay.PlayerBatting.FullName : "-")
+                                </h6>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @* Inning and AB Info *@
+
+                @* Ball Strike Out *@
+                <div class="d-flex justify-content-center py-2 mb-2">
+                    @if (ViewBag.Inplay != null)
+                    {
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">B</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="ballsCount">@(ViewBag.Inplay != null ? ViewBag.Inplay.Balls : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center me-4">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">S</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="strikesCount"> @(ViewBag.Inplay != null ? ViewBag.Inplay.Strikes : "")</h4>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center ">
+                            <h4 id="ballsText" class="text-white fs-1 m-0">O</h4>
+                            <div class="ball-box mx-2 px-3 py-2">
+                                <h4 class="text-info m-0 d-flex h-100 justify-content-center align-items-center" id="outs">@(ViewBag.Inplay != null ? ViewBag.Inplay.Outs : "")</h4>
+                            </div>
+                        </div>
+                    }
+                </div>
+                @* Ball Strike Out *@
             </div>
         </div>
-        @* Buttons *@
+    </div>
+    @* Buttons *@
+    <div>
         <div>
-            <div>
-                @if (ViewBag.Inplay != null)
-                {
-                    <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
-                }
+            @if (ViewBag.Inplay != null)
+            {
+                <input type="hidden" id="inplayId" value="@(ViewBag.Inplay != null ? ViewBag.Inplay.ID : "")" />
+            }
+        </div>
+        <div class="d-flex justify-content-around rounded-bottom">
+            <a id="hbpButton" class="btn btn-kelly mx-1 col py-3" data-toggle="tooltip" data-placement="top" title=" hit-by-pitch">
+                <span>HBP</span>
+            </a>
+            @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
+            <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span>Hit</span>
+            </button>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" href="#">Single</a>
+                <a class="dropdown-item" href="#">Double</a>
+                <a class="dropdown-item" href="#">Triple</a>
+                <a class="dropdown-item" href="#">HomeRun</a>
             </div>
             <div class="d-flex justify-content-around rounded-bottom">
-                <a id="hbpButton" class="btn btn-kelly mx-1 col py-3" data-toggle="tooltip" data-placement="top" title=" hit-by-pitch">
+                <a id="hbpButton" class="btn btn-kelly mx-1 col py-3">
                     <span>HBP</span>
                 </a>
                 @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
@@ -261,356 +250,184 @@
                     <a class="dropdown-item" href="#">Triple</a>
                     <a class="dropdown-item" href="#">HomeRun</a>
                 </div>
-                <div class="d-flex justify-content-around rounded-bottom">
-                    <a id="hbpButton" class="btn btn-kelly mx-1 col py-3">
-                        <span>HBP</span>
-                    </a>
-                    @*  <a id="hitButton" class="btn btn-kelly mx-1 col">Hit</a> *@
-                    <button type="button" class="btn btn-kelly mx-1 col dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span>Hit</span>
+                <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col py-3">
+                    <span>In Play</span>
+                </a>
+            </div>
+        </div>
+        <div class="card-body p-3 bg-light-grey d-flex align-content-center justify-content-center">
+            <div class="d-flex justify-content-around">
+                <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span>Start Game</span>
+                </a>
+                <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span>Next Inning</span>
+                </a>
+                <a href="#" id="lineupButton" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+                    <span style="white-space: normal;">Line Up</span>
+                </a>
+                <div class="dropdown d-flex btn-group dropup">
+                    <button class="btn btn-blue mx-1 col py-3 dropdown-toggle d-flex align-items-center justify-content-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <span style="white-space: normal;">Exit Game</span>
                     </button>
                     <div class="dropdown-menu">
-                        <a class="dropdown-item" href="#">Single</a>
-                        <a class="dropdown-item" href="#">Double</a>
-                        <a class="dropdown-item" href="#">Triple</a>
-                        <a class="dropdown-item" href="#">HomeRun</a>
-                    </div>
-                    <a id="openPopupButton" data-inplayId="ViewBag.Inplay.ID" class="btn btn-kelly mx-1 col py-3">
-                        <span>In Play</span>
-                    </a>
-                </div>
-            </div>
-            <div class="card-body p-3 bg-light-grey d-flex align-content-center justify-content-center">
-                <div class="d-flex justify-content-around">
-                    <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
-                        <span>Start Game</span>
-                    </a>
-                    <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
-                        <span>Next Inning</span>
-                    </a>
-                    <a href="#" id="lineupButton" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
-                        <span style="white-space: normal;">Line Up</span>
-                    </a>
-                    <div class="dropdown d-flex btn-group dropup">
-                        <button class="btn btn-blue mx-1 col py-3 dropdown-toggle d-flex align-items-center justify-content-center" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <span style="white-space: normal;">Exit Game</span>
-                        </button>
-                        <div class="dropdown-menu">
-                            <a class="dropdown-item exit-game-option" href="#">End Game</a>
-                            <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
-                        </div>
+                        <a class="dropdown-item exit-game-option" href="#">End Game</a>
+                        <a class="dropdown-item exit-game-option" href="#">Cancel Game</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    @* End Row *@
+</div>
+@* End Row *@
 
-    @* This is for LineUp Popup *@
-    <div id="lineupPopup" class="popup-container" style="display: none;">
-        <div class="popup-content">
-            <button id="closeButton" class="close">&times;</button> <!-- "x" button -->
-            <!-- This is where the lineup view will be loaded -->
-            <button id="popoverButton" class="btn btn-secondary">Open Popover</button>
-            <div id="popoverContent" style="display: none;">
-                <!-- Popover content goes here -->
-                This is the content of the popover.
+@* This is for LineUp Popup *@
+<div id="lineupPopup" class="popup-container" style="display: none;">
+    <div class="popup-content">
+        <button id="closeButton" class="close">&times;</button> <!-- "x" button -->
+        <!-- This is where the lineup view will be loaded -->
+        <button id="popoverButton" class="btn btn-secondary">Open Popover</button>
+        <div id="popoverContent" style="display: none;">
+            <!-- Popover content goes here -->
+            This is the content of the popover.
+        </div>
+    </div>
+</div>
+
+
+@* Ths is for InPlay popup *@
+
+<!-- Modal -->
+<div class="modal fade" id="inplayModal" tabindex="-1" role="dialog" aria-labelledby="inplayModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="inplayModalLabel">Inplay Data</h5>
+                <button id="closeButtonInplayx" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="inplayModalBody">
+            </div>
+            <div class="modal-footer">
+                <button id="closeButtonInplay" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button id="saveChangesButton" type="button" class="btn btn-kelly mx-1">Save changes</button>
             </div>
         </div>
     </div>
+</div>
+
+<script src="~/js/Scorekeeper.js" asp-append-version="true"></script>
+
+@*Cierra popup  inplay *@
+<script>
+    $('#closeButtonInplay').click(function () {
+        // Solo cierra el popup
+        $('#inplayModal').modal('hide');
+    });
+</script>
+
+@* Cierra boton Inplay desde la x *@
+
+<script>
+    $('#closeButtonInplayx').click(function () {
+        // Solo cierra el popup
+        $('#inplayModal').modal('hide');
+    });
+</script>
 
 
-    @* Ths is for InPlay popup *@
+@* For the Modal Inplay *@
+<script>
+    $('#openPopupButton').click(function () {
+        var inplayId = $('#inplayId').val();
+        $.ajax({
+            url: '/ScorePlayer/LoadInplayPartial',
+            data: {
+                inplayId: inplayId
+            },
+            success: function (response) {
 
-    <!-- Modal -->
-    <div class="modal fade" id="inplayModal" tabindex="-1" role="dialog" aria-labelledby="inplayModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="inplayModalLabel">Inplay Data</h5>
-                    <button id="closeButtonInplayx" type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body" id="inplayModalBody">
-                </div>
-                <div class="modal-footer">
-                    <button id="closeButtonInplay" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <button id="saveChangesButton" type="button" class="btn btn-kelly mx-1">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
+                $('#inplayModalBody').html(response);
 
-    <script src="~/js/Scorekeeper.js" asp-append-version="true"></script>
-
-    @*Cierra popup  inplay *@
-    <script>
-        $('#closeButtonInplay').click(function () {
-            // Solo cierra el popup
-            $('#inplayModal').modal('hide');
+                $('#inplayModal').modal('show');
+            }
         });
-    </script>
+    });
+</script>
 
-    @* Cierra boton Inplay desde la x *@
+@* For saving the changes in the modal *@
+<script>
+    $(document).ready(function () {
+        $('#saveChangesButton').click(function () {
+            var data = {
+                InplayID: Number($('#inplayId').val()),
+                PlayerInBase1Base: Number($('input[name="PlayerInBase1Base"]:checked').val()),
+                PlayerInBase2Base: Number($('input[name="PlayerInBase2Base"]:checked').val()),
+                PlayerInBase3Base: Number($('input[name="PlayerInBase3Base"]:checked').val()),
+                PlayerBattingBase: Number($('input[name="PlayerBattingBase"]:checked').val()),
+                PlayerInBase1Id: Number($('#playerInBase1Id').val()),
+                PlayerInBase2Id: Number($('#playerInBase2Id').val()),
+                PlayerInBase3Id: Number($('#playerInBase3Id').val()),
+                PlayerBattingId: Number($('#playerBattingId').val()),
+                IsHit: $('input[name="isHit"]').is(':checked'),
+                IsRunPlayer1: $('input[name="isRunPlayer1"]').is(':checked'),
+                IsRunPlayer2: $('input[name="isRunPlayer2"]').is(':checked'),
+                IsRunPlayer3: $('input[name="isRunPlayer3"]').is(':checked'),
+                IsOutPlayer1: $('input[name="isOutPlayer1"]').is(':checked'),
+                IsOutPlayer2: $('input[name="isOutPlayer2"]').is(':checked'),
+                IsOutPlayer3: $('input[name="isOutPlayer3"]').is(':checked'),
+                IsRBI: Number($('input[name="isRBI"]').val()),
+                IsHomerun: $('input[name="isHomerun"]').is(':checked'),
+            };
 
-    <script>
-        $('#closeButtonInplayx').click(function () {
-            // Solo cierra el popup
-            $('#inplayModal').modal('hide');
-        });
-    </script>
-
-
-    @* For the Modal Inplay *@
-    <script>
-        $('#openPopupButton').click(function () {
-            var inplayId = $('#inplayId').val();
             $.ajax({
-                url: '/ScorePlayer/LoadInplayPartial',
-                data: {
-                    inplayId: inplayId
-                },
+                url: '/ScorePlayer/SaveInplayChanges',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(data),
                 success: function (response) {
+                    console.log(response);
+                    if (response.success) {
+                        console.log('Los datos se guardaron correctamente..');
+                        $('#inplayId').val(response.inplay.id);
+                        $('#strikesCount').text(response.inplay.strikes);
+                        $('#outs').text(response.inplay.outs);
+                        $('#fouls').text(response.inplay.fouls);
+                        $('#ballsCount').text(response.inplay.balls);
+                        $('#runs').text(response.inplay.runs);
+                        $('#runs2').text(response.inplay.runs2);
+                        $('#inning').text(response.inplay.inningNumber);
+                        $('#playerAtBat').text(response.inplay.firstPlayer);
 
-                    $('#inplayModalBody').html(response);
-
-                    $('#inplayModal').modal('show');
+                        // Cierra el popup
+                        $('#inplayModal').modal('hide');
+                    } else {
+                        console.log('Hubo un error al guardar los datos de Inply');
+                    }
                 }
             });
         });
-    </script>
+    });
+</script>
 
-    @* For saving the changes in the modal *@
-    <script>
-        $(document).ready(function () {
-            $('#saveChangesButton').click(function () {
-                var data = {
-                    InplayID: Number($('#inplayId').val()),
-                    PlayerInBase1Base: Number($('input[name="PlayerInBase1Base"]:checked').val()),
-                    PlayerInBase2Base: Number($('input[name="PlayerInBase2Base"]:checked').val()),
-                    PlayerInBase3Base: Number($('input[name="PlayerInBase3Base"]:checked').val()),
-                    PlayerBattingBase: Number($('input[name="PlayerBattingBase"]:checked').val()),
-                    PlayerInBase1Id: Number($('#playerInBase1Id').val()),
-                    PlayerInBase2Id: Number($('#playerInBase2Id').val()),
-                    PlayerInBase3Id: Number($('#playerInBase3Id').val()),
-                    PlayerBattingId: Number($('#playerBattingId').val()),
-                    IsHit: $('input[name="isHit"]').is(':checked'),
-                    IsRunPlayer1: $('input[name="isRunPlayer1"]').is(':checked'),
-                    IsRunPlayer2: $('input[name="isRunPlayer2"]').is(':checked'),
-                    IsRunPlayer3: $('input[name="isRunPlayer3"]').is(':checked'),
-                    IsOutPlayer1: $('input[name="isOutPlayer1"]').is(':checked'),
-                    IsOutPlayer2: $('input[name="isOutPlayer2"]').is(':checked'),
-                    IsOutPlayer3: $('input[name="isOutPlayer3"]').is(':checked'),
-                    IsRBI: Number($('input[name="isRBI"]').val()),
-                    IsHomerun: $('input[name="isHomerun"]').is(':checked'),
+@* Script for Button´s action *@
+<script>
+    $(document).ready(function () {
 
-                };
+        // Start Button
+        $('#startButton').click(function (e) {
+            e.preventDefault();
 
-                $.ajax({
-                    url: '/ScorePlayer/SaveInplayChanges',
-                    type: 'POST',
-                    contentType: 'application/json',
-                    data: JSON.stringify(data),
-                    success: function (response) {
-                        console.log(response);
-                        if (response.success) {
-                            console.log('Los datos se guardaron correctamente..');
-                            $('#inplayId').val(response.inplay.id);
-                            $('#strikesCount').text(response.inplay.strikes);
-                            $('#outs').text(response.inplay.outs);
-                            $('#fouls').text(response.inplay.fouls);
-                            $('#ballsCount').text(response.inplay.balls);
-                            $('#runs').text(response.inplay.runs);
-                            $('#runs2').text(response.inplay.runs2);
-                            $('#inning').text(response.inplay.inningNumber);
-                            $('#playerAtBat').text(response.inplay.firstPlayer);
+            var inplayId = $('#inplayId').val();
+            var url = $(this).attr('href');
+            url = url.replace('http://', 'https://');
 
-                            // Cierra el popup
-                            $('#inplayModal').modal('hide');
-                        } else {
-                            console.log('Hubo un error al guardar los datos de Inply');
-                        }
-                    }
-                });
-            });
-        });
-    </script>
-
-    @* Script for Button´s action *@
-    <script>
-        $(document).ready(function () {
-
-            // Start Button
-            $('#startButton').click(function (e) {
-                e.preventDefault();
-
-                var inplayId = $('#inplayId').val();
-                var url = $(this).attr('href');
-                url = url.replace('http://', 'https://');
-
-                $.ajax({
-                    url: url,
-                    type: 'GET',
-
-                    success: function (data) {
-                        if (data.success === false) {
-                            // Show the error message in an alert
-                            alert(data.message);
-                        } else if (data.inplay) {
-                            $('#inplayId').val(data.inplay.id);
-                            $('#strikesCount').text(data.inplay.strikes);
-                            $('#outs').text(data.inplay.outs);
-                            $('#fouls').text(data.inplay.fouls);
-                            $('#ballsCount').text(data.inplay.balls);
-                            $('#runs').text(data.inplay.runs);
-                            $('#runs2').text(data.inplay.runs2);
-                            $('#inning').text(data.inplay.inningNumber);
-                            $('#playerAtBat').text(data.inplay.firstPlayer);
-
-                            // Actualiza las celdas de la tabla para el equipo "A"
-                            var inningScoresTeam1 = data.inningScoresTeam1;
-                            for (var key in inningScoresTeam1) {
-                                if (key !== "$id") {  // Ignora la clave "$id"
-                                    var score = inningScoresTeam1[key];
-                                    console.log($('#inningScoreA' + key));
-                                    $('#inningScoreA' + key).text(score);
-                                }
-                            }
-
-                            // Actualiza las celdas de la tabla para el equipo "H"
-                            var inningScoresTeam2 = data.inningScoresTeam2;
-                            for (var key in inningScoresTeam2) {
-                                if (key !== "$id") {  // Ignora la clave "$id"
-                                    var score = inningScoresTeam2[key];
-                                    console.log($('#inningScoreH' + key));
-                                    $('#inningScoreH' + key).text(score);
-                                }
-                            }
-
-
-                        } else {
-                            console.log('inplay is undefined');
-                        }
-                        if (data.needUserDecision) {
-                            swal({
-                                title: data.message,
-                                text: "Choose one option:",
-                                icon: "warning",
-                                buttons: {
-                                    cancel: "Out",
-                                    confirm: "Run"
-                                }
-                            });
-                        } else {
-
-                        }
-                    }
-                    // if the user clicked "Cancel Game"
-                    if ($(this).text() === 'Cancel Game') {
-                        // shows the alert to confirm the action
-                        if (confirm('Are you sure you want to cancel this game?')) {
-
-                            $.ajax({
-                                url: '/ScorePlayer/Exit',
-                                type: 'POST',
-                                data: { id: inplayId, exitType: exitType },
-                                success: function (data) {
-                                    if (data.redirectTo) {
-                                        window.location.href = data.redirectTo;
-                                    }
-                                }
-                            });
-                        } else {
-
-                        }
-                    }
-
-
-                });
-            });
-
-            //Hits Button
-            $(document).ready(function () {
-                $('.dropdown-item').click(function (e) {
-                    e.preventDefault();
-
-                    var hitType = $(this).text();
-                    var inplayId = parseInt($('#inplayId').val(), 10);
-
-                    $.ajax({
-                        url: '/ScorePlayer/Hit',
-                        type: 'POST',
-                        data: { id: inplayId, hitType: hitType },
-                        success: function (data) {
-                            console.log(data);
-                            if (data.success === false) {
-                                // Show the error message in an alert
-                                alert(data.message);
-                            } else if (data.inplay) {
-                                $('#inplayId').val(data.inplay.id);
-                                $('#strikesCount').text(data.inplay.strikes);
-                                $('#outs').text(data.inplay.outs);
-                                $('#fouls').text(data.inplay.fouls);
-                                $('#ballsCount').text(data.inplay.balls);
-                                $('#runs').text(data.inplay.runs);
-                                $('#runs2').text(data.inplay.runs2);
-                                $('#inning').text(data.inplay.inningNumber);
-                                $('#playerAtBat').text(data.inplay.firstPlayer);
-                            } else {
-                                console.log('inplay is undefined');
-                            }
-                            if (data.needUserDecision) {
-                                swal({
-                                    title: data.message,
-                                    text: "Choose one option:",
-                                    icon: "warning",
-                                    buttons: {
-                                        cancel: "Out",
-                                        confirm: "Run"
-                                    }
-                                }).then((isConfirm) => {
-                                    if (isConfirm) {
-                                        // El usuario eligió "Run"
-                                        handleUserDecision(inplayId, "Run", data.playerBatting, data.playerInBase3);
-                                    } else {
-                                        // El usuario eligió "Out"
-                                        handleUserDecision(inplayId, "Out", data.playerBatting, data.playerInBase3);
-                                    }
-                                });
-                            }
-                        },
-                        error: function (jqXHR, textStatus, errorThrown) {
-                            console.log(textStatus, errorThrown);
-                        }
-                    });
-                });
-            });
-
-            function handleUserDecision(inplayId, decision, batter, player) {
-
-                $.ajax({
-                    url: '/ScorePlayer/HandleUserDecision',
-                    type: 'POST',
-                    data: { id: inplayId, decision: decision, batter: batter, player: player },
-                    success: function (data) {
-
-                        console.log(data);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
-            }
-            //end hits button
-
-            //Inning Button
             $.ajax({
-                url: '/ScorePlayer/HandleUserDecision',
-                type: 'POST',
-                data: { id: inplayId, decision: decision, batter: batter, player: player },
+                url: url,
+                type: 'GET',
+
                 success: function (data) {
-                    console.log(data);
                     if (data.success === false) {
                         // Show the error message in an alert
                         alert(data.message);
@@ -644,369 +461,524 @@
                                 $('#inningScoreH' + key).text(score);
                             }
                         }
-
-
                     } else {
                         console.log('inplay is undefined');
                     }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-
-
-            // Ball Button
-
-            $('#ballsButton').click(function (e) {
-                e.preventDefault();
-                var inplayId = $('#inplayId').val();
-
-                $.ajax({
-                    url: '/ScorePlayer/CountBalls',
-                    type: 'POST',
-                    data: { inplayId: inplayId },
-                    success: function (data) {
-
-                        if (data.success === false) {
-                            alert(data.message);
-                            return;
-                        }
-                        $('#ballsCount').text(data.inplay.balls);
-                        $('#inplayId').val(data.inplay.id);
-                        $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text(data.inplay.outs);
-                        $('#fouls').text(data.inplay.fouls);
-                        $('#runs').text(data.inplay.runs);
-                        $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text(data.inplay.inningNumber);
-                        $('#playerAtBat').text(data.inplay.firstPlayer);
-
-                        // Actualiza las celdas de la tabla para el equipo "A"
-                        var inningScoresTeam1 = data.inningScoresTeam1;
-                        for (var key in inningScoresTeam1) {
-                            if (key !== "$id") {  // Ignora la clave "$id"
-                                var score = inningScoresTeam1[key];
-                                console.log($('#inningScoreA' + key));
-                                $('#inningScoreA' + key).text(score);
+                    if (data.needUserDecision) {
+                        swal({
+                            title: data.message,
+                            text: "Choose one option:",
+                            icon: "warning",
+                            buttons: {
+                                cancel: "Out",
+                                confirm: "Run"
                             }
-                        }
-
-                        // Actualiza las celdas de la tabla para el equipo "H"
-                        var inningScoresTeam2 = data.inningScoresTeam2;
-                        for (var key in inningScoresTeam2) {
-                            if (key !== "$id") {  // Ignora la clave "$id"
-                                var score = inningScoresTeam2[key];
-                                console.log($('#inningScoreH' + key));
-                                $('#inningScoreH' + key).text(score);
-                            }
-                        }
-
+                        });
                     } else {
-                        console.log('inplay is undefined');
+
                     }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
                 }
-            });
-        });
-
-
-        // Ball Button
-
-        $('#ballsButton').click(function (e) {
-            e.preventDefault();
-            var inplayId = $('#inplayId').val();
-
-            $.ajax({
-                url: '/ScorePlayer/CountBalls',
-                type: 'POST',
-                data: { inplayId: inplayId },
-                success: function (data) {
-
-                    if (data.success === false) {
-                        alert(data.message);
-                        return;
-                    }
-                    $('#ballsCount').text(data.inplay.balls);
-                    $('#inplayId').val(data.inplay.id);
-                    $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text(data.inplay.outs);
-                    $('#fouls').text(data.inplay.fouls);
-                    $('#runs').text(data.inplay.runs);
-                    $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text(data.inplay.inningNumber);
-                    $('#playerAtBat').text(data.inplay.firstPlayer);
-
-
-                    // Actualiza las celdas de la tabla para el equipo "A"
-                    var inningScoresTeam1 = data.inningScoresTeam1;
-                    for (var key in inningScoresTeam1) {
-                        if (key !== "$id") {  // Ignora la clave "$id"
-                            var score = inningScoresTeam1[key];
-                            console.log($('#inningScoreA' + key));
-                            $('#inningScoreA' + key).text(score);
-                        }
-                    }
-
-                    // Actualiza las celdas de la tabla para el equipo "H"
-                    var inningScoresTeam2 = data.inningScoresTeam2;
-                    for (var key in inningScoresTeam2) {
-                        if (key !== "$id") {  // Ignora la clave "$id"
-                            var score = inningScoresTeam2[key];
-                            console.log($('#inningScoreH' + key));
-                            $('#inningScoreH' + key).text(score);
-                        }
-                    }
-
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-        });
-        // Strike Button
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
-            });
-            // Strike Button
-
-            $('#strikeButton').click(function (e) {
-                e.preventDefault();
-                var inplayId = $('#inplayId').val();;
-
-                $.ajax({
-                    url: '/ScorePlayer/CountStrikes',
-                    type: 'POST',
-                    data: { inplayId: inplayId },
-                    success: function (data) {
-                        if (data.success === false) {
-                            alert(data.message);
-                            return;
-                        }
-                        // Actualiza el contador de Balls en la vista
-                        $('#ballsCount').text(data.inplay.balls);
-                        $('#inplayId').val(data.inplay.id);
-                        $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text(data.inplay.outs);
-                        $('#fouls').text(data.inplay.fouls);
-                        $('#runs').text(data.inplay.runs);
-                        $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text(data.inplay.inningNumber);
-                        $('#playerAtBat').text(data.inplay.firstPlayer);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
-            });
-
-            // Foul Button
-
-            $('#foulButton').click(function (e) {
-                e.preventDefault();
-                var inplayId = $('#inplayId').val();;
-
-                $.ajax({
-                    url: '/ScorePlayer/CountFouls',
-                    type: 'POST',
-                    data: { inplayId: inplayId },
-                    success: function (data) {
-                        if (data.success === false) {
-                            alert(data.message);
-                            return;
-                        }
-                        // Actualiza el contador de Balls en la vista
-                        $('#ballsCount').text(data.inplay.balls);
-                        $('#inplayId').val(data.inplay.id);
-                        $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text(data.inplay.outs);
-                        $('#fouls').text(data.inplay.fouls);
-                        $('#runs').text(data.inplay.runs);
-                        $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text(data.inplay.inningNumber);
-                        $('#playerAtBat').text(data.inplay.firstPlayer);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                    // Actualiza el contador de Balls en la vista
-                    $('#ballsCount').text(data.inplay.balls);
-                    $('#inplayId').val(data.inplay.id);
-                    $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text(data.inplay.outs);
-                    $('#fouls').text(data.inplay.fouls);
-                    $('#runs').text(data.inplay.runs);
-                    $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text(data.inplay.inningNumber);
-                    $('#playerAtBat').text(data.inplay.firstPlayer);
-
-                    // Actualiza las celdas de la tabla para el equipo "A"
-                    var inningScoresTeam1 = data.inningScoresTeam1;
-                    for (var key in inningScoresTeam1) {
-                        if (key !== "$id") {  // Ignora la clave "$id"
-                            var score = inningScoresTeam1[key];
-                            console.log($('#inningScoreA' + key));
-                            $('#inningScoreA' + key).text(score);
-                        }
-                    }
-
-                    // Actualiza las celdas de la tabla para el equipo "H"
-                    var inningScoresTeam2 = data.inningScoresTeam2;
-                    for (var key in inningScoresTeam2) {
-                        if (key !== "$id") {  // Ignora la clave "$id"
-                            var score = inningScoresTeam2[key];
-                            console.log($('#inningScoreH' + key));
-                            $('#inningScoreH' + key).text(score);
-                        }
-                    }
-
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-
-            // Hit by pitch Button
-
-            $('#hbpButton').click(function (e) {
-                e.preventDefault();
-                var inplayId = $('#inplayId').val();
-
-                $.ajax({
-                    url: '/ScorePlayer/HitByPitch',
-                    type: 'POST',
-                    data: { inplayId: inplayId },
-                    success: function (data) {
-                        if (data.success === false) {
-                            alert(data.message);
-                            return;
-                        }
-                        // Actualiza el contador de Balls en la vista
-                        $('#ballsCount').text(data.inplay.balls);
-                        $('#inplayId').val(data.inplay.id);
-                        $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text(data.inplay.outs);
-                        $('#fouls').text(data.inplay.fouls);
-                        $('#runs').text(data.inplay.runs);
-                        $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text(data.inplay.inningNumber);
-                        $('#playerAtBat').text(data.inplay.firstPlayer);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-
-                    // Actualiza el contador de Balls en la vista
-                    $('#ballsCount').text(data.inplay.balls);
-                    $('#inplayId').val(data.inplay.id);
-                    $('#strikesCount').text(data.inplay.strikes);
-                    $('#outs').text(data.inplay.outs);
-                    $('#fouls').text(data.inplay.fouls);
-                    $('#runs').text(data.inplay.runs);
-                    $('#runs2').text(data.inplay.runs2);
-                    $('#inning').text(data.inplay.inningNumber);
-                    $('#playerAtBat').text(data.inplay.firstPlayer);
-                    $('#inningScore').text(data.inplay.inningScore);
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    console.log(textStatus, errorThrown);
-                }
-            });
-
-            // Out Button
-
-            $('#outButton').click(function (e) {
-                e.preventDefault();
-                var inplayId = $('#inplayId').val();;
-
-                $.ajax({
-                    url: '/ScorePlayer/Out',
-                    type: 'POST',
-                    data: { inplayId: inplayId },
-                    success: function (data) {
-                        if (data.success === false) {
-                            alert(data.message);
-                            return;
-                        }
-                        // Actualiza el contador de Balls en la vista
-                        $('#ballsCount').text(data.inplay.balls);
-                        $('#inplayId').val(data.inplay.id);
-                        $('#strikesCount').text(data.inplay.strikes);
-                        $('#outs').text(data.inplay.outs);
-                        $('#fouls').text(data.inplay.fouls);
-                        $('#runs').text(data.inplay.runs);
-                        $('#runs2').text(data.inplay.runs2);
-                        $('#inning').text(data.inplay.inningNumber);
-                        $('#playerAtBat').text(data.inplay.firstPlayer);
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        console.log(textStatus, errorThrown);
-                    }
-                });
-            });
-
-
-        });
-    </script>
-
-    @* Script for the LineUp Button *@
-    @section Scripts {
-        <script>
-            $(document).ready(function () {
-                // Existing code for the start button AJAX request goes here
-                $('#popoverButton').popover({
-                    container: 'body',
-                    content: $('#popoverContent').html(),
-                    html: true,
-                    title: 'Popover Title',
-                });
-
-                $('#lineupButton').click(function (e) {
-                    e.preventDefault();
-
-                    var gameId = $(this).data('gameid');
-                    var teamId = $(this).data('teamid');
+                                                    // if the user clicked "Cancel Game"
+                                                    if($(this).text() === 'Cancel Game') {
+                // shows the alert to confirm the action
+                if (confirm('Are you sure you want to cancel this game?')) {
 
                     $.ajax({
-                        url: '/ScorePlayer/GetLineup', // Change the URL to your endpoint that returns the lineup view
-                        type: 'GET',
-                        data: { gameId: gameId, teamId: teamId },
+                        url: '/ScorePlayer/Exit',
+                        type: 'POST',
+                        data: { id: inplayId, exitType: exitType },
                         success: function (data) {
-                            $('#lineupPopup .popup-content').html(data);
-                            $('#lineupPopup').show();
-                        },
-                        error: function () {
-                            console.error('Failed to fetch lineup data.');
+                            if (data.redirectTo) {
+                                window.location.href = data.redirectTo;
+                            }
                         }
                     });
-                });
+                } else {
 
-                $(document).click(function (e) {
-                    if (!$(e.target).closest('#lineupPopup').length) {
-                        $('#lineupPopup').hide();
+                }
+            }
+
+
+        });
+    });
+
+    //Hits Button
+    $(document).ready(function () {
+        $('.dropdown-item').click(function (e) {
+            e.preventDefault();
+
+            var hitType = $(this).text();
+            var inplayId = parseInt($('#inplayId').val(), 10);
+
+            $.ajax({
+                url: '/ScorePlayer/Hit',
+                type: 'POST',
+                data: { id: inplayId, hitType: hitType },
+                success: function (data) {
+                    console.log(data);
+                    if (data.success === false) {
+                        // Show the error message in an alert
+                        alert(data.message);
+                    } else if (data.inplay) {
+                        $('#inplayId').val(data.inplay.id);
+                        $('#strikesCount').text(data.inplay.strikes);
+                        $('#outs').text(data.inplay.outs);
+                        $('#fouls').text(data.inplay.fouls);
+                        $('#ballsCount').text(data.inplay.balls);
+                        $('#runs').text(data.inplay.runs);
+                        $('#runs2').text(data.inplay.runs2);
+                        $('#inning').text(data.inplay.inningNumber);
+                        $('#playerAtBat').text(data.inplay.firstPlayer);
+                    } else {
+                        console.log('inplay is undefined');
+                    }
+                    if (data.needUserDecision) {
+                        swal({
+                            title: data.message,
+                            text: "Choose one option:",
+                            icon: "warning",
+                            buttons: {
+                                cancel: "Out",
+                                confirm: "Run"
+                            }
+                        }).then((isConfirm) => {
+                            if (isConfirm) {
+                                // El usuario eligió "Run"
+                                handleUserDecision(inplayId, "Run", data.playerBatting, data.playerInBase3);
+                            } else {
+                                // El usuario eligió "Out"
+                                handleUserDecision(inplayId, "Out", data.playerBatting, data.playerInBase3);
+                            }
+                        });
+                    }
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    console.log(textStatus, errorThrown);
+                }
+            });
+        });
+    });
+
+    function handleUserDecision(inplayId, decision, batter, player) {
+
+        $.ajax({
+            url: '/ScorePlayer/HandleUserDecision',
+            type: 'POST',
+            data: { id: inplayId, decision: decision, batter: batter, player: player },
+            success: function (data) {
+
+                console.log(data);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    }
+    //end hits button
+
+    //Inning Button
+    $.ajax({
+        url: '/ScorePlayer/HandleUserDecision',
+        type: 'POST',
+        data: { id: inplayId, decision: decision, batter: batter, player: player },
+        success: function (data) {
+            console.log(data);
+            if (data.success === false) {
+                // Show the error message in an alert
+                alert(data.message);
+            } else if (data.inplay) {
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#ballsCount').text(data.inplay.balls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+
+                // Actualiza las celdas de la tabla para el equipo "A"
+                var inningScoresTeam1 = data.inningScoresTeam1;
+                for (var key in inningScoresTeam1) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam1[key];
+                        console.log($('#inningScoreA' + key));
+                        $('#inningScoreA' + key).text(score);
+                    }
+                }
+
+                // Actualiza las celdas de la tabla para el equipo "H"
+                var inningScoresTeam2 = data.inningScoresTeam2;
+                for (var key in inningScoresTeam2) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam2[key];
+                        console.log($('#inningScoreH' + key));
+                        $('#inningScoreH' + key).text(score);
+                    }
+                }
+
+
+            } else {
+                console.log('inplay is undefined');
+            }
+        },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+    });
+
+
+    // Ball Button
+
+    $('#ballsButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();
+
+        $.ajax({
+            url: '/ScorePlayer/CountBalls',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+
+                // Actualiza las celdas de la tabla para el equipo "A"
+                var inningScoresTeam1 = data.inningScoresTeam1;
+                for (var key in inningScoresTeam1) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam1[key];
+                        console.log($('#inningScoreA' + key));
+                        $('#inningScoreA' + key).text(score);
+                    }
+                }
+
+                // Actualiza las celdas de la tabla para el equipo "H"
+                var inningScoresTeam2 = data.inningScoresTeam2;
+                for (var key in inningScoresTeam2) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam2[key];
+                        console.log($('#inningScoreH' + key));
+                        $('#inningScoreH' + key).text(score);
+                    }
+                }
+
+            } else {
+                console.log('inplay is undefined');
+            }
+        },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+                                            });
+                                        });
+
+
+    // Ball Button
+
+    $('#ballsButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();
+
+        $.ajax({
+            url: '/ScorePlayer/CountBalls',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+
+
+                // Actualiza las celdas de la tabla para el equipo "A"
+                var inningScoresTeam1 = data.inningScoresTeam1;
+                for (var key in inningScoresTeam1) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam1[key];
+                        console.log($('#inningScoreA' + key));
+                        $('#inningScoreA' + key).text(score);
+                    }
+                }
+
+                // Actualiza las celdas de la tabla para el equipo "H"
+                var inningScoresTeam2 = data.inningScoresTeam2;
+                for (var key in inningScoresTeam2) {
+                    if (key !== "$id") {  // Ignora la clave "$id"
+                        var score = inningScoresTeam2[key];
+                        console.log($('#inningScoreH' + key));
+                        $('#inningScoreH' + key).text(score);
+                    }
+                }
+
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    });
+                                        // Strike Button
+                                                    },
+    error: function (jqXHR, textStatus, errorThrown) {
+        console.log(textStatus, errorThrown);
+    }
+                                                });
+                                            });
+    // Strike Button
+
+    $('#strikeButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();;
+
+        $.ajax({
+            url: '/ScorePlayer/CountStrikes',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                // Actualiza el contador de Balls en la vista
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    });
+
+    // Foul Button
+
+    $('#foulButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();;
+
+        $.ajax({
+            url: '/ScorePlayer/CountFouls',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                // Actualiza el contador de Balls en la vista
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+                                                    // Actualiza el contador de Balls en la vista
+                                                    $('#ballsCount').text(data.inplay.balls);
+            $('#inplayId').val(data.inplay.id);
+            $('#strikesCount').text(data.inplay.strikes);
+            $('#outs').text(data.inplay.outs);
+            $('#fouls').text(data.inplay.fouls);
+            $('#runs').text(data.inplay.runs);
+            $('#runs2').text(data.inplay.runs2);
+            $('#inning').text(data.inplay.inningNumber);
+            $('#playerAtBat').text(data.inplay.firstPlayer);
+
+            // Actualiza las celdas de la tabla para el equipo "A"
+            var inningScoresTeam1 = data.inningScoresTeam1;
+            for(var key in inningScoresTeam1) {
+            if (key !== "$id") {  // Ignora la clave "$id"
+                var score = inningScoresTeam1[key];
+                console.log($('#inningScoreA' + key));
+                $('#inningScoreA' + key).text(score);
+            }
+        }
+
+        // Actualiza las celdas de la tabla para el equipo "H"
+        var inningScoresTeam2 = data.inningScoresTeam2;
+        for (var key in inningScoresTeam2) {
+            if (key !== "$id") {  // Ignora la clave "$id"
+                var score = inningScoresTeam2[key];
+                console.log($('#inningScoreH' + key));
+                $('#inningScoreH' + key).text(score);
+            }
+        }
+
+    },
+        error: function (jqXHR, textStatus, errorThrown) {
+            console.log(textStatus, errorThrown);
+        }
+                                            });
+
+    // Hit by pitch Button
+
+    $('#hbpButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();
+
+        $.ajax({
+            url: '/ScorePlayer/HitByPitch',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                // Actualiza el contador de Balls en la vista
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+
+                                                    // Actualiza el contador de Balls en la vista
+                                                    $('#ballsCount').text(data.inplay.balls);
+            $('#inplayId').val(data.inplay.id);
+            $('#strikesCount').text(data.inplay.strikes);
+            $('#outs').text(data.inplay.outs);
+            $('#fouls').text(data.inplay.fouls);
+            $('#runs').text(data.inplay.runs);
+            $('#runs2').text(data.inplay.runs2);
+            $('#inning').text(data.inplay.inningNumber);
+            $('#playerAtBat').text(data.inplay.firstPlayer);
+            $('#inningScore').text(data.inplay.inningScore);
+        },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+                                            });
+
+    // Out Button
+
+    $('#outButton').click(function (e) {
+        e.preventDefault();
+        var inplayId = $('#inplayId').val();;
+
+        $.ajax({
+            url: '/ScorePlayer/Out',
+            type: 'POST',
+            data: { inplayId: inplayId },
+            success: function (data) {
+                if (data.success === false) {
+                    alert(data.message);
+                    return;
+                }
+                // Actualiza el contador de Balls en la vista
+                $('#ballsCount').text(data.inplay.balls);
+                $('#inplayId').val(data.inplay.id);
+                $('#strikesCount').text(data.inplay.strikes);
+                $('#outs').text(data.inplay.outs);
+                $('#fouls').text(data.inplay.fouls);
+                $('#runs').text(data.inplay.runs);
+                $('#runs2').text(data.inplay.runs2);
+                $('#inning').text(data.inplay.inningNumber);
+                $('#playerAtBat').text(data.inplay.firstPlayer);
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    });
+
+
+                                        });
+</script>
+
+@* Script for the LineUp Button *@
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Existing code for the start button AJAX request goes here
+            $('#popoverButton').popover({
+                container: 'body',
+                content: $('#popoverContent').html(),
+                html: true,
+                title: 'Popover Title',
+            });
+
+            $('#lineupButton').click(function (e) {
+                e.preventDefault();
+
+                var gameId = $(this).data('gameid');
+                var teamId = $(this).data('teamid');
+
+                $.ajax({
+                    url: '/ScorePlayer/GetLineup', // Change the URL to your endpoint that returns the lineup view
+                    type: 'GET',
+                    data: { gameId: gameId, teamId: teamId },
+                    success: function (data) {
+                        $('#lineupPopup .popup-content').html(data);
+                        $('#lineupPopup').show();
+                    },
+                    error: function () {
+                        console.error('Failed to fetch lineup data.');
                     }
                 });
             });
-        </script>
-    }
 
-    @* Kim can you please change this to the loyout I dont want to move your code?, if you change de design its ok *@
+            $(document).click(function (e) {
+                if (!$(e.target).closest('#lineupPopup').length) {
+                    $('#lineupPopup').hide();
+                }
+            });
+        });
+    </script>
+}
 
-    @section Styles {
-        <style>
-            .btn.rounded-circle {
-                width: 60px;
-                height: 60px;
-                text-align: center;
-                padding: 6px 0;
-                font-size: 12px;
-                line-height: 1.428571429;
-                border-radius: 30px;
-            }
-        </style>
-    }
+@* Kim can you please change this to the loyout I dont want to move your code?, if you change de design its ok *@
+
+@section Styles {
+    <style>
+        .btn.rounded-circle {
+            width: 60px;
+            height: 60px;
+            text-align: center;
+            padding: 6px 0;
+            font-size: 12px;
+            line-height: 1.428571429;
+            border-radius: 30px;
+        }
+    </style>
+}

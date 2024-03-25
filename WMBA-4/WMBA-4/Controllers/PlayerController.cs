@@ -64,7 +64,7 @@ namespace WMBA_4.Controllers
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
 
-            
+
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Player", "Team", "Division" };
@@ -177,7 +177,8 @@ namespace WMBA_4.Controllers
                 .Include(t => t.Division)
                 .OrderBy(t => t.Division.ID)
                 .ThenBy(t => t.Name)
-                .Select(t => new {
+                .Select(t => new
+                {
                     t.ID,
                     TeamName = t.Division.DivisionName + " - " + t.Name
                 }), "ID", "TeamName");
@@ -371,14 +372,14 @@ namespace WMBA_4.Controllers
 
             var currentDivisionId = player.Team.DivisionID;
 
-            // 현재 선수가 속한 디비전과 그 위 디비전의 ID
-            var divisionIds = new List<int?> { currentDivisionId, currentDivisionId + 1 }; // 위 디비전도 포함
+            // 현재 선수가 속한 디비전과 그 위 아래 디비전의 ID
+            var divisionIds = new List<int?> { currentDivisionId, currentDivisionId + 1, currentDivisionId - 1 }; // 위 아래 디비전도 포함
 
-            // 해당 디비전과 그 위 디비전의 팀들을 가져옴
+            // 해당 디비전과 그 위 아래 디비전의 팀들을 가져옴
             var teams = await _context.Teams
                 .Include(t => t.Division)
                 .Where(t => divisionIds.Contains(t.DivisionID))
-                .OrderBy(t => t.DivisionID == currentDivisionId ? 0 : 1) // 현재 디비전이 먼저 나오도록 정렬
+                .OrderBy(t => t.DivisionID)
                 .ThenBy(t => t.Division.DivisionName)
                 .ThenBy(t => t.Name)
                 .AsNoTracking()
@@ -405,6 +406,7 @@ namespace WMBA_4.Controllers
 
             return View(player);
         }
+
 
 
         // POST: Player/Edit/5
