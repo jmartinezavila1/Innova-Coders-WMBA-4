@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 
 namespace WMBA_4.Controllers
 {
+    [Authorize]
     public class ReportController : CognizantController
     {
         private readonly WMBA_4_Context _context;
