@@ -5,27 +5,38 @@
                 <button type="button" class="btn-close" aria-label="Close" id="sidebar-close"></button>
             </div>
         </div>
+        @* Admin *@
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="sb-sidenav-menu-heading">Admin</div>
+            <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
+                Setting
+                <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
+            </a>
+            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
+                <a class="nav-link-sub nav-hover" asp-controller="Staff" asp-action="Index">Manage Staff</a>
+                <a class="nav-link-sub nav-hover" asp-controller="UserRole" asp-action="Index">Manage User Roles</a>
+            </div>
+            <a class="nav-link nav-hover" asp-area="" asp-controller="EndSeason" asp-action="Index">End Season</a>
+        }
+        @* Admin *@
+
         @* Quick *@
-        <div class="sb-sidenav-menu-heading">Quick Access</div>
-        <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Teams</a>
-        <a class="nav-link nav-hover" asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
+        @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor")) 
+        {
+            <div class="sb-sidenav-menu-heading">Quick Access</div>
+            <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Teams</a>
+            <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
+            <a class="nav-link nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Division</a>
+        }
+        @* Quick *@
+
         @* User *@
         <div class="sb-sidenav-menu-heading">User Access</div>
-        <a class="nav-link nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Division</a>
         <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
         <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
-        <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
         <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Scorekeeper</a>
-        @* Admin *@
-        <div class="sb-sidenav-menu-heading">Admin</div>
-        <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
-            Setting
-            <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
-        </a>
-        <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-            <a class="nav-link-sub nav-hover" asp-controller="Staff" asp-action="Index">Manage Staff</a>
-            <a class="nav-link-sub nav-hover" asp-controller="UserRole" asp-action="Index">Manage User Roles</a>
-        </div>
-        <a class="nav-link nav-hover" asp-area="" asp-controller="EndSeason" asp-action="Index">End Season</a>
+        <a class="nav-link nav-hover" asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
+        @* User *@
     </div>
 </div>

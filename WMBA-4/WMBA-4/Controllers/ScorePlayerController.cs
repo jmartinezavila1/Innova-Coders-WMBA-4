@@ -1435,7 +1435,8 @@ namespace WMBA_4.Controllers
 
             // Get the scores for each team
             var scores = _context.TeamGame
-                .Include(t => t.Team)
+                .Include(tg => tg.Team)
+                .ThenInclude(t=>t.Division)
                 .Where(tg => tg.GameID == GameID)
                 .ToList();
 
@@ -1462,9 +1463,9 @@ namespace WMBA_4.Controllers
                 .ToListAsync();
 
             var teamInnings = await _context.Innings
-                   .Where(i => i.GameID == GameID)
-                   .OrderBy(i => i.InningNumber)
-                   .ToListAsync();
+                .Where(i => i.GameID == GameID)
+                .OrderBy(i => i.InningNumber)
+                .ToListAsync();
 
             var playerCount = lineup.Sum(gl => gl.Team.Players.Count);
             // Store the scores in ViewBag
@@ -1477,6 +1478,7 @@ namespace WMBA_4.Controllers
             ViewBag.InningScores = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
             ViewBag.PlayerCount = playerCount;
 
+            ViewData["AllTeams"] = scores;
             ViewData["Teams"] = teams;
             ViewData["InPlay"] = inPlay;
             ViewBag.Inplay = new Inplay();

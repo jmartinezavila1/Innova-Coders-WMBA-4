@@ -253,20 +253,6 @@ table tdoby tr td {
 }
 
 /*//////////////////////////////////padding//////////////////////////////////////////*/
-.main-padding-scorekeeper {
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
-}
-
-.main-padding {
-    padding-left: 1rem;
-    padding-right: 1rem;
-    padding-top: 5rem;
-    padding-bottom: 3rem;
-}
-
 .px-6 {
     padding-left: 1rem !important;
     padding-right: 1rem !important;
@@ -285,7 +271,6 @@ table tdoby tr td {
 }
 
 @media (max-width: 391px) {
-   
     .card-wrapper {
         max-width: 100%; /* 최대 너비를 100%로 설정하여 부모 요소의 너비에 따라 크기가 조정됩니다. */
     }
@@ -297,16 +282,16 @@ table tdoby tr td {
         padding-right: 0;
     }
 
-    .main-padding {
-        padding-left: 0.5rem !important;
-        padding-right: 0.5rem !important;
+    .px-6 {
+        padding-left: 1.4rem !important;
+        padding-right: 1.5rem !important;
     }
 }
 
 @media (min-width: 427px) {
-    .main-padding {
-        padding-left: 1rem !important;
-        padding-right: 1rem !important;
+    .px-6 {
+        padding-left: 2rem !important;
+        padding-right: 2rem !important;
     }
 }
 
@@ -318,27 +303,28 @@ table tdoby tr td {
 }
 
 @media (min-width: 524px) {
-    .main-padding {
+    .px-6 {
         padding-left: 3rem !important;
         padding-right: 3rem !important;
     }
 }
-@media (max-width: 541px){
+
+@media (max-width: 541px) {
     .t-in-flex {
         flex-direction: column;
     }
 }
 
-
 @media (min-width: 768px) {
-    .main-padding {
+
+    .px-6 {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
     }
 }
 
 @media (min-width: 960px) {
-    .main-padding {
+    .px-6 {
         padding-left: 7rem !important;
         padding-right: 7rem !important;
     }
@@ -351,25 +337,27 @@ table tdoby tr td {
 }
 
 @media (min-width: 1280px) {
-    .main-padding {
+    .px-6 {
         padding-left: 9rem !important;
         padding-right: 9rem !important;
     }
 }
 
 @media (min-width: 1380px) {
-    .main-padding {
+    .px-6 {
         padding-left: 11rem !important;
         padding-right: 11rem !important;
     }
 }
 
 @media (min-width: 1420px) {
-    .main-padding {
+    .px-6 {
         padding-left: 13rem !important;
         padding-right: 13rem !important;
     }
 }
+
+
 /*//////////////////////////////////table//////////////////////////////////////////*/
 
 .text-column {
