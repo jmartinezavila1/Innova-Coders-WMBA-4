@@ -113,15 +113,20 @@
                     url: '@Url.Action("AddCoach", "Team")',
                     data: { firstName: firstName, lastName: lastName, email: email },
                     success: function (data) {
+                        // Append the new coach to the select options
+                        $('#TeamStaff').append('<option value="' + data.id + '">' + data.name + '</option>');
 
-                        $('#SelectedStaffIds').append('<option value="' + data.id + '">' + data.name + '</option>');
-
-                        $('#addCoachModal').modal('hide');
+                        // Close the modal
+                        document.getElementById('addCoachModal').classList.remove('show');
                     },
                     error: function () {
                         alert('Error occurred while adding coach.');
                     }
                 });
+            });
+            $('#addCoachModal').on('hidden.bs.modal', function () {
+
+                $('#addCoachForm')[0].reset();
             });
         });
     </script>
