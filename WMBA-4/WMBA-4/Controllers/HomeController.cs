@@ -47,6 +47,7 @@ namespace WMBA_4.Controllers
                  .Select(s => s.SeasonCode)
                  .FirstOrDefaultAsync();
 
+            ViewBag.Season = seasonCode;
             ViewBag.DivisionCount = divisionCount;
             ViewBag.PlayerCount = playerCount;
             ViewBag.GameCount = gameCount;
