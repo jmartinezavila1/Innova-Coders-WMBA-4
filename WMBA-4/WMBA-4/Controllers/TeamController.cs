@@ -536,6 +536,7 @@ namespace WMBA_4.Controllers
             return View("ImportTeam");
         }
         [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
+
         [HttpPost]
         public async Task<IActionResult> ImportTeam(IFormFile theExcel)
         {
@@ -647,7 +648,10 @@ namespace WMBA_4.Controllers
 
                             // Validación para la columna "Season"
                             string season = workSheet.Cells[row, 5].Text;
-                            int currentYear = DateTime.Now.Year;
+                            var currentSeason = _context.Seasons.FirstOrDefault();
+                            int currentYear = int.Parse(currentSeason.SeasonCode);
+
+                            //int currentYear = DateTime.Now.Year;
                             if (season != currentYear.ToString())
                             {
                                 transaction.Rollback();
@@ -665,8 +669,9 @@ namespace WMBA_4.Controllers
                                 Division existingDiv = _context.Divisions.FirstOrDefault(t => t.DivisionName == DivisonName);
                                 if (existingDiv == null)
                                 {
-                                    Division newDivision = newDivision = new Division { DivisionName = DivisonName };
+                                    Division newDivision = new Division { DivisionName = DivisonName, Status = true, ClubID = 1 };
                                     _context.Divisions.Add(newDivision);
+                                    await _context.SaveChangesAsync();
                                     t.DivisionID = newDivision.ID;
                                 }
                                 else
@@ -681,6 +686,8 @@ namespace WMBA_4.Controllers
                                 {
                                     Team newTeam = newTeam = new Team { Name = teamName, DivisionID = t.DivisionID };
                                     _context.Teams.Add(newTeam);
+
+                                    await _context.SaveChangesAsync();
                                     pl.TeamID = newTeam.ID;
                                 }
                                 else
@@ -688,7 +695,7 @@ namespace WMBA_4.Controllers
                                     pl.TeamID = existingTeam.ID;
                                 }
                                 _context.Players.Add(pl);
-                                _context.SaveChanges();
+                                await _context.SaveChangesAsync();
                                 successCount++;
                                 transaction.Commit();
                             }
@@ -758,6 +765,7 @@ namespace WMBA_4.Controllers
             }
             return feedBack;
         }
+
 
         private SelectList DivisionList(int? selectedId)
         {

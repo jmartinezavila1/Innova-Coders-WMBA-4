@@ -43,6 +43,9 @@ namespace WMBA_4.Controllers
             var teamCount = await _context.Teams
                 .Where(t => t.Status == true)
                 .CountAsync();
+            var seasonCode = await _context.Seasons
+                 .Select(s => s.SeasonCode)
+                 .FirstOrDefaultAsync();
 
             ViewBag.DivisionCount = divisionCount;
             ViewBag.PlayerCount = playerCount;
