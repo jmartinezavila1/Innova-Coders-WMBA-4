@@ -37,16 +37,17 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
-                    <i class="fas fa-plus"></i>
-                </button>
-                <label asp-for="TeamStaff" class="control-label">Add Team Staff</label>
-                <select asp-for="TeamStaff" asp-items="ViewBag.StaffId" class="form-control" multiple></select>
-
+                <div class="mb-2">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addCoachModal">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <label asp-for="TeamStaff" class="control-label">Add Team Staff</label>
+                </div>
+                <select asp-for="TeamStaff" asp-items="ViewBag.StaffId" class="form-control form-select" multiple></select>
             </div>
             <div class="form-group">
                 <label asp-for="DivisionID" class="control-label"></label>
-                <select asp-for="DivisionID" class="form-control" asp-items="ViewBag.DivisionID"></select>
+                <select asp-for="DivisionID" class="form-control form-select" asp-items="ViewBag.DivisionID"></select>
             </div>
         </div>
     </div>

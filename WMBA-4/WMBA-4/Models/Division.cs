@@ -12,6 +12,9 @@ namespace WMBA_4.Models
         [StringLength(100, ErrorMessage = "Division name can not be more than 100 characters long.")]
         public string DivisionName { get; set; }
 
+        [Display(Name = "Division Number")]
+        public int DivisionNumber {  get; set; }
+
         [Display(Name = "Status")]
         public bool Status { get; set; } = true;
 
