@@ -95,6 +95,49 @@ namespace WMBA_4.Data
                     GROUP BY p.ID
             ");
 
+
+            migrationBuilder.Sql(
+                               @"
+                Drop View IF EXISTS [TeamStats];
+		        Create View TeamStats as
+                SELECT 
+                     t.ID, 
+                     t.Name AS Team, 
+                     d.DivisionName,
+                     GamesPlayed.Games AS G, 
+                     SUM(s.H)AS H, 
+                     SUM(s.RBI) AS RBI, 
+                     SUM(s.Singles)AS Singles, 
+                     SUM(s.Doubles)AS Doubles, 
+                     SUM(s.Triples)AS Triples, 
+                     SUM(s.HR) AS HR, 
+                     SUM(s.BB)AS BB, 
+                     SUM(s.PA)AS PA, 
+                     SUM(s.AB)AS AB, 
+                     SUM(s.Run)AS Run, 
+                     SUM(s.HBP)AS HBP, 
+                     SUM(s.StrikeOut)AS SO, 
+                     SUM(s.Out)AS Out, 
+                     printf(""%.3f"", IFNULL(SUM(s.H)*1.0/SUM(s.AB),0)) AS [AVG], 
+                     printf(""%.3f"", IFNULL((SUM(s.H)*1.0 + SUM(s.BB) + SUM(s.HBP))/(SUM(s.AB) + SUM(s.BB) + SUM(s.HBP)),0)) AS [OBP], 
+                     printf(""%.3f"", IFNULL(((SUM(s.Singles)*1.0 + 2 * SUM(s.Doubles)+ (3 *SUM(s.Triples) )+ 4*SUM(s.HR))/IFNULL(SUM(s.AB),1)),0)) AS [SLG], 
+                     printf(""%.3f"", IFNULL( 
+                       ((SUM(s.H)*1.0 + SUM(s.BB) + SUM(s.HBP)) / NULLIF(SUM(s.AB) + SUM(s.BB) + SUM(s.HBP), 0))  
+                       +  
+                       ((SUM(s.Singles)*1.0 + 2 * SUM(s.Doubles) + 3 * SUM(s.Triples) + 4 * SUM(s.HR)) / NULLIF(SUM(s.AB), 0)),  
+                       0 
+                     )) AS [OPS] 
+                     FROM ScorePlayers s 
+                     JOIN GameLineUps g ON g.ID = s.GameLineUpID 
+                     JOIN Games gm ON gm.ID  = g.GameID 
+                     JOIN Players p ON p.ID = g.PlayerID
+				     JOIN Teams t ON t.ID = p.TeamID 
+					 JOIN Divisions d ON d.ID=t.DivisionID				     
+                     JOIN (SELECT TeamID,COUNT(DISTINCT GameID)AS Games FROM GameLineUps
+							GROUP BY TeamID)GamesPlayed ON GamesPlayed.TeamID=t.ID                    
+                     GROUP BY t.ID
+            ");
+
         }
     }
 }

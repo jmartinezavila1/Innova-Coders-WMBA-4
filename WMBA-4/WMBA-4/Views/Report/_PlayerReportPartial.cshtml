@@ -1,4 +1,5 @@
-﻿@model IEnumerable<WMBA_4.ViewModels.PlayerStatsVM>
+﻿@model WMBA_4.ViewModels.StatsVM
+@* @model IEnumerable<WMBA_4.ViewModels.PlayerStatsVM> *@
 
 @{
     ViewData["Title"] = "Player Stats";
@@ -10,70 +11,70 @@
         <thead>
             <tr>
                 <th>
-                    @Html.DisplayNameFor(model => model.Player)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Player)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.JerseyNumber)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().JerseyNumber)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Team)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Team)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.G)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().G)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.H)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().H)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.RBI)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().RBI)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Singles)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Singles)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Doubles)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Doubles)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Triples)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Triples)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.BB)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().BB)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.PA)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().PA)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.AB)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().AB)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Run)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Run)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.HBP)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().HBP)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SO)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().SO)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Out)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().Out)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.AVG)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().AVG)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.OBP)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().OBP)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.SLG)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().SLG)
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.OPS)
+                    @Html.DisplayNameFor(model => model.PlayerStats.First().OPS)
                 </th>
 
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (var item in Model.PlayerStats)
             {
                 <tr>
                     <td>
