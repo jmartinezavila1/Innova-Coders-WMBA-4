@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
+using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
@@ -19,11 +20,15 @@ namespace WMBA_4.Controllers
         {
             var playerStats = await _context.PlayerStats.ToListAsync();
 
-            if (playerStats == null)
+            var teamStats = await _context.TeamStats.ToListAsync();
+
+            var model = new StatsVM
             {
-                return NotFound();
-            }
-            return View(playerStats);
+                PlayerStats = playerStats,
+                TeamStats = teamStats
+            };
+
+            return View(model);
         }
 
     }

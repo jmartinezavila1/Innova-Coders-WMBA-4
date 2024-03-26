@@ -49,6 +49,8 @@ namespace WMBA_4.Data
 
         public DbSet<PlayerStatsVM> PlayerStats { get; set; }
 
+        public DbSet<TeamStatsVM> TeamStats { get; set; }
+
         public DbSet<PlayerEndSeasonVM> PlayersEndSeason { get; set; }
 
         public DbSet<GameEndSeasonVM> GamesEndSeason { get; set; }
@@ -229,6 +231,11 @@ namespace WMBA_4.Data
              .Entity<PlayerStatsVM>()
              .ToView(nameof(PlayerStats))
              .HasNoKey();
+
+            modelBuilder
+            .Entity<TeamStatsVM>()
+            .ToView(nameof(TeamStats))
+            .HasNoKey();
 
             //For End of Season
             modelBuilder
