@@ -10,7 +10,7 @@
     <table class="table-two">
         <thead>
             <tr>
-                <th>
+                <th style="position: sticky; left: 0; background-color: white; width: 100px;">
                     @Html.DisplayNameFor(model => model.PlayerStats.First().Player)
                 </th>
                 <th>
@@ -70,14 +70,13 @@
                 <th>
                     @Html.DisplayNameFor(model => model.PlayerStats.First().OPS)
                 </th>
-
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model.PlayerStats)
             {
                 <tr>
-                    <td>
+                    <td style="position: sticky; left: 0; background-color: white; width: 100px;">
                         @Html.DisplayFor(modelItem => item.Player)
                     </td>
                     <td>
