@@ -139,13 +139,13 @@
                             }
                             <td>
                                 <div class="game-padding">
-                                    <div class="game-flex mb-2 pb-2 border-bottom">
+                                    <div class="game-flex mb-2 pb-1 border-bottom">
                                         <div class="pb-2"><span>@item.GameType.Description</span></div>
                                         <div><span>@item.Location.LocationName</span></div>
                                     </div>
                                     @for (int i = 0; i < teamGamesList.Count; i++)
                                     {
-                                        <div class="li-flex align-items-center p-2 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
+                                        <div class="li-flex align-items-center p-1 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
                                             <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
                                             <div class="mx-2">
                                                 <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
