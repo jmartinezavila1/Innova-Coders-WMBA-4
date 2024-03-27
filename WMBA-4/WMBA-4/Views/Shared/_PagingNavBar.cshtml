@@ -5,9 +5,11 @@
         {
             <ul class="pagination justify-content-center pagination-sm" style="margin:20px 0">
                 <li class="page-item active">
-                    <button type="button" title="Click to change page size." data-bs-toggle="modal" data-bs-target="#pageSizeModal" class="btn page-link">
-                        No Data to Show
-                    </button>
+                    <span class="input-group-text">
+                        <span class="d-none d-md-inline">
+                            No Data to Show
+                        </span>
+                    </span>
                 </li>
             </ul>
         }
@@ -15,9 +17,11 @@
         {
             <ul class="pagination justify-content-center pagination-sm" style="margin:20px 0">
                 <li class="page-item active">
-                    <button type="button" title="Click to change page size." data-bs-toggle="modal" data-bs-target="#pageSizeModal" class="btn page-link">
-                        Page @Model.PageIndex of @Model.TotalPages
-                    </button>
+                    <span class="input-group-text">
+                        <span class="d-none d-md-inline">
+                            Page @Model.PageIndex of @Model.TotalPages
+                        </span>
+                    </span>
                 </li>
             </ul>
         }

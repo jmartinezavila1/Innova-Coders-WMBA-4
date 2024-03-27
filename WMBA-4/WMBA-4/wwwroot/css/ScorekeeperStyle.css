@@ -1,5 +1,4 @@
 ﻿
-
 .svg {
     background-color: rgb(22, 22, 22);
     margin-top: 0;
@@ -25,32 +24,32 @@
 #playerText {
     font-family: Arial;
     font-size: 12px;
-    fill: black;
+    fill: white;
     text-anchor: middle;
 }
 
 .score-box {
-    background: black;
+    background: white;
     text-align: center;
 }
 
 .ball-box {
-    background: black;
+    background: white;
     text-align: center;
 }
 
 .team-box {
-    background: black;
+    background: white;
     text-align: center;
 }
 
 .inning-box {
     padding: 0.5rem;
-    background: black;
+    background: white;
     text-align: center;
 }
 
-    .score-box h4,
+    /*.score-box h4,
     .score-box h6,
     .team-box div,
     .team-box h3,
@@ -58,10 +57,10 @@
     .inning-box h6 {
         font-family: 'digital display tfb', sans-serif;
         font-size: 2.5rem;
-    }
+    }*/
 
 .player-box {
-    background: black;
+    background: white;
     text-align: center;
 }
 
@@ -69,7 +68,7 @@
     .inning-box {
         width: 1.9rem;
         height: 2rem;
-        background: black;
+        background: white;
         text-align: center;
     }
 }
@@ -87,6 +86,6 @@
     .inning-box {
         width: 2rem;
         height: 2rem;
-        background: black;
+        background: white;
     }
 }

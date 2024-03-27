@@ -3,26 +3,7 @@
 
 /*/////////////////////////////////////////font//////////////////////////////////////////*/
 @import url("https://p.typekit.net/p.css?s=1&k=igy8ywi&ht=tk&f=32897.32904&a=39545793&app=typekit&e=css");
-@font-face {
-    font-family: 'scoreboard';
-    src: url('../fonts/scoreboard.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'jdled3regular-1xg2';
-    src: url('../fonts/jd-led3-font/jdled3regular-1xg2.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'cursedtimerulil-aznm';
-    src: url('../fonts/cursed-timer-ulil-font/cursedtimerulil-aznm.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'sfdigitalreadoutmedium-q3rq';
-    src: url('../fonts/sf-digital-readout-font/sfdigitalreadoutmedium-q3rq.ttf') format('truetype');
-}
-@font-face {
-    font-family: 'digital display tfb';
-    src: url('../fonts/digital display/digital display tfb.ttf') format('truetype');
-}
+
 @font-face {
     font-family: "proxima-soft";
     src: url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/l?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff2"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/d?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("woff"),url("https://use.typekit.net/af/a4e72f/00000000000000003b9b3032/27/a?primer=7cdcb44be4a7db8877ffa5c0007b8dd865b3bbc383831fe2ea177f62257a9191&fvd=n4&v=3") format("opentype");
@@ -175,7 +156,9 @@ table tdoby tr td {
 .bg-kelly {
     background-color: var(--bg-kelly);
 }
-
+.bg-blue {
+    background-color: var(--bg-dark-blue);
+}
 .bg-white {
     background-color: var(--bg-white);
 }
@@ -199,7 +182,7 @@ table tdoby tr td {
 }
 
 .ft-kelly {
-    color: var(--ft-kelly);
+    color: var(--ft-dark-blue);
 }
 
 .ft-grey {
@@ -517,17 +500,17 @@ table tdoby tr td {
     box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
 }
 
-.btn-kelly {
+/*.btn-kelly {
     padding: 0.45rem 0.9rem;
     border: none;
-    background-color: var(--bg-kelly);
+    background-color: var(--bg-dark-blue);
     border-radius: 5px;
 }
 
     .btn-kelly:hover {
         cursor: pointer;
-        background-color: var(--bg-dark-blue);
-    }
+        background-color: var(--bg-dark-grey);
+    }*/
 
 .btn-text {
     color: var(--ft-white);
