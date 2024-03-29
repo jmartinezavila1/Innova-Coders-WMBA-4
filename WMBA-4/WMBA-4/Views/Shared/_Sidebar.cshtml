@@ -31,12 +31,15 @@
         }
         @* Quick *@
 
-        @* User *@
+         @* User *@
+        @if (!User.IsInRole("User"))
+        {
             <div class="sb-sidenav-menu-heading">User Access</div>
             <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
             <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
             <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Scorekeeper</a>
             <a class="nav-link nav-hover" asp-area="" asp-controller="Report" asp-action="Index">Reports</a>
+        }
         @* User *@
     </div>
 </div>
