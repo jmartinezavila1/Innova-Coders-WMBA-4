@@ -19,7 +19,7 @@ namespace WMBA_4.Data
                     // Create Roles
                     var roleManager = applicationBuilder.ApplicationServices.CreateScope()
                         .ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-                    string[] roleNames = { "Admin", "Coach", "Scorekeeper", "RookieConvenor", "IntermediateConvenor", "SeniorConvenor" };
+                    string[] roleNames = { "Admin", "Coach", "Scorekeeper", "RookieConvenor", "IntermediateConvenor", "SeniorConvenor", "User" };
                     IdentityResult roleResult;
                     foreach (var roleName in roleNames)
                     {

@@ -4,7 +4,8 @@
     ViewData["Title"] = "Home Page";
     var today = DateTime.Today;
 }
-
+@if (!User.IsInRole("User"))
+{
 <main>
     <div class="container-fluid">
         <h1 class="mb-2">Dashboard</h1>
@@ -126,6 +127,15 @@
 
     </div>
 </main>
+}
+else
+{
+    <div class="alert alert-success" role="alert" style="font-size: 18px; font-family: Arial, sans-serif;">
+        You need authorization to view this content. Please contact your system administrator. We apologize for the inconvenience.
+    </div>
+
+}
+
 <script>
     $(document).ready(function () {
         var cardWidth = $('.game-wrapper').outerWidth() + 15; // 각 카드의 가로 크기에 20px를 더합니다.
