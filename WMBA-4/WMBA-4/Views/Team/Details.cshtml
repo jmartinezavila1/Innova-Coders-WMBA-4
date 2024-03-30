@@ -1,6 +1,14 @@
 ﻿@model WMBA_4.Models.Team
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 @{
     ViewData["Title"] = "Details";
+    // Get the current user
+    var user = await UserManager.GetUserAsync(User);
+
+    // Check if the user is in the "Scorekeeper" role
+    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
+
 }
 
 @* page navigation *@
@@ -24,13 +32,19 @@
 <div class="f-in-flex">
     <h1>@Model.Name</h1>
     <div class="d-flex">
-        @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+        @if (!isScorekeeper)
         {
-            <button type="submit" class="btn btn-kelly me-2">Add Player</button>
+            @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+            {
+                <button type="submit" class="btn btn-kelly me-2">Add Player</button>
+            }
         }
-        @using (Html.BeginForm("Create", "Game", FormMethod.Get))
+        @if (!isScorekeeper)
         {
-            <button type="submit" class="btn btn-kelly">Add Game</button>
+            @using (Html.BeginForm("Create", "Game", FormMethod.Get))
+            {
+                <button type="submit" class="btn btn-kelly">Add Game</button>
+            }
         }
     </div>
 </div>

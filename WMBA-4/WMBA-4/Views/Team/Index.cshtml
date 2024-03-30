@@ -1,7 +1,13 @@
 ﻿@model IEnumerable<WMBA_4.Models.Team>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
+    var user = await UserManager.GetUserAsync(User);
+
+    // Check if the user is in the "Scorekeeper" role
+    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
 }
 
 @* page navigation *@
@@ -26,7 +32,10 @@
         aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
                 Filter/Search @ViewData["numberFilters"]
             </button>
+        @if (!isScorekeeper)
+        {
         <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new team">Add Team</button>
+        }
         }
     </div>
 
@@ -176,11 +185,25 @@
                             <td>
                                 @if (item.Status == true)
                                 {
-                                    <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            edit
-                                        </span>
-                                </a>
+                                    
+
+                                        @if (!isScorekeeper)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
+                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                                edit
+                                            </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Index" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
+                                            <span class="material-symbols-outlined ft-kelly px-1" style="pointer-events: none; color: gray;" data-toggle="tooltip" data-placement="top" title="You do not have permission to edit this team">
+                                                edit
+                                            </span>
+                                            </a>
+                                        }
+                                    
                                     <a asp-action="Details" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" View details">
                                         <span class="material-symbols-outlined ft-kelly px-1">
                                             visibility

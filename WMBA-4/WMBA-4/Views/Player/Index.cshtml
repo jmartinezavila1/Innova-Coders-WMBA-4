@@ -230,11 +230,22 @@
                                 @if (item.Status == true)
                                 {
                                     <div class="t-in-flex">
-                                        <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit player">
-                                            <span class="material-symbols-outlined ft-kelly px-2">
-                                                edit
-                                            </span>
-                                        </a>
+                                        @if (!isScorekeeper)
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit player">
+                                                <span class="material-symbols-outlined ft-kelly px-2">
+                                                    edit
+                                                </span>
+                                            </a>
+                                        }
+                                        else
+                                        {
+                                            <a asp-action="Index" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit player">
+                                                <span class="material-symbols-outlined ft-kelly px-1" style="pointer-events: none; color: gray;" data-toggle="tooltip" data-placement="top" title="You do not have permission to edit this team">
+                                                    edit
+                                                </span>
+                                            </a>
+                                        }
                                         <a asp-action="Details" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" View player's details">
                                             <span class="material-symbols-outlined ft-kelly px-2">
                                                 visibility

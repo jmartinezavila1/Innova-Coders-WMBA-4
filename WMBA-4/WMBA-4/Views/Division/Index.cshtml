@@ -191,11 +191,12 @@
                                     }
                                     else // Render inactive "Edit" button for non-admin users
                                     {
-                                        <button type="button" class="btn btn-link" disabled>
+                                       <a asp-action="Index" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit division">
                                             <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);" aria-disabled="true">
                                                 edit
                                             </span>
-                                        </button>
+                                       
+                                        </a>
                                     }
                                     <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Inactive division">
                                         <span class="material-symbols-outlined ft-kelly px-2">
