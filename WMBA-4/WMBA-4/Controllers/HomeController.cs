@@ -7,7 +7,8 @@ using WMBA_4.Models;
 
 namespace WMBA_4.Controllers
 {
-    [AllowAnonymous]
+
+    [Authorize]
     public class HomeController : Controller
     {
         private readonly WMBA_4_Context _context;
