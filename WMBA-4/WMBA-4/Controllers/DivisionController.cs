@@ -175,7 +175,7 @@ namespace WMBA_4.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Division/Create
         public IActionResult Create()
         {
@@ -218,7 +218,7 @@ namespace WMBA_4.Controllers
             ViewData["ClubID"] = new SelectList(_context.Clubs,"ID", "ClubName", division.ClubID);
             return View(division);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Division/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
