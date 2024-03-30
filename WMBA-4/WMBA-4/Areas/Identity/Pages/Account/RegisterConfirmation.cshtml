@@ -1,0 +1,30 @@
+﻿@page
+@model RegisterConfirmationModel
+@{
+    Layout = "~/Views/Shared/_EnterPagePartial.cshtml";
+    ViewData["Title"] = "Register confirmation";
+    var wrongEmail = "Register Failed";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-4">
+        @{
+            if (@Model.DisplayConfirmAccountLink)
+            {
+                <h1 class="mb-3">@wrongEmail</h1>
+                <p class="mb-5">Please double-check and try again with a valid email address.</p>
+                <p>
+                    <a href="/Identity/Account/Register" class="w-100 btn btn-lg btn-kelly">Register</a>
+                </p>
+            }
+            else
+            {
+                <h1 class="mb-3">@ViewData["Title"]</h1>
+                <p>
+                    Please check your email to confirm your account.
+                </p>
+            }
+        }
+    </div>
+</div>
+
