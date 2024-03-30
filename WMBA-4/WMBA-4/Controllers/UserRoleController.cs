@@ -62,6 +62,21 @@ namespace WMBA_4.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(string Id, string[] selectedRoles)
         {
+            if (Id == null)
+            {
+                return new BadRequestResult();
+            }
+
+            //Prevent users from changing their own roles
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser.Id == Id)
+            {
+                // Prevent users from changing their own roles                
+                ModelState.AddModelError("", "You cannot change your own role.");
+                return RedirectToAction("Edit"); // or return some error view
+                
+            }
+
             var _user = await _userManager.FindByIdAsync(Id);//IdentityRole
             UserVM user = new UserVM
             {
