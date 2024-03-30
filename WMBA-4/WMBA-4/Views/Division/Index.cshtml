@@ -1,9 +1,16 @@
 ﻿@model IEnumerable<WMBA_4.Models.Division>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = "Index";
-}
 
+    // Get the current user
+    var user = await UserManager.GetUserAsync(User);
+
+    // Check if the user is in the "Admin" role
+    var isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+}
 @* page navigation *@
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
@@ -22,14 +29,19 @@
 </nav>
 @* page navigation *@
 <div class="f-in-flex justify-content-end">
+
     @using (Html.BeginForm("Create", "Division", FormMethod.Get))
     {
         <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
                 aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
             Filter/Search @ViewData["numberFilters"]
         </button>
-        <button type="submit" class="btn btn-kelly">Add Division</button>
+        @if (isAdmin)
+        {
+            <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new division">Add Division</button>
+        }
     }
+
 </div>
 <div class="p-in-flex">
     <form asp-action="Index" method="get">
@@ -157,10 +169,9 @@
                     </tr>
                 </thead>
                 <tbody>
-                     @foreach (var item in Model)
+                    @foreach (var item in Model)
                     {
                         <tr class="@((item.Status) ? "" : "inactive-division") division-row" onclick="redirectToDetails('@item.ID')">
-
                             <td>
                                 @Html.DisplayFor(modelItem => item.DivisionName)
                             </td>
@@ -170,11 +181,22 @@
                             <td>
                                 @if (item.Status == true)
                                 {
-                                    <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit division">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            edit
-                                        </span>
-                                    </a>
+                                    @if (isAdmin) // Only render active "Edit" button for admin
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit division">
+                                            <span class="material-symbols-outlined ft-kelly px-1">
+                                                edit
+                                            </span>
+                                        </a>
+                                    }
+                                    else // Render inactive "Edit" button for non-admin users
+                                    {
+                                        <button type="button" class="btn btn-link" disabled>
+                                            <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);" aria-disabled="true">
+                                                edit
+                                            </span>
+                                        </button>
+                                    }
                                     <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Inactive division">
                                         <span class="material-symbols-outlined ft-kelly px-2">
                                             group
