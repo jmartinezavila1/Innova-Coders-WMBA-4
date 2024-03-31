@@ -14,9 +14,12 @@ namespace WMBA_4.Models
 
         public int Fouls { get; set; }
         public int Balls { get; set; }
+
+        public int TeamAtBat { get; set; }
+        public int Turns { get; set; }
+        public int OpponentOuts { get; set; }
         public int InningID { get; set; }
         public Inning Inning { get; set; }
-
         public int NextPlayer { get; set; }
 
         /// <summary>

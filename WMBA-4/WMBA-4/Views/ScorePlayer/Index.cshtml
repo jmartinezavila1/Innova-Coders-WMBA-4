@@ -4,6 +4,7 @@
     ViewData["Title"] = "Index";
 }
 @* page navigation *@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
         <li class="breadcrumb-item">
@@ -177,7 +178,21 @@
         <partial name="_PagingNavBar" />
     </form>
 </div>
-
+@{
+    var message = TempData["Message"] as string;
+    if (!string.IsNullOrEmpty(message))
+    {
+        <script type="text/javascript">
+            Swal.fire({
+                title: 'Mensaje',
+                text: "@message",
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 3000
+            });
+        </script>
+    }
+}
 @* show a scorekeeper view when click the row *@
 @section Scripts {
     <script>
