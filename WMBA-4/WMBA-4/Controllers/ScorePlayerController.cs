@@ -177,17 +177,54 @@ namespace WMBA_4.Controllers
         // GET: For selecting the team
         public async Task<IActionResult> SelectTeam(int? id)
         {
+            var userEmail = User.Identity.Name;
+
+
+
+            var staff = await _context.Staff
+                .Where(s => s.Email == userEmail)
+                .FirstOrDefaultAsync();
+
+            var TeamStaff = await _context.TeamStaff
+                .Where(t => t.StaffID == staff.ID)
+                .Select(t => t.TeamID)
+                .FirstOrDefaultAsync();
+
+            var tg = await _context.TeamGame
+                .Where(t => t.GameID == id && t.TeamID == TeamStaff)
+                .FirstOrDefaultAsync();
+
+            var tgOpponent = await _context.TeamGame
+                .Where(t => t.GameID == id && t.TeamID != TeamStaff)
+                .FirstOrDefaultAsync();
+
+            var inningOpponent = await _context.Innings
+                .Where(i => i.GameID == id && i.TeamID != TeamStaff)
+                .OrderByDescending(i => i.InningNumber)
+                .FirstOrDefaultAsync();
+
+
+
+            if (staff.RoleId == 1 || staff.RoleId == 2)
+            {
+
+                return RedirectToAction("Scorekeeping", new { GameID = id, TeamID = TeamStaff });
+            }
+
+
             var teams = await _context.TeamGame
                         .Include(t => t.Team)
                         .Where(t => t.GameID == id)
                         .Select(t => new { t.Team.ID, t.Team.Name })
                         .Distinct()
                         .ToListAsync();
+
             if (teams.Count == 0)
             {
                 TempData["Message"] = "No Line Up for these teams.";
                 return RedirectToAction("Index");
             }
+
             ViewData["TeamID"] = new SelectList(teams, "ID", "Name");
             ViewData["GameID"] = id;
 
@@ -336,6 +373,8 @@ namespace WMBA_4.Controllers
             await _context.SaveChangesAsync();
 
         }
+
+        //Start scoring
         public async Task<IActionResult> Start(int teamId, int gameId)
         {
             try
@@ -348,6 +387,8 @@ namespace WMBA_4.Controllers
                 var inplay = new Inplay();
                 object inplayData = null;
                 string player = "";
+
+                bool visi;
 
 
                 //Si existe, obtener el último `Inning` y consultar la tabla `Inplay`
@@ -380,6 +421,14 @@ namespace WMBA_4.Controllers
                            .FirstOrDefault();
 
                     }
+                    if (inplay.TeamAtBat == 1)
+                    {
+                        visi = true;
+                    }
+                    else
+                    {
+                        visi = false;
+                    }
 
                     // Adding players to the ScorePlayer table if they don't exist
                     var lineupPlayers = _context.GameLineUps
@@ -404,7 +453,7 @@ namespace WMBA_4.Controllers
                         }
                     }
 
-                    // Save changes once after all ScorePlayers have been added
+                    // Save changes after all ScorePlayers have been added
                     await _context.SaveChangesAsync();
 
 
@@ -427,7 +476,8 @@ namespace WMBA_4.Controllers
                             Fouls = inplay.Fouls,
                             Balls = inplay.Balls,
                             InningNumber = inplay.Inning.InningNumber,
-                            FirstPlayer = player
+                            FirstPlayer = player,
+                            IsVisitor = visi
 
                         };
 
@@ -457,6 +507,7 @@ namespace WMBA_4.Controllers
                     // Add the inning to the context and save the changes
                     _context.Innings.Add(inning);
                     await _context.SaveChangesAsync();
+
 
                     // load the lineup data
                     var firstPlayer = _context.GameLineUps
@@ -501,6 +552,21 @@ namespace WMBA_4.Controllers
                         .Where(tg => tg.GameID == gameId)
                         .ToList();
 
+                    var IsVisitor = await _context.TeamGame
+                        .Where(tg => tg.GameID == gameId && tg.TeamID == teamId)
+                        .Select(tg => tg.IsVisitorTeam)
+                        .FirstOrDefaultAsync();
+
+                    // 1 for Visitor, 2 for Home
+                    if (IsVisitor)
+                    {
+                        inplay2.TeamAtBat = 1;
+                    }
+                    else
+                    {
+                        inplay2.TeamAtBat = 2;
+                    }
+                    inplay.Turns = 1;
 
                     inplayData = new
                     {
@@ -512,7 +578,8 @@ namespace WMBA_4.Controllers
                         Fouls = inplay2.Fouls,
                         Balls = inplay2.Balls,
                         InningNumber = inplay2.Inning.InningNumber,
-                        FirstPlayer = firstPlayer != null ? firstPlayer.FullName : "N/A"
+                        FirstPlayer = firstPlayer != null ? firstPlayer.FullName : "N/A",
+                        IsVisitor = IsVisitor
                     };
 
                     //Adding players to the ScorePlayer table
@@ -530,8 +597,6 @@ namespace WMBA_4.Controllers
                         _context.ScorePlayers.Add(scoreplayer);
                         await _context.SaveChangesAsync();
                     }
-
-
 
                 }
 
@@ -792,6 +857,15 @@ namespace WMBA_4.Controllers
                 .Where(tg => tg.GameID == gameId)
                 .ToList();
 
+            bool visi;
+            if (inplay.TeamAtBat == 1)
+            {
+                visi = true;
+            }
+            else
+            {
+                visi = false;
+            }
 
             //if the division is 9U, then the strikes are 5
 
@@ -812,6 +886,7 @@ namespace WMBA_4.Controllers
                         Balls = inplay.Balls,
                         InningNumber = inningNumber,
                         FirstPlayer = player,
+                        IsVisitor = visi
                     };
                 }
 
@@ -827,9 +902,7 @@ namespace WMBA_4.Controllers
                         .Where(sp => sp.GameLineUpID == lineupID)
                         .OrderByDescending(sp => sp.ID) // Ordena los resultados por ID en orden descendente
                         .FirstOrDefaultAsync();
-                    //var scorePlayer = await _context.ScorePlayers
-                    //    .Where(sp => sp.GameLineUpID == lineupID)
-                    //    .FirstOrDefaultAsync();
+
 
                     GetNextPlayer(inplayId);
 
@@ -854,14 +927,41 @@ namespace WMBA_4.Controllers
                     inplay.Outs++;
                     inplay.NextPlayer = (int)inplay.PlayerBattingID;
 
-
-
                     // save changes to the database
                     await _context.SaveChangesAsync();
 
                     if (inplay.Outs == 3)
                     {
-                        NextInning(inning.TeamID, inning.GameID, inplayId);
+                        if (inplay.Turns == 2)
+                        {
+                            NextInning(inning.TeamID, inning.GameID, inplayId);
+                            inplay.Turns = 0;
+                            if (inplay.TeamAtBat == 1)
+                            {
+                                inplay.TeamAtBat = 2;
+                                visi = false;
+                            }
+                            else
+                            {
+                                inplay.TeamAtBat = 1;
+                                visi = true;
+                            }
+                        }
+                        else
+                        {
+                            inplay.Turns = 2;
+                            if (inplay.TeamAtBat == 1)
+                            {
+                                inplay.TeamAtBat = 2;
+                                visi = false;
+                            }
+                            else
+                            {
+                                inplay.TeamAtBat = 1;
+                                visi = true;
+                            }
+                        }
+                        await _context.SaveChangesAsync();
 
                     }
                     var inplay2 = await _context.Inplays.FindAsync(inplayId);
@@ -881,7 +981,8 @@ namespace WMBA_4.Controllers
                         Fouls = inplay2.Fouls,
                         Balls = inplay2.Balls,
                         InningNumber = inningNumber2,
-                        FirstPlayer = playeratBat
+                        FirstPlayer = playeratBat,
+                        IsVisitor = visi
                     };
 
                 }
@@ -908,6 +1009,7 @@ namespace WMBA_4.Controllers
                         Balls = inplay.Balls,
                         InningNumber = inningNumber,
                         FirstPlayer = player,
+                        IsVisitor = visi
                     };
                     //save changes to the database
                     await _context.SaveChangesAsync();
@@ -962,7 +1064,35 @@ namespace WMBA_4.Controllers
 
                     if (inplay.Outs == 3)
                     {
-                        NextInning(inning.TeamID, inning.GameID, inplayId);
+                        if (inplay.Turns == 2)
+                        {
+                            NextInning(inning.TeamID, inning.GameID, inplayId);
+                            inplay.Turns = 0;
+                            if (inplay.TeamAtBat == 1)
+                            {
+                                inplay.TeamAtBat = 2;
+                                visi = false;
+                            }
+                            else
+                            {
+                                inplay.TeamAtBat = 1;
+                                visi = true;
+                            }
+                        }
+                        else
+                        {
+                            inplay.Turns = 2;
+                            if (inplay.TeamAtBat == 1)
+                            {
+                                inplay.TeamAtBat = 2;
+                                visi = false;
+                            }
+                            else
+                            {
+                                inplay.TeamAtBat = 1;
+                                visi = true;
+                            }
+                        }
 
                     }
                     var inplay2 = await _context.Inplays.FindAsync(inplayId);
@@ -983,7 +1113,8 @@ namespace WMBA_4.Controllers
                         Fouls = inplay.Fouls,
                         Balls = inplay.Balls,
                         InningNumber = inningNumber,
-                        FirstPlayer = playeratBat
+                        FirstPlayer = playeratBat,
+                        IsVisitor = visi
                     };
 
                 }
@@ -1351,11 +1482,50 @@ namespace WMBA_4.Controllers
               .Select(p => p.FullName)
               .FirstOrDefault();
 
+            bool visi;
+            if (inplay.TeamAtBat == 1)
+            {
+                visi = true;
+            }
+            else
+            {
+                visi = false;
+            }
+
             if (inplay.Outs == 3)
             {
-                NextInning(inning.TeamID, inning.GameID, inplayId);
+                if (inplay.Turns == 2)
+                {
+                    NextInning(inning.TeamID, inning.GameID, inplayId);
+                    inplay.Turns = 0;
+                    if (inplay.TeamAtBat == 1)
+                    {
+                        inplay.TeamAtBat = 2;
+                        visi = false;
+                    }
+                    else
+                    {
+                        inplay.TeamAtBat = 1;
+                        visi = true;
+                    }
+                }
+                else
+                {
+                    inplay.Turns = 2;
+                    if (inplay.TeamAtBat == 1)
+                    {
+                        inplay.TeamAtBat = 2;
+                        visi = false;
+                    }
+                    else
+                    {
+                        inplay.TeamAtBat = 1;
+                        visi = true;
+                    }
+                }
 
             }
+
 
             var inplay2 = await _context.Inplays.FindAsync(inplayId);
 
@@ -1375,6 +1545,7 @@ namespace WMBA_4.Controllers
                 Balls = inplay2.Balls,
                 InningNumber = inningNumber,
                 FirstPlayer = playeratBat,
+                IsVisitor = visi
             };
             //inplay.Strikes = 0;
             // Guarda los cambios en la base de datos
@@ -1561,6 +1732,7 @@ namespace WMBA_4.Controllers
             ViewData["InPlay"] = inPlay;
             ViewBag.Inplay = new Inplay();
             ViewBag.TeamID = TeamID;
+            ViewBag.IsVisitor = defTeam;
             ViewBag.TeamScoring = TeamScoring;
             ViewBag.GameID = GameID;
 
@@ -1582,22 +1754,22 @@ namespace WMBA_4.Controllers
             }
 
             var inning = await _context.Innings
-               .Where(i => i.TeamID == teamId && i.GameID == gameId && i.ID < inplay.InningID)
-               .OrderByDescending(i => i.ID)
-               .FirstOrDefaultAsync();
+             .Where(i => i.TeamID == teamId && i.GameID == gameId)
+             .OrderByDescending(i => i.ID)
+             .FirstOrDefaultAsync();
 
             string error = null;
 
-            if (inning == null)
-            {
-                error = "You will be able to score the opponent team when you finish scoring Inning #1 for your team";
-            }
-            else
-            {
-                inning.ScorePerInningOpponent++;
-                await _context.SaveChangesAsync();
+            //if (inning == null)
+            //{
+            //    error = "You will be able to score the opponent team when you finish scoring Inning #1 for your team";
+            //}
+            //else
+            //{
+            inning.ScorePerInningOpponent++;
+            await _context.SaveChangesAsync();
 
-            }
+            //}
             // Get the scores for each team
             var scores = _context.TeamGame
                 .Where(tg => tg.GameID == gameId)
@@ -1657,7 +1829,145 @@ namespace WMBA_4.Controllers
 
             return Json(new { Error = error, Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
 
+
+
         }
+
+        //Method for recording Outs to the Opponent Team
+        [HttpPost]
+        public async Task<IActionResult> OpponentOuts(int inplayId, int teamId, int gameId)
+        {
+            object inplayData = null;
+            // get the inplay record
+            var inplay = await _context.Inplays.FindAsync(inplayId);
+
+            if (inplay == null)
+            {
+                return NotFound();
+            }
+
+            var inning = await _context.Innings
+               .Where(i => i.TeamID == teamId && i.GameID == gameId)
+               .FirstOrDefaultAsync();
+
+            string error = null;
+
+
+            inplay.OpponentOuts++;
+            await _context.SaveChangesAsync();
+
+            bool visi;
+            if (inplay.TeamAtBat == 1)
+            {
+                visi = true;
+            }
+            else
+            {
+                visi = false;
+            }
+
+
+            if (inplay.OpponentOuts == 3)
+            {
+                inplay.OpponentOuts = 0;
+
+                if (inplay.Turns == 2)
+                {
+                    NextInning(inning.TeamID, inning.GameID, inplayId);
+                    inplay.Turns = 0;
+                    if (inplay.TeamAtBat == 1)
+                    {
+                        inplay.TeamAtBat = 2;
+                        visi = false;
+                    }
+                    else
+                    {
+                        inplay.TeamAtBat = 1;
+                        visi = true;
+                    }
+                }
+                else
+                {
+                    inplay.Turns = 2;
+                    if (inplay.TeamAtBat == 1)
+                    {
+                        inplay.TeamAtBat = 2;
+                        visi = false;
+                    }
+                    else
+                    {
+                        inplay.TeamAtBat = 1;
+                        visi = true;
+                    }
+                }
+            }
+
+            await _context.SaveChangesAsync();
+
+            var scores = _context.TeamGame
+                .Where(tg => tg.GameID == gameId)
+                .ToList();
+
+
+            var inningNumber = _context.Innings
+                       .Where(i => i.ID == inplay.InningID)
+                       .Select(i => i.InningNumber)
+                       .FirstOrDefault();
+
+
+            var playeratBat = _context.Players
+              .Where(p => p.ID == inplay.PlayerBattingID)
+              .Select(p => p.FullName)
+              .FirstOrDefault();
+
+            // Devuelve una respuesta
+            inplayData = new
+            {
+                ID = inplay.ID,
+                Runs = scores.FirstOrDefault(s => s.IsHomeTeam == true)?.score,
+                Runs2 = scores.FirstOrDefault(s => s.IsVisitorTeam == true)?.score,
+                Strikes = inplay.Strikes,
+                Outs = inplay.Outs,
+                Fouls = inplay.Fouls,
+                Balls = inplay.Balls,
+                InningNumber = inningNumber,
+                FirstPlayer = playeratBat,
+                IsVisitor = visi
+
+            };
+
+
+            var innings = await _context.Innings
+              .Where(i => i.GameID == inning.GameID && i.TeamID == inning.TeamID)
+              .OrderBy(i => i.InningNumber)
+              .ToListAsync();
+
+            var defTeam = _context.TeamGame
+                .Where(tg => tg.GameID == inning.GameID && tg.TeamID == inning.TeamID)
+                .Select(tg => tg.IsHomeTeam)
+                .FirstOrDefault();
+
+            if (defTeam)
+            {
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+            else
+            {
+                ViewBag.InningScoresTeam1 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInning);
+                ViewBag.InningScoresTeam2 = innings.ToDictionary(i => i.InningNumber, i => i.ScorePerInningOpponent);
+
+            }
+
+
+
+            return Json(new { Error = error, Inplay = inplayData, InningScoresTeam1 = ViewBag.InningScoresTeam1, InningScoresTeam2 = ViewBag.InningScoresTeam2 });
+
+
+
+        }
+
 
         // GET: Lineup
         public async Task<IActionResult> GetLineup(int gameId, int teamId)
