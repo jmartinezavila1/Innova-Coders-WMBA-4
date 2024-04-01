@@ -1,217 +1,62 @@
-﻿<!--Edward-->
-@model IEnumerable<WMBA_4.Models.Staff>
+﻿@model IEnumerable<WMBA_4.ViewModels.StaffAdminVM>
 
 @{
     ViewData["Title"] = "Index";
 }
 
-@* page navigation *@
-<nav aria-label="breadcrumb">
-    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
-        <li class="breadcrumb-item">
-            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
-                <i class="bi bi-house-door-fill"></i>
-            </a>
-        </li>
-        <li class="breadcrumb-item">
-            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Staff" asp-action="Index">Staff</a>
-        </li>
-    </ol>
-</nav>
+<div class="text-danger">@TempData["message"]</div>
 
-@* page navigation *@
-<div class="f-in-flex justify-content-end">
-    @using (Html.BeginForm("Create", "Staff", FormMethod.Get))
-    {
-        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" 
-        aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
-        Filter/Search @ViewData["numberFilters"]
-    </button>
-        <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new staff member">Add Staff</button>
-    }
-</div>
-
-<div class="p-in-flex">
-    <form asp-action="Index" method="get">
-        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
-        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
-        <div class="form-horizontal">
-            <div class="collapse" id="collapseFilter">
-                <div class="card card-body bg-light">
-                    <div class="row">
-                        <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the name of the staff member you want to search for">
-                            <label class="control-label">Search Staff Name:</label>
-                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
-                        </div>
-                        <div class="form-group col-md-4 align-content-center">
-                            <div class="d-flex my-2">
-                                @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
-                                <label class="control-label" for="isActiveCheckbox">Active Staff Only</label>
-                            </div>
-                            <div class="d-flex my-2">
-                                @Html.CheckBox("isInactive", null, new { @class = "form-check form-switch me-2", id = "isInactiveCheckbox" })
-                                <label class="control-label" for="isInactiveCheckbox">Inactive Staff Only</label>
-                            </div>
-                        </div>
-                        <div class="form-group col-md-4 align-self-end" data-toggle="tooltip" data-placement="top" title="Click to apply the filter">
-                            <input type="submit" name="actionButton" value="Filter" class="btn btn-outline-success" />
-                            <a asp-action="Index" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Click to clear filter">Clear</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="table-responsive mt-3">
-            <div class="form-row">
-                <div class="form-group col-md-12">
-                    <div class="input-group">
-                        <div class="input-group-prepend">
-                            <span class="input-group-text">Page Size: </span>
-                        </div>
-                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new
-                            {
-                                @class = "form-control form-select text-center mx-1",
-                                @data_toggle = "tooltip",
-                                @data_placement = "top",
-                                @title = "Select the page size"
-                            })
-                        <div class="input-group-append" data-toggle="tooltip" data-placement="top" title="Click to set page size">
-                            <input type="submit" class="btn btn-kelly" value="Set Page Size" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            @* added from modal *@
-            <table class="table-two giro-table table-bordered">
-                <thead>
-                    <tr>
-                        <th>
-                            <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Staff" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Staff" />
-                                @if (ViewData["sortField"].ToString() == "Staff")
-                                {
-                                    <div>
-                                        @if (ViewData["sortDirection"].ToString() == "asc")
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
-                                                <i class="fa-solid fa-sort-up"></i>
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
-                                                <i class="fa-solid fa-sort-down"></i>
-                                            </span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
-                                            <i class="fa-solid fa-sort-up"></i>
-                                        </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending" style="display: none;">
-                                            <i class="fa-solid fa-sort-down"></i>
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-
-                        </th>
-                        <th>
-                            <div class="d-flex justify-content-center">
-                                <input type="submit" name="actionButton" value="Role" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Role" />
-                                @if (ViewData["sortField"].ToString() == "Role")
-                                {
-                                    <div>
-                                        @if (ViewData["sortDirection"].ToString() == "asc")
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
-                                                <i class="fa-solid fa-sort-up"></i>
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
-                                                <i class="fa-solid fa-sort-down"></i>
-                                            </span>
-                                        }
-                                    </div>
-                                }
-                                else
-                                {
-                                    <div>
-                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
-                                            <i class="fa-solid fa-sort-up"></i>
-                                        </span>
-                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending" style="display: none;">
-                                            <i class="fa-solid fa-sort-down"></i>
-                                        </span>
-                                    </div>
-                                }
-                            </div>
-
-                        </th>
-                        <th>
-                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>Status</span></div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model)
-                    {
-                        <tr class="@((item.Status) ? "" : "inactive-staff") staff-row" onclick="redirectToDetails('@item.ID')">
-
-                            <td>
-                                @Html.DisplayFor(modelItem => item.FullName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Roles.Description)
-                            </td>
-                            <td>
-                                @if (item.Status == true)
-                                {
-                                    <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit to Staff">
-                                        <span class="material-symbols-outlined ft-kelly px-1">
-                                            edit
-                                        </span>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Delete Staff">
-                                        <span class="material-symbols-outlined ft-kelly px-2">
-                                            group
-                                        </span>
-                                    </a>
-                                }
-                                else
-                                {
-                                    <div class="d-inline">
-                                        <span class="material-symbols-outlined px-1" style="color: var(--ft-light-grey);">
-                                            edit
-                                        </span>
-                                    </div>
-                                    <a asp-action="Delete" asp-route-id="@item.ID">
-                                        <span class="material-symbols-outlined px-2">
-                                            group_off
-                                        </span>
-                                    </a>
-                                }
-                            </td>
-                        </tr>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.FullName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Status)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Roles)
+            </th>
+           
+            <th class="text-center" style="min-width:120px">
+                <a asp-action="Create" class="btn btn-sm btn-outline-success"
+                   role="button" data-bs-toggle="tooltip" title="Create New @ViewData["ControllerFriendlyName"]">
+                    <strong>&#x270D; Create</strong>
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FullName)<br />
+                    Email: @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Status)
+                </td>
+                
+                <td>
+                    @{
+                        foreach (var r in item.Roles)
+                        {
+                            @:  @r <br />
+                        }
                     }
-                </tbody>
-            </table>
-        </div>
-        <partial name="_PagingNavBar" />
-    </form>
-
-</div>
-
-@* show a staff's' details view when click the row *@
-@section Scripts {
-    <script>
-        function redirectToDetails(staffId) {
-            window.location.href = '@Url.Action("Edit", "Staff")/' + staffId;
+                </td>
+                                <td class="text-center">
+                    <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
+                       role="button" data-bs-toggle="tooltip" title="Edit @ViewData["ControllerFriendlyName"]">
+                        &#x270E; Edit
+                    </a>
+                    
+                </td>
+                                
+            </tr>
         }
-    </script>
-}
+    </tbody>
+</table>
+

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +13,7 @@ using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
 using WMBA_4.Utilities;
+using WMBA_4.ViewModels;
 
 namespace WMBA_4.Controllers
 {
@@ -18,240 +21,218 @@ namespace WMBA_4.Controllers
     public class StaffController : ElephantController
     {
         private readonly WMBA_4_Context _context;
+        private readonly ApplicationDbContext _identityContext;
+        private IMyEmailSender _emailSender;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public StaffController(WMBA_4_Context context)
+
+        public StaffController(WMBA_4_Context context,
+           ApplicationDbContext identityContext, IMyEmailSender emailSender,
+           UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _identityContext = identityContext;
+            _emailSender = emailSender;
+            _userManager = userManager;
         }
 
         // GET: Staff
-        public async Task<IActionResult> Index(string SearchString, int? RoleID, int? CoachID, bool isActive, bool isInactive, int? page, int? pageSizeID,
+        public async Task<IActionResult> Index(string SearchString, int? RoleId, int? CoachID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Staff")
         {
-            var wMBA_4_Context = _context.Staff.Include(s => s.Roles);
-            //Count the number of filters applied - start by assuming no filters
-            ViewData["Filtering"] = "btn-outline-secondary";
-            int numberFilters = 0;
+     
 
-            var staff = from r in _context.Staff
-                                    .Include(r => r.Roles)
-                                    .OrderBy(s => s.Status == true)
-                                    .AsNoTracking()
-                        select r;
+            var staffs = await _context.Staff
+                 .Select(s => new StaffAdminVM
+                 {
+                     Email = s.Email,
+                     Status = s.Status,
 
-            //sorting sortoption array
-            string[] sortOptions = new[] { "Staff", "Role" };
+                     ID = s.ID,
+                     FirstName = s.FirstName,
+                     LastName = s.LastName
+                 }).ToListAsync();
 
-            //filter
-            if (RoleID.HasValue)
+            
+            foreach (var e in staffs)
             {
-                staff = staff.Where(r => r.RoleId == RoleID);
-                numberFilters++;
-            }
-            if (!String.IsNullOrEmpty(SearchString))
-            {
-                staff = staff.Where(r => r.LastName.ToUpper().Contains(SearchString.ToUpper())
-                                       || r.FirstName.ToUpper().Contains(SearchString.ToUpper()));
-                numberFilters++;
-            }
-            if (isActive == true)
-            {
-                staff = staff.Where(r => r.Status == true);
-                numberFilters++;
-            }
-            if (isInactive == true)
-            {
-                staff = staff.Where(r => r.Status == false);
-                numberFilters++;
-            }
-            if (numberFilters != 0)
-            {
-                //Toggle the Open/Closed state of the collapse depending on if we are filtering
-                ViewData["Filtering"] = " btn-danger";
-                //Show how many filters have been applied
-                ViewData["numberFilters"] = "(" + numberFilters.ToString()
-                    + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
-                //Keep the Bootstrap collapse open
-                //@ViewData["ShowFilter"] = " show";
-            }
-
-            staff = staff
-                .OrderByDescending(r => r.Status) // send all false status staff to the back in the list 
-                .ThenBy(r => r.FirstName)
-                .ThenBy(r => r.LastName)
-                .ThenBy(r => r.Roles.Description);
-
-            if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
-            {
-                page = 1;//Reset page to start
-                         //sorting
-                if (!String.IsNullOrEmpty(actionButton)) //Form Submitted!
+                var user = await _userManager.FindByEmailAsync(e.Email);
+                if (user != null)
                 {
-                    if (sortOptions.Contains(actionButton))//Change of sort is requested
-                    {
-                        if (actionButton == sortField) //Reverse order on same field
-                        {
-                            sortDirection = sortDirection == "asc" ? "desc" : "asc";
-                        }
-                        sortField = actionButton;//Sort by the button clicked
-                    }
+                    e.Roles = (List<string>)await _userManager.GetRolesAsync(user);
                 }
-                if (sortField == "Staff")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        staff = staff
-                            .OrderBy(r => r.FirstName)
-                            .ThenBy(r => r.LastName);
-                    }
-                    else
-                    {
-                        staff = staff
-                            .OrderByDescending(r => r.FirstName)
-                            .ThenByDescending(r => r.LastName);
-                    }
-                }
-                else if (sortField == "Role")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        staff = staff.OrderBy(r => r.Roles.Description);
-                    }
-                    else
-                    {
-                        staff = staff.OrderByDescending(r => r.Roles.Description);
-                    }
-                }
-            }
-            ViewData["sortField"] = sortField;
-            ViewData["sortDirection"] = sortDirection;
-            ViewData["RoleID"] = new SelectList(_context.Roles, "ID", "Name");
-
-            // Handle Paging
-            int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
-            ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Staff>.CreateAsync(staff.AsNoTracking(), page ?? 1, pageSize);
-
-            return View(pagedData);
+            };
+            return View(staffs);
         }
 
-        // GET: Staff/Details/5
-        public async Task<IActionResult> Details(int? id)
+        // GET: Employee/Create
+        public IActionResult Create()
         {
-            if (id == null || _context.Staff == null)
-            {
-                return NotFound();
-            }
-
-            var staff = await _context.Staff
-                .Include(s => s.Roles)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
+            StaffAdminVM staff = new StaffAdminVM();
+            PopulateAssignedRoleData(staff);
             return View(staff);
         }
 
-        // GET: Staff/Activate/5
-        public async Task<IActionResult> Activate(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            // Set the staff's status to active
-            staff.Status = true;
-            _context.Staff.Update(staff);
-            await _context.SaveChangesAsync();
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        // GET: Staff/Create
-        public IActionResult Create()
-        {
-            ViewData["returnURL"] = Url.Action("Index");
-            ViewData["ControllerName"] = "Staff";
-            ViewData["Roles"] = new SelectList(_context.Roles, "ID", "Description");
-            return View();
-        }
-
-        // POST: Staff/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Employee/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,FirstName,LastName,Email,Status,RoleId")] Staff staff)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email")] Staff staff, string[] selectedRoles)
         {
+
             try
             {
                 if (ModelState.IsValid)
                 {
                     _context.Add(staff);
                     await _context.SaveChangesAsync();
+
+                    var roleId = await _context.Roles
+                       .Where(r => selectedRoles.Contains(r.Description))
+                       .Select(r => r.ID)
+                       .FirstOrDefaultAsync();
+
+                    staff.RoleId = roleId;
+                    _context.Update(staff);
+                    await _context.SaveChangesAsync();
+
+                    InsertIdentityUser(staff.Email, selectedRoles);
+
+                    //Send Email to new Employee - commented out till email configured
+                    //await InviteUserToResetPassword(employee, null);
+
                     return RedirectToAction(nameof(Index));
                 }
-                ViewData["RoleId"] = new SelectList(_context.Roles, "ID", "Description", staff.RoleId);
-
-                return View(staff);
             }
-            catch (RetryLimitExceededException /* dex */)
+            catch (DbUpdateException dex)
             {
-                ModelState.AddModelError("", "An error occurred while processing your request.");
-                return View(staff);
+                if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                {
+                    ModelState.AddModelError("Email", "Unable to save changes. Remember, you cannot have duplicate Email addresses.");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                }
             }
+            //We are here because something went wrong and need to redisplay
+            StaffAdminVM staffAdminVM = new StaffAdminVM
+            {
+                Email = staff.Email,
+                Status = staff.Status,
+                ID = staff.ID,
+                FirstName = staff.FirstName,
+                LastName = staff.LastName,
+  
+            };
+            foreach (var role in selectedRoles)
+            {
+                staffAdminVM.Roles.Add(role);
+            }
+            PopulateAssignedRoleData(staffAdminVM);
+            return View(staffAdminVM);
         }
 
-        // GET: Staff/Edit/5
+        // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null || _context.Staff == null)
+            if (id == null)
             {
                 return NotFound();
             }
 
-            var staff = await _context.Staff.FindAsync(id);
+            var staff = await _context.Staff
+                .Where(e => e.ID == id)
+                .Select(e => new StaffAdminVM
+                {
+                    Email = e.Email,
+                    Status = e.Status,
+                    ID = e.ID,
+                    FirstName = e.FirstName,
+                    LastName = e.LastName,
+                
+                }).FirstOrDefaultAsync();
+
             if (staff == null)
             {
                 return NotFound();
             }
-            ViewBag.Roles = await _context.Roles.ToListAsync();
 
-            ViewData["RoleId"] = new SelectList(_context.Roles, "ID", "ID", staff.RoleId);
+            //Get the user from the Identity system
+            var user = await _userManager.FindByEmailAsync(staff.Email);
+            if (user != null)
+            {
+                //Add the current roles
+                var r = await _userManager.GetRolesAsync(user);
+                staff.Roles = (List<string>)r;
+            }
+            PopulateAssignedRoleData(staff);
+
             return View(staff);
         }
 
-        // POST: Staff/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // POST: Employees/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
+        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id)
+        public async Task<IActionResult> Edit(int id, bool Active, string[] selectedRoles)
         {
             var staffToUpdate = await _context.Staff
-                .Include(s => s.Roles)
-                .FirstOrDefaultAsync(p => p.ID == id);
-
+                .FirstOrDefaultAsync(m => m.ID == id);
             if (staffToUpdate == null)
             {
                 return NotFound();
             }
 
-            if (await TryUpdateModelAsync<Staff>(staffToUpdate, "", s => s.FirstName, s => s.LastName, s => s.Email, s => s.Status, s => s.RoleId))
+            //Note the current Email and Active Status
+            bool ActiveStatus = staffToUpdate.Status;
+            string databaseEmail = staffToUpdate.Email;
+
+
+            if (await TryUpdateModelAsync<Staff>(staffToUpdate, "",
+                e => e.FirstName, e => e.LastName, e => e.Email, e => e.Status))
             {
                 try
                 {
-                    _context.Update(staffToUpdate);
                     await _context.SaveChangesAsync();
+                    //Save successful so go on to related changes
+
+                    //Check for changes in the Active state
+                    if (staffToUpdate.Status == false && ActiveStatus == true)
+                    {
+                        //Deactivating them so delete the IdentityUser
+                        //This deletes the user's login from the security system
+                        await DeleteIdentityUser(staffToUpdate.Email);
+
+                    }
+                    else if (staffToUpdate.Status == true && ActiveStatus == false)
+                    {
+                        //You reactivating the user, create them and
+                        //give them the selected roles
+                        InsertIdentityUser(staffToUpdate.Email, selectedRoles);
+                    }
+                    else if (staffToUpdate.Status == true && ActiveStatus == true)
+                    {
+                        //No change to Active status so check for a change in Email
+                        //If you Changed the email, Delete the old login and create a new one
+                        //with the selected roles
+                        if (staffToUpdate.Email != databaseEmail)
+                        {
+                            //Add the new login with the selected roles
+                            InsertIdentityUser(staffToUpdate.Email, selectedRoles);
+
+                            //This deletes the user's old login from the security system
+                            await DeleteIdentityUser(databaseEmail);
+                        }
+                        else
+                        {
+                            //Finially, Still Active and no change to Email so just Update
+                            await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
+                        }
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
@@ -265,61 +246,159 @@ namespace WMBA_4.Controllers
                         throw;
                     }
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateException dex)
                 {
-                    ModelState.AddModelError("", "An error occurred while saving. Retry a few times, and if the issue persists, seek assistance from your system administrator.");
+                    if (dex.GetBaseException().Message.Contains("UNIQUE constraint failed"))
+                    {
+                        ModelState.AddModelError("Email", "Unable to save changes. Remember, you cannot have duplicate Email addresses.");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
+                    }
                 }
             }
-            ViewData["RoleId"] = new SelectList(_context.Roles, "ID", "ID", staffToUpdate.RoleId);
-            return View(staffToUpdate);
+            //We are here because something went wrong and need to redisplay
+            StaffAdminVM staffAdminVM = new StaffAdminVM
+            {
+                Email = staffToUpdate.Email,
+                ID = staffToUpdate.ID,
+                FirstName = staffToUpdate.FirstName,
+                LastName = staffToUpdate.LastName,
+                Status = staffToUpdate.Status
+            };
+            foreach (var role in selectedRoles)
+            {
+                staffAdminVM.Roles.Add(role);
+            }
+            PopulateAssignedRoleData(staffAdminVM);
+            return View(staffAdminVM);
         }
 
-        // GET: Staff/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null || _context.Staff == null)
+        private void PopulateAssignedRoleData(StaffAdminVM staff)
+        {//Prepare checkboxes for all Roles
+            var allRoles = _identityContext.Roles;
+            var currentRoles = staff.Roles;
+            var viewModel = new List<RoleVM>();
+            foreach (var r in allRoles)
             {
-                return NotFound();
+                viewModel.Add(new RoleVM
+                {
+                    RoleId = r.Id,
+                    RoleName = r.Name,
+                    Assigned = currentRoles.Contains(r.Name)
+                });
             }
-
-            var staff = await _context.Staff
-                .Include(s => s.Roles)
-                .FirstOrDefaultAsync(m => m.ID == id);
-            if (staff == null)
-            {
-                return NotFound();
-            }
-
-            return View(staff);
+            ViewBag.Roles = viewModel;
         }
 
-        // POST: Staff/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        private async Task UpdateUserRoles(string[] selectedRoles, string Email)
         {
-            if (_context.Staff == null)
+            var _user = await _userManager.FindByEmailAsync(Email);//IdentityUser
+            if (_user != null)
             {
-                return Problem("The staff data could not be retrieved. It may have been deleted or does not exist. If the issue persists, please contact support.");
-            }
-            var staff = await _context.Staff.FindAsync(id);
+                var UserRoles = (List<string>)await _userManager.GetRolesAsync(_user);//Current roles user is in
 
+                if (selectedRoles == null)
+                {
+                    //No roles selected so just remove any currently assigned
+                    foreach (var r in UserRoles)
+                    {
+                        await _userManager.RemoveFromRoleAsync(_user, r);
+                    }
+                }
+                else
+                {
+                    //At least one role checked so loop through all the roles
+                    //and add or remove as required
+
+                    //We need to do this next line because foreach loops don't always work well
+                    //for data returned by EF when working async.  Pulling it into an IList<>
+                    //first means we can safely loop over the colleciton making async calls and avoid
+                    //the error 'New transaction is not allowed because there are other threads running in the session'
+                    IList<IdentityRole> allRoles = _identityContext.Roles.ToList<IdentityRole>();
+
+                    foreach (var r in allRoles)
+                    {
+                        if (selectedRoles.Contains(r.Name))
+                        {
+                            if (!UserRoles.Contains(r.Name))
+                            {
+                                await _userManager.AddToRoleAsync(_user, r.Name);
+                            }
+                        }
+                        else
+                        {
+                            if (UserRoles.Contains(r.Name))
+                            {
+                                await _userManager.RemoveFromRoleAsync(_user, r.Name);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        private void InsertIdentityUser(string Email, string[] selectedRoles)
+        {
+            //Create the IdentityUser in the IdentitySystem
+            //Note: this is similar to what we did in ApplicationSeedData
+            if (_userManager.FindByEmailAsync(Email).Result == null)
+            {
+                IdentityUser user = new IdentityUser
+                {
+                    UserName = Email,
+                    Email = Email,
+                    EmailConfirmed = true //since we are creating it!
+                };
+                //Create a random password with a default 8 characters
+                //string password = MakePassword.Generate();
+                IdentityResult result = _userManager.CreateAsync(user).Result;
+
+                if (result.Succeeded)
+                {
+                    foreach (string role in selectedRoles)
+                    {
+                        _userManager.AddToRoleAsync(user, role).Wait();
+                    }
+                }
+            }
+            else
+            {
+                TempData["message"] = "The Login Account for " + Email + " was already in the system.";
+            }
+        }
+
+        private async Task DeleteIdentityUser(string Email)
+        {
+            var userToDelete = await _identityContext.Users.Where(u => u.Email == Email).FirstOrDefaultAsync();
+            if (userToDelete != null)
+            {
+                _identityContext.Users.Remove(userToDelete);
+                await _identityContext.SaveChangesAsync();
+            }
+        }
+
+        private async Task InviteUserToResetPassword(Staff staff, string message)
+        {
+            message ??= "Hello " + staff.FirstName + "<br /><p>Please navigate to:<br />" +
+                        "<a href='https://theapp.azurewebsites.net/' title='https://theapp.azurewebsites.net/' target='_blank' rel='noopener'>" +
+                        "https://theapp.azurewebsites.net</a><br />" +
+                        " and create a new password for " + staff.Email + " using Forgot Password.</p>";
             try
             {
-
-                if (staff != null)
-                {
-                    staff.Status = false; // Set status to inactive
-                    _context.Staff.Update(staff);
-                    await _context.SaveChangesAsync();
-                }
+                await _emailSender.SendOneAsync(staff.FullName, staff.Email,
+                "Account Registration", message);
+                TempData["message"] = "Invitation email sent to " + staff.FullName + " at " + staff.Email;
             }
-            catch (DbUpdateException)
+            catch (Exception)
             {
-                ModelState.AddModelError("", "Unable to delete record. Try again, and if the problem persists see your system administrator.");
+                TempData["message"] = "Could not send Invitation email to " + staff.FullName + " at " + staff.Email;
             }
-            return RedirectToAction(nameof(Index));
+
+
         }
+
 
         private bool StaffExists(int id)
         {

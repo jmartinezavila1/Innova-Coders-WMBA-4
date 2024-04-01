@@ -18,6 +18,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using WMBA_4.Data;
+using WMBA_4.Models;
 
 namespace WMBA_4.Areas.Identity.Pages.Account
 {
@@ -29,13 +31,14 @@ namespace WMBA_4.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly IEmailSender _emailSender;
+        private readonly WMBA_4_Context _context;
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
             IUserStore<IdentityUser> userStore,
             SignInManager<IdentityUser> signInManager,
             ILogger<RegisterModel> logger,
-            IEmailSender emailSender)
+            IEmailSender emailSender, WMBA_4_Context context)
         {
             _userManager = userManager;
             _userStore = userStore;
@@ -43,6 +46,7 @@ namespace WMBA_4.Areas.Identity.Pages.Account
             _signInManager = signInManager;
             _logger = logger;
             _emailSender = emailSender;
+            _context = context;
         }
 
         /// <summary>
@@ -159,6 +163,8 @@ namespace WMBA_4.Areas.Identity.Pages.Account
         {
             try
             {
+                _context.Staff.Add(new Staff { Email = Input.Email, RoleId=4 });
+                _context.SaveChanges();
                 return Activator.CreateInstance<IdentityUser>();
             }
             catch

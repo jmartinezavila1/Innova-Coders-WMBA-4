@@ -1,4 +1,4 @@
-﻿@model WMBA_4.Models.Staff
+﻿@model WMBA_4.ViewModels.StaffAdminVM
 
 @{
     ViewData["Title"] = "Create";
@@ -24,12 +24,13 @@
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 <hr />
 <form asp-action="Create">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <div class="row">
-        <div class="col-md-4 mb-3">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="col-md-4">
+            <input type="hidden" asp-for="Status" />
             <div class="form-group">
                 <label asp-for="FirstName" class="control-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+                <input asp-for="FirstName" class="form-control" autofocus />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -37,23 +38,50 @@
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
+        </div>
+        <div class="col-md-4">
+           
+                <div class="form-group">
+                    <label asp-for="Email" class="control-label"></label>
+                    <input asp-for="Email" class="form-control" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
             <div class="form-group">
-                <label asp-for="Email" class="control-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="RoleId" class="control-label"></label>
-                <select asp-for="RoleId" class="form-control form-select" asp-items="ViewBag.Roles"></select>
+                <label asp-for="Roles" class="control-label"></label>
+                <table>
+                    <tr>
+                        @{
+                            int cnt = 0;
+                            List<WMBA_4.ViewModels.RoleVM> roles = ViewBag.Roles;
+                            foreach (var role in roles)
+                            {
+                                if (cnt++ % 3 == 0)
+                                {
+                                @:</tr><tr>
+                                }
+                                @:<td>
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox"
+                                               id="@role.RoleName-CheckBox"
+                                               name="selectedRoles"
+                                               value="@role.RoleName"
+                                               @(Html.Raw(role.Assigned ? "checked=\"checked\"" : "")) />
+                                        <label class="form-check-label" "@role.RoleName-CheckBox">@role.RoleName  &nbsp;&nbsp;</label>
+                                    </div>
+                                @:</td>
+                            }
+                        @:</tr>
+                        }
+                    </table>
+                </div>
             </div>
         </div>
-    </div>
     <div class="form-group">
         <a href='@ViewData["returnURL"]' class="btn btn-outline-secondary mx-1">Back to the @ViewData["ControllerName"] List</a>
-        <input type="submit" value="Create and Save" class="btn btn-kelly mx-1" />
+        <input type="submit" value="Create" class="btn btn-kelly mx-1" />
     </div>
-</form>
+    </form>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");

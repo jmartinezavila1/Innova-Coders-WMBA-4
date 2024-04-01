@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
+using WMBA_4.Models;
 
-namespace WMBA_4.Models
+namespace WMBA_4.ViewModels
 {
     [ModelMetadataType(typeof(StaffMetaData))]
-    public class Staff
+    public class StaffVM
     {
         public int ID { get; set; }
 
@@ -19,18 +20,10 @@ namespace WMBA_4.Models
 
         public string FirstName { get; set; }
 
-       
+
         public string LastName { get; set; }
 
-       
-        public string Email { get; set; }
 
-      
-        public bool Status { get; set; } = true;
-
-        public int? RoleId { get; set; }
-        public Role Roles { get; set; }
-
-        public ICollection<TeamStaff> TeamStaff { get; set; } = new HashSet<TeamStaff>();
+  
     }
 }
