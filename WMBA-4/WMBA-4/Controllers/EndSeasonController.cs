@@ -74,7 +74,6 @@ namespace WMBA_4.Controllers
             //For Staff
             var staffRep = _context.Staff
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Team)
-                .Include(r => r.Roles)
                 .OrderBy(a => a.ID)
                 .Select(t => new
                 {
@@ -82,7 +81,6 @@ namespace WMBA_4.Controllers
                     First_Name = t.FirstName,
                     Last_Name = t.LastName,
                     Email = t.Email,
-                    Role = t.Roles.Description,
                     Status = t.Status ? "Active" : "Inactive"
                 })
                .AsNoTracking();

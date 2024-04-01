@@ -106,7 +106,7 @@ namespace WMBA_4.Controllers
             {
                 viewModel.Add(new RoleVM
                 {
-                    RoleID = r.Id,
+                    RoleId = r.Id,
                     RoleName = r.Name,
                     Assigned = currentRoles.Contains(r.Name)
                 });

@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using System.Text.Json.Serialization;
 using WMBA_4.Data;
 using WMBA_4.Utilities;
@@ -73,6 +74,20 @@ builder.Services.AddControllersWithViews();
 //    .RequireAuthenticatedUser()
 //        .Build();
 //});
+//To give access to IHttpContextAccessor for Audit Data with IAuditable
+builder.Services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+builder.Services.AddControllersWithViews();
+
+//For email service configuration
+builder.Services.AddSingleton<IEmailConfiguration>(builder.Configuration
+    .GetSection("EmailConfiguration").Get<EmailConfiguration>());
+
+//For the Identity System
+builder.Services.AddTransient<IEmailSender, EmailSender>();
+
+//Email with added methods for production use.
+builder.Services.AddTransient<IMyEmailSender, MyEmailSender>();
 
 var app = builder.Build();
 
