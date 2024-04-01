@@ -179,11 +179,33 @@ namespace WMBA_4.Controllers
         {
             var userEmail = User.Identity.Name;
 
-
-
             var staff = await _context.Staff
                 .Where(s => s.Email == userEmail)
                 .FirstOrDefaultAsync();
+         
+
+            if (staff == null)
+            {
+              var teams = await _context.TeamGame
+                    .Include(t => t.Team)
+                    .Where(t => t.GameID == id)
+                    .Select(t => new { t.Team.ID, t.Team.Name })
+                    .Distinct()
+                    .ToListAsync();
+
+                if (teams.Count == 0)
+                {
+                    TempData["Message"] = "No Line Up for these teams.";
+                    return RedirectToAction("Index");
+                }
+
+                ViewData["TeamID"] = new SelectList(teams, "ID", "Name");
+                ViewData["GameID"] = id;
+
+                var model = new GameLineUp();
+
+                return View(model);
+            }
 
             var TeamStaff = await _context.TeamStaff
                 .Where(t => t.StaffID == staff.ID)
@@ -211,26 +233,7 @@ namespace WMBA_4.Controllers
                 return RedirectToAction("Scorekeeping", new { GameID = id, TeamID = TeamStaff });
             }
 
-
-            var teams = await _context.TeamGame
-                        .Include(t => t.Team)
-                        .Where(t => t.GameID == id)
-                        .Select(t => new { t.Team.ID, t.Team.Name })
-                        .Distinct()
-                        .ToListAsync();
-
-            if (teams.Count == 0)
-            {
-                TempData["Message"] = "No Line Up for these teams.";
-                return RedirectToAction("Index");
-            }
-
-            ViewData["TeamID"] = new SelectList(teams, "ID", "Name");
-            ViewData["GameID"] = id;
-
-            var model = new GameLineUp();
-
-            return View(model);
+            return RedirectToAction("Error");
         }
 
         // This method is for creating a new inning
