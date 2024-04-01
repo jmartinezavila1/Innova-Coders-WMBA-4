@@ -2,8 +2,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -19,27 +21,42 @@ namespace WMBA_4.Controllers
     public class DivisionController : ElephantController
     {
         private readonly WMBA_4_Context _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public DivisionController(WMBA_4_Context context)
+        public DivisionController(WMBA_4_Context context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Division
         public async Task<IActionResult> Index(string SearchString, int? ClubID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Division")
         {
-            var wMBA_4_Context = _context.Divisions.Include(d => d.Club);
-            //Count the number of filters applied - start by assuming no filters
+            var userRole = User.FindFirst(ClaimTypes.Role)?.Value;
+
+            var divisions = _context.Divisions.Include(d => d.Club).AsQueryable();
+
+            // Logic to filter divisions based on the user's role
+            switch (userRole)
+            {
+                case "RookieConvenor":
+                    divisions = divisions.Where(d => d.DivisionName == "9U");
+                    break;
+                case "IntermediateConvenor":
+                    divisions = divisions.Where(d => d.DivisionName == "11U" || d.DivisionName == "13U");
+                    break;
+                case "SeniorConvenor":
+                    divisions = divisions.Where(d => d.DivisionName == "15U" || d.DivisionName == "18U");
+                    break;
+                // Add more cases as needed for other roles
+                default:
+                    // No specific division restriction for other roles
+                    break;
+            }
+
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
-
-            var divisions = from d in _context.Divisions
-                                      .Include(d => d.Club)
-                                      .OrderBy(s => s.Status == true)
-                                      .AsNoTracking()
-                            select d;
-
             //sorting sortoption array
             string[] sortOptions = new[] { "Division", "Club" };
 
