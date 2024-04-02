@@ -636,6 +636,11 @@ div > .nav-hover:hover {
             border-radius: 5px;
         }
 
+.alert_box {
+    height: 50px;
+    color: var(--ft-kelly); /* 텍스트 색상 변경 */
+    padding: 10px 10px; /* 여백 추가 */
+}
 
 /*///////////////////////////////////////////////collapse////////////////// /////////////////////////*/
 
