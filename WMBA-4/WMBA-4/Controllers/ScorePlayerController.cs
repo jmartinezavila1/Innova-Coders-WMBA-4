@@ -184,7 +184,7 @@ namespace WMBA_4.Controllers
                 .FirstOrDefaultAsync();
          
 
-            if (staff == null)
+            if (staff == null || staff.RoleId == 3 || staff.RoleId == 5 || staff.RoleId == 6 || staff.RoleId == 7)
             {
               var teams = await _context.TeamGame
                     .Include(t => t.Team)
