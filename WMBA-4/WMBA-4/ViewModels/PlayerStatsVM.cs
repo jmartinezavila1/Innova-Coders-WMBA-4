@@ -1,9 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace WMBA_4.ViewModels
 {
     public class PlayerStatsVM
     {
         public int ID { get; set; }
+
         public string Player { get; set; }
         public string JerseyNumber { get; set; }
         public string Team { get; set; }

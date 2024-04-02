@@ -6,138 +6,183 @@
     ViewData["Title"] = "Team Stats";
 }
 
-@* <h1>Teams</h1> *@
-<div class="table-container" style="overflow-x: auto; width: 100%;">
-    <table class="table-two">
-        <thead>
-            <tr>
-                <th style="position: sticky; left: 0; background-color: white; width: 100px;">
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Team)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().DivisionName)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().G)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().H)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().RBI)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Singles)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Doubles)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Triples)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().BB)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().PA)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().AB)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Run)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().HBP)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().SO)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().Out)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().AVG)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().OBP)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().SLG)
-                </th>
-                <th>
-                    @Html.DisplayNameFor(model => model.TeamStats.First().OPS)
-                </th>
-
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model.TeamStats)
-            {
-                <tr>
-                    <td style="position: sticky; left: 0; background-color: white; width: 100px;">
-                        @Html.DisplayFor(modelItem => item.Team)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.DivisionName)
-                    </td>
-
-                    <td>
-                        @Html.DisplayFor(modelItem => item.G)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.H)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.RBI)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Singles)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Doubles)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Triples)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.HR)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.BB)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.PA)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.AB)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Run)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.HBP)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.SO)
-                    </td>
-                    <td>
-                        @Html.DisplayFor(modelItem => item.Out)
-                    </td>
-                    <td>
-                        @item.AVG.ToString("F3")
-                    </td>
-                    <td>
-                        @item.OBP.ToString("F3")
-                    </td>
-                    <td>
-                        @item.SLG.ToString("F3")
-                    </td>
-                    <td>
-                        @item.OPS.ToString("F3")
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+<div class="f-in-flex justify-content-end">
+    @using (Html.BeginForm("Create", "Player", FormMethod.Get))
+    {
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
+                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
+    }
 </div>
+
+<form asp-action="Index" method="get">
+    <input type="hidden" name="sortTDirection" value="@ViewData["sortTDirection"]" />
+    <input type="hidden" name="sortTField" value="@ViewData["sortTField"]" />
+    <div class="form-horizontal mb-4">
+        <div class="collapse" id="collapseFilter">
+            <div class="card card-body bg-light">
+                <div class="row">
+                    <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the player's name you want to search for">
+                        <label class="control-label">Search Player Name:</label>
+                        @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group col-md-4 align-self-end" data-toggle="tooltip" data-placement="top" title="Click to apply the filter">
+                        <input type="submit" name="actionTButton" value="Filter" class="btn btn-outline-primary" />
+                        <a asp-action="Index" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Click to clear filter">Clear</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    @using (Html.BeginForm("Compare", "Report", FormMethod.Post))
+{
+        @* <button class="btn btn-outline-dark me-1" type="submit" id="compareplayers"
+                data-toggle="tooltip" data-placement="top" title="Click to Compare two or more players">
+            Compare Teams
+        </button> *@
+    @* <h1>Teams</h1> *@
+    <div class="table-container" style="overflow-x: auto; width: 100%;">
+        <table class="table-two">
+            <thead>
+                <tr>
+                        @* <th>
+                            Select
+                        </th> *@
+                    <th style="position: sticky; left: 0; background-color: white; width: 200px;">
+                        <input type="submit" name="actionTButton" value="Team" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Team" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Division" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Division" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="G" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort G" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="H" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort H" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="RBI" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort RBI" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Singles" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Singles" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Doubles" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Doubles" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Triples" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Triples" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="HR" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort HR" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="BB" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort BB" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="PA" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort PA" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="AB" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort AB" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Run" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Run" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="HBP" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort HBP" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="SO" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort SO" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="Out" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Out" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="AVG" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort AVG" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="OBP" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort OBP" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="SLG" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort SLG" />
+                    </th>
+                    <th>
+                        <input type="submit" name="actionTButton" value="OPS" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort OPS" />
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model.TeamStats)
+                {
+                    <tr>
+                            @* <td>
+                                <input type="checkbox" name="selectedTeams" value="@item.ID" />
+                            </td> *@
+                        <td style="position: sticky; left: 0; background-color: white; width: 100px;">
+                            @Html.DisplayFor(modelItem => item.Team)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.DivisionName)
+                        </td>
+
+                        <td>
+                            @Html.DisplayFor(modelItem => item.G)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.H)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.RBI)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Singles)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Doubles)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Triples)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HR)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BB)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.PA)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.AB)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Run)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.HBP)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.SO)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Out)
+                        </td>
+                        <td>
+                            @item.AVG.ToString("F3")
+                        </td>
+                        <td>
+                            @item.OBP.ToString("F3")
+                        </td>
+                        <td>
+                            @item.SLG.ToString("F3")
+                        </td>
+                        <td>
+                            @item.OPS.ToString("F3")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    }
+</form>
