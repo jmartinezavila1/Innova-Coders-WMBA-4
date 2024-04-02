@@ -169,7 +169,13 @@ namespace WMBA_4.Data
                         new Staff { FirstName = "Benjamin", LastName = "Hill", Email = "benjamin.hill@example.com", RoleId = 2 },
                         new Staff { FirstName = "Avery", LastName = "King", Email = "avery.king@example.com" , RoleId = 2},
                         new Staff { FirstName = "Ryan", LastName = "Cooper", Email = "ryan.cooper@example.com" , RoleId = 2},
-                        new Staff { FirstName = "Nora", LastName = "Baker", Email = "nora.baker@example.com" , RoleId = 2}
+                        new Staff { FirstName = "Nora", LastName = "Baker", Email = "nora.baker@example.com" , RoleId = 2},
+                        new Staff { FirstName = "Alexander", LastName = "Brown", Email = "michael.brown@example.com" , RoleId = 1},
+                        new Staff { FirstName = "Jack", LastName = "Sparrow", Email = "rookie@outlook.com" , RoleId = 5},
+                        new Staff { FirstName = "Yazmin", LastName = "Peralta", Email = "intermediate@outlook.com" , RoleId = 6},
+                        new Staff { FirstName = "Benjamin", LastName = "Hill", Email = "senior@outlook.com", RoleId = 7 },
+                        new Staff { FirstName = "Julian", LastName = "Martinez", Email = "admin@outlook.com", RoleId = 3 },
+                        
                     };
 
                     context.Staff.AddRange(staffMembers);
