@@ -3,12 +3,6 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@ViewData["Title"]</title>
     <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -51,9 +45,7 @@
                 line-height: 1.6;
             }
     </style>
-</head>
-<body>
-    <div class="container">
+    <div class="container" id="help">
         <h1 class="mt-5">User Guide</h1>
 
         <!-- Authentication -->
@@ -61,7 +53,7 @@
             <div class="card">
                 <div class="card-header" id="headingAuthentication">
                     <h2 class="mb-0">
-                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseAuthentication" aria-expanded="true" aria-controls="collapseAuthentication">
+                        <button class="btn" type="button" data-toggle="collapse" data-target="#collapseAuthentication" aria-expanded="true" aria-controls="collapseAuthentication">
                             Authentication
                         </button>
                     </h2>
@@ -81,7 +73,7 @@
             <div class="card">
                 <div class="card-header" id="headingTeamManagement">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTeamManagement" aria-expanded="false" aria-controls="collapseTeamManagement">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTeamManagement" aria-expanded="false" aria-controls="collapseTeamManagement">
                             Team Management
                         </button>
                     </h2>
@@ -101,7 +93,7 @@
             <div class="card">
                 <div class="card-header" id="headingGameAssignment">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseGameAssignment" aria-expanded="false" aria-controls="collapseGameAssignment">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseGameAssignment" aria-expanded="false" aria-controls="collapseGameAssignment">
                             Game Assignment
                         </button>
                     </h2>
@@ -121,7 +113,7 @@
             <div class="card">
                 <div class="card-header" id="headingScorekeeper">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseScorekeeper" aria-expanded="false" aria-controls="collapseScorekeeper">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseScorekeeper" aria-expanded="false" aria-controls="collapseScorekeeper">
                             Scorekeeper
                         </button>
                     </h2>
@@ -153,7 +145,7 @@
             <div class="card">
                 <div class="card-header" id="headingReports">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
                             Reports
                         </button>
                     </h2>
@@ -173,7 +165,7 @@
             <div class="card">
                 <div class="card-header" id="headingTroubleshooting">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTroubleshooting" aria-expanded="false" aria-controls="collapseTroubleshooting">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTroubleshooting" aria-expanded="false" aria-controls="collapseTroubleshooting">
                             Troubleshooting
                         </button>
                     </h2>
@@ -193,7 +185,7 @@
             <div class="card">
                 <div class="card-header" id="headingContactSupport">
                     <h2 class="mb-0">
-                        <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseContactSupport" aria-expanded="false" aria-controls="collapseContactSupport">
+                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseContactSupport" aria-expanded="false" aria-controls="collapseContactSupport">
                             Contact Support
                         </button>
                     </h2>
@@ -206,7 +198,18 @@
                 </div>
             </div>
         </div>
-
     </div>
-</body>
-</html>
+    <script>
+    $(document).ready(function() {
+        // 카드 클릭 이벤트 핸들러 등록
+        $('.card').click(function() {
+            var $collapse = $(this).find('.collapse');
+            // 현재 카드의 아코디언 상태 확인 후 토글
+            if ($collapse.hasClass('show')) {
+                $collapse.collapse('hide');
+            } else {
+                $collapse.collapse('show');
+            }
+        });
+    });
+</script>

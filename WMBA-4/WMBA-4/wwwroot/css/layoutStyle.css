@@ -2077,7 +2077,7 @@ table-three th, table-three td {
     --bs-table-hover-color: var(--bs-body-color);
     --bs-table-hover-bg: rgba(0, 0, 0, 0.075);
     width: 100%;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
     margin-bottom: 1rem;
     color: var(--bs-table-color);
     vertical-align: top;
