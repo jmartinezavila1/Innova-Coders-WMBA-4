@@ -99,8 +99,8 @@ namespace WMBA_4.Controllers
 
                     InsertIdentityUser(staff.Email, selectedRoles);
 
-                    //Send Email to new Employee - commented out till email configured
-                    //await InviteUserToResetPassword(employee, null);
+                    //Send Email to new User - commented out till email configured
+                    await InviteUserToResetPassword(staff, null);
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -133,7 +133,22 @@ namespace WMBA_4.Controllers
             PopulateAssignedRoleData(staffAdminVM);
             return View(staffAdminVM);
         }
-
+        // Method to send email notification to user
+        private async Task SendRoleUpdateEmail(string userEmail, string[] newRoles)
+        {
+            var message = "Your role has been updated. You now can access to the application with the following roles: " + string.Join(", ", newRoles);
+            try
+            {
+                // Pass an empty string for plaintext message
+                await _emailSender.SendOneAsync("User", userEmail, "Role Update", message);
+                // Optionally, add a message to TempData indicating the email was sent successfully
+            }
+            catch (Exception ex)
+            {
+                // Handle exceptions (e.g., email sending failure)
+                // Optionally, add a message to TempData indicating the failure
+            }
+        }
         // GET: Employees/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -184,6 +199,21 @@ namespace WMBA_4.Controllers
             if (staffToUpdate == null)
             {
                 return NotFound();
+            }
+            var user = await _userManager.FindByEmailAsync(staffToUpdate.Email);
+            var currentRoles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
+
+            // Check if roles are updated
+            var rolesUpdated = !currentRoles.SequenceEqual(selectedRoles);
+
+            // Your exist
+            if (rolesUpdated)
+            {
+                var staff = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
+                if (staff != null)
+                {
+                    await SendRoleUpdateEmail(staff.Email, selectedRoles);
+                }
             }
 
             //Note the current Email and Active Status
@@ -352,8 +382,8 @@ namespace WMBA_4.Controllers
                     EmailConfirmed = true //since we are creating it!
                 };
                 //Create a random password with a default 8 characters
-                //string password = MakePassword.Generate();
-                IdentityResult result = _userManager.CreateAsync(user).Result;
+                string password = MakePassword.Generate();
+                IdentityResult result = _userManager.CreateAsync(user, password).Result;
 
                 if (result.Succeeded)
                 {
@@ -380,22 +410,29 @@ namespace WMBA_4.Controllers
         }
 
         private async Task InviteUserToResetPassword(Staff staff, string message)
-        {
-            message ??= "Hello " + staff.FirstName + "<br /><p>Please navigate to:<br />" +
-                        "<a href='https://theapp.azurewebsites.net/' title='https://theapp.azurewebsites.net/' target='_blank' rel='noopener'>" +
-                        "https://theapp.azurewebsites.net</a><br />" +
-                        " and create a new password for " + staff.Email + " using Forgot Password.</p>";
+        {// Constructing the URL for password reset
+            string resetPasswordUrl = Url.Action(
+                "ResetPassword", // Action method for resetting password
+                "Account", // Controller handling password reset
+                new { userId = staff.ID, token = "your_reset_token_here" }, // Route parameters
+                Request.Scheme // Request scheme (http or https)
+            );
+
+            message ??= $"Hello {staff.FirstName}<br /><p>Please navigate to:<br />" +
+                        $"<a href='{resetPasswordUrl}' title='{resetPasswordUrl}' target='_blank' rel='noopener'>" +
+                        $"{resetPasswordUrl}</a><br />" +
+                        $" and create a new password for {staff.Email} using Forgot Password.</p>";
             try
             {
+                // Sending the email
                 await _emailSender.SendOneAsync(staff.FullName, staff.Email,
                 "Account Registration", message);
-                TempData["message"] = "Invitation email sent to " + staff.FullName + " at " + staff.Email;
+                TempData["message"] = $"Invitation email sent to {staff.FullName} at {staff.Email}";
             }
             catch (Exception)
             {
-                TempData["message"] = "Could not send Invitation email to " + staff.FullName + " at " + staff.Email;
+                TempData["message"] = $"Could not send Invitation email to {staff.FullName} at {staff.Email}";
             }
-
 
         }
 
