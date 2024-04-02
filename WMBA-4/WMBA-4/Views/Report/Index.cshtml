@@ -20,28 +20,52 @@
 </nav>
 @* page navigation *@
 
-<ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+<!-- Nav tabs -->
+<ul class="nav nav-tabs" id="myTab" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">Players</button>
+        <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">Player Stats</button>
     </li>
     <li class="nav-item" role="presentation">
-        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">Teams</button>
-    </li>
-    <li class="nav-item" role="presentation">
-        <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact-tab-pane" type="button" role="tab" aria-controls="contact-tab-pane" aria-selected="false">Games</button>
+        <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">Team Stats</button>
     </li>
 </ul>
-<div class="tab-content" id="myTabContent">
-    <div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-        <partial name="_PlayerReportPartial" />
+
+<!-- Tab panes -->
+<div class="tab-content">
+    <div class="tab-pane active" id="home" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+        @await Html.PartialAsync("_PlayerReportPartial", Model)
     </div>
-    <div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-        <partial name="_TeamReportPartial" />
-    </div>
-    <div class="tab-pane fade" id="contact-tab-pane" role="tabpanel" aria-labelledby="contact-tab" tabindex="0">
-        <partial name="_GameReportPartial" />
+    <div class="tab-pane" id="profile" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+        @await Html.PartialAsync("_TeamReportPartial", Model)
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        // Almacena el índice de la pestaña en el almacenamiento local cuando se va a ocultar una pestaña
+        $('a[data-toggle="tab"]').on('hide.bs.tab', function (e) {
+            localStorage.setItem('activeTab', $(e.target).attr('href'));
+        });
+
+        // Obtiene el índice de la pestaña activa del almacenamiento local
+        var activeTab = localStorage.getItem('activeTab');
+        if (activeTab) {
+            // Activa la pestaña almacenada en el almacenamiento local
+            $('#myTab a[href="' + activeTab + '"]').tab('show');
+        }
+
+        $('#myTab button').on('click', function (e) {
+            e.preventDefault();
+            var target = $(this).attr('data-bs-target');
+            $(target).tab('show');
+        });
+
+        // No es necesario actualizar el almacenamiento local cuando se muestra una nueva pestaña,
+        // ya que esto ya se hace en el evento 'hide.bs.tab'
+    });
+</script>
 
 
-@* <h1>Players</h1> *@
+
+
+
+

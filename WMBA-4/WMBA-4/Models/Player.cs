@@ -30,7 +30,7 @@ namespace WMBA_4.Models
             }
         }
         //End Summary
-
+        public int Ranking { get; set; }
 
         [Display(Name = "Member ID")]
         [Required(ErrorMessage = "You cannot leave the MemberID blank.")]
