@@ -12995,7 +12995,7 @@ body {
         }
 
             .sb-sidenav .sb-sidenav-menu .nav .sb-sidenav-menu-heading {
-                padding: 1.25rem 1rem 0.75rem;
+                padding: 1.25rem 1rem 0.55rem;
                 font-size: 0.75rem;
                 font-weight: bold;
                 text-transform: uppercase;
@@ -13005,8 +13005,8 @@ body {
             .sb-sidenav .sb-sidenav-menu .nav .nav-link {
                 display: flex;
                 align-items: center;
-                padding-top: 0.75rem;
-                padding-bottom: 0.75rem;
+                padding-top: 0.65rem;
+                padding-bottom: 0.65rem;
                 position: relative;
                 color: var(--ft-white);
                 font-size: 1rem;

@@ -3,206 +3,205 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Custom styles for better user experience */
-        .accordion {
-            margin-bottom: 20px;
+<!-- Bootstrap CSS -->
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<style>
+    /* Custom styles for better user experience */
+    .accordion {
+        margin-bottom: 20px;
+    }
+
+    .card {
+        border: none;
+        margin-bottom: 10px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        cursor: pointer;
+        border-radius: 10px;
+        border: none;
+        position: relative;
+    }
+
+        .card-header button {
+            font-weight: bold;
+            color: green; /* Set the color */
         }
 
-        .card {
-            border: none;
-            margin-bottom: 10px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        .card-header:hover {
+            background-color: #e9ecef;
         }
 
-        .card-header {
-            background-color: #f8f9fa;
-            padding: 15px;
-            cursor: pointer;
-            border-radius: 10px;
-            border: none;
-            position: relative;
+    .card-body {
+        padding: 0 15px 15px 15px;
+    }
+
+        .card-body p {
+            margin: 0;
+            line-height: 1.6;
         }
+</style>
+<div class="container" id="help">
+    <h1 class="mt-5">User Guide</h1>
 
-            .card-header button {
-                font-weight: bold;
-                color: green; /* Set the color */
-            }
-
-            .card-header:hover {
-                background-color: #e9ecef;
-            }
-
-        .card-body {
-            padding: 0 15px 15px 15px;
-        }
-
-            .card-body p {
-                margin: 0;
-                line-height: 1.6;
-            }
-    </style>
-    <div class="container" id="help">
-        <h1 class="mt-5">User Guide</h1>
-
-        <!-- Authentication -->
-        <div class="accordion" id="accordionAuthentication">
-            <div class="card">
-                <div class="card-header" id="headingAuthentication">
-                    <h2 class="mb-0">
-                        <button class="btn" type="button" data-toggle="collapse" data-target="#collapseAuthentication" aria-expanded="true" aria-controls="collapseAuthentication">
-                            Authentication
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseAuthentication" class="collapse" aria-labelledby="headingAuthentication" data-parent="#accordionAuthentication">
-                    <div class="card-body">
-                        <p>If you're a new user, click on the "Register" link to create a new account. Otherwise, log in using your existing credentials.</p>
-                        <p>Upon logging in, you'll be directed to the dashboard where you can access various features and functionalities.</p>
-                    </div>
-                </div>
+    <!-- Authentication -->
+    <div class="accordion" id="accordionAuthentication">
+        <div class="card">
+            <div class="card-header" id="headingAuthentication">
+                <h2 class="mb-0">
+                    <button class="btn" type="button" data-toggle="collapse" data-target="#collapseAuthentication" aria-expanded="true" aria-controls="collapseAuthentication">
+                        Authentication
+                    </button>
+                </h2>
             </div>
-        </div>
 
-        <!-- Team Management -->
-        <div class="accordion" id="accordionTeamManagement">
-            <div class="card">
-                <div class="card-header" id="headingTeamManagement">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTeamManagement" aria-expanded="false" aria-controls="collapseTeamManagement">
-                            Team Management
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseTeamManagement" class="collapse" aria-labelledby="headingTeamManagement" data-parent="#accordionTeamManagement">
-                    <div class="card-body">
-                        <p>Navigate to the "Team" section and select "Import Teams" to add new teams to the database.</p>
-                        <p>Click on "Teams" in the sidebar to view a list of all registered teams.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Game Assignment -->
-        <div class="accordion" id="accordionGameAssignment">
-            <div class="card">
-                <div class="card-header" id="headingGameAssignment">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseGameAssignment" aria-expanded="false" aria-controls="collapseGameAssignment">
-                            Game Assignment
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseGameAssignment" class="card-body collapse" aria-labelledby="headingGameAssignment" data-parent="#accordionGameAssignment">
-                    <div class="card-body">
-                        <p>Head to the "Game" section to assign games to teams for upcoming matches.</p>
-                        <p>Check the "Game Assignment" page to see a list of scheduled games.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Scorekeeper Section -->
-        <div class="accordion" id="accordionScorekeeper">
-            <div class="card">
-                <div class="card-header" id="headingScorekeeper">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseScorekeeper" aria-expanded="false" aria-controls="collapseScorekeeper">
-                            Scorekeeper
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseScorekeeper" class="collapse" aria-labelledby="headingScorekeeper" data-parent="#accordionScorekeeper">
-                    <div class="card-body">
-                        <h3>Using the Scorekeeper</h3>
-                        <p>The Scorekeeper feature allows you to record and manage game scores for baseball matches. Follow these steps to use the Scorekeeper:</p>
-                        <ol>
-                            <li>Login to the application using your credentials.</li>
-                            <li>Navigate to the "Scorekeeper" section in the sidebar.</li>
-                            <li>Select the game for which you want to record scores.</li>
-                            <li>Enter the scores for each team and any additional details required.</li>
-                            <li>Click the "Save" or "Submit" button to record the scores.</li>
-                        </ol>
-                        <h3>Additional Tips</h3>
-                        <ul>
-                            <li>You can edit or delete scores for a game if needed.</li>
-                            <li>Make sure to double-check the entered scores before saving to ensure accuracy.</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reports -->
-        <div class="accordion" id="accordionReports">
-            <div class="card">
-                <div class="card-header" id="headingReports">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
-                            Reports
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseReports" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionReports">
-                    <div class="card-body">
-                        <p>Access the "Report" section to generate reports based on game statistics, player performance, etc.</p>
-                        <p>View and download generated reports for analysis and sharing.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Troubleshooting -->
-        <div class="accordion" id="accordionTroubleshooting">
-            <div class="card">
-                <div class="card-header" id="headingTroubleshooting">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTroubleshooting" aria-expanded="false" aria-controls="collapseTroubleshooting">
-                            Troubleshooting
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseTroubleshooting" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionTroubleshooting">
-                    <div class="card-body">
-                        <p>If you encounter any error messages, refer to the documentation or contact support for assistance.</p>
-                        <p>Check your internet connection and ensure that your browser is up-to-date. Clearing browser cache may also resolve some issues.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Contact Support -->
-        <div class="accordion" id="accordionContactSupport">
-            <div class="card">
-                <div class="card-header" id="headingContactSupport">
-                    <h2 class="mb-0">
-                        <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseContactSupport" aria-expanded="false" aria-controls="collapseContactSupport">
-                            Contact Support
-                        </button>
-                    </h2>
-                </div>
-
-                <div id="collapseContactSupport" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionContactSupport">
-                    <div class="card-body">
-                        <p>If you need further assistance or have any questions, please don't hesitate to contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
-                    </div>
+            <div id="collapseAuthentication" class="collapse" aria-labelledby="headingAuthentication" data-parent="#accordionAuthentication">
+                <div class="card-body">
+                    <p>If you're a new user, click on the "Register" link to create a new account. Otherwise, log in using your existing credentials.</p>
+                    <p>Upon logging in, you'll be directed to the dashboard where you can access various features and functionalities.</p>
                 </div>
             </div>
         </div>
     </div>
-    <script>
-    $(document).ready(function() {
+
+    <!-- Team Management -->
+    <div class="accordion" id="accordionTeamManagement">
+        <div class="card">
+            <div class="card-header" id="headingTeamManagement">
+                <h2 class="mb-0">
+                    <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTeamManagement" aria-expanded="false" aria-controls="collapseTeamManagement">
+                        Team Management
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseTeamManagement" class="collapse" aria-labelledby="headingTeamManagement" data-parent="#accordionTeamManagement">
+                <div class="card-body">
+                    <p>Navigate to the "Team" section and select "Import Teams" to add new teams to the database.</p>
+                    <p>Click on "Teams" in the sidebar to view a list of all registered teams.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Game Assignment -->
+    <div class="accordion" id="accordionGameAssignment">
+        <div class="card">
+            <div class="card-header" id="headingGameAssignment">
+                <h2 class="mb-0">
+                    <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseGameAssignment" aria-expanded="false" aria-controls="collapseGameAssignment">
+                        Game Assignment
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseGameAssignment" class="card-body collapse" aria-labelledby="headingGameAssignment" data-parent="#accordionGameAssignment">
+                <div class="card-body">
+                    <p>Head to the "Game" section to assign games to teams for upcoming matches.</p>
+                    <p>Check the "Game Assignment" page to see a list of scheduled games.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scorekeeper Section -->
+    <div class="accordion" id="accordionScorekeeper">
+        <div class="card">
+            <div class="card-header" id="headingScorekeeper">
+                <h2 class="mb-0">
+                    <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseScorekeeper" aria-expanded="false" aria-controls="collapseScorekeeper">
+                        Scorekeeper
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseScorekeeper" class="collapse" aria-labelledby="headingScorekeeper" data-parent="#accordionScorekeeper">
+                <div class="card-body">
+                    <h3>Using the Scorekeeper</h3>
+                    <p>The Scorekeeper feature allows you to record and manage game scores for baseball matches. Follow these steps to use the Scorekeeper:</p>
+                    <ol>
+                        <li>Login to the application using your credentials.</li>
+                        <li>Navigate to the "Scorekeeper" section in the sidebar.</li>
+                        <li>Select the game for which you want to record scores.</li>
+                        <li>Enter the scores for each team and any additional details required.</li>
+                        <li>Click the "Save" or "Submit" button to record the scores.</li>
+                    </ol>
+                    <h3>Additional Tips</h3>
+                    <ul>
+                        <li>You can edit or delete scores for a game if needed.</li>
+                        <li>Make sure to double-check the entered scores before saving to ensure accuracy.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reports -->
+    <div class="accordion" id="accordionReports">
+        <div class="card">
+            <div class="card-header" id="headingReports">
+                <h2 class="mb-0">
+                    <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseReports" aria-expanded="false" aria-controls="collapseReports">
+                        Reports
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseReports" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionReports">
+                <div class="card-body">
+                    <p>Access the "Report" section to generate reports based on game statistics, player performance, etc.</p>
+                    <p>View and download generated reports for analysis and sharing.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Troubleshooting -->
+    <div class="accordion" id="accordionTroubleshooting">
+        <div class="card">
+            <div class="card-header" id="headingTroubleshooting">
+                <h2 class="mb-0">
+                    <button class="btn  collapsed" type="button" data-toggle="collapse" data-target="#collapseTroubleshooting" aria-expanded="false" aria-controls="collapseTroubleshooting">
+                        Troubleshooting
+                    </button>
+                </h2>
+            </div>
+
+            <div id="collapseTroubleshooting" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionTroubleshooting">
+                <div class="card-body">
+                    <p>If you encounter any error messages, refer to the documentation or contact support for assistance.</p>
+                    <p>Check your internet connection and ensure that your browser is up-to-date. Clearing browser cache may also resolve some issues.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contact Support -->
+    <div class="accordion" id="accordionContactSupport">
+        <div class="card">
+            <div class="card-header" id="headingContactSupport">
+                <h2 class="mb-0">
+                    <button class="btn collapsed" type="button" data-toggle="collapse" data-target="#collapseContactSupport" aria-expanded="false" aria-controls="collapseContactSupport">
+                        Contact Support
+                    </button>
+                </h2>
+            </div>
+            <div id="collapseContactSupport" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionContactSupport">
+                <div class="card-body">
+                    <p>If you need further assistance or have any questions, please don't hesitate to contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
         // 카드 클릭 이벤트 핸들러 등록
-        $('.card').click(function() {
+        $('.card').click(function () {
             var $collapse = $(this).find('.collapse');
             // 현재 카드의 아코디언 상태 확인 후 토글
             if ($collapse.hasClass('show')) {

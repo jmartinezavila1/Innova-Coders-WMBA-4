@@ -23,7 +23,7 @@
                     {
                         @if (ViewBag.Teams.Count > 1)
                         {
-                            <div class="f-in-flex align-items-center my-2">
+                            <div class="f-in-flex align-items-center my-1">
                                 @* Home Team *@
                                 <div class="w-50">
                                     <div class="d-flex flex-column team-box me-2 p-2" data-toggle="tooltip" data-placement="top" title=" Home Team Name">
@@ -107,7 +107,7 @@
                 @* Inning Table Info *@
                 <div class="inning-area">
                     <div class="w-100">
-                        <table class="table-four">
+                        <table class="table-four mb-1">
                             <thead>
                                 <tr>
                                     <th></th>
@@ -184,7 +184,7 @@
                 <input type="hidden" id="isVisitor" value="@(ViewBag.Inplay != null ? ViewBag.IsVisitor: "")" />
             }
         </div>
-        <div class="card-body p-0 mb-4">
+        <div class="card-body p-0 mb-3">
             <div id="opponentButtons" class="d-flex justify-content-around">
                 @* Cristina added this for innings *@
                 <a href="#" id="opponentScoreButton" class="btn btn-Scorekeeper  mx-1 col py-3" data-gameid="@ViewBag.GameID" data-teamid="@ViewBag.TeamID">
@@ -195,7 +195,7 @@
                 </a>
             </div>
             <div id="scoreBtnContainer">
-                <div class="d-flex justify-content-around my-3">
+                <div class="d-flex justify-content-around mt-2">
                     <a id="ballsButton" class="btn btn-Scorekeeper  mx-1 col py-3">
                         <span>Ball</span>
                     </a>
@@ -209,7 +209,7 @@
                         <span>Out</span>
                     </a>
                 </div>
-                <div class="d-flex justify-content-around rounded-bottom">
+                <div class="d-flex justify-content-around rounded-bottom mt-2">
                     <a id="hbpButton" class="btn btn-Scorekeeper  mx-1 col py-3" data-toggle="tooltip" data-placement="top" title=" hit-by-pitch">
                         <span>HBP</span>
                     </a>
@@ -233,7 +233,7 @@
             <a asp-controller="ScorePlayer" id="startButton" asp-action="Start" asp-route-teamId="@ViewBag.TeamID" asp-route-gameId="@ViewBag.GameID" class="btn btn-blue py-4 ms-1 col align-items-center justify-content-center">
                 <span>Start Game</span>
             </a>
-            <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">
+            <a id="inningButton" data-team-id="@ViewBag.TeamID" data-game-id="@ViewBag.GameID" class="btn btn-blue ms-1 col py-3 d-flex align-items-center justify-content-center">
                 <span>Next Inning</span>
             </a>
             <div id="lineupButton" class="btn btn-blue mx-1 col py-3 d-flex align-items-center justify-content-center">

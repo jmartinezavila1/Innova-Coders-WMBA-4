@@ -6,127 +6,137 @@
 }
 @if (!User.IsInRole("User"))
 {
-<main>
-    <div class="container-fluid">
-        <h1 class="mb-2">Dashboard</h1>
-        <h5 class="mb-4 ps-2">Season @ViewBag.Season</h5>
-        @* Current entities counts boxes *@
-        <div class="row" data-masonry='{"percentPosition": true }'>
-            <div class="col-xl-3 col-md-3">
-                <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around align-items-center">
-                        <span>Total Divisions</span>
-                        <span class="text-bold fs-5 ft-kelly">@ViewBag.DivisionCount</span>
+    <main>
+        <div class="container-fluid">
+            <h1 class="mb-2">Dashboard</h1>
+            <h5 class="mb-4 ps-2">Season @ViewBag.Season</h5>
+            @* Dashboard *@
+            <div class="row" data-masonry='{"percentPosition": true }'>
+                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                {
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card text-black mb-4 card-hover shadow ">
+                            <div class="card-body d-flex justify-content-around align-items-center">
+                                <span>Total Divisions</span>
+                                <span class="text-bold fs-5 ft-kelly">@ViewBag.DivisionCount</span>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-black stretched-link" asp-area="" asp-controller="Division" asp-action="Index">View Divisions</a>
+                                <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-black stretched-link" asp-area="" asp-controller="Division" asp-action="Index">View Divisions</a>
-                        <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach"))
+                {
+                <div class="col-xl-3 col-md-3">
+                    <div class="card text-black mb-4 card-hover shadow ">
+                        <div class="card-body d-flex justify-content-around align-items-center">
+                            <span>Total Teams</span>
+                            <span class="text-bold fs-5 ft-kelly">@ViewBag.TeamCount</span>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-black stretched-link" asp-area="" asp-controller="Team" asp-action="Index">View Teams</a>
+                            <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                        </div>
                     </div>
                 </div>
-            </div><div class="col-xl-3 col-md-3">
-                <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around align-items-center">
-                        <span>Total Teams</span>
-                        <span class="text-bold fs-5 ft-kelly">@ViewBag.TeamCount</span>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-black stretched-link" asp-area="" asp-controller="Team" asp-action="Index">View Teams</a>
-                        <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                <div class="col-xl-3 col-md-3">
+                    <div class="card text-black mb-4 card-hover shadow ">
+                        <div class="card-body d-flex justify-content-around align-items-center">
+                            <span>Total Players</span>
+                            <span class="text-bold fs-5 ft-kelly">@ViewBag.PlayerCount</span>
+                        </div>
+                        <div class="card-footer d-flex align-items-center justify-content-between">
+                            <a class="small text-black stretched-link" asp-area="" asp-controller="Player" asp-action="Index">View Players</a>
+                            <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                        </div>
                     </div>
                 </div>
+                }
+                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                {
+                    <div class="col-xl-3 col-md-3">
+                        <div class="card text-black mb-4 card-hover shadow ">
+                            <div class="card-body d-flex justify-content-around align-items-center">
+                                <span>Total Games</span>
+                                <span class="text-bold fs-5 ft-kelly">@ViewBag.GameCount</span>
+                            </div>
+                            <div class="card-footer d-flex align-items-center justify-content-between">
+                                <a class="small text-black stretched-link" asp-area="" asp-controller="Game" asp-action="Index">View Games</a>
+                                <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
+                            </div>
+                        </div>
+                    </div>
+                }
             </div>
-            <div class="col-xl-3 col-md-3">
-                <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around align-items-center">
-                        <span>Total Players</span>
-                        <span class="text-bold fs-5 ft-kelly">@ViewBag.PlayerCount</span>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-black stretched-link" asp-area="" asp-controller="Player" asp-action="Index">View Players</a>
-                        <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-3">
-                <div class="card text-black mb-4 card-hover shadow ">
-                    <div class="card-body d-flex justify-content-around align-items-center">
-                        <span>Total Games</span>
-                        <span class="text-bold fs-5 ft-kelly">@ViewBag.GameCount</span>
-                    </div>
-                    <div class="card-footer d-flex align-items-center justify-content-between">
-                        <a class="small text-black stretched-link" asp-area="" asp-controller="Game" asp-action="Index">View Games</a>
-                        <div class="small px-2 text-black"><svg class="svg-inline--fa fa-angle-right" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-right" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 512" data-fa-i2svg=""><path fill="currentColor" d="M246.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-160 160c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L178.7 256 41.4 118.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l160 160z"></path></svg><!-- <i class="fas fa-angle-right"></i> Font Awesome fontawesome.com --></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        @* import box *@
+            @* Dashboard *@
 
-        <div class="row">
-            @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
-            {
+            <div class="row">
+                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                {
+                    <div class="col-xl-6">
+                        <div class="card mb-4 card-hover shadow">
+                            <partial name="_ImportTeams" />
+                        </div>
+                    </div>
+                }
                 <div class="col-xl-6">
                     <div class="card mb-4 card-hover shadow">
-                        <partial name="_ImportTeams" />
-                    </div>
-                </div>
-            }
-            <div class="col-xl-6">
-                <div class="card mb-4 card-hover shadow">
-                    <h5 class="card-header">
-                        Upcoming Games
-                    </h5>
-                    <div class="card-body d-flex align-items-center">
-                        <button id="prevButton" class="btn btn-light h-01">
-                            <span class="material-symbols-outlined">
-                                arrow_back_ios_new
-                            </span>
-                        </button>
-                        <div class="d-flex carousel-container align-items-center mx-2 p-3 ps-0" style="scroll-behavior: smooth;">
-                            @foreach (var game in Model.Where(g => g.Date >= today))
-                            {
-                                <div class="game-wrapper">
-                                    <div class="mx-3 card-hover shadow-sm border border-1 rounded-3" style="width: 15rem; height:18rem;">
-                                        <div class="card-header">
-                                            @game.GameType.Description
-                                        </div>
-                                        <div class="card-body text-center">
-                                            @{
-                                                var teamGamesList = game.TeamGames.ToList();
-                                                var firstTeamGame = teamGamesList.FirstOrDefault();
-                                                var secondTeamGame = teamGamesList.LastOrDefault();
-                                            }
-                                            @if (firstTeamGame != null && secondTeamGame != null)
-                                            {
-                                                <h5 class="card-title">@firstTeamGame.Team.Name vs @secondTeamGame.Team.Name</h5>
-                                                <p class="card-text">
-                                                    <strong class="fs-5">@firstTeamGame.score</strong> - <strong class="fs-5">@secondTeamGame.score</strong>
-                                                </p>
-                                            }
-                                            else
-                                            {
-                                                <p class="card-text">Team information not available</p>
-                                            }
-                                            <h5 class="card-title">@game.Date.ToString("MMMM dd hh:mm tt")</h5>
-                                            <h5 class="card-title">@game.Location.LocationName</h5>
-                                            <a asp-area="" asp-controller="ScorePlayer" asp-action="Index" class="btn btn-kelly">Start game</a>
+                        <h5 class="card-header">
+                            Upcoming Games
+                        </h5>
+                        <div class="card-body d-flex align-items-center">
+                            <button id="prevButton" class="btn btn-light h-01">
+                                <span class="material-symbols-outlined">
+                                    arrow_back_ios_new
+                                </span>
+                            </button>
+                            <div class="d-flex carousel-container align-items-center mx-2 p-3 ps-0" style="scroll-behavior: smooth;">
+                                @foreach (var game in Model.Where(g => g.Date >= today))
+                                {
+                                    <div class="game-wrapper">
+                                        <div class="mx-3 card-hover shadow-sm border border-1 rounded-3" style="width: 15rem; height:18rem;">
+                                            <div class="card-header">
+                                                @game.GameType.Description
+                                            </div>
+                                            <div class="card-body text-center">
+                                                @{
+                                                    var teamGamesList = game.TeamGames.ToList();
+                                                    var firstTeamGame = teamGamesList.FirstOrDefault();
+                                                    var secondTeamGame = teamGamesList.LastOrDefault();
+                                                }
+                                                @if (firstTeamGame != null && secondTeamGame != null)
+                                                {
+                                                    <h5 class="card-title">@firstTeamGame.Team.Name vs @secondTeamGame.Team.Name</h5>
+                                                    <p class="card-text">
+                                                        <strong class="fs-5">@firstTeamGame.score</strong> - <strong class="fs-5">@secondTeamGame.score</strong>
+                                                    </p>
+                                                }
+                                                else
+                                                {
+                                                    <p class="card-text">Team information not available</p>
+                                                }
+                                                <h5 class="card-title">@game.Date.ToString("MMMM dd hh:mm tt")</h5>
+                                                <h5 class="card-title">@game.Location.LocationName</h5>
+                                                <a asp-area="" asp-controller="ScorePlayer" asp-action="Index" class="btn btn-kelly">Start game</a>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            }
+                                }
+                            </div>
+                            <button id="nextButton" class="btn btn-light h-01">
+                                <span class="material-symbols-outlined">
+                                    arrow_forward_ios
+                                </span>
+                            </button>
                         </div>
-                        <button id="nextButton" class="btn btn-light h-01">
-                            <span class="material-symbols-outlined">
-                                arrow_forward_ios
-                            </span>
-                        </button>
                     </div>
                 </div>
             </div>
-        </div>
 
-    </div>
-</main>
+        </div>
+    </main>
 }
 else
 {

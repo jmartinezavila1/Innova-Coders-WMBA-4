@@ -28,10 +28,9 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Game
-        public async Task<IActionResult> Index(int? divisionID, string SearchString, int? GameTypeID, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID, int? year, int? month, int? day,
+        public async Task<IActionResult> Index(int? divisionID, int? LocationID, int? GameTypeID, DateTime GameDate, int? TeamID, bool isActive, bool isInactive, int? page, int? pageSizeID,
             string actionButton, string sortDirection = "asc", string sortField = "Date")
         {
-      
             var userEmail = User.Identity.Name;
 
             List<int> teamIds = new List<int>();
@@ -47,7 +46,6 @@ namespace WMBA_4.Controllers
             }
             else
             {
-                
                 var convenorDivisions = await GetConvenorDivisionsAsync(userEmail);
                 teamIds = await _context.Teams
                     .Where(t => convenorDivisions.Contains(t.Division.DivisionName))
@@ -55,17 +53,20 @@ namespace WMBA_4.Controllers
                     .ToListAsync();
             }
 
-        IQueryable<Game> games = _context.Games
-                  .Include(g => g.GameType)
-                  .Include(g => g.Location)
-                  .Include(g => g.Season)
-                  .Include(tg => tg.TeamGames) 
-                      .ThenInclude(t => t.Team)
-                          .ThenInclude(d => d.Division)
-                  .Where(g => g.TeamGames.Any(tg => teamIds.Contains(tg.TeamID)));
+            IQueryable<Game> games = _context.Games
+               .Include(g => g.GameType)
+               .Include(g => g.Location)
+               .Include(g => g.Season)
+               .Include(tg => tg.TeamGames)
+                   .ThenInclude(t => t.Team)
+                       .ThenInclude(d => d.Division)
+               .Where(s => s.Date >= DateTime.Today && s.TeamGames.Any(tg => teamIds.Contains(tg.TeamID)))
+               .OrderBy(a => a.Date)
+               .ThenBy(a => a.Status == true);
 
             ViewData["Filtering"] = "btn-outline-secondary";
             int numberFilters = 0;
+
             //sorting sortoption array
             string[] sortOptions = new[] { "Division", "Location", "GameType", "Date" };
 
@@ -85,27 +86,17 @@ namespace WMBA_4.Controllers
                 games = games.Where(g => g.TeamGames.Any(tg => tg.TeamID == TeamID));
                 numberFilters++;
             }
-            if (!System.String.IsNullOrEmpty(SearchString))
+            if (LocationID.HasValue)
             {
-                games = games.Where(l => l.Location.LocationName.ToUpper().Contains(SearchString.ToUpper()));
-                numberFilters++;
-            }    
-            //if (year.HasValue)
-            //{
-            //    games = games.Where(g => g.Date.Year == year.Value);
-            //    numberFilters++;
-            //}
-            if (month.HasValue)
-            {
-                games = games.Where(g => g.Date.Month == month.Value);
+                games = games.Where(g => g.LocationID == LocationID);
                 numberFilters++;
             }
-            if (day.HasValue)
+            if (GameDate >= DateTime.Today)
             {
-                games = games.Where(g => g.Date.Day == day.Value);
+                games = games.Where(g => g.Date >= GameDate);
+                ViewData["GameDate"] = "03/02/2024";
                 numberFilters++;
             }
-
             if (isActive == true)
             {
                 games = games.Where(g => g.Status == true);
@@ -116,7 +107,6 @@ namespace WMBA_4.Controllers
                 games = games.Where(g => g.Status == false);
                 numberFilters++;
             }
-
             if (numberFilters != 0)
             {
                 //Toggle the Open/Closed state of the collapse depending on if we are filtering
@@ -125,12 +115,10 @@ namespace WMBA_4.Controllers
                 ViewData["numberFilters"] = "(" + numberFilters.ToString()
                     + " Filter" + (numberFilters > 1 ? "s" : "") + " Applied)";
                 //Keep the Bootstrap collapse open
-                //@ViewData["ShowFilter"] = " show";
             }
 
             games = games.OrderByDescending(g => g.Status) // Active games first
                     .ThenBy(g => g.Date);             // Order by last name
-
 
             if (!System.String.IsNullOrEmpty(actionButton)) //Form Submitted!
             {
@@ -147,101 +135,91 @@ namespace WMBA_4.Controllers
                         sortField = actionButton;//Sort by the button clicked
                     }
                 }
-                if (sortField == "Division")
+            }
+            if (sortField == "Division")
+            {
+                if (sortDirection == "asc")
                 {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
-                    }
-                }
-                if (sortField == "Date")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderByDescending(d => d.Status)
-                            .ThenBy(d => d.Date);
-                    }
-                    else
-                    {
-                        games = games
-                         .OrderByDescending(d => d.Status)
-                         .ThenByDescending(d => d.Date);
-                    }
-                }
-                else
-                if (sortField == "Location")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(l => l.Location.LocationName);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(l => l.Location.LocationName);
-                    }
-                }
-                else if (sortField == "GameType")
-                {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(g => g.GameType.Description);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(p => p.GameType.Description);
-                    }
+                    games = games.OrderBy(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
                 }
                 else
                 {
-                    if (sortDirection == "asc")
-                    {
-                        games = games
-                            .OrderBy(g => g.GameType.Description);
-                    }
-                    else
-                    {
-                        games = games
-                            .OrderByDescending(g => g.GameType.Description);
-                    }
+                    games = games.OrderByDescending(l => l.TeamGames.FirstOrDefault().Team.DivisionID);
+                }
+            }
+            if (sortField == "Date")
+            {
+                if (sortDirection == "asc")
+                {
+                    games = games
+                        .OrderByDescending(d => d.Status)
+                        .ThenBy(d => d.Date);
+                }
+                else
+                {
+                    games = games
+                     .OrderByDescending(d => d.Status)
+                     .ThenByDescending(d => d.Date);
+                }
+            }
+            else
+            if (sortField == "Location")
+            {
+                if (sortDirection == "asc")
+                {
+                    games = games.OrderBy(l => l.Location.LocationName);
+                }
+                else
+                {
+                    games = games.OrderByDescending(l => l.Location.LocationName);
+                }
+            }
+            else if (sortField == "GameType")
+            {
+                if (sortDirection == "asc")
+                {
+                    games = games.OrderBy(g => g.GameType.Description);
+                }
+                else
+                {
+                    games = games.OrderByDescending(p => p.GameType.Description);
+                }
+            }
+            else
+            {
+                if (sortDirection == "asc")
+                {
+                    games = games.OrderBy(g => g.GameType.Description);
+                }
+                else
+                {
+                    games = games.OrderByDescending(g => g.GameType.Description);
                 }
             }
 
-            ViewData["sortField"] = sortField;
-            ViewData["sortDirection"] = sortDirection;
-            //ViewData["LocationID"] = new SelectList(_context.Teams, "ID", "LocationName");
-
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
-            ViewData["SearchString"] = SearchString;
-            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");            
-            
             //Filter by DivisionName - TeamName
             ViewBag.TeamID = new SelectList(_context.Teams
                 .Include(t => t.Division)
                 .OrderBy(t => t.Division.ID)
                 .ThenBy(t => t.Name)
-                .Select(t => new { 
-                    t.ID, 
-                    TeamName = t.Division.DivisionName + " - " + t.Name 
+                .Select(t => new
+                {
+                    t.ID,
+                    TeamName = t.Division.DivisionName + " - " + t.Name
                 }), "ID", "TeamName");
+
+            ViewData["sortField"] = sortField;
+            ViewData["sortDirection"] = sortDirection;
+
+            ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l => l.LocationName), "ID", "LocationName");
+            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+            ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
 
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
-            var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);           
+            var pagedData = await PaginatedList<Game>.CreateAsync(games, page ?? 1, pageSize);
 
-
-            //return View(await games.ToListAsync());
             return View(pagedData);
         }
 
@@ -283,8 +261,6 @@ namespace WMBA_4.Controllers
                         .ThenInclude(d => d.Division)
                 .FirstOrDefaultAsync(m => m.ID == gameid);
 
-
-
             if (game == null)
             {
                 return NotFound();
@@ -313,7 +289,6 @@ namespace WMBA_4.Controllers
             // Actualizar la alineación del juego
             UpdateGameLineUp(selectedOptions, GameToUpdate, team);
 
-
             await _context.SaveChangesAsync();
 
             return RedirectToAction("Details", "Game", new { gameid = gameid, team = team });
@@ -335,8 +310,19 @@ namespace WMBA_4.Controllers
             var divisions = _context.Divisions.ToList();
             var firstDivisionId = divisions.FirstOrDefault()?.ID;
 
-            
-            
+            var locationMembers = _context.Locations.ToList();
+            var localtionSelectItems = locationMembers.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.LocationName}"
+            });
+
+            var selectedLocalIds = game.LocationID.ToString();
+
+            ViewData["LocationID"] = new MultiSelectList(localtionSelectItems, "Value", "Text", selectedLocalIds);
+
+            ViewBag.SelectedLocationIds = selectedLocalIds;
+
             ViewBag.Teams = new SelectList(_context.Teams.Where(t => t.DivisionID == firstDivisionId), "TeamID", "TeamName");
             //ViewData["Divisions"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
@@ -354,7 +340,7 @@ namespace WMBA_4.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId , string LocationName)
+        public async Task<IActionResult> Create([Bind("Date,LocationID,SeasonID,GameTypeID,TeamID")] Game game, int Team1, int Team2, int teamId, string LocationName)
         {
             if (!ModelState.IsValid)
             {
@@ -379,20 +365,6 @@ namespace WMBA_4.Controllers
                 }
             }
 
-            // Verifica si el LocationID existe en la base de datos
-            //var location = await _context.Locations.FindAsync(game.LocationID);
-            //if (location == null)
-            //{
-            //    // Si no existe, crea una nueva ubicación y guárdala en la base de datos
-            //    location = new Models.Location { ID = game.LocationID, LocationName = LocationName, CityID = 1 };
-            //    _context.Locations.Add(location);
-            //    await _context.SaveChangesAsync();
-
-            //    game.LocationID = location.ID;    
-
-            //    ModelState.Remove("LocationID");            
-            //}
-            
             //Game
             if (ModelState.IsValid)
             {
@@ -404,7 +376,7 @@ namespace WMBA_4.Controllers
                         IsHomeTeam = true,
                         IsVisitorTeam = false,
                         TeamID = Team1,
-                        score=0,
+                        score = 0,
                         GameID = game.ID
                     };
                     if (!_context.TeamGame.Local.Any(e => e.GameID == teamGame1.GameID && e.TeamID == teamGame1.TeamID))
@@ -418,7 +390,7 @@ namespace WMBA_4.Controllers
                         IsHomeTeam = false,
                         IsVisitorTeam = true,
                         TeamID = Team2,
-                        score=0,
+                        score = 0,
                         GameID = game.ID
                     };
                     if (!_context.TeamGame.Local.Any(e => e.GameID == teamGame2.GameID && e.TeamID == teamGame2.TeamID))
@@ -433,18 +405,18 @@ namespace WMBA_4.Controllers
                 }
                 catch (InvalidOperationException)
                 {
-                    ModelState.AddModelError("", "Unable to save changes. " +                        
+                    ModelState.AddModelError("", "Unable to save changes. " +
                         "Try again, and if the problem persists, " +
                         "see your system administrator.");
                 }
             }
-            
+
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
-            
+
             return View(game);
         }
 
@@ -457,7 +429,7 @@ namespace WMBA_4.Controllers
             }
 
             var game = await _context.Games
-                .Include(tg => tg.TeamGames)                
+                .Include(tg => tg.TeamGames)
                     .ThenInclude(t => t.Team)
                         .Include(tg => tg.TeamGames)
                             .ThenInclude(t => t.Team.Division)
@@ -470,10 +442,10 @@ namespace WMBA_4.Controllers
             }
 
             var teamGames = await _context.TeamGame.Where(tg => tg.GameID == id).ToListAsync();
-                if (teamGames.Count != 2)
-                {
-                    // Handle the case where there are not exactly two teams for the game
-                }
+            if (teamGames.Count != 2)
+            {
+                // Handle the case where there are not exactly two teams for the game
+            }
 
             var teamGame1 = teamGames[0];
             var teamGame2 = teamGames[1];
@@ -481,20 +453,15 @@ namespace WMBA_4.Controllers
             var divisionId1 = teamGame1.Team.DivisionID; // Get the DivisionID from Team1 of the teams
             var teamName1 = teamGame1.Team.Name;
             var teamName2 = teamGame2.Team.Name;
-            
 
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            //ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", divisionId1); // Set the selected DivisionID
             ViewData["Team1ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame1.TeamID); // Filter the teams by DivisionID
             ViewData["Team2ID"] = new SelectList(_context.Teams.Where(t => t.DivisionID == divisionId1), "ID", "Name", teamGame2.TeamID); // Filter the teams by DivisionID
 
-
-            //ViewData["Score1"] = teamGame1.score;
-            //ViewData["Score2"] = teamGame2.score;
             ViewBag.TeamID = team;
-            
+
             var locationMembers = _context.Locations.ToList();
             var localtionSelectItems = locationMembers.Select(s => new SelectListItem
             {
@@ -503,28 +470,27 @@ namespace WMBA_4.Controllers
             });
 
             var selectedLocalIds = game.LocationID.ToString();
-               
-            ViewData["LocationID"] = new MultiSelectList(localtionSelectItems, "Value", "Text", selectedLocalIds);
 
+            ViewData["LocationID"] = new MultiSelectList(localtionSelectItems, "Value", "Text", selectedLocalIds);
 
             ViewBag.SelectedLocationIds = selectedLocalIds;
 
             // Assign the Date and GameTypeID to the Game model
             game.Date = game.Date;
             game.GameTypeID = game.GameTypeID;
-            
+
             var viewModel = new GameEditVM
             {
                 Game = game,
                 DivisionID = divisionId1,
                 Team1ID = teamGame1.TeamID,
-                Team2ID = teamGame2.TeamID,                
+                Team2ID = teamGame2.TeamID,
                 Score1 = teamGame1.score,
                 Score2 = teamGame2.score,
-                Team1Name= teamName1,
-                Team2Name= teamName2,
+                Team1Name = teamName1,
+                Team2Name = teamName2,
                 Date = game.Date,
-                LocationID = game.LocationID,   
+                LocationID = game.LocationID,
                 SeasonID = game.SeasonID,
                 GameTypeID = game.GameTypeID
 
@@ -595,7 +561,7 @@ namespace WMBA_4.Controllers
 
                         // Keep the current status
                         game.Status = currentGame.Status;
-                        
+
                         // Update the game                                                
                         _context.Update(game);
                         await _context.SaveChangesAsync();
@@ -603,7 +569,7 @@ namespace WMBA_4.Controllers
                         // Commit the transaction
                         transaction.Commit();
                         return Redirect(ViewData["returnURL"].ToString());
-                    }                    
+                    }
                     catch (DbUpdateConcurrencyException)
                     {
                         // Roll back the transaction
@@ -622,8 +588,8 @@ namespace WMBA_4.Controllers
                     {
                         // Roll back the transaction
                         transaction.Rollback();
-                        
-                        ModelState.AddModelError("", "Unable to save changes. " +                        
+
+                        ModelState.AddModelError("", "Unable to save changes. " +
                             "Try again, and if the problem persists, " +
                             "see your system administrator.");
                     }
@@ -636,13 +602,10 @@ namespace WMBA_4.Controllers
             }
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description", game.GameTypeID);
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName", game.LocationID);
-            //ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName", game.SeasonID);            
             ViewData["Team1ID"] = new SelectList(_context.Teams, "ID", "Name", team1Id);
             ViewData["Team2ID"] = new SelectList(_context.Teams, "ID", "Name", team2Id);
 
-            //ViewData["Score1"] = score1;
-            //ViewData["Score2"] = score2;
-            ViewBag.TeamID = team;            
+            ViewBag.TeamID = team;
 
             return View(game);
         }
@@ -652,50 +615,18 @@ namespace WMBA_4.Controllers
         {
             try
             {
-                var location = new Models.Location { LocationName = locationName, CityID=1 };
-                           _context.Locations.Add(location);
-                           await _context.SaveChangesAsync();
-            
-                        //return Ok(location.ID);                           
-                        return Ok(new { id = location.ID, name = location.LocationName});
+                var location = new Models.Location { LocationName = locationName, CityID = 1 };
+                _context.Locations.Add(location);
+                await _context.SaveChangesAsync();
+
+                //return Ok(location.ID);                           
+                return Ok(new { id = location.ID, name = location.LocationName });
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "An error occurred while adding the location.");
                 return BadRequest(ModelState);
             }
-            
-            //try
-            //{
-
-            //    var coachRole = await _context.Roles.FirstOrDefaultAsync(r => r.Description == "Coach");
-            //    if (coachRole == null)
-            //    {
-            //        ModelState.AddModelError("", "The Coach role does not exist.");
-            //        return BadRequest(ModelState);
-            //    }
-
-
-            //    var coach = new Staff
-            //    {
-            //        FirstName = firstName,
-            //        LastName = lastName,
-            //        Email = email,
-            //        Status = true,
-            //        RoleId = coachRole.ID
-            //    };
-
-
-            //    _context.Staff.Add(coach);
-            //    await _context.SaveChangesAsync();
-
-            //    return Ok(new { id = coach.ID, name = $"{coach.FirstName} {coach.LastName}" });
-            //}
-            //catch (Exception)
-            //{
-            //    ModelState.AddModelError("", "An error occurred while adding the coach.");
-            //    return BadRequest(ModelState);
-            //}
         }
 
         // GET: Game/Delete/5
@@ -767,7 +698,6 @@ namespace WMBA_4.Controllers
 
         private void PopulatePlayersAssignedTeam(Game game, int team)
         {
-
             var allOptions = _context.Players
                .Where(m => m.TeamID == team && m.Status == true);
 
@@ -823,7 +753,6 @@ namespace WMBA_4.Controllers
                 {
                     // Update the batting order of the existing player
                     existingGameLineUp.BattingOrder = battingOrder;
-
                 }
                 else
                 {
@@ -845,9 +774,7 @@ namespace WMBA_4.Controllers
                 {
                     GameLineUpToUpdate.GameLineUps.Remove(playerToRemove);
                 }
-
             }
-
 
             _context.SaveChanges();
         }
@@ -861,21 +788,6 @@ namespace WMBA_4.Controllers
 
             return Json(teams);
         }
-
-        //[HttpPost]
-        //public async Task<IActionResult> CreateLocation(string name)
-        //{
-        //    if (string.IsNullOrEmpty(name))
-        //    {
-        //        return BadRequest("Name is required.");
-        //    }
-
-        //    var location = new Models.Location { LocationName = name };
-        //    _context.Locations.Add(location);
-        //    await _context.SaveChangesAsync();
-                        
-        //    return Ok(new { id = location.ID, name = location.LocationName });
-        //}
 
         private bool GameExists(int id)
         {
@@ -908,11 +820,9 @@ namespace WMBA_4.Controllers
             var user = await _userManager.FindByEmailAsync(coachEmail);
             if (user != null)
             {
-
                 var staff = await _context.Staff.FirstOrDefaultAsync(s => s.Email == coachEmail);
                 if (staff != null)
                 {
-
                     var teamIds = await _context.TeamStaff
                         .Where(ts => ts.StaffID == staff.ID)
                         .Select(ts => ts.TeamID)

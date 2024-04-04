@@ -28,7 +28,6 @@
 @* page navigation *@
 
 <div class="f-in-flex justify-content-end">
- 
         @using (Html.BeginForm("Create", "Player", FormMethod.Get))
         {
             <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
@@ -40,7 +39,6 @@
             <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new player">Add Player</button>
         }
     }
-    
 </div>
 
 <div class="p-in-flex">

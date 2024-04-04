@@ -7,7 +7,10 @@
     var user = await UserManager.GetUserAsync(User);
 
     // Check if the user is in the "Scorekeeper" role
-    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
+    var isAdmin = await UserManager.IsInRoleAsync(user, "Admin");
+    var isRookieConvenor = await UserManager.IsInRoleAsync(user, "RookieConvenor");
+    var isIntermediateConvenor = await UserManager.IsInRoleAsync(user, "IntermediateConvenor");
+    var isSeniorConvenor = await UserManager.IsInRoleAsync(user, "SeniorConvenor");
 }
 
 @* page navigation *@
@@ -26,18 +29,18 @@
 
 <div class="f-in-flex justify-content-end">
 
-        @using (Html.BeginForm("Create", "Team", FormMethod.Get))
+    @using (Html.BeginForm("Create", "Team", FormMethod.Get))
+    {
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
+                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
+        @if (isAdmin || isRookieConvenor || isIntermediateConvenor || isSeniorConvenor)
         {
-        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false" 
-        aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
-                Filter/Search @ViewData["numberFilters"]
-            </button>
-        @if (!isScorekeeper)
-        {
-        <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new team">Add Team</button>
+            <button type="submit" class="btn btn-kelly" data-toggle="tooltip" data-placement="top" title="Click to add a new team">Add Team</button>
         }
-        }
-    </div>
+    }
+</div>
 
 <div class="p-in-flex">
     <form asp-action="Index" method="get">
@@ -58,7 +61,7 @@
                         <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Select the division you want to search for">
                             <label class="control-label">Select Team:</label>
                             @Html.DropDownList("DivisionID", null, "All Divisions", htmlAttributes: new { @class = "form-control" })
-                        </div> 
+                        </div>
                         <div class="form-group col-md-4 align-content-center">
                             <div class="d-flex my-2">
                                 @Html.CheckBox("isActive", null, new { @class = "form-check form-switch me-2", id = "isActiveCheckbox" })
@@ -99,7 +102,7 @@
                     </div>
                 </div>
             </div>
-            <table class="table giro-table table-bordered">
+            <table class="table-two giro-table table-bordered">
                 <thead>
                     <tr>
                         <th>
@@ -169,13 +172,24 @@
                             </div>
                         </th>
                         <th>
-                            <div class="t-in-flex"><span>Edit |&nbsp;</span><span>LineUp |&nbsp;</span><span>Status</span></div>
+
+                            <div class="t-in-flex">
+                                @if (isAdmin || isRookieConvenor || isIntermediateConvenor || isSeniorConvenor)
+                                {
+                                    <span>Edit |&nbsp;</span>
+                                }
+                                <span>LineUp</span>
+                                @if (isAdmin || isRookieConvenor || isIntermediateConvenor || isSeniorConvenor)
+                                {
+                                    <span>&nbsp|&nbsp Status</span>
+                                }
+                            </div>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr class="@((item.Status) ? "" : "inactive-team")">
+                        <tr class="@((item.Status) ? "" : "inactive-team")" onclick="redirectToDetails('@item.ID')">
                             <td>
                                 @Html.DisplayFor(modelItem => item.Name)
                             </td>
@@ -185,35 +199,30 @@
                             <td>
                                 @if (item.Status == true)
                                 {
-                                    
 
-                                        @if (!isScorekeeper)
-                                        {
-                                            <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
+
+                                    @if (isAdmin || isRookieConvenor || isIntermediateConvenor || isSeniorConvenor)
+                                    {
+                                        <a asp-action="Edit" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
                                             <span class="material-symbols-outlined ft-kelly px-1">
                                                 edit
                                             </span>
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-action="Index" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title="Edit team">
-                                            <span class="material-symbols-outlined ft-kelly px-1" style="pointer-events: none; color: gray;" data-toggle="tooltip" data-placement="top" title="You do not have permission to edit this team">
-                                                edit
-                                            </span>
-                                            </a>
-                                        }
-                                    
+                                        </a>
+                                    }
+
                                     <a asp-action="Details" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" View details">
                                         <span class="material-symbols-outlined ft-kelly px-1">
                                             visibility
                                         </span>
-                                </a>
-                                    <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Inactive division">
-                                        <span class="material-symbols-outlined ft-kelly px-2">
-                                            group
-                                        </span>
-                                </a>
+                                    </a>
+                                    @if (isAdmin || isRookieConvenor || isIntermediateConvenor || isSeniorConvenor)
+                                    {
+                                        <a asp-action="Delete" asp-route-id="@item.ID" data-toggle="tooltip" data-placement="top" title=" Set to Inactive division">
+                                            <span class="material-symbols-outlined ft-kelly px-2">
+                                                group
+                                            </span>
+                                        </a>
+                                    }
                                 }
                                 else
                                 {
@@ -243,5 +252,12 @@
     </form>
 </div>
 
-
+@* show a player's details view when click the row *@
+@section Scripts {
+    <script>
+        function redirectToDetails(teamId) {
+            window.location.href = '@Url.Action("Details", "Team")/' + teamId;
+        }
+    </script>
+}
 
