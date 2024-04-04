@@ -1,0 +1,133 @@
+﻿@model IEnumerable<WMBA_4.ViewModels.TeamStatsVM>
+
+@{
+    ViewData["Title"] = "Player Stats";
+}
+
+
+<h1>Team stats</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Team)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.G)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.H)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.RBI)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Singles)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Doubles)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Triples)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.BB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PA)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AB)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Run)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HBP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SO)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Out)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AVG)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OBP)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.SLG)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.OPS)
+            </th>
+
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Team)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.G)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.H)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RBI)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Singles)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Doubles)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Triples)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HR)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.BB)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PA)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AB)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Run)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.HBP)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SO)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Out)
+                </td>
+                <td>
+                    @item.AVG.ToString("F3")
+                </td>
+                <td>
+                    @item.OBP.ToString("F3")
+                </td>
+                <td>
+                    @item.SLG.ToString("F3")
+                </td>
+                <td>
+                    @item.OPS.ToString("F3")
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

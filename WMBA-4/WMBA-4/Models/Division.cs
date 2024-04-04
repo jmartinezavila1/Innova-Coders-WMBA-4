@@ -24,5 +24,8 @@ namespace WMBA_4.Models
         public Club Club { get; set; }
 
         public ICollection<Team> Teams { get; set; } = new HashSet<Team>();
+
+        public ICollection<StaffDivision> StaffDivision { get; set; } = new HashSet<StaffDivision>();
+
     }
 }

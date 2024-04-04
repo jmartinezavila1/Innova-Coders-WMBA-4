@@ -32,5 +32,8 @@ namespace WMBA_4.Models
         public Role Roles { get; set; }
 
         public ICollection<TeamStaff> TeamStaff { get; set; } = new HashSet<TeamStaff>();
+
+        public ICollection<StaffDivision> StaffDivision { get; set; } = new HashSet<StaffDivision>();
+
     }
 }
