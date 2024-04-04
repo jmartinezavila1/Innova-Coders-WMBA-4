@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Net.Mail;
 using System.Text;
 using System.Text.Encodings.Web;
 using System.Threading;
@@ -74,6 +75,14 @@ namespace WMBA_4.Areas.Identity.Pages.Account
         /// </summary>
         public class InputModel
         {
+
+            [Required]
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Required]
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -103,7 +112,6 @@ namespace WMBA_4.Areas.Identity.Pages.Account
             public string ConfirmPassword { get; set; }
         }
 
-
         public async Task OnGetAsync(string returnUrl = null)
         {
             ReturnUrl = returnUrl;
@@ -122,6 +130,16 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
+                MailAddress address = new MailAddress(Input.Email);
+                string userName = address.User;
+                var staff = new Staff
+                {
+                    FirstName = userName,
+                    Email = Input.Email,
+                    FirstName = Input.FirstName,
+                    LastName = Input.LastName
+                };
+
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User created a new account with password.");
@@ -136,8 +154,19 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                         values: new { area = "Identity", userId = userId, code = code, returnUrl = returnUrl },
                         protocol: Request.Scheme);
 
-                    await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
-                        $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                    //await _emailSender.SendEmailAsync(Input.Email, "Confirm your email",
+                    //    $"Please confirm your account by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+
+                    await _emailSender.SendEmailAsync(Input.Email, "Please Confirm Your Email Address",
+                         "Thank you for registering an account with us. To activate your account, " +
+                         "<ul>" +
+                         $"<li> Please confirm your email address by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.<br/></li>" +
+                         "<li> Once your account is confirmed, our administrator will complete verification of your email.<br/><br/></li>" +
+                         "<li> After the above process is completed, you can use the website.<br/><br/></li>" +
+                         "</ul>" +
+                         $"If you have any questions or concerns, please contact us at <a href='mailto:admin@outlook.com'>admin@outlook.com</a>.<br/><br/>" +
+                         "Best regards,<br/>Welland Minor Baseball Association");
+
 
                     if (_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
@@ -163,7 +192,7 @@ namespace WMBA_4.Areas.Identity.Pages.Account
         {
             try
             {
-                _context.Staff.Add(new Staff { Email = Input.Email, RoleId=4 });
+                _context.Staff.Add(new Staff { Email = Input.Email, RoleId = 4 });
                 _context.SaveChanges();
                 return Activator.CreateInstance<IdentityUser>();
             }

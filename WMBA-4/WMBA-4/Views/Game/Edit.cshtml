@@ -30,14 +30,10 @@
     <div class="row">
         <div class="col-md-4 mb-3">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <input type="hidden" asp-for="ID" /> *@
-
-
             <div class="form-group">
                 <label asp-for="DivisionID" class="control-label"></label>
                 <select asp-for="DivisionID" class="form-control form-select" asp-items="ViewBag.DivisionID" disabled></select>
             </div>
-
             <div class="form-group">
                 <label asp-for="Date" class="control-label"></label>
                 <input asp-for="Date" class="form-control" />
@@ -63,26 +59,13 @@
             </div>
             <div>
                 <div class="mb-2">
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#addLocationModal">
+                    <button type="button" class="btn btn-kelly" data-toggle="modal" data-target="#addLocationModals">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <label asp-for="Locations" class="control-label">Add Location</label>
+                    <label  class="control-label">Add Location</label>
                 </div>
-
-                <select id="SelectedLocationIds" name="LocationID" asp-for="Locations" class="form-control mb-3" multiple>
-                    @foreach (var item in ViewBag.LocationID as MultiSelectList)
-                    {
-                        var isSelected = ViewBag.SelectedLocationIds.Contains(item.Value) ? "selected" : null;
-                        <option value="@item.Value" selected="@isSelected">@item.Text</option>
-                    }
-                </select>
+                <select id="SelectedLocationIdss" name="LocationID" class="form-control form-select mb-3" asp-items="@ViewBag.LocationID"></select>
             </div>
-
-@*             <div class="form-group">
-                <label asp-for="SeasonID" class="control-label"></label>
-                <select asp-for="SeasonID" class="form-control form-select" asp-items="ViewBag.SeasonID"></select>
-                <span asp-validation-for="SeasonID" class="text-danger"></span>
-            </div> *@
             <div class="form-group">
                 <label asp-for="GameTypeID" class="control-label"></label>
                 <select asp-for="GameTypeID" class="form-control form-select" asp-items="ViewBag.GameTypeID"></select>
@@ -97,7 +80,7 @@
 </form>
 
 @* Popup Modal *@
-<div class="modal fade" id="addLocationModal" tabindex="-1" role="dialog" aria-labelledby="addLocationModalLabel" aria-hidden="true">
+<div class="modal fade" id="addLocationModals" tabindex="-1" role="dialog" aria-labelledby="addLocationModalsLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -109,14 +92,14 @@
             <div class="modal-body">
                 <form id="addLocationForm">
                     <div class="form-group">
-                        <label for="LocationName">Location Name</label>
-                        <input type="text" class="form-control" id="LocationName" name="LocationName" required>
+                        <label for="LocationNames">Location Name</label>
+                        <input type="text" class="form-control" id="LocationNames" name="LocationName" required>
                     </div>
                 </form>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" id="saveLocationBtn">Save changes</button>
+                <button type="button" class="btn btn-primary" id="saveLocationBtns">Save changes</button>
             </div>
         </div>
     </div>
@@ -129,20 +112,20 @@
     }
     <script>
         $(document).ready(function () {
-            $('#saveLocationBtn').click(function () {
-                var locationName = $('#LocationName').val();
+            $('#saveLocationBtns').click(function () {
+                var locationName = $('#LocationNames').val();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("AddLocation", "Game")',
                     data: { locationName: locationName },
                     success: function (data) {
-                        $('#SelectedLocationIds').append('<option value="' + data.id + '">' + data.name + '</option>');
-                        $('#addLocationModal').modal('hide');
+                        $('#SelectedLocationIdss').append('<option value="' + data.id + '">' + data.name + '</option>');
+                        $('#addLocationModals').modal('hide');
                     },
                     error: function () {
                         alert('Error occurred while adding location.');
                     }
-                });                              
+                });
             });
         });
     </script>

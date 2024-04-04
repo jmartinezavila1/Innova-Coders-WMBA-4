@@ -9,7 +9,6 @@ using MailKit.Net.Smtp;
         public class MyEmailSender : IMyEmailSender
         {
             private readonly IEmailConfiguration _emailConfiguration;
-
             public MyEmailSender(IEmailConfiguration emailConfiguration)
             {
                 _emailConfiguration = emailConfiguration;
@@ -29,10 +28,11 @@ using MailKit.Net.Smtp;
                 {
                     name = email;
                 }
+
                 var message = new MimeMessage();
                 message.To.Add(new MailboxAddress(name, email));
                 message.From.Add(new MailboxAddress(_emailConfiguration.SmtpFromName, _emailConfiguration.SmtpUsername));
-
+                
                 message.Subject = subject;
                 //We will say we are sending HTML. But there are options for plaintext etc. 
                 message.Body = new TextPart(TextFormat.Html)
