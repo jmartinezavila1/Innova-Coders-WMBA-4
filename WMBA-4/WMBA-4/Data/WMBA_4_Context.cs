@@ -54,6 +54,8 @@ namespace WMBA_4.Data
         public DbSet<PlayerEndSeasonVM> PlayersEndSeason { get; set; }
 
         public DbSet<GameEndSeasonVM> GamesEndSeason { get; set; }
+
+        public DbSet<StaffDivision> StaffDivision { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             ///Prevent Cascade Delete from Game to GameType
@@ -139,6 +141,10 @@ namespace WMBA_4.Data
             //Many to Many Intersection
             modelBuilder.Entity<TeamStaff>()
             .HasKey(t => new { t.TeamID, t.StaffID });
+
+            //Many to Many Intersection
+            modelBuilder.Entity<StaffDivision>()
+            .HasKey(t => new { t.DivisionID, t.StaffID });
 
             // Prevent Cascade Delete from Staff to TeamStaff
             //so we are prevented from deleting a Staff with
