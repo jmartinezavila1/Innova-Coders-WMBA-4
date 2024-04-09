@@ -134,7 +134,7 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                 string userName = address.User;
                 var staff = new Staff
                 {
-                    FirstName = userName,
+                    //FirstName = userName,
                     Email = Input.Email,
                     FirstName = Input.FirstName,
                     LastName = Input.LastName

@@ -62,14 +62,18 @@ namespace WMBA_4.Controllers
                     e.Roles = (List<string>)await _userManager.GetRolesAsync(user);
                 }
             };
+
             return View(staffs);
         }
 
         // GET: Employee/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             StaffAdminVM staff = new StaffAdminVM();
             PopulateAssignedRoleData(staff);
+
+            var teams = await _context.Teams.ToListAsync();
+            ViewBag.Teams = new SelectList(teams, "ID", "Name");
             return View(staff);
         }
 
@@ -173,8 +177,11 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
+            var teams = await _context.Teams.ToListAsync();
 
-            //Get the user from the Identity system
+            
+            ViewBag.Teams = new SelectList(teams, "ID", "Name");
+            
             var user = await _userManager.FindByEmailAsync(staff.Email);
             if (user != null)
             {
@@ -203,10 +210,10 @@ namespace WMBA_4.Controllers
             var user = await _userManager.FindByEmailAsync(staffToUpdate.Email);
             var currentRoles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
 
-            // Check if roles are updated
+          
             var rolesUpdated = !currentRoles.SequenceEqual(selectedRoles);
 
-            // Your exist
+       
             if (rolesUpdated)
             {
                 var staff = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
@@ -216,7 +223,7 @@ namespace WMBA_4.Controllers
                 }
             }
 
-            //Note the current Email and Active Status
+            
             bool ActiveStatus = staffToUpdate.Status;
             string databaseEmail = staffToUpdate.Email;
 
@@ -227,38 +234,35 @@ namespace WMBA_4.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                    //Save successful so go on to related changes
+                   
 
-                    //Check for changes in the Active state
+                    
                     if (staffToUpdate.Status == false && ActiveStatus == true)
                     {
-                        //Deactivating them so delete the IdentityUser
-                        //This deletes the user's login from the security system
+                       
+                       
                         await DeleteIdentityUser(staffToUpdate.Email);
 
                     }
                     else if (staffToUpdate.Status == true && ActiveStatus == false)
                     {
-                        //You reactivating the user, create them and
-                        //give them the selected roles
+                       
                         InsertIdentityUser(staffToUpdate.Email, selectedRoles);
                     }
                     else if (staffToUpdate.Status == true && ActiveStatus == true)
                     {
-                        //No change to Active status so check for a change in Email
-                        //If you Changed the email, Delete the old login and create a new one
-                        //with the selected roles
+                        
                         if (staffToUpdate.Email != databaseEmail)
                         {
-                            //Add the new login with the selected roles
+                        
                             InsertIdentityUser(staffToUpdate.Email, selectedRoles);
 
-                            //This deletes the user's old login from the security system
+                           
                             await DeleteIdentityUser(databaseEmail);
                         }
                         else
                         {
-                            //Finially, Still Active and no change to Email so just Update
+                            
                             await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
                         }
                     }
@@ -288,7 +292,7 @@ namespace WMBA_4.Controllers
                     }
                 }
             }
-            //We are here because something went wrong and need to redisplay
+            
             StaffAdminVM staffAdminVM = new StaffAdminVM
             {
                 Email = staffToUpdate.Email,
@@ -306,7 +310,7 @@ namespace WMBA_4.Controllers
         }
 
         private void PopulateAssignedRoleData(StaffAdminVM staff)
-        {//Prepare checkboxes for all Roles
+        {
             var allRoles = _identityContext.Roles;
             var currentRoles = staff.Roles;
             var viewModel = new List<RoleVM>();
@@ -324,14 +328,14 @@ namespace WMBA_4.Controllers
 
         private async Task UpdateUserRoles(string[] selectedRoles, string Email)
         {
-            var _user = await _userManager.FindByEmailAsync(Email);//IdentityUser
+            var _user = await _userManager.FindByEmailAsync(Email);
             if (_user != null)
             {
-                var UserRoles = (List<string>)await _userManager.GetRolesAsync(_user);//Current roles user is in
+                var UserRoles = (List<string>)await _userManager.GetRolesAsync(_user);
 
                 if (selectedRoles == null)
                 {
-                    //No roles selected so just remove any currently assigned
+                    
                     foreach (var r in UserRoles)
                     {
                         await _userManager.RemoveFromRoleAsync(_user, r);
@@ -339,13 +343,7 @@ namespace WMBA_4.Controllers
                 }
                 else
                 {
-                    //At least one role checked so loop through all the roles
-                    //and add or remove as required
-
-                    //We need to do this next line because foreach loops don't always work well
-                    //for data returned by EF when working async.  Pulling it into an IList<>
-                    //first means we can safely loop over the colleciton making async calls and avoid
-                    //the error 'New transaction is not allowed because there are other threads running in the session'
+                    
                     IList<IdentityRole> allRoles = _identityContext.Roles.ToList<IdentityRole>();
 
                     foreach (var r in allRoles)
@@ -371,17 +369,16 @@ namespace WMBA_4.Controllers
 
         private void InsertIdentityUser(string Email, string[] selectedRoles)
         {
-            //Create the IdentityUser in the IdentitySystem
-            //Note: this is similar to what we did in ApplicationSeedData
+         
             if (_userManager.FindByEmailAsync(Email).Result == null)
             {
                 IdentityUser user = new IdentityUser
                 {
                     UserName = Email,
                     Email = Email,
-                    EmailConfirmed = true //since we are creating it!
+                    EmailConfirmed = true 
                 };
-                //Create a random password with a default 8 characters
+                
                 string password = MakePassword.Generate();
                 IdentityResult result = _userManager.CreateAsync(user, password).Result;
 
@@ -410,12 +407,12 @@ namespace WMBA_4.Controllers
         }
 
         private async Task InviteUserToResetPassword(Staff staff, string message)
-        {// Constructing the URL for password reset
+        {
             string resetPasswordUrl = Url.Action(
-                "ResetPassword", // Action method for resetting password
-                "Account", // Controller handling password reset
-                new { userId = staff.ID, token = "your_reset_token_here" }, // Route parameters
-                Request.Scheme // Request scheme (http or https)
+                "ResetPassword", 
+                "Account",
+                new { userId = staff.ID, token = "your_reset_token_here" }, 
+                Request.Scheme 
             );
 
             message ??= $"Hello {staff.FirstName}<br /><p>Please navigate to:<br />" +
@@ -424,7 +421,7 @@ namespace WMBA_4.Controllers
                         $" and create a new password for {staff.Email} using Forgot Password.</p>";
             try
             {
-                // Sending the email
+                
                 await _emailSender.SendOneAsync(staff.FullName, staff.Email,
                 "Account Registration", message);
                 TempData["message"] = $"Invitation email sent to {staff.FullName} at {staff.Email}";
@@ -442,4 +439,6 @@ namespace WMBA_4.Controllers
             return _context.Staff.Any(e => e.ID == id);
         }
     }
+
 }
+
