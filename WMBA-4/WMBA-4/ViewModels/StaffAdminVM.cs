@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 using WMBA_4.Models;
@@ -13,5 +14,7 @@ namespace WMBA_4.ViewModels
         
         [Display(Name = "Roles")]
         public List<string> Roles { get; set; }= new List<string>();
+
+        public List<SelectListItem> TeamList { get; set; }
     }
 }
