@@ -78,17 +78,15 @@ namespace WMBA_4.Controllers
         }
 
         // POST: Employee/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email")] Staff staff, string[] selectedRoles)
+        public async Task<IActionResult> Create([Bind("FirstName,LastName,Email")] Staff staff, StaffAdminVM staffVM, string[] selectedRoles)
         {
-
             try
             {
                 if (ModelState.IsValid)
                 {
+                    // Your existing code for creating a staff member
                     _context.Add(staff);
                     await _context.SaveChangesAsync();
 
@@ -106,6 +104,31 @@ namespace WMBA_4.Controllers
                     //Send Email to new User - commented out till email configured
                     await InviteUserToResetPassword(staff, null);
 
+                    // Your new code for checking and assigning coach/scorekeeper
+                    var team = await _context.Teams.FindAsync(staffVM.SelectedTeamID);
+
+                    if (team != null)
+                    {
+                        var existingStaff = await _context.TeamStaff
+                            .Include(ts => ts.Staff)
+                            .Where(ts => ts.TeamID == staffVM.SelectedTeamID)
+                            .ToListAsync();
+
+                        // Check if the team already has a coach or scorekeeper assigned
+                        if (existingStaff.Any(ts => ts.Staff.Roles != null && (ts.Staff.Roles.Description == "Coach" || ts.Staff.Roles.Description == "Scorekeeper")))
+                        {
+                            ModelState.AddModelError(string.Empty, "This team already has a coach or scorekeeper assigned.");
+                            // Repopulate the dropdown and return the view with the error message
+                            var teamList = await _context.Teams.ToListAsync();
+                            ViewBag.Teams = new SelectList(teamList, "ID", "Name");
+                            return View(staffVM);
+                        }
+
+                        // Assign coach and scorekeeper to the selected team
+                        team.TeamStaff.Add(new TeamStaff { StaffID = staff.ID, TeamID = team.ID });
+                        await _context.SaveChangesAsync();
+                    }
+
                     return RedirectToAction(nameof(Index));
                 }
             }
@@ -120,22 +143,13 @@ namespace WMBA_4.Controllers
                     ModelState.AddModelError("", "Unable to save changes. Try again, and if the problem persists see your system administrator.");
                 }
             }
+
             //We are here because something went wrong and need to redisplay
-            StaffAdminVM staffAdminVM = new StaffAdminVM
-            {
-                Email = staff.Email,
-                Status = staff.Status,
-                ID = staff.ID,
-                FirstName = staff.FirstName,
-                LastName = staff.LastName,
-  
-            };
-            foreach (var role in selectedRoles)
-            {
-                staffAdminVM.Roles.Add(role);
-            }
-            PopulateAssignedRoleData(staffAdminVM);
-            return View(staffAdminVM);
+            // Here, you should repopulate the dropdown and return the view with the model
+            var teams = await _context.Teams.ToListAsync();
+            ViewBag.Teams = new SelectList(teams, "ID", "Name");
+            PopulateAssignedRoleData(staffVM);
+            return View(staffVM);
         }
         // Method to send email notification to user
         private async Task SendRoleUpdateEmail(string userEmail, string[] newRoles)
@@ -177,11 +191,7 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            var teams = await _context.Teams.ToListAsync();
-
-            
-            ViewBag.Teams = new SelectList(teams, "ID", "Name");
-            
+                        
             var user = await _userManager.FindByEmailAsync(staff.Email);
             if (user != null)
             {
@@ -189,6 +199,7 @@ namespace WMBA_4.Controllers
                 var r = await _userManager.GetRolesAsync(user);
                 staff.Roles = (List<string>)r;
             }
+
             PopulateAssignedRoleData(staff);
 
             return View(staff);
@@ -266,6 +277,7 @@ namespace WMBA_4.Controllers
                             await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
                         }
                     }
+
 
                     return RedirectToAction(nameof(Index));
                 }
