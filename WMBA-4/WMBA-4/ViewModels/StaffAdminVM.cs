@@ -11,7 +11,10 @@ namespace WMBA_4.ViewModels
     {
         public string Email { get; set; }
         public bool Status { get; set; } = true;
-        
+
+        [Display(Name = "Select Teams")]
+        public int SelectedTeamID { get; set; }
+
         [Display(Name = "Roles")]
         public List<string> Roles { get; set; }= new List<string>();
 
