@@ -62,10 +62,10 @@
                         {
                             <div class="mb-1">
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox"
-                                           id="@role.RoleName-CheckBox"
-                                           name="selectedRoles"
-                                           value="@role.RoleName"
+                                    <input class="form-check-input" type="radio"
+                                        id="@role.RoleName-CheckBox"
+                                        name="selectedRoles"
+                                        value="@role.RoleName"
                                     @(Html.Raw(role.Assigned ? "checked=\"checked\"" : "")) />
                                     <label class="form-check-label" for="@role.RoleName-CheckBox">@role.RoleName</label>
                                 </div>

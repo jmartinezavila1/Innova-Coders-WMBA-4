@@ -91,9 +91,9 @@ namespace WMBA_4.Controllers
                     await _context.SaveChangesAsync();
 
                     var roleId = await _context.Roles
-                       .Where(r => selectedRoles.Contains(r.Description))
-                       .Select(r => r.ID)
-                       .FirstOrDefaultAsync();
+                        .Where(r => selectedRoles.Contains(r.Description))
+                        .Select(r => r.ID)
+                        .FirstOrDefaultAsync();
 
                     staff.RoleId = roleId;
                     _context.Update(staff);
@@ -218,13 +218,19 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
+
+            //Prevent users from changing their own roles
+            var currentUser = await _userManager.GetUserAsync(User);
+            if (currentUser.Email == staffToUpdate.Email)
+            {
+                ModelState.AddModelError("", "You cannot change your own role.");                
+            }
+
             var user = await _userManager.FindByEmailAsync(staffToUpdate.Email);
             var currentRoles = user != null ? await _userManager.GetRolesAsync(user) : new List<string>();
 
-          
             var rolesUpdated = !currentRoles.SequenceEqual(selectedRoles);
 
-       
             if (rolesUpdated)
             {
                 var staff = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
@@ -245,19 +251,13 @@ namespace WMBA_4.Controllers
                 try
                 {
                     await _context.SaveChangesAsync();
-                   
-
                     
                     if (staffToUpdate.Status == false && ActiveStatus == true)
                     {
-                       
-                       
                         await DeleteIdentityUser(staffToUpdate.Email);
-
                     }
                     else if (staffToUpdate.Status == true && ActiveStatus == false)
                     {
-                       
                         InsertIdentityUser(staffToUpdate.Email, selectedRoles);
                     }
                     else if (staffToUpdate.Status == true && ActiveStatus == true)
@@ -267,8 +267,6 @@ namespace WMBA_4.Controllers
                         {
                         
                             InsertIdentityUser(staffToUpdate.Email, selectedRoles);
-
-                           
                             await DeleteIdentityUser(databaseEmail);
                         }
                         else
