@@ -2,11 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
+using System.Text;
+using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using WMBA_4.CustomControllers;
@@ -100,6 +103,7 @@ namespace WMBA_4.Controllers
                     await _context.SaveChangesAsync();
 
                     InsertIdentityUser(staff.Email, selectedRoles);
+
 
                     //Send Email to new User - commented out till email configured
                     await InviteUserToResetPassword(staff, null);
@@ -418,30 +422,33 @@ namespace WMBA_4.Controllers
 
         private async Task InviteUserToResetPassword(Staff staff, string message)
         {
-            string resetPasswordUrl = Url.Action(
-                "ResetPassword", 
-                "Account",
-                new { userId = staff.ID, token = "your_reset_token_here" }, 
-                Request.Scheme 
+            var user = await _userManager.FindByEmailAsync(staff.Email);
+            var resetToken = await _userManager.GeneratePasswordResetTokenAsync(user);
+            var encodedToken = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(resetToken));
+
+            // Construct the reset link based on the route to your reset password page
+            var resetLink = Url.Action(
+                "ResetPassword",            // Action method name for resetting the password
+                "Account",                  // Controller name containing the ResetPassword action
+                new { code = encodedToken }, // Route values (token parameter)
+                Request.Scheme              // Request scheme (HTTP or HTTPS)
             );
 
-            message ??= $"Hello {staff.FirstName}<br /><p>Please navigate to:<br />" +
-                        $"<a href='{resetPasswordUrl}' title='{resetPasswordUrl}' target='_blank' rel='noopener'>" +
-                        $"{resetPasswordUrl}</a><br />" +
-                        $" and create a new password for {staff.Email} using Forgot Password.</p>";
+            // Ensure that the controller name includes the Identity folder
+            resetLink = resetLink.Replace("/Account", "/Identity/Account");
+
+            message = $"Please reset your password by clicking <a href='{HtmlEncoder.Default.Encode(resetLink)}'>here</a>.";
             try
             {
-                
-                await _emailSender.SendOneAsync(staff.FullName, staff.Email,
-                "Account Registration", message);
+                await _emailSender.SendOneAsync(staff.FullName, staff.Email, "Account Registration", message);
                 TempData["message"] = $"Invitation email sent to {staff.FullName} at {staff.Email}";
             }
             catch (Exception)
             {
                 TempData["message"] = $"Could not send Invitation email to {staff.FullName} at {staff.Email}";
             }
-
         }
+
 
 
         private bool StaffExists(int id)
