@@ -17,6 +17,9 @@ namespace WMBA_4.Models
         [Display(Name = "Status")]
         public bool Status { get; set; } = true;
 
+        [Display(Name = "Ranking")]
+        public int Ranking { get; set; }
+
         [Display(Name = "Division")]
         public int DivisionID { get; set; }
 

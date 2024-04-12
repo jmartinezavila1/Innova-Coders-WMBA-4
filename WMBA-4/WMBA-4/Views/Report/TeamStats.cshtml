@@ -1,133 +1,887 @@
 ﻿@model IEnumerable<WMBA_4.ViewModels.TeamStatsVM>
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<IdentityUser> UserManager
 @{
-    ViewData["Title"] = "Player Stats";
+    ViewData["Title"] = "Team Stats";
 }
+@{
+    ViewData["Title"] = "Index";
+
+    // Get the current user
+    var user = await UserManager.GetUserAsync(User);
+
+    // Check if the user is in the "Scorekeeper" role
+    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
+}
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Report" asp-action="TeamStats">Team Stats</a>
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
+<div class="f-in-flex justify-content-end">
+    <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
+            aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
+        Filter/Search @ViewData["numberFilters"]
+    </button>
+</div>
+<div class="p-in-flex">
+    <form asp-action="TeamStats" method="get">
+        <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
+        <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
+        <div class="form-horizontal">
+            <div class="collapse" id="collapseFilter">
+                <div class="card card-body bg-light">
+                    <div class="row">
+                        <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the team's name you want to search for">
+                            <label class="control-label">Search Team Name:</label>
+                            @Html.TextBox("SearchString", null, new { @class = "form-control" })
+                        </div>
+
+                        <div class="form-group col-md-4 align-self-end" data-toggle="tooltip" data-placement="top" title="Click to apply the filter">
+                            <input id="filter-button" type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
+                            <a asp-action="TeamStats" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Click to clear filter">Clear</a>
+                        </div>
+                        <div class="form-group">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
 
 
-<h1>Team stats</h1>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Team)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.G)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.H)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RBI)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Singles)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Doubles)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Triples)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.BB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PA)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AB)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Run)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HBP)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SO)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Out)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AVG)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OBP)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SLG)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OPS)
-            </th>
+        <div class="table-responsive mt-3">
+            @* added from modal *@
+            <div class="form-row">
+                <div class="form-group col-md-12">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">Page Size: </span>
+                        </div>
+                        @Html.DropDownList("pageSizeID", null, htmlAttributes: new
+                        {
+                        @class = "form-control form-select text-center mx-1",
+                        @data_toggle = "tooltip",
+                        @data_placement = "top",
+                        @title = "Select the page size"
+                        })
+                        <div class="input-group-append" data-toggle="tooltip" data-placement="top" title="Click to set page size">
+                            <input id="set-page-button" type="submit" class="btn btn-kelly" value="Set Page Size" />
+                        </div>
 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Team)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.G)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.H)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.RBI)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Singles)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Doubles)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Triples)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HR)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.BB)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PA)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.AB)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Run)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.HBP)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SO)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Out)
-                </td>
-                <td>
-                    @item.AVG.ToString("F3")
-                </td>
-                <td>
-                    @item.OBP.ToString("F3")
-                </td>
-                <td>
-                    @item.SLG.ToString("F3")
-                </td>
-                <td>
-                    @item.OPS.ToString("F3")
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                    </div>
+
+                </div>
+                <div>
+                    <input type="hidden" id="compareTeams" name="compareTeams" value="false" />
+                    <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareteams"
+                            data-toggle="tooltip" data-placement="top" title="Click to Compare two or more teams">
+                        Compare teams
+                    </button>
+                    <input type="hidden" id="validateRankings" name="validateRankings" value="false" />
+                    <button id="ranking-button" class="btn btn-outline-dark me-1" type="submit"
+                            data-toggle="tooltip" data-placement="top" title="Click to Set the ranking of the desired teams">
+                        Set Rankings
+                    </button>
+                </div>
+            </div>
+
+            @if (ViewBag.ErrorMessages != null)
+            {
+                foreach (var errorMessage in ViewBag.ErrorMessages)
+                {
+                    <div class="alert alert-danger">
+                        @errorMessage
+                    </div>
+                }
+            }
+            <table class="table-two giro-table table-bordered">
+                <thead>
+                    <tr>
+                        <th>
+                            <div class="t-in-flex"><span>Select </span></div>
+                        </th>
+                        <th>
+                            <div class="t-in-flex"><span>Ranking </span></div>
+                        </th>
+                        <th style="width: 7rem;">
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Team" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort Team" />
+                                @if (ViewData["sortField"].ToString() == "Team")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="G" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Game played" />
+                                @if (ViewData["sortField"].ToString() == "G")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="H" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Hits" />
+                                @if (ViewData["sortField"].ToString() == "H")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="RBI" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Runs Batted In" />
+                                @if (ViewData["sortField"].ToString() == "RBI")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Singles" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Bases 1" />
+                                @if (ViewData["sortField"].ToString() == "Sinles")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Doubles" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Bases 2" />
+                                @if (ViewData["sortField"].ToString() == "Doubles")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Triples" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Bases 3" />
+                                @if (ViewData["sortField"].ToString() == "Triples")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="HR" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Homeruns" />
+                                @if (ViewData["sortField"].ToString() == "HR")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="BB" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Base on Balls" />
+                                @if (ViewData["sortField"].ToString() == "BB")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="PA" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Plate Appearance" />
+                                @if (ViewData["sortField"].ToString() == "PA")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="AB" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of At Bat" />
+                                @if (ViewData["sortField"].ToString() == "AB")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Run" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Runs" />
+                                @if (ViewData["sortField"].ToString() == "Run")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="HBP" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Hits by Pitch" />
+                                @if (ViewData["sortField"].ToString() == "HBP")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="SO" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Strike Outs" />
+                                @if (ViewData["sortField"].ToString() == "SO")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="Out" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Number of Outs" />
+                                @if (ViewData["sortField"].ToString() == "Out")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="AVG" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by Batting Average" />
+                                @if (ViewData["sortField"].ToString() == "AVG")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="OBP" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by On-Base Percentage" />
+                                @if (ViewData["sortField"].ToString() == "OBP")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="SLG" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by On-Base Slugging" />
+                                @if (ViewData["sortField"].ToString() == "SLG")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+                        <th>
+                            <div class="d-flex justify-content-center">
+                                <input type="submit" name="actionButton" value="OPS" class="text-column me-2" data-toggle="tooltip" data-placement="top" title="Click to sort by (On-base Percentage plus Slugging Percentage)" />
+                                @if (ViewData["sortField"].ToString() == "OPS")
+                                {
+                                    <div>
+                                        @if (ViewData["sortDirection"].ToString() == "asc")
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Ascending">
+                                                <i class="fa-solid fa-sort-up"></i>
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Sorted Descending">
+                                                <i class="fa-solid fa-sort-down"></i>
+                                            </span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Ascending">
+                                            <i class="fa-solid fa-sort-up"></i>
+                                        </span>
+                                        <span class="material-icons-outlined ms-1 ft-kelly" data-toggle="tooltip" data-placement="top" title="Click to sort Descending">
+                                            <i class="fa-solid fa-sort-down" style="display: none;"></i>
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                        </th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <input type="checkbox" name="selectedTeams" value="@item.ID" />
+                            </td>
+                            <td>
+                                <input type="number" class="team-ranking" name="teamRankings[@item.ID]" value="@(ViewBag.TeamRankings.ContainsKey(item.ID) ? ViewBag.TeamRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Team)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.G)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.H)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.RBI)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Singles)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Doubles)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Triples)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HR)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.BB)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.PA)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.AB)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Run)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.HBP)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.SO)
+                            </td>
+                            <td>
+                                @Html.DisplayFor(modelItem => item.Out)
+                            </td>
+                            <td>
+                                @item.AVG.ToString("F3")
+                            </td>
+                            <td>
+                                @item.OBP.ToString("F3")
+                            </td>
+                            <td>
+                                @item.SLG.ToString("F3")
+                            </td>
+                            <td>
+                                @item.OPS.ToString("F3")
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <partial name="_PagingNavBar" />
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $('[data-toggle="tooltip"]').each(function () {
+            var tooltip = $(this);
+            tooltip.tooltip({
+                boundary: 'window'
+            }).on('show.bs.tooltip', function () {
+                tooltip.tooltip('dispose');
+                tooltip.tooltip({
+                    boundary: 'window'
+                });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            $('#compare-button').on('click', function (e) {
+                $('#compareTeams').val('true');
+            });
+
+            // Handle the click event of the compare button
+            $('#ranking-button').on('click', function (e) {
+                var seenValues = {};
+                var hasDuplicates = false;
+
+
+
+                // Iterate over each input in the form
+                $('.team-ranking').each(function () {
+                    var value = $(this).val();
+                    var name = $(this).attr('name');
+
+                    console.log('Checking input with name ' + name + ' and value ' + value);
+
+                    $('#validateRankings').val('true');
+                    // If the input is empty, disable it
+                    if (value === '' && name !== 'sortDirection' && name !== 'SearchString' && name !== 'page' && name !== 'pageSizeID' && name !== 'actionButton' && name !== 'sortField') {
+                        $(this).prop('disabled', true);
+                    } else if (value !== '') { // Only add non-empty values to seenValues
+                        // If we've seen this value before, set hasDuplicates to true
+                        if (seenValues[value]) {
+                            console.log('Duplicate value found: ' + value);
+                            hasDuplicates = true;
+                        }
+
+                        // Record that we've seen this value
+                        seenValues[value] = true;
+                    }
+                });
+
+                // If there are duplicate values, prevent the form from being submitted
+                if (hasDuplicates) {
+                    e.preventDefault();
+                    alert('Please do not enter duplicate rankings.');
+                }
+
+
+            });
+        });
+    </script>
+    }
+

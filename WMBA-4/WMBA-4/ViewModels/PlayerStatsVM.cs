@@ -34,5 +34,6 @@ namespace WMBA_4.ViewModels
         public double OBP { get; set; }
         public double SLG { get; set; }
         public double OPS { get; set; }
+   
     }
 }
