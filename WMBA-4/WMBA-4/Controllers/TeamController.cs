@@ -248,9 +248,11 @@ namespace WMBA_4.Controllers
             }
             // Get the coach of the team
             var coach = team.TeamStaff.FirstOrDefault(ts => ts.Staff.Roles.Description == "Coach")?.Staff;
+            var scoreK = team.TeamStaff.FirstOrDefault(ts => ts.Staff.Roles.Description == "Scorekeeper")?.Staff;
 
             // Pass the coach to the view 
             ViewBag.Coach = coach;
+            ViewBag.Scorekeeper = scoreK;
 
             ViewBag.OpponentTeams = opponentTeams;
             ViewData["Players"] = players.ToList();
