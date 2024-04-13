@@ -300,7 +300,7 @@ namespace WMBA_4.Controllers
         {
             var convenorEmail = User.Identity.Name;
             //var user = await _userManager.FindByEmailAsync(convenorEmail);
-            List<string> allowedDivisions = await GetAllowedDivisionsAsync(convenorEmail);
+            List<string> allowedDivisions = await GetConvenorDivisionsAsync(convenorEmail);
 
             var game = new Game
             {
@@ -337,28 +337,7 @@ namespace WMBA_4.Controllers
             return View(game);
         }
 
-             private async Task<List<string>> GetAllowedDivisionsAsync(string convenorEmail)
-             {
-                 var user = await _userManager.FindByEmailAsync(convenorEmail);
-                  if (user != null)
-                  {
-                         var roles = await _userManager.GetRolesAsync(user);
-
-                         switch (roles.FirstOrDefault())
-                         {
-                            case "RookieConvenor":
-                                   return new List<string> { "9U" };
-                            case "IntermediateConvenor":
-                                return new List<string> { "11U", "13U" };
-                            case "SeniorConvenor":
-                                return new List<string> { "15U", "18U" };
-                            default:
-                                return new List<string> { "9U", "11U", "13U", "15U", "18U" };
-                         }
-                  }
-                    return new List<string>();
-             }
-
+            
         // POST: Game/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
