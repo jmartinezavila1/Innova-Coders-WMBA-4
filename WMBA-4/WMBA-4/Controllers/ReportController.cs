@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using System.Drawing;
 using WMBA_4.CustomControllers;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -20,7 +23,7 @@ namespace WMBA_4.Controllers
 
         #region PlayerStats
         //Method to display the PlayerStats
-        public async Task<IActionResult> PlayerStats(string SearchString,int? page, int? pageSizeID, string actionButton, string sortDirection = "asc", string sortField = "Player", List<int> selectedPlayers = null, Dictionary<int, string> playerRankings = null, bool validateRankings = false,bool comparePlayers=false)
+        public async Task<IActionResult> PlayerStats(string SearchString, int? page, int? pageSizeID, string actionButton, string sortDirection = "asc", string sortField = "Player", List<int> selectedPlayers = null, Dictionary<int, string> playerRankings = null, bool validateRankings = false, bool comparePlayers = false)
         {
             IQueryable<PlayerStatsVM> playerStats = _context.PlayerStats;
 
@@ -110,7 +113,7 @@ namespace WMBA_4.Controllers
                 }
                 else
                 {
-                    playerStats = playerStats .OrderByDescending(p => p.RBI);
+                    playerStats = playerStats.OrderByDescending(p => p.RBI);
                 }
             }
             else if (sortField == "Singles")
@@ -249,7 +252,7 @@ namespace WMBA_4.Controllers
             {
                 if (sortDirection == "asc")
                 {
-                    playerStats = playerStats .OrderBy(p => p.OBP);
+                    playerStats = playerStats.OrderBy(p => p.OBP);
                 }
                 else
                 {
@@ -279,7 +282,7 @@ namespace WMBA_4.Controllers
                 }
             }
 
-            if (comparePlayers)                   
+            if (comparePlayers)
             {
                 //Filter by selected players for comparation
 
@@ -288,13 +291,13 @@ namespace WMBA_4.Controllers
                     playerStats = playerStats.Where(p => selectedPlayers.Contains(p.ID));
                 }
             }
-           
+
 
             //For adding player rankings
             playerRankings = playerRankings ?? new Dictionary<int, string>();
             List<string> errorMessages = new List<string>();
 
-            if (validateRankings) 
+            if (validateRankings)
             {
                 foreach (var playerRanking in playerRankings)
                 {
@@ -331,7 +334,7 @@ namespace WMBA_4.Controllers
                     await _context.SaveChangesAsync();
                 }
             }
-            
+
 
             var playerStatsList = await playerStats.ToListAsync();
 
@@ -689,5 +692,246 @@ namespace WMBA_4.Controllers
 
         #endregion
 
+        #region PlayerStatsDownload
+        public async Task<IActionResult> DowloadPlayerStats()
+        {
+            //For Score
+            var scoreRep = _context.PlayerStats
+                .OrderBy(p => p.ID)
+                .Select(s => new
+                {
+                    Player_Name = s.Player,
+                    Jersey_Number = s.JerseyNumber,
+                    Team = s.Team,
+                    G = s.G,
+                    H = s.H,
+                    RBI = s.RBI,
+                    Singles = s.Singles,
+                    Doubles = s.Doubles,
+                    Triples = s.Triples,
+                    HR = s.HR,
+                    BB = s.BB,
+                    PA = s.PA,
+                    AB = s.AB,
+                    Run = s.Run,
+                    HBP = s.HBP,
+                    SO = s.SO,
+                    Out = s.Out,
+                    AVG = s.AVG,
+                    OBP = s.OBP,
+                    SLG = s.SLG,
+                    OPS = s.OPS,
+
+                })
+               .AsNoTracking();
+
+            var seasonRep = await _context.Seasons
+                .Select(s => s.SeasonCode)
+                .FirstOrDefaultAsync();
+
+            int numRowsSC = scoreRep.Count();
+
+            //Create a new spreadsheet from scratch.
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                if (numRowsSC > 0) //We have data
+                {
+                    var workSheetD = excel.Workbook.Worksheets.Add("Score_by_Player");
+
+
+                    //Note: Cells[row, column]
+                    workSheetD.Cells[3, 1].LoadFromCollection(scoreRep, true);
+
+                    // Change the header names
+                    workSheetD.Cells["G3"].Value = "1B";
+                    workSheetD.Cells["H3"].Value = "2B";
+                    workSheetD.Cells["I3"].Value = "3B";
+
+                    //Format for decimal numbers    
+                    int numRows = scoreRep.Count();
+                    workSheetD.Cells["R4:R" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["S4:S" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["T4:T" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["U4:U" + numRows].Style.Numberformat.Format = "#.000";
+
+                    //Set Style and backgound colour of headings
+                    using (ExcelRange headings = workSheetD.Cells[3, 1, 3, 21])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#5EC22E"));
+                    }
+
+                    //Autofit columns
+                    workSheetD.Cells.AutoFitColumns();
+                    //Note: You can manually set width of columns as well
+                    //workSheet.Column(7).Width = 10;
+
+                    //Add a title and timestamp at the top of the report
+                    workSheetD.Cells[1, 1].Value = "Score by Player";
+
+                    using (ExcelRange Rng = workSheetD.Cells[1, 1, 1, 21])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    //Since the time zone where the server is running can be different, adjust to 
+                    //Local for us.
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheetD.Cells[2, 3])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Season " + seasonRep + " Report.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not download the report.");
+                    }
+
+
+                }
+            }
+            return BadRequest("No data to download.");
+
+        }
+
+        #endregion
+
+        #region TeamStatsDownload
+
+        public async Task<IActionResult> DowloadTeamStats()
+        {
+            //For Score
+            var scoreRep = _context.TeamStats
+                .OrderBy(p => p.ID)
+                .Select(s => new
+                {
+                    Team = s.Team,
+                    G = s.G,
+                    H = s.H,
+                    RBI = s.RBI,
+                    Singles = s.Singles,
+                    Doubles = s.Doubles,
+                    Triples = s.Triples,
+                    HR = s.HR,
+                    BB = s.BB,
+                    PA = s.PA,
+                    AB = s.AB,
+                    Run = s.Run,
+                    HBP = s.HBP,
+                    SO = s.SO,
+                    Out = s.Out,
+                    AVG = s.AVG,
+                    OBP = s.OBP,
+                    SLG = s.SLG,
+                    OPS = s.OPS,
+
+                })
+               .AsNoTracking();
+
+            var seasonRep = await _context.Seasons
+                .Select(s => s.SeasonCode)
+                .FirstOrDefaultAsync();
+
+            int numRowsSC = scoreRep.Count();
+
+            //Create a new spreadsheet from scratch.
+            using (ExcelPackage excel = new ExcelPackage())
+            {
+                if (numRowsSC > 0) //We have data
+                {
+                    var workSheetD = excel.Workbook.Worksheets.Add("Score_by_Team");
+
+
+                    //Note: Cells[row, column]
+                    workSheetD.Cells[3, 1].LoadFromCollection(scoreRep, true);
+
+                    // Change the header names
+                    workSheetD.Cells["G3"].Value = "1B";
+                    workSheetD.Cells["H3"].Value = "2B";
+                    workSheetD.Cells["I3"].Value = "3B";
+
+                    //Format for decimal numbers    
+                    int numRows = scoreRep.Count();
+                    workSheetD.Cells["R4:R" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["S4:S" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["T4:T" + numRows].Style.Numberformat.Format = "#.000";
+                    workSheetD.Cells["U4:U" + numRows].Style.Numberformat.Format = "#.000";
+
+                    //Set Style and backgound colour of headings
+                    using (ExcelRange headings = workSheetD.Cells[3, 1, 3, 19])
+                    {
+                        headings.Style.Font.Bold = true;
+                        var fill = headings.Style.Fill;
+                        fill.PatternType = ExcelFillStyle.Solid;
+                        fill.BackgroundColor.SetColor(ColorTranslator.FromHtml("#5EC22E"));
+                    }
+
+                    //Autofit columns
+                    workSheetD.Cells.AutoFitColumns();
+                    //Note: You can manually set width of columns as well
+                    //workSheet.Column(7).Width = 10;
+
+                    //Add a title and timestamp at the top of the report
+                    workSheetD.Cells[1, 1].Value = "Score by Team";
+
+                    using (ExcelRange Rng = workSheetD.Cells[1, 1, 1, 19])
+                    {
+                        Rng.Merge = true; //Merge columns start and end range
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 18;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    }
+
+                    //Since the time zone where the server is running can be different, adjust to 
+                    //Local for us.
+                    DateTime utcDate = DateTime.UtcNow;
+                    TimeZoneInfo esTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+                    DateTime localDate = TimeZoneInfo.ConvertTimeFromUtc(utcDate, esTimeZone);
+                    using (ExcelRange Rng = workSheetD.Cells[2, 3])
+                    {
+                        Rng.Value = "Created: " + localDate.ToShortTimeString() + " on " +
+                            localDate.ToShortDateString();
+                        Rng.Style.Font.Bold = true; //Font should be bold
+                        Rng.Style.Font.Size = 12;
+                        Rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Right;
+                    }
+
+                    try
+                    {
+                        Byte[] theData = excel.GetAsByteArray();
+                        string filename = "Season " + seasonRep + " Report.xlsx";
+                        string mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+                        return File(theData, mimeType, filename);
+                    }
+                    catch (Exception)
+                    {
+                        return BadRequest("Could not download the report.");
+                    }
+
+
+                }
+            }
+            return BadRequest("No data to download.");
+
+        }
+        #endregion
     }
 }

@@ -81,17 +81,34 @@
                     </div>
 
                 </div>
-                <div>
-                    <input type="hidden" id="compareTeams" name="compareTeams" value="false" />
-                    <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareteams"
-                            data-toggle="tooltip" data-placement="top" title="Click to Compare two or more teams">
-                        Compare teams
-                    </button>
-                    <input type="hidden" id="validateRankings" name="validateRankings" value="false" />
-                    <button id="ranking-button" class="btn btn-outline-dark me-1" type="submit"
-                            data-toggle="tooltip" data-placement="top" title="Click to Set the ranking of the desired teams">
-                        Set Rankings
-                    </button>
+                <div class="form-group col-md-12">
+                    <div class="d-flex justify-content-start">
+                        <div>
+                            <input type="hidden" id="compareTeams" name="compareTeams" value="false" />
+                            <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareteams"
+                                    data-toggle="tooltip" data-placement="top" title="Click to Compare two or more teams"
+                                    style="width: 120px;">
+                                Compare
+                            </button>
+                        </div>
+
+                        <div>
+                            <input type="hidden" id="validateRankings" name="validateRankings" value="false" />
+                            <button id="ranking-button" class="btn btn-outline-dark me-1" type="submit"
+                                    data-toggle="tooltip" data-placement="top" title="Click to Set the ranking of the desired teams"
+                                    style="width: 120px;">
+                                Set Rankings
+                            </button>
+                        </div>
+
+                        <div>
+                            <button id="download-button" class="btn btn-outline-dark me-1" type="submit"
+                                    data-toggle="tooltip" asp-action="DowloadTeamStats" data-placement="top" title="Click to download the report"
+                                    style="width: 120px;">
+                                Download
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
