@@ -261,9 +261,12 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team/Create
-        public IActionResult Create()
+        public async Task<IActionResult> CreateAsync()
         {
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+            var convenorEmail = User.Identity.Name;
+            //var user = await _userManager.FindByEmailAsync(convenorEmail);
+            List<string> allowedDivisions = await GetConvenorDivisionsAsync(convenorEmail);
+            ViewData["DivisionID"] = new SelectList(_context.Divisions.Where(d => allowedDivisions.Contains(d.DivisionName)), "ID", "DivisionName"); ;
 
 
             var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
@@ -325,6 +328,7 @@ namespace WMBA_4.Controllers
         // GET: Team/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+
             if (id == null || _context.Teams == null)
             {
                 return NotFound();
@@ -339,7 +343,11 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
+            var convenorEmail = User.Identity.Name;
+            //var user = await _userManager.FindByEmailAsync(convenorEmail);
+            List<string> allowedDivisions = await GetConvenorDivisionsAsync(convenorEmail);
+            ViewData["DivisionID"] = new SelectList(_context.Divisions.Where(d => allowedDivisions.Contains(d.DivisionName)), "ID", "DivisionName", team.DivisionID);
+            
 
             if (!team.Status) // Check if team is inactive
             {
