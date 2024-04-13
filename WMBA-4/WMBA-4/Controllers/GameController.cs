@@ -296,18 +296,21 @@ namespace WMBA_4.Controllers
 
         [Authorize(Roles = "Admin,RookieConvenor, IntermediateConvenor, SeniorConvenor")]
         // GET: Game/Create
-        public IActionResult Create(int id)
+        public async Task<IActionResult> Create(int id)
         {
-            //Game game = new Game();
+            var convenorEmail = User.Identity.Name;
+            //var user = await _userManager.FindByEmailAsync(convenorEmail);
+            List<string> allowedDivisions = await GetAllowedDivisionsAsync(convenorEmail);
+
             var game = new Game
             {
                 TeamGames = new List<TeamGame> // Create a new List<TeamGame> to hold the collection of TeamGame objects
                 {
-                    _context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).FirstOrDefault()
+                   _context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).FirstOrDefault()
                 }
             };
 
-            var divisions = _context.Divisions.ToList();
+            var divisions = _context.Divisions.Where(d => allowedDivisions.Contains(d.DivisionName)).ToList();
             var firstDivisionId = divisions.FirstOrDefault()?.ID;
 
             var locationMembers = _context.Locations.ToList();
@@ -324,16 +327,37 @@ namespace WMBA_4.Controllers
             ViewBag.SelectedLocationIds = selectedLocalIds;
 
             ViewBag.Teams = new SelectList(_context.Teams.Where(t => t.DivisionID == firstDivisionId), "TeamID", "TeamName");
-            //ViewData["Divisions"] = new SelectList(_context.TeamGame.Include(tg => tg.Team).ThenInclude(t => t.Division).Select(tg => tg.Team.Division).Distinct(), "DivisionID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes, "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations, "ID", "LocationName");
             ViewData["SeasonID"] = new SelectList(_context.Seasons, "ID", "SeasonName");
-            ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
+            ViewData["DivisionID"] = new SelectList(divisions, "ID", "DivisionName");
             ViewBag.Teams = new SelectList(_context.Teams, "ID", "Name");
             ViewBag.TeamID = id;
 
             return View(game);
         }
+
+             private async Task<List<string>> GetAllowedDivisionsAsync(string convenorEmail)
+             {
+                 var user = await _userManager.FindByEmailAsync(convenorEmail);
+                  if (user != null)
+                  {
+                         var roles = await _userManager.GetRolesAsync(user);
+
+                         switch (roles.FirstOrDefault())
+                         {
+                            case "RookieConvenor":
+                                   return new List<string> { "9U" };
+                            case "IntermediateConvenor":
+                                return new List<string> { "11U", "13U" };
+                            case "SeniorConvenor":
+                                return new List<string> { "15U", "18U" };
+                            default:
+                                return new List<string> { "9U", "11U", "13U", "15U", "18U" };
+                         }
+                  }
+                    return new List<string>();
+             }
 
         // POST: Game/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
