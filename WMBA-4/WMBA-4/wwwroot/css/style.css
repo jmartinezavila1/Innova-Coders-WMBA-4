@@ -296,10 +296,24 @@ table tdoby tr td {
     .t-in-flex {
         flex-direction: column;
     }
+   
+}
+
+@media (max-width: 621px) {
+    .m-in-flex {
+        flex-direction: column;
+    }
+    #compare-button{
+        margin-top:5px;
+        margin-bottom:5px;
+    }
+    #viewRanking-button {
+        margin-top: 5px;
+        margin-bottom: 5px;
+    }
 }
 
 @media (min-width: 768px) {
-
     .px-6 {
         padding-left: 5rem !important;
         padding-right: 5rem !important;
@@ -403,6 +417,7 @@ table tdoby tr td {
     border-top-left-radius: 30px;
     border-bottom-left-radius: 30px;
     padding-left: 1rem; /*table left side padding*/
+    padding-right: 1rem; /*table left side padding*/
 }
 
 @media (max-width: 390px) {
@@ -416,6 +431,7 @@ table tdoby tr td {
 .giro-table td:last-child {
     border-top-right-radius: 30px;
     border-bottom-right-radius: 30px;
+    padding-right: 1rem; /*table left side padding*/
 }
 
 @media (max-width: 390px) {
@@ -452,6 +468,13 @@ table tdoby tr td {
     display: flex;
     justify-content: center;
     flex-direction: column;
+}
+
+.m-in-flex {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    margin-top: 20px;
 }
 
 .f-in-flex {
@@ -520,9 +543,9 @@ table tdoby tr td {
     /*color: var(--ft-kelly);*/
 }
 
-    .material-symbols-outlined:hover {
-        color: var(--ft-dark-blue); /*in the index operation hovers*/
-    }
+    /*.material-symbols-outlined:hover {
+        color: var(--ft-dark-blue);*/ /*in the index operation hovers*/
+    /*}*/
 
 .inactive-player td:not(:last-child),
 .inactive-team td:not(:last-child),

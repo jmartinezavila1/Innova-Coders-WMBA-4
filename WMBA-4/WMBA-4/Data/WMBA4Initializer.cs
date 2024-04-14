@@ -136,9 +136,6 @@ namespace WMBA_4.Data
                         new Role { ID = 5, Description = "RookieConvenor" },
                         new Role { ID = 6, Description = "IntermediateConvenor" },
                         new Role { ID = 7, Description = "SeniorConvenor" },
-                        new Role { ID = 8, Description = "Scorekeeper" },
-
-
                     };
 
                     context.Roles.AddRange(roles);

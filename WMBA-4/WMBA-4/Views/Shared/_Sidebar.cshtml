@@ -33,7 +33,7 @@
         @* Coach *@
         @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach"))
         {
-            <div class="sb-sidenav-menu-heading">Coach Access</div>
+            <div class="sb-sidenav-menu-heading">Coach</div>
             <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
             <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
             <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsRep" aria-expanded="true" aria-controls="collapseLayouts">
@@ -41,10 +41,10 @@
                 <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
             </a>
             <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="PlayerStats">By Player</a>
+                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="PlayerStats">Player Stats</a>
             </div>
             <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="TeamStats">By Team</a>
+                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="TeamStats">Team Stats</a>
             </div>
         }
         @* Coach *@
@@ -52,8 +52,8 @@
         @* Scorekeeper *@
         @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach") || User.IsInRole("Scorekeeper"))
         {
-            <div class="sb-sidenav-menu-heading">Scorekeeper Access</div>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Scorekeeper</a>
+            <div class="sb-sidenav-menu-heading">Scorekeeper</div>
+            <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Upcoming Games</a>
         }
         @* Coach *@
         <div class="sb-sidenav-menu-heading">Help</div>

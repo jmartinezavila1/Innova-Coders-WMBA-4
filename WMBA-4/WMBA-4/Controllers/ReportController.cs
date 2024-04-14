@@ -37,7 +37,7 @@ namespace WMBA_4.Controllers
             int numberFilters = 0;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Player", "G", "H", "RBI", "Singles", "Doubles", "Triples", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
+            string[] sortOptions = new[] { "Player", "G", "H", "RBI", "1B", "2B", "3B", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
 
             //filter
 
@@ -116,7 +116,7 @@ namespace WMBA_4.Controllers
                     playerStats = playerStats.OrderByDescending(p => p.RBI);
                 }
             }
-            else if (sortField == "Singles")
+            else if (sortField == "1B")
             {
                 if (sortDirection == "asc")
                 {
@@ -127,7 +127,7 @@ namespace WMBA_4.Controllers
                     playerStats = playerStats.OrderByDescending(p => p.Singles);
                 }
             }
-            else if (sortField == "Doubles")
+            else if (sortField == "2B")
             {
                 if (sortDirection == "asc")
                 {
@@ -138,7 +138,7 @@ namespace WMBA_4.Controllers
                     playerStats = playerStats.OrderByDescending(p => p.Doubles);
                 }
             }
-            else if (sortField == "Triples")
+            else if (sortField == "3B")
             {
                 if (sortDirection == "asc")
                 {
@@ -372,7 +372,7 @@ namespace WMBA_4.Controllers
             int numberFilters = 0;
 
             //sorting sortoption array
-            string[] sortOptions = new[] { "Team", "G", "H", "RBI", "Singles", "Doubles", "Triples", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
+            string[] sortOptions = new[] { "Team", "G", "H", "RBI", "1B", "2B", "3B", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
 
             //filter
 
@@ -451,7 +451,7 @@ namespace WMBA_4.Controllers
                     teamStats = teamStats.OrderByDescending(p => p.RBI);
                 }
             }
-            else if (sortField == "Singles")
+            else if (sortField == "1B")
             {
                 if (sortDirection == "asc")
                 {
@@ -462,7 +462,7 @@ namespace WMBA_4.Controllers
                     teamStats = teamStats.OrderByDescending(p => p.Singles);
                 }
             }
-            else if (sortField == "Doubles")
+            else if (sortField == "2B")
             {
                 if (sortDirection == "asc")
                 {
@@ -473,7 +473,7 @@ namespace WMBA_4.Controllers
                     teamStats = teamStats.OrderByDescending(p => p.Doubles);
                 }
             }
-            else if (sortField == "Triples")
+            else if (sortField == "3B")
             {
                 if (sortDirection == "asc")
                 {
