@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Org.BouncyCastle.Pqc.Crypto.Lms;
 using SQLitePCL;
 using WMBA_4.Data;
 using WMBA_4.Models;
@@ -2451,7 +2452,11 @@ namespace WMBA_4.Controllers
             inplay.Balls = 0;
             inplay.Strikes = 0;
             inplay.Fouls = 0;
-            await _context.SaveChangesAsync();
+            if(inplay!=null)
+            {
+                await _context.SaveChangesAsync();
+            }
+            
         }
 
         public async void MovePlayer(Inplay inplay)
@@ -2517,55 +2522,118 @@ namespace WMBA_4.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Exit(int id, string exitType)
+        public async Task<IActionResult> Exit(int id, string exitType,int teamId)
         {
-            var inplay = await _context.Inplays.FindAsync(id);
 
-            var GameID = await _context.Innings
-                .Where(i => i.ID == inplay.InningID)
-                .Select(i => i.GameID)
-                .FirstOrDefaultAsync();
+            string alertMessage ="";
 
-            var Game = await _context.Games.FindAsync(GameID);
 
-            if (inplay == null)
-            {
-                return NotFound();
-            }
+                var inplay = await _context.Inplays.FindAsync(id);
 
-            if (exitType == "End Game")
-            {
-                //Mark the Inplay for deletion
-
-                _context.Inplays.Remove(inplay);
-                Game.Status = false;
-
-                // Save changes to the database
-                await _context.SaveChangesAsync();
-            }
-            if (exitType == "Cancel Game")
-            {
-                var scoreplayers = await _context.ScorePlayers
-                    .Where(sp => sp.GameLineUp.GameID == GameID)
-                    .ToListAsync();
+                var GameID = await _context.Innings
+                    .Where(i => i.ID == inplay.InningID)
+                    .Select(i => i.GameID)
+                    .FirstOrDefaultAsync();
 
                 var innings = await _context.Innings
-                    .Where(i => i.GameID == GameID)
-                    .ToListAsync();
+                        .Where(i => i.GameID == GameID)
+                        .ToListAsync();
+
+                var Game = await _context.Games.FindAsync(GameID);
+
+                if (inplay == null)
+                {
+                    return NotFound();
+                }
+
+                if (exitType == "End Game")
+                {
+                    //Mark the Inplay for deletion
+
+                    _context.Inplays.Remove(inplay);
+                    Game.Status = false;
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+                    alertMessage = "The game has ended and the information has been saved.";
+            }
+                if (exitType == "Cancel Game")
+                {
+                    var scoreplayers = await _context.ScorePlayers
+                        .Where(sp => sp.GameLineUp.GameID == GameID)
+                        .ToListAsync();
 
 
-                _context.Inplays.Remove(inplay);
-                _context.ScorePlayers.RemoveRange(scoreplayers);
-                _context.Innings.RemoveRange(innings);
-                Game.Status = false;
+                    _context.Inplays.Remove(inplay);
+                    _context.ScorePlayers.RemoveRange(scoreplayers);
+                    _context.Innings.RemoveRange(innings);
+                    Game.Status = false;
 
-                // Save changes to the database
-                await _context.SaveChangesAsync();
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+                    alertMessage = "The game has been canceled, so the statistics have been deleted. The convenor may reschedule this game.";
+
 
 
             }
+            if (exitType == "Forfeit")
+                {
+                    var scoreplayers = await _context.ScorePlayers
+                        .Where(sp => sp.GameLineUp.GameID == GameID)
+                        .ToListAsync();
 
-            return Json(new { redirectTo = Url.Action("Index", "ScorePlayer") });
+                    var lastInning = await _context.Innings
+                    .Where(i => i.GameID == GameID)
+                    .OrderByDescending(i => i.InningNumber)
+                    .FirstOrDefaultAsync();
+
+                    var teamGame = await _context.TeamGame
+                        .Where(tg => tg.GameID == GameID && tg.TeamID == teamId)
+                        .FirstOrDefaultAsync();
+
+                    var teamGameScores = await _context.TeamGame
+                        .Where(tg => tg.GameID == GameID)
+                        .ToListAsync();
+
+                // Obtén las puntuaciones de ambos equipos
+                var scoreTeam1 = teamGameScores[0].score.HasValue ? teamGameScores[0].score.Value : 0;
+                var scoreTeam2 = teamGameScores[1].score.HasValue ? teamGameScores[1].score.Value : 0;
+
+                // Calcula la diferencia de puntuación
+                var scoreDifference = Math.Abs(scoreTeam1 - scoreTeam2);
+
+                if (scoreDifference >= 10 && (lastInning != null && lastInning.InningNumber >= 5))
+                {
+                    _context.Inplays.Remove(inplay);
+                    Game.Status = false;
+                    alertMessage = "The game has been canceled due to forfeit; the statistics will be saved.";
+                }
+                else if (teamGameScores.Count == 2 && teamGameScores[0].score == 0 && teamGameScores[1].score == 0)
+                    {
+
+                        _context.Inplays.Remove(inplay);
+                        _context.ScorePlayers.RemoveRange(scoreplayers);
+                        _context.Innings.RemoveRange(innings);
+                        Game.Status = false;
+                        teamGame.score = 3;
+                        alertMessage = "The game is canceled due to forfeit; 3 runs will be added to this team, and it will be declared the winner";
+
+                    }
+                    else
+                    {
+                        // Ninguna de las condiciones anteriores se cumplió, envía una alerta
+                        alertMessage = "The requirements to be considered a forfeit are not met.";
+                       return Json(new {message = alertMessage, success = true });
+                }
+
+                    // Save changes to the database
+                    await _context.SaveChangesAsync();
+
+
+                }
+
+
+            return Json(new { redirectTo = Url.Action("Index", "ScorePlayer"), message = alertMessage, success = true });
         }
 
         [HttpPost]
