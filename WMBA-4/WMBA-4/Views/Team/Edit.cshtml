@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit";
 }
 
-@* page navigation *@
+
 <nav aria-label="breadcrumb">
     <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
         <li class="breadcrumb-item">
@@ -20,7 +20,7 @@
         </li>
     </ol>
 </nav>
-@* page navigation *@
+
 
 <h3>@Model.Name</h3>
 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -34,21 +34,14 @@
                 <input asp-for="Name" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
-            <div>
-                <div class="mb-2">
-                    <button type="button" class="btn btn-kelly" data-toggle="modal" data-target="#addCoachModal">
-                        <i class="fas fa-plus"></i>
-                    </button>
-                    <label asp-for="TeamStaff" class="control-label">Add Team Staff</label>
-                </div>
+            <div class="form-group">
+                <label class="control-label">Scorekeepers</label>
+                <select name="ScorekeeperIds" asp-items="ViewBag.ScorekeeperIds" class="form-control form-select" multiple></select>
+            </div>
 
-                <select id="SelectedStaffIds" name="SelectedStaffIds" asp-for="TeamStaff" class="form-control mb-3" multiple>
-                    @foreach (var item in ViewBag.StaffId as MultiSelectList)
-                    {
-                        var isSelected = ViewBag.SelectedStaffIds.Contains(item.Value) ? "selected" : null;
-                        <option value="@item.Value" selected="@isSelected">@item.Text</option>
-                    }
-                </select>
+            <div class="form-group">
+                <label class="control-label">Coaches</label>
+                <select name="CoachIds" asp-items="ViewBag.CoachIds" class="form-control form-select" multiple></select>
             </div>
 
             <div class="form-group">
@@ -100,33 +93,5 @@
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-    <script>
-        $(document).ready(function () {
-            $('#saveCoachBtn').click(function () {
-                var firstName = $('#coachFirstName').val();
-                var lastName = $('#coachLastName').val();
-                var email = $('#coachEmail').val();
 
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("AddCoach", "Team")',
-                    data: { firstName: firstName, lastName: lastName, email: email },
-                    success: function (data) {
-                        // Append the new coach to the select options
-                        $('#TeamStaff').append('<option value="' + data.id + '">' + data.name + '</option>');
-
-                        // Close the modal
-                        document.getElementById('addCoachModal').classList.remove('show');
-                    },
-                    error: function () {
-                        alert('Error occurred while adding coach.');
-                    }
-                });
-            });
-            $('#addCoachModal').on('hidden.bs.modal', function () {
-
-                $('#addCoachForm')[0].reset();
-            });
-        });
-    </script>
 }

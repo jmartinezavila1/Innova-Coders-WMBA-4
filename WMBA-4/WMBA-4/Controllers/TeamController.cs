@@ -263,20 +263,34 @@ namespace WMBA_4.Controllers
         // GET: Team/Create
         public async Task<IActionResult> CreateAsync()
         {
+         
+
+         
             var convenorEmail = User.Identity.Name;
             //var user = await _userManager.FindByEmailAsync(convenorEmail);
             List<string> allowedDivisions = await GetConvenorDivisionsAsync(convenorEmail);
             ViewData["DivisionID"] = new SelectList(_context.Divisions.Where(d => allowedDivisions.Contains(d.DivisionName)), "ID", "DivisionName"); ;
+            // Filter staff members based on their roles
+            var scorekeeperStaff = _context.Staff.Where(s => s.Roles.Description == "Scorekeeper").ToList();
+            var coachStaff = _context.Staff.Where(s => s.Roles.Description == "Coach").ToList();
 
-
-            var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
-            var staffSelectItems = staffMembers.Select(s => new SelectListItem
+            // Create select items for scorekeepers and coaches
+            var scorekeeperSelectItems = scorekeeperStaff.Select(s => new SelectListItem
             {
                 Value = s.ID.ToString(),
-                Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
+                Text = $"{s.FirstName} {s.LastName}"
             });
 
-            ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text");
+            var coachSelectItems = coachStaff.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.FirstName} {s.LastName}"
+            });
+
+            
+            // Pass select items and selected staff IDs to the view
+            ViewBag.ScorekeeperIds = new MultiSelectList(scorekeeperSelectItems, "Value", "Text");
+            ViewBag.CoachIds = new MultiSelectList(coachSelectItems, "Value", "Text");
 
             return View();
         }
@@ -285,8 +299,9 @@ namespace WMBA_4.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("Team/Create/")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID,Name,DivisionID")] Team team, List<int> TeamStaff)
+        public async Task<IActionResult> Create([Bind("ID,Name,DivisionID")] Team team,  List<int> ScorekeeperIds, List<int> CoachIds)
         {
             try
             {
@@ -295,10 +310,15 @@ namespace WMBA_4.Controllers
                     _context.Add(team);
                     await _context.SaveChangesAsync();
 
-                    foreach (var id in TeamStaff)
+                    foreach (var staffId in ScorekeeperIds)
                     {
-                        var teamStaff = new TeamStaff { TeamID = team.ID, StaffID = id };
-                        _context.Add(teamStaff);
+                        var teamStaffsck = new TeamStaff { TeamID = team.ID, StaffID = staffId };
+                        _context.Add(teamStaffsck);
+                    }
+                    foreach (var staffId in CoachIds)
+                    {
+                        var teamStaffcoach = new TeamStaff { TeamID = team.ID, StaffID = staffId };
+                        _context.Add(teamStaffcoach);
                     }
 
                     await _context.SaveChangesAsync();
@@ -326,9 +346,10 @@ namespace WMBA_4.Controllers
         }
 
         // GET: Team/Edit/5
+        [HttpGet]
+        [Route("Team/Edit/{id}")]
         public async Task<IActionResult> Edit(int? id)
         {
-
             if (id == null || _context.Teams == null)
             {
                 return NotFound();
@@ -338,48 +359,58 @@ namespace WMBA_4.Controllers
                 .Include(t => t.TeamStaff).ThenInclude(ts => ts.Staff)
                 .FirstOrDefaultAsync(t => t.ID == id);
 
-            //var team = await _context.Teams.FindAsync(id);
             if (team == null)
             {
                 return NotFound();
             }
+
             var convenorEmail = User.Identity.Name;
-            //var user = await _userManager.FindByEmailAsync(convenorEmail);
             List<string> allowedDivisions = await GetConvenorDivisionsAsync(convenorEmail);
             ViewData["DivisionID"] = new SelectList(_context.Divisions.Where(d => allowedDivisions.Contains(d.DivisionName)), "ID", "DivisionName", team.DivisionID);
-            
 
-            if (!team.Status) // Check if team is inactive
-            {
-                TempData["ErrorMessage"] = "The team is inactive, you cannot edit this team.";
-                return RedirectToAction("Index");
-            }
+            // Filter staff members based on their roles
+            var scorekeeperStaff = _context.Staff.Where(s => s.Roles.Description == "Scorekeeper").ToList();
+            var coachStaff = _context.Staff.Where(s => s.Roles.Description == "Coach").ToList();
 
-
-            var staffMembers = _context.Staff.Include(s => s.Roles).ToList();
-            var staffSelectItems = staffMembers.Select(s => new SelectListItem
+            // Create select items for scorekeepers and coaches
+            var scorekeeperSelectItems = scorekeeperStaff.Select(s => new SelectListItem
             {
                 Value = s.ID.ToString(),
-                Text = $"{s.FirstName} {s.LastName} - {s.Roles.Description}"
+                Text = $"{s.FirstName} {s.LastName}"
             });
 
+            var coachSelectItems = coachStaff.Select(s => new SelectListItem
+            {
+                Value = s.ID.ToString(),
+                Text = $"{s.FirstName} {s.LastName}"
+            });
 
-            var selectedStaffIds = team.TeamStaff.Select(ts => ts.StaffID.ToString()).ToList();
+            // Get the selected staff IDs
+            var selectedScorekeeperIds = team.TeamStaff
+                .Where(ts => ts.Staff != null && ts.Staff.Roles != null && ts.Staff.Roles.Description == "Scorekeeper")
+                .Select(ts => ts.StaffID.ToString())
+                .ToList();
 
-            ViewData["StaffId"] = new MultiSelectList(staffSelectItems, "Value", "Text", selectedStaffIds);
+            var selectedCoachIds = team.TeamStaff
+                .Where(ts => ts.Staff != null && ts.Staff.Roles != null && ts.Staff.Roles.Description == "Coach")
+                .Select(ts => ts.StaffID.ToString())
+                .ToList();
 
-
-            ViewBag.SelectedStaffIds = selectedStaffIds;
+            // Pass select items and selected staff IDs to the view
+            ViewBag.ScorekeeperIds = new MultiSelectList(scorekeeperSelectItems, "Value", "Text", selectedScorekeeperIds);
+            ViewBag.CoachIds = new MultiSelectList(coachSelectItems, "Value", "Text", selectedCoachIds);
 
             return View(team);
         }
+
 
         // POST: Team/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
+        [Route("Team/Edit/{id}")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,DivisionID")] Team team, List<int> SelectedStaffIds)
+        public async Task<IActionResult> Edit(int id, [Bind("ID,Name,DivisionID")] Team team, List<int> ScorekeeperIds, List<int> CoachIds)
         {
             if (id != team.ID)
             {
@@ -395,13 +426,19 @@ namespace WMBA_4.Controllers
                     _context.TeamStaff.RemoveRange(existingStaffMembers);
 
 
-                    foreach (var staffId in SelectedStaffIds)
+                    foreach (var staffId in ScorekeeperIds)
                     {
-                        var teamStaff = new TeamStaff { TeamID = id, StaffID = staffId };
-                        _context.Add(teamStaff);
+                        var teamStaffsck = new TeamStaff { TeamID = id, StaffID = staffId };
+                        _context.Add(teamStaffsck);
+                    }
+                    foreach (var staffId in CoachIds)
+                    {
+                        var teamStaffcoach = new TeamStaff { TeamID = id, StaffID = staffId };
+                        _context.Add(teamStaffcoach);
                     }
                     _context.Update(team);
                     await _context.SaveChangesAsync();
+
                 }
                 catch (RetryLimitExceededException)
                 {
@@ -434,41 +471,7 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName", team.DivisionID);
             return View("Details", new List<WMBA_4.Models.Team> { team });
         }
-        [HttpPost]
-        public async Task<IActionResult> AddCoach(string firstName, string lastName, string email)
-        {
-            try
-            {
-
-                var coachRole = await _context.Roles.FirstOrDefaultAsync(r => r.Description == "Coach");
-                if (coachRole == null)
-                {
-                    ModelState.AddModelError("", "The Coach role does not exist.");
-                    return BadRequest(ModelState);
-                }
-
-
-                var coach = new Staff
-                {
-                    FirstName = firstName,
-                    LastName = lastName,
-                    Email = email,
-                    Status = true,
-                    RoleId = coachRole.ID
-                };
-
-
-                _context.Staff.Add(coach);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { id = coach.ID, name = $"{coach.FirstName} {coach.LastName}" });
-            }
-            catch (Exception)
-            {
-                ModelState.AddModelError("", "An error occurred while adding the coach.");
-                return BadRequest(ModelState);
-            }
-        }
+        
 
         // GET: Team/Delete/5
         public async Task<IActionResult> Delete(int? id)
