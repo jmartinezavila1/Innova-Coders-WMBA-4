@@ -108,6 +108,13 @@
                                 Download
                             </button>
                         </div>
+                        <div>
+                            <button id="viewRanking-button" class="btn btn-outline-dark me-1" type="submit"
+                                    data-toggle="tooltip" asp-action="PlayerRanking" data-placement="top" title="Click to view the player's ranking"
+                                    style="width: 160px;">
+                                View Ranking
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -767,7 +774,7 @@
                     {
                         <tr>
                             <td>
-                                <input type="checkbox" name="selectedPlayers" value="@item.ID" />
+                                <input type="checkbox" name="selectedTeams" value="@item.ID" />
                             </td>
                             <td>
                                 <input type="number" class="player-ranking" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />

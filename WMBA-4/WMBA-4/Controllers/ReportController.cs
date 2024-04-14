@@ -641,15 +641,15 @@ namespace WMBA_4.Controllers
                         continue;
                     }
 
-                    var team = _context.Players.Find(teamRanking.Key);
+                    var team = _context.Teams.Find(teamRanking.Key);
                     if (team != null)
                     {
                         if (int.TryParse(teamRanking.Value, out int ranking) && ranking != 0)
                         {
-                            var existingTeamWithSameRanking = _context.Players.FirstOrDefault(p => p.Ranking == ranking);
+                            var existingTeamWithSameRanking = _context.Teams.FirstOrDefault(p => p.Ranking == ranking);
                             if (existingTeamWithSameRanking != null)
                             {
-                                errorMessages.Add($"Ranking {ranking} is already in use for Team {existingTeamWithSameRanking.Team}. Please choose a different ranking.");
+                                errorMessages.Add($"Ranking {ranking} is already in use for Team {existingTeamWithSameRanking.Name}. Please choose a different ranking.");
                             }
                             else
                             {
@@ -931,6 +931,28 @@ namespace WMBA_4.Controllers
             }
             return BadRequest("No data to download.");
 
+        }
+        #endregion
+
+        #region PlayerRankings
+
+        public ActionResult PlayerRanking()
+        {
+            var players = _context.Players.Where(p => p.Ranking != 0).ToList();
+            var topPlayers = players.OrderBy(p => p.Ranking).Take(4).ToList();
+
+            return View(topPlayers);
+        }
+        #endregion
+
+        #region TeamRankings
+
+        public ActionResult TeamRanking()
+        {
+            var teams = _context.Teams.Where(p => p.Ranking != 0).ToList();
+            var topTeams = teams.OrderBy(p => p.Ranking).Take(4).ToList();
+
+            return View(topTeams);
         }
         #endregion
     }
