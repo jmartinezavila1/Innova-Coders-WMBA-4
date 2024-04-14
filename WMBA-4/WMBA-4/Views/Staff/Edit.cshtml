@@ -54,6 +54,13 @@
         </div>
         <div class="col-md-4">
             <div class="form-group">
+                <label asp-for="SelectedTeamID" class="control-label"></label>
+                <select asp-for="SelectedTeamID" class="form-control" asp-items="ViewBag.Teams">
+                    <!-- Add an empty option tag -->
+                    <option value=""></option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label asp-for="Roles" class="control-label"></label>
                 <div class="list-group">
                     @{
@@ -85,6 +92,32 @@
 
 
 @section Scripts {
+    <script>
+        $(document).ready(function () {
+
+            function toggleTeamListbox() {
+                var selectedRoles = $("input[name='selectedRoles']:checked");
+
+
+                var isCoachOrScorekeeper = selectedRoles.toArray().some(function (role) {
+                    return role.value === "Coach" || role.value === "Scorekeeper";
+                });
+
+
+                if (isCoachOrScorekeeper) {
+                    $('#SelectedTeamID').prop('disabled', false);
+                    $('#SelectedTeamID').val('');
+                } else {
+                    $('#SelectedTeamID').prop('disabled', true);
+                    $('#SelectedTeamID').val('');
+                }
+            }
+
+
+            toggleTeamListbox();
+            $('input[name="selectedRoles"]').change(toggleTeamListbox);
+        });
+    </script>
     
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
