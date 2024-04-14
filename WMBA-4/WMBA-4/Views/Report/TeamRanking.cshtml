@@ -1,0 +1,29 @@
+﻿@model List<Team>
+
+
+<h1>Teams Ranking</h1>
+<table class="table-two giro-table table-bordered">
+    <thead>
+        <tr>
+            <th>Team Name</th>
+            <th>Ranking</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var player in Model)
+        {
+            <tr>
+                <td>@player.Name</td>
+                <td>@player.Ranking</td>
+                <td>
+                    <span class="material-symbols-outlined ft-kelly px-2">
+                        emoji_events
+                    </span>
+                </td>
+            </tr>
+        }
+
+    </tbody>
+</table>
+
