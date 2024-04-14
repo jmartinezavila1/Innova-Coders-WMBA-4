@@ -209,15 +209,11 @@ namespace WMBA_4.Controllers
             return View(staff);
         }
 
-        // POST: Employees/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to, for 
-        // more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, bool Active, string[] selectedRoles)
         {
-            var staffToUpdate = await _context.Staff
-                .FirstOrDefaultAsync(m => m.ID == id);
+            var staffToUpdate = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
             if (staffToUpdate == null)
             {
                 return NotFound();
@@ -227,7 +223,7 @@ namespace WMBA_4.Controllers
             var currentUser = await _userManager.GetUserAsync(User);
             if (currentUser.Email == staffToUpdate.Email)
             {
-                ModelState.AddModelError("", "You cannot change your own role.");                
+                ModelState.AddModelError("", "You cannot change your own role.");
             }
 
             var user = await _userManager.FindByEmailAsync(staffToUpdate.Email);
@@ -237,25 +233,27 @@ namespace WMBA_4.Controllers
 
             if (rolesUpdated)
             {
-                var staff = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
-                if (staff != null)
-                {
-                    await SendRoleUpdateEmail(staff.Email, selectedRoles);
-                }
+                await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
+
+                // Update RoleId in the Staff table based on the selected role
+                var roleId = await _context.Roles
+                    .Where(r => selectedRoles.Contains(r.Description))
+                    .Select(r => r.ID)
+                    .FirstOrDefaultAsync();
+
+                staffToUpdate.RoleId = roleId;
             }
 
-            
             bool ActiveStatus = staffToUpdate.Status;
             string databaseEmail = staffToUpdate.Email;
 
-
             if (await TryUpdateModelAsync<Staff>(staffToUpdate, "",
-                e => e.FirstName, e => e.LastName, e => e.Email, e => e.Status))
+                s => s.FirstName, s => s.LastName, s => s.Email, s => s.Status))
             {
                 try
                 {
                     await _context.SaveChangesAsync();
-                    
+
                     if (staffToUpdate.Status == false && ActiveStatus == true)
                     {
                         await DeleteIdentityUser(staffToUpdate.Email);
@@ -266,20 +264,12 @@ namespace WMBA_4.Controllers
                     }
                     else if (staffToUpdate.Status == true && ActiveStatus == true)
                     {
-                        
                         if (staffToUpdate.Email != databaseEmail)
                         {
-                        
                             InsertIdentityUser(staffToUpdate.Email, selectedRoles);
                             await DeleteIdentityUser(databaseEmail);
                         }
-                        else
-                        {
-                            
-                            await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
-                        }
                     }
-
 
                     return RedirectToAction(nameof(Index));
                 }
@@ -306,7 +296,7 @@ namespace WMBA_4.Controllers
                     }
                 }
             }
-            
+
             StaffAdminVM staffAdminVM = new StaffAdminVM
             {
                 Email = staffToUpdate.Email,
