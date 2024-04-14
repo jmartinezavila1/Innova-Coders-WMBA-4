@@ -188,20 +188,52 @@ namespace WMBA_4.Controllers
                     ID = e.ID,
                     FirstName = e.FirstName,
                     LastName = e.LastName,
-                
                 }).FirstOrDefaultAsync();
 
             if (staff == null)
             {
                 return NotFound();
             }
-                        
+
             var user = await _userManager.FindByEmailAsync(staff.Email);
             if (user != null)
             {
-                //Add the current roles
+                // Add the current roles
                 var r = await _userManager.GetRolesAsync(user);
                 staff.Roles = (List<string>)r;
+            }
+
+            // Fetch teams associated with the coach or scorekeeper
+            var associatedTeams = await _context.TeamStaff
+                .Where(ts => ts.StaffID == id)
+                .Select(ts => ts.Team)
+                .ToListAsync();
+
+            // Fetch all teams
+            var allTeams = await _context.Teams.ToListAsync();
+
+            // Create a list to hold SelectListItems for all teams
+            List<SelectListItem> teamList = new List<SelectListItem>();
+
+            
+
+            // Add all other teams to the team list
+            foreach (var team in allTeams)
+            {
+                // Skip the associated team as it's already added to the list
+                if (associatedTeams.Any(at => at.ID == team.ID))
+                    continue;
+
+                teamList.Add(new SelectListItem { Value = team.ID.ToString(), Text = team.Name });
+            }
+
+            // Populate the dropdown list with the team list
+            ViewBag.Teams = teamList;
+
+            // Set the selected team to the first team that the coach or scorekeeper is assigned to
+            if (associatedTeams.Any())
+            {
+                ViewBag.SelectedTeamID = associatedTeams.First().ID;
             }
 
             PopulateAssignedRoleData(staff);
@@ -210,8 +242,9 @@ namespace WMBA_4.Controllers
         }
 
         [HttpPost]
+        [Route("Staff/Edit")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, bool Active, string[] selectedRoles)
+        public async Task<IActionResult> Edit(int id, bool Active, string[] selectedRoles, StaffAdminVM staffVM)
         {
             var staffToUpdate = await _context.Staff.FirstOrDefaultAsync(m => m.ID == id);
             if (staffToUpdate == null)
@@ -269,6 +302,18 @@ namespace WMBA_4.Controllers
                             InsertIdentityUser(staffToUpdate.Email, selectedRoles);
                             await DeleteIdentityUser(databaseEmail);
                         }
+                    }
+                    var team = await _context.Teams.FindAsync(staffVM.SelectedTeamID);
+                    if (team != null)
+                    {
+                        // Remove existing team associations
+                        _context.TeamStaff.RemoveRange(_context.TeamStaff.Where(ts => ts.StaffID == staffToUpdate.ID));
+
+                        // Add the new team association
+                        team.TeamStaff.Add(new TeamStaff { StaffID = staffToUpdate.ID, TeamID = team.ID });
+
+                        // Save changes to the database
+                        await _context.SaveChangesAsync();
                     }
 
                     return RedirectToAction(nameof(Index));
