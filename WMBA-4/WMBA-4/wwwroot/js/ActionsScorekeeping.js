@@ -292,7 +292,8 @@
                 e.preventDefault();
                 var exitType = $(this).text();
                 var inplayId = parseInt($('#inplayId').val(), 10);
-
+                var teamId = $(this).data('teamid');
+              
                 // if user click on "End Game"
                 if ($(this).text() === 'End Game') {
                     // shows an alert to confirm the action
@@ -301,11 +302,17 @@
                         $.ajax({
                             url: '/ScorePlayer/Exit',
                             type: 'POST',
-                            data: { id: inplayId, exitType: exitType },
+                            data: { id: inplayId, exitType: exitType, teamId: teamId },
                             success: function (data) {
-                                if (data.redirectTo) {
-                                    window.location.href = data.redirectTo;
+                                if (data.message) {
+                                    alert(data.message);
                                 }
+                                if (data.redirectTo) {
+                                    setTimeout(function () {
+                                        window.location.href = data.redirectTo;
+                                    }, 2000);
+                                }
+
                             }
                         });
                     } else {
@@ -320,12 +327,47 @@
                         $.ajax({
                             url: '/ScorePlayer/Exit',
                             type: 'POST',
-                            data: { id: inplayId, exitType: exitType },
+                            data: { id: inplayId, exitType: exitType, teamId: teamId },
                             success: function (data) {
-                                if (data.redirectTo) {
-                                    window.location.href = data.redirectTo;
+                                if (data.message) {
+                                    alert(data.message);
                                 }
+                                if (data.redirectTo) {
+                                    setTimeout(function () {
+                                        window.location.href = data.redirectTo;
+                                    }, 2000);
+                                }
+
                             }
+                        });
+                    } else {
+
+                    }
+                }
+                // if the user clicked "Forfeits"
+                if ($(this).text() === 'Forfeit') {
+                    // shows the alert to confirm the action
+                    if (confirm('Are you sure you want to this game as a Forfeit?')) {
+
+                        $.ajax({
+                            url: '/ScorePlayer/Exit',
+                            type: 'POST',
+                            data: { id: inplayId, exitType: exitType, teamId: teamId },
+                            success: function (data) {
+                                if (data.message) {
+                                    alert(data.message);
+                                }
+                                if (data.redirectTo) {
+                                    setTimeout(function () {
+                                        window.location.href = data.redirectTo;
+                                    }, 2000);
+                                }
+                               
+                            },
+                            error: function (jqXHR, textStatus, errorThrown) {
+                                console.log(textStatus, errorThrown); // shoe error message
+                            }
+                            
                         });
                     } else {
 
