@@ -178,6 +178,9 @@ namespace WMBA_4.Controllers
             {
                 return NotFound();
             }
+            var selectedCoachTeamID = _context.TeamStaff
+                .Where(ts => ts.StaffID == id)
+                .Select(ts => ts.TeamID).FirstOrDefault();
 
             var staff = await _context.Staff
                 .Where(e => e.ID == id)
@@ -188,6 +191,7 @@ namespace WMBA_4.Controllers
                     ID = e.ID,
                     FirstName = e.FirstName,
                     LastName = e.LastName,
+                    SelectedTeamID = selectedCoachTeamID
                 }).FirstOrDefaultAsync();
 
             if (staff == null)
@@ -203,38 +207,15 @@ namespace WMBA_4.Controllers
                 staff.Roles = (List<string>)r;
             }
 
-            // Fetch teams associated with the coach or scorekeeper
-            var associatedTeams = await _context.TeamStaff
-                .Where(ts => ts.StaffID == id)
-                .Select(ts => ts.Team)
-                .ToListAsync();
-
-            // Fetch all teams
-            var allTeams = await _context.Teams.ToListAsync();
-
-            // Create a list to hold SelectListItems for all teams
-            List<SelectListItem> teamList = new List<SelectListItem>();
-
-            
-
-            // Add all other teams to the team list
-            foreach (var team in allTeams)
-            {
-                // Skip the associated team as it's already added to the list
-                if (associatedTeams.Any(at => at.ID == team.ID))
-                    continue;
-
-                teamList.Add(new SelectListItem { Value = team.ID.ToString(), Text = team.Name });
-            }
-
-            // Populate the dropdown list with the team list
-            ViewBag.Teams = teamList;
-
-            // Set the selected team to the first team that the coach or scorekeeper is assigned to
-            if (associatedTeams.Any())
-            {
-                ViewBag.SelectedTeamID = associatedTeams.First().ID;
-            }
+            ViewBag.Teams = new SelectList(_context.Teams
+                .Include(t => t.Division)
+                .OrderBy(t => t.Division.ID)
+                .ThenBy(t => t.Name)
+                .Select(t => new
+                {
+                    t.ID,
+                    TeamName = t.Division.DivisionName + " - " + t.Name
+                }), "ID", "TeamName");
 
             PopulateAssignedRoleData(staff);
 

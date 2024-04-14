@@ -57,7 +57,7 @@
                 <label asp-for="SelectedTeamID" class="control-label"></label>
                 <select asp-for="SelectedTeamID" class="form-control" asp-items="ViewBag.Teams">
                     <!-- Add an empty option tag -->
-                    <option value=""></option>
+                    <option value="">Select a Team</option>
                 </select>
             </div>
             <div class="form-group">
@@ -112,7 +112,6 @@
                     $('#SelectedTeamID').val('');
                 }
             }
-
 
             toggleTeamListbox();
             $('input[name="selectedRoles"]').change(toggleTeamListbox);

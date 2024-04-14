@@ -1997,7 +1997,7 @@ progress {
 }
 
     .table-four > :not(caption) > * > *, .datatable-table-four > :not(caption) > * > * {
-        padding: 0.5rem 0.1rem;
+        padding: 0.5rem 0.2rem;
         background-color: var(--bs-table-bg);
         box-shadow: inset 0 0 0 9999px var(--bs-table-accent-bg);
     }
@@ -2019,10 +2019,6 @@ table-four th, table-four td {
 
 .table-four tbody tr {
     margin-bottom: 10px;
-}
-
-.table-four tbody td {
-    padding: 0px;
 }
 
 .table-three, .datatable-table-three {
