@@ -7,7 +7,7 @@
     @* favicon *@
     <link rel="icon" href="~/WMBA-icon-36x36.png" type="image/x-icon" />
     <link rel="shortcut icon" href="~/WMBA-icon-36x36.png" type="image/x-icon" />
-     @* bootstrap *@
+    @* bootstrap *@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
@@ -34,40 +34,70 @@
             <button class="btn btn-link btn-sm order-lg-1 ms-5 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars ft-kelly fs-5"></i></button>
         </div>
         <!-- Navbar Brand-->
-        <a class="navbar-brand d-flex justify-content-center" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/WMBA.png" alt="WBMA logo" class="logo" /></a>
+        <a class="navbar-brand d-flex justify-content-center" asp-area="" asp-controller="Home" asp-action="Index">
+            <img src="~/images/WMBA.png" alt="WBMA logo" class="logo" />
+        </a>
         <!-- Setting-->
         <div class="me-5">
             <div class="flex-shrink-0 dropdown">
-                
                 <a class="nav-link dropdown-toggle" id="navbarDropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" title="Settings">
-                   @*  <i class="fa-solid fa-gear ft-kelly"></i> *@
+                    @*  <i class="fa-solid fa-gear ft-kelly"></i> *@
                     <svg class="svg-inline--fa fa-user fa-fw ft-kelly" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="user" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z"></path></svg>
                 </a>
                 <ul class="dropdown-menu dropdown-menu-lg-end mt-3">
                     @* @await Html.PartialAsync("_LoginPartial") *@
-                    <partial name="_LoginPartial"/>
+                    <partial name="_LoginPartial" />
                 </ul>
             </div>
         </div>
     </nav>
     <div id="layoutSidenav">
-        <div id="layoutSidenav_nav">
-            <nav class="sb-sidenav accordion bg-sidenav" id="sidenavAccordion">
-                <partial name="_Sidebar" />
-            </nav>
-        </div>
-        <div id="layoutSidenav_content">
-            <main>
-                <div class="container-fluid px-6 py-6">
-                    @RenderBody()
-                </div>
-            </main>
-            <footer class="bg-light mt-auto border-top">
-                <div class="container-fluid px-6 py-4">
-                    <partial name="_Footer" />
-                </div>
-            </footer>
-        </div>
+        @if (!User.IsInRole("User"))
+        {
+            <div id="layoutSidenav_nav">
+                <nav class="sb-sidenav accordion bg-sidenav" id="sidenavAccordion">
+                    <partial name="_Sidebar" />
+                </nav>
+            </div>
+            <div id="layoutSidenav_content">
+                <main>
+                    <div class="container-fluid px-6 py-6">
+                        @RenderBody()
+                    </div>
+                </main>
+                <footer class="bg-light mt-auto border-top">
+                    <div class="container-fluid px-6 py-4">
+                        <partial name="_Footer" />
+                    </div>
+                </footer>
+            </div>
+        }
+        else
+        {
+            <div id="layoutSidenav_content" class="p-0">
+                <main>
+                    <div class="container-fluid px-2 py-6">
+                        @RenderBody()
+                        
+                        <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center">
+                            <img src="~/images/WMBA - combine.png" alt="Main Iamge" class="main-image mb-5" />
+                            <div class="col-md-6 p-lg-1 mx-auto">
+                                @* <h4 class="display-3 fw-bold">Welland Minor Baseball Association</h4> *@
+                                <h5 class="fw-normal text-muted mb-3">You need authorization to view this content. 
+                                    <br />Please contact your system administrator.
+                                    <br />We apologize for the inconvenience.
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+                <footer class="bg-light mt-auto border-top">
+                    <div class="container-fluid px-6 py-4">
+                        <partial name="_Footer" />
+                    </div>
+                </footer>
+            </div>
+        }
     </div>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

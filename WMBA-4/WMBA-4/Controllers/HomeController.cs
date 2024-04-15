@@ -17,6 +17,7 @@ namespace WMBA_4.Controllers
         {
             _context = context;
         }
+
         public async Task<IActionResult> Index()
         {
             var today = DateTime.Today;
