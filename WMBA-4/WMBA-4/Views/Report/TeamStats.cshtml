@@ -34,9 +34,9 @@
                 aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
             Filter/Search @ViewData["numberFilters"]
         </button>
-        <input type="hidden" id="comparePlayers" name="comparePlayers" value="false" />
-        <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareplayers"
-                data-toggle="tooltip" data-placement="top" title="Click to Compare two or more players">
+        <input type="hidden" id="compareTeams" name="compareTeams" value="false" />
+        <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareteams"
+                data-toggle="tooltip" data-placement="top" title="Click to Compare two or more teams">
             Compare
         </button>
         @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
@@ -48,11 +48,11 @@
             </button>
         }
         <button id="viewRanking-button" class="btn btn-outline-dark me-1" type="submit"
-                data-toggle="tooltip" asp-action="PlayerRanking" data-placement="top" title="Click to view the player's ranking">
+                data-toggle="tooltip" asp-action="TeamRanking" data-placement="top" title="Click to view the player's ranking">
             View Ranking
         </button>
         <button id="download-button" class="btn btn-outline-dark d-flex justify-content-center me-1" type="submit"
-                data-toggle="tooltip" asp-action="DowloadPlayerStats" data-placement="top" title="Click to download the report">
+                data-toggle="tooltip" asp-action="DowloadTeamStats" data-placement="top" title="Click to download the report">
             <span class="material-symbols-outlined me-0">
                 download
             </span>
@@ -762,7 +762,7 @@
                         {
                             <tr>
                                 <td>
-                                    <input type="checkbox" name="selectedTeams" />
+                                    <input type="checkbox" name="selectedTeams" value="@item.ID" />
                                 </td>
                                 <td>
                                     <input type="number" class="team-ranking" name="teamRankings[@item.ID]" value="@(ViewBag.TeamRankings.ContainsKey(item.ID) ? ViewBag.TeamRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />

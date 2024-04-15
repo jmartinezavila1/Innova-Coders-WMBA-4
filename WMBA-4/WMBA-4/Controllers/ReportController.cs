@@ -628,7 +628,7 @@ namespace WMBA_4.Controllers
             }
 
 
-            //For adding player rankings
+            //For adding Teams rankings
             teamRankings = teamRankings ?? new Dictionary<int, string>();
             List<string> errorMessages = new List<string>();
 
