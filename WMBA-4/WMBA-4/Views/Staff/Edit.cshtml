@@ -20,18 +20,18 @@
         </li>
     </ol>
 </nav>
-<div class="d-flex align-items-center">
-    <h3 class="text-black me-3">@Model.FirstName @Model.LastName</h3>
-    <div class="form-group form-switch m-0">
-        <label class="form-check-label">
-            <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
-        </label>
-    </div>
-</div>
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<hr />
+@* page navigation *@
 <form asp-action="Edit">
+    <div class="d-flex align-items-center">
+        <h3 class="text-black me-3">@Model.FirstName @Model.LastName</h3>
+        <div class="form-group form-switch m-0">
+            <label class="form-check-label">
+                <input class="form-check-input" asp-for="Status" /> @Html.DisplayNameFor(model => model.Status)
+            </label>
+        </div>
+    </div>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <hr />
     <div class="row">
         <div class="col-md-4">
             <input type="hidden" asp-for="ID" />
@@ -59,6 +59,7 @@
                     <!-- Add an empty option tag -->
                     <option value="">Select a Team</option>
                 </select>
+                <span asp-validation-for="SelectedTeamID" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="Roles" class="control-label"></label>
@@ -70,9 +71,9 @@
                             <div class="mb-1">
                                 <div class="form-check form-switch">
                                     <input class="form-check-input" type="radio"
-                                        id="@role.RoleName-CheckBox"
-                                        name="selectedRoles"
-                                        value="@role.RoleName"
+                                           id="@role.RoleName-CheckBox"
+                                           name="selectedRoles"
+                                           value="@role.RoleName"
                                     @(Html.Raw(role.Assigned ? "checked=\"checked\"" : "")) />
                                     <label class="form-check-label" for="@role.RoleName-CheckBox">@role.RoleName</label>
                                 </div>
@@ -117,7 +118,7 @@
             $('input[name="selectedRoles"]').change(toggleTeamListbox);
         });
     </script>
-    
+
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

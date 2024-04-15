@@ -1,64 +1,67 @@
-﻿<div class="sb-sidenav-menu">
-    <div class="nav nav-text">
-        <div class="sb-sidenav-close px-4 pt-1 text-end invisible" style="font-size: 12px;">
-            <div data-bs-theme="dark">
-                <button type="button" class="btn-close" aria-label="Close" id="sidebar-close"></button>
+﻿@if (!User.IsInRole("User"))
+{
+    <div class="sb-sidenav-menu">
+        <div class="nav nav-text">
+            <div class="sb-sidenav-close px-4 pt-1 text-end invisible" style="font-size: 12px;">
+                <div data-bs-theme="dark">
+                    <button type="button" class="btn-close" aria-label="Close" id="sidebar-close"></button>
+                </div>
             </div>
+            @* Admin *@
+            @if (User.IsInRole("Admin"))
+            {
+                <div class="sb-sidenav-menu-heading">Admin</div>
+                <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
+                    Management
+                    <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
+                </a>
+                <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
+                    <a class="nav-link-sub nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Division</a>
+                </div>
+                <a class="nav-link nav-hover" asp-controller="Staff" asp-action="Index">Manage Staff</a>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="EndSeason" asp-action="Index">End Season</a>
+            }
+            @* Admin *@
+
+            @* Quick *@
+            @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+            {
+                <div class="sb-sidenav-menu-heading">Convenor</div>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Teams</a>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
+            }
+            @* Quick *@
+
+            @* Coach *@
+            @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach"))
+            {
+                <div class="sb-sidenav-menu-heading">Coach</div>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
+                <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsRep" aria-expanded="true" aria-controls="collapseLayouts">
+                    Reports
+                    <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
+                </a>
+                <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
+                    <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="PlayerStats">Player Stats</a>
+                </div>
+                <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
+                    <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="TeamStats">Team Stats</a>
+                </div>
+            }
+            @* Coach *@
+
+            @* Scorekeeper *@
+            @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach") || User.IsInRole("Scorekeeper"))
+            {
+                <div class="sb-sidenav-menu-heading">Scorekeeper</div>
+                <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Upcoming Games</a>
+                <div class="sb-sidenav-menu-heading">Help</div>
+                <a class="nav-link nav-hover" href="@Url.Action("Index", "HelpTopic")">
+                    <span>Help Topic</span>
+                </a>
+            }
+            @* Scorekeeper *@
         </div>
-        @* Admin *@
-        @if (User.IsInRole("Admin"))
-        {
-            <div class="sb-sidenav-menu-heading">Admin</div>
-            <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayouts" aria-expanded="true" aria-controls="collapseLayouts">
-                Management
-                <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
-            </a>
-            <div class="collapse" id="collapseLayouts" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-                <a class="nav-link-sub nav-hover" asp-area="" asp-controller="Division" asp-action="Index">Division</a>
-            </div>
-            <a class="nav-link nav-hover" asp-controller="Staff" asp-action="Index">Manage Staff</a>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="EndSeason" asp-action="Index">End Season</a>
-        }
-        @* Admin *@
-
-        @* Quick *@
-        @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
-        {
-            <div class="sb-sidenav-menu-heading">Convenor</div>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="GoToImportPlayers">Import Teams</a>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="Game" asp-action="Index">Game Assignment</a>
-        }
-        @* Quick *@
-
-        @* Coach *@
-        @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach"))
-        {
-            <div class="sb-sidenav-menu-heading">Coach</div>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="Team" asp-action="Index">Teams</a>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="Player" asp-action="Index">Players</a>
-            <a class="nav-link nav-hover collapsed" href="#" data-bs-toggle="collapse" data-bs-target="#collapseLayoutsRep" aria-expanded="true" aria-controls="collapseLayouts">
-                Reports
-                <div class="sb-sidenav-collapse-arrow"><svg class="svg-inline--fa fa-angle-down" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="angle-down" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 512" data-fa-i2svg=""><path fill="currentColor" d="M169.4 342.6c12.5 12.5 32.8 12.5 45.3 0l160-160c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 274.7 54.6 137.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l160 160z"></path></svg><!-- <i class="fas fa-angle-down"></i> Font Awesome fontawesome.com --></div>
-            </a>
-            <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="PlayerStats">Player Stats</a>
-            </div>
-            <div class="collapse" id="collapseLayoutsRep" aria-labelledby="headingOne" data-bs-parent="#sidenavAccordion" style="">
-                <a class="nav-link-sub nav-hover" asp-controller="Report" asp-action="TeamStats">Team Stats</a>
-            </div>
-        }
-        @* Coach *@
-
-        @* Scorekeeper *@
-        @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach") || User.IsInRole("Scorekeeper"))
-        {
-            <div class="sb-sidenav-menu-heading">Scorekeeper</div>
-            <a class="nav-link nav-hover" asp-area="" asp-controller="ScorePlayer" asp-action="Index">Upcoming Games</a>
-        }
-        @* Coach *@
-        <div class="sb-sidenav-menu-heading">Help</div>
-        <a class="nav-link nav-hover" href="@Url.Action("Index", "HelpTopic")">
-            <span>Help Topic</span>
-        </a>
     </div>
-</div>
+}

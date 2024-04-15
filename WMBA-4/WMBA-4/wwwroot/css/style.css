@@ -30,7 +30,7 @@
     /*////background colors////*/
     --bg-hover-kelly: rgba(76, 187, 23, 0.2);
     --bg-hover-grey: rgb(232, 232, 232, 0.5);
-    --bg-kelly: #4CBB17; /* rgb(76, 187, 23)*/
+    --bg-kelly: #2e8b43; /* rgb(76, 187, 23)*/
     --bg-light-kelly: #5EC22E;
     --bg-white: #FFFFFF;
     --bg-light-black: #2B2B2B;
@@ -38,7 +38,7 @@
     --bg-dark-grey: #464646;
     --bg-light-grey: #E4E4E4;
     --bg-light-grey2: #DADADA;
-    --bg-dark-blue: #23314E;
+    --bg-dark-blue: #17254c;
     --bg-breadcrumble: #80858585;
     /*////font colors////*/
     --ft-black: #000000;
@@ -46,8 +46,8 @@
     --ft-light-grey: #E4E4E4;
     --ft-light-grey2: #DADADA;
     --ft-white: #FCFAFA;
-    --ft-kelly: #4CBB17;
-    --ft-dark-blue: #23314E;
+    --ft-kelly: #2e8b43;
+    --ft-dark-blue: #17254c;
     /*////font sizes////*/
     /*px*/
     --scorekeeper: 3rem;
@@ -517,6 +517,10 @@ table tdoby tr td {
 
 .logo {
     width: 7rem;
+}
+
+.main-image {
+    width: 15rem;
 }
 
 .btn-shadow {

@@ -19,12 +19,10 @@
         </li>
     </ol>
 </nav>
-@*<h1>Create New Staff</h1>*@
-
-<div asp-validation-summary="ModelOnly" class="text-danger"></div>
-<hr />
 <form asp-action="Create">
+    <h1>Add New Staff</h1>
     <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <hr />
     <div class="row">
         <div class="col-md-4">
             <input type="hidden" asp-for="Status" />
