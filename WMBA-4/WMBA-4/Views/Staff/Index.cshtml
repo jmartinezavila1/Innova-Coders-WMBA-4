@@ -46,16 +46,20 @@
                             @:  @r <br />
                         }
                     }
-                </td>
-                                <td class="text-center">
+                </td>                
+                
+                <td class="text-center">
+                @if (!item.Roles.Contains("Admin"))
+                {
                     <a asp-action="Edit" asp-route-id="@item.ID" class="btn btn-sm btn-outline-primary"
-                       role="button" data-bs-toggle="tooltip" title="Edit @ViewData["ControllerFriendlyName"]">
+                    role="button" data-bs-toggle="tooltip" title="Edit @ViewData["ControllerFriendlyName"]">
                         &#x270E; Edit
                     </a>
-                    
-                </td>
-                                
+                }
+                </td>               
+                
             </tr>
+
         }
     </tbody>
 </table>
