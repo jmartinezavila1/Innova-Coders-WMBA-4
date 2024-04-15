@@ -764,7 +764,7 @@
                         {
                             <tr>
                                 <td>
-                                    <input type="checkbox" name="selectedTeams" value="@item.ID" />
+                                    <input type="checkbox" name="selectedPlayers" value="@item.ID" />
                                 </td>
                                 <td>
                                     <input type="number" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
@@ -834,7 +834,7 @@
         </div>
         <partial name="_PagingNavBar" />
 </form>
-</div>
+
 
 @section Scripts {
     <script>
