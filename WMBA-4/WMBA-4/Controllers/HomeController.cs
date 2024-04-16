@@ -48,7 +48,8 @@ namespace WMBA_4.Controllers
             var seasonCode = await _context.Seasons
                  .Select(s => s.SeasonCode)
                  .FirstOrDefaultAsync();
-
+            ViewBag.playerList = await _context.Players.ToListAsync();
+            ViewBag.teamList = await _context.Teams.ToListAsync();
             ViewBag.Season = seasonCode;
             ViewBag.DivisionCount = divisionCount;
             ViewBag.PlayerCount = playerCount;

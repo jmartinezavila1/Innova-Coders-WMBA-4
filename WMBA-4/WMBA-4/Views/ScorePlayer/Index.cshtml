@@ -144,24 +144,43 @@
                                         <div class="pb-2"><span>@item.GameType.Description</span></div>
                                         <div><span>@item.Location.LocationName</span></div>
                                     </div>
-                                    @for (int i = 0; i < teamGamesList.Count; i++)
+                                    @if (User.IsInRole("Coach"))
                                     {
-                                        <div class="li-flex align-items-center p-1 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
-                                            <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
-                                            <div class="mx-2">
-                                                @if (teamGamesList[i].Team.ID == ViewBag.CoachID)
-                                                {
+                                        @for (int i = 0; i < teamGamesList.Count; i++)
+                                        {
+                                            <div class="li-flex align-items-center p-1 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
+                                                <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
+                                                <div class="mx-2">
+                                                    @if (teamGamesList[i].Team.ID == ViewBag.CoachID)
+                                                    {
+                                                        <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
+                                                            @teamGamesList[i].Team.Name
+                                                        </a>
+                                                    }
+                                                    else
+                                                    {
+                                                        <span>@teamGamesList[i].Team.Name</span>
+                                                    }
+                                                </div>
+                                                <div class="mx-2 text-bold">@teamGamesList[i].score</div>
+                                            </div>
+                                        }
+                                    }
+                                    @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                                    {
+                                        @for (int i = 0; i < teamGamesList.Count; i++)
+                                        {
+                                            <div class="li-flex align-items-center p-1 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
+                                                <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
+                                                <div class="mx-2">
+                                                    @* <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline"> *@
                                                     <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
                                                         @teamGamesList[i].Team.Name
                                                     </a>
-                                                }
-                                                else
-                                                {
-                                                    <span>@teamGamesList[i].Team.Name</span>
-                                                }
+                                                </div>
+                                                <div class="mx-2 text-bold">@teamGamesList[i].score</div>
                                             </div>
-                                            <div class="mx-2 text-bold">@teamGamesList[i].score</div>
-                                        </div>
+                                        }
                                     }
                                 </div>
                             </td>

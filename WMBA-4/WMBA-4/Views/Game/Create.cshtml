@@ -46,26 +46,25 @@
             </div>
             <div class="form-group">
                 <label for="Team2">Visitor Team</label>
-                <select id="Team2" name="Team2" class="form-control form-select" asp-items="ViewBag.Teams"></select>
+                <select id="Team2" name="Team2" class="form-control form-select" asp-items="ViewBag.Teams">
+                </select>
             </div>
             <div>
                 <div class="mb-2">
-                    <button type="button" class="btn btn-kelly" data-toggle="modal" data-target="#addLocationModal">
+                    <button type="button" class="btn btn-kelly" data-toggle="modal" data-target="#addLocationModals">
                         <i class="fas fa-plus"></i>
                     </button>
-                    <label asp-for="Location" class="control-label">Add Location</label>
+                    <label class="control-label">Add Location</label>
                 </div>
-                <select id="SelectedLocationIds" name="LocationID" asp-for="Location" class="form-control form-select mb-3" asp-items="@ViewBag.LocationID">
-                   @*  @foreach (var item in ViewBag.LocationID as MultiSelectList)
-                    {
-                        var isSelected = ViewBag.SelectedLocationIds.Contains(item.Value) ? "selected" : null;
-                        <option value="@item.Value" selected="@isSelected">@item.Text</option>
-                    } *@
+                <select id="SelectedLocationIds" name="LocationID" class="form-control form-select mb-3" asp-items="@ViewBag.LocationID">
+                    <option value="">Select a location</option>
                 </select>
             </div>
             <div class="form-group">
                 <label asp-for="GameTypeID" class="control-label"></label>
-                <select asp-for="GameTypeID" class="form-control form-select" asp-items="ViewBag.GameTypeID"></select>
+                <select asp-for="GameTypeID" class="form-control form-select" asp-items="ViewBag.GameTypeID">
+                    <option value="">Select a game type</option>
+                </select>
             </div>
         </div>
     </div>
@@ -75,7 +74,32 @@
     </div>
 </form>
 
-
+@* Popup Modal *@
+<div class="modal fade" id="addLocationModals" tabindex="-1" role="dialog" aria-labelledby="addLocationModalsLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addLocationModalLabel">Add New Location</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addLocationForm">
+                    <div class="form-group">
+                        <label for="LocationNames">Location Name</label>
+                        <input type="text" class="form-control" id="LocationNames" name="LocationName" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-kelly" id="saveLocationBtns" data-dismiss="modal">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+@* Popup Modal *@
 
 @section Scripts {
     @{
@@ -83,15 +107,15 @@
     }
     <script>
         $(document).ready(function () {
-            $('#saveLocationBtn').click(function () {
-                var locationName = $('#LocationName').val();
+            $('#saveLocationBtns').click(function () {
+                var locationName = $('#LocationNames').val();
                 $.ajax({
                     type: 'POST',
                     url: '@Url.Action("AddLocation", "Game")',
                     data: { locationName: locationName },
                     success: function (data) {
                         $('#SelectedLocationIds').append('<option value="' + data.id + '">' + data.name + '</option>');
-                        $('#addLocationModal').modal('hide');
+                        $('#addLocationModals').modal('hide');
                     },
                     error: function () {
                         alert('Error occurred while adding location.');

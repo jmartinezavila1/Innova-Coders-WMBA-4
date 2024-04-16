@@ -1,0 +1,20 @@
+﻿<table class="table-four giro-table table-bordered">
+    <tbody>
+        @foreach (var player in ViewBag.playerList)
+        {
+            if (player.Ranking > 0)
+            {
+                <tr>
+                    <td>@player.FullName</td>
+                    <td>@player.Ranking</td>
+                    <td>
+                        <span class="material-symbols-outlined ft-kelly px-2">
+                            emoji_events
+                        </span>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+

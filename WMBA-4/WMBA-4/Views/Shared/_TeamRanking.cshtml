@@ -1,0 +1,23 @@
+﻿<table class="table-four giro-table table-bordered">
+    <tbody>
+        @if (ViewBag.teamList != null)
+        {
+            foreach (var team in ViewBag.teamList)
+            {
+                if (team.Ranking > 0)
+                {
+                    <tr>
+                        <td>@team.Name</td>
+                        <td>@team.Ranking</td>
+                        <td>
+                            <span class="material-symbols-outlined ft-kelly px-2">
+                                emoji_events
+                            </span>
+                        </td>
+                    </tr>
+                }
+            }
+        }
+    </tbody>
+</table>
+

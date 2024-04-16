@@ -1,8 +1,25 @@
 ﻿@model List<Player>
 
+@* page navigation *@
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb breadcrumb-chevron p-3 bg-breadcrumble rounded-3">
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis" asp-controller="Home" asp-action="Index">
+                <i class="bi bi-house-door-fill"></i>
+            </a>
+        </li>
+        <li class="breadcrumb-item">
+            <a class="link-body-emphasis fw-semibold text-decoration-none" asp-controller="Report" asp-action="PlayerStats">Player Stats</a>
+        </li>
+        <li class="breadcrumb-item" aria-current="page">
+            Players Ranking
+        </li>
+    </ol>
+</nav>
+@* page navigation *@
 
 <h1>Players Ranking</h1>
-<table class="table-two giro-table table-bordered">
+<table class="table-four giro-table table-bordered">
     <thead>
         <tr>
             <th>Player Name</th>
@@ -23,7 +40,9 @@
                 </td>
             </tr>
         }
-       
     </tbody>
 </table>
+<div class="form-group">
+    <a asp-area="" asp-controller="Report" asp-action="PlayerStats" class="btn btn-outline-secondary mx-1">Back to the Team Stats List</a>
 
+</div>
