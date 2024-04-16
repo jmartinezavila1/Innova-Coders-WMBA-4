@@ -247,7 +247,7 @@ namespace WMBA_4.Controllers
 
             if (rolesUpdated)
             {
-                await UpdateUserRoles(selectedRoles, staffToUpdate.Email);
+                await SendRoleUpdateEmail(user.Email, selectedRoles);
 
                 // Update RoleId in the Staff table based on the selected role
                 var roleId = await _context.Roles
