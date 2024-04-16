@@ -41,9 +41,28 @@
     }
 
         .card-body p {
-            margin: 0;
+            margin: 10px 10px 10px 10px;
+            padding: 10px 10px 10px 10px;
             line-height: 1.6;
+            text-align: justify;
         }
+
+        .card-body img {
+            border: 1px solid #ccc; /* Add border around images */
+        }
+
+    .accordion-img-container {
+        display: flex;
+        justify-content: center; /* Horizontally center the images */
+    }
+
+    .accordion-img {
+        width: 400px;
+        height: auto;
+        padding: 10px 10px 10px 10px;
+        margin: 10px 10px 10px 10px;
+    }
+
 </style>
 <div class="container" id="help">
     <h1 class="mt-5">User Guide</h1>
@@ -61,8 +80,22 @@
 
             <div id="collapseAuthentication" class="collapse" aria-labelledby="headingAuthentication" data-parent="#accordionAuthentication">
                 <div class="card-body">
-                    <p>If you're a new user, click on the "Register" link to create a new account. Otherwise, log in using your existing credentials.</p>
-                    <p>Upon logging in, you'll be directed to the dashboard where you can access various features and functionalities.</p>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/reg1.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>If you're a new user, click on the "<a href="Identity/Account/Register?returnUrl=%2F">Register</a>" link to create a new account.</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/login.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Otherwise, log in using your existing credentials.</b></p>
+                    </div>
+
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/DashBoard.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Upon logging in, you'll be directed to the dashboard where you can access various features and functionalities.<br /> <br />Note: Dash Board Image may be different by role</b></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,8 +114,16 @@
 
             <div id="collapseTeamManagement" class="collapse" aria-labelledby="headingTeamManagement" data-parent="#accordionTeamManagement">
                 <div class="card-body">
-                    <p>Navigate to the "Team" section and select "Import Teams" to add new teams to the database.</p>
-                    <p>Click on "Teams" in the sidebar to view a list of all registered teams.</p>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/ImportTeam.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Navigate to the "CONVENOR" section in the sidebar and select "Import Teams" to add new teams to the database.</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/Addteam.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Navigate to the "COACH" section in the sidebar and select "Teams" to view a list of all registered teams.</b></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -101,8 +142,16 @@
 
             <div id="collapseGameAssignment" class="card-body collapse" aria-labelledby="headingGameAssignment" data-parent="#accordionGameAssignment">
                 <div class="card-body">
-                    <p>Head to the "Game" section to assign games to teams for upcoming matches.</p>
-                    <p>Check the "Game Assignment" page to see a list of scheduled games.</p>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/GameAssigment.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Navigate to the "CONVENOR" section in the sidebar and select "Game Assignment" to see a list of scheduled games</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/GameAssigment1.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Click the "Add Game" to make a new game or click the edit icon to edit the game.</b></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -121,19 +170,26 @@
 
             <div id="collapseScorekeeper" class="collapse" aria-labelledby="headingScorekeeper" data-parent="#accordionScorekeeper">
                 <div class="card-body">
-                    <h3>Using the Scorekeeper</h3>
-                    <p>The Scorekeeper feature allows you to record and manage game scores for baseball matches. Follow these steps to use the Scorekeeper:</p>
-                    <ol>
-                        <li>Login to the application using your credentials.</li>
-                        <li>Navigate to the "Scorekeeper" section in the sidebar.</li>
-                        <li>Select the game for which you want to record scores.</li>
-                        <li>Enter the scores for each team and any additional details required.</li>
-                        <li>Click the "Save" or "Submit" button to record the scores.</li>
-                    </ol>
-                    <h3>Additional Tips</h3>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/Scorekeeper.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Navigate to the "SCOREKEEPER" section in the sidebar and select "Upcoming Games".</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/Scorekeeper2.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Select a Match you are about to score and and select "Start Score".</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/Scorekeeper3.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Select a Team you are about to score and  select "Start Match".</b></p>
+                    </div>
+                    <h5>Additional Tips</h5>
                     <ul>
+                        <b>
                         <li>You can edit or delete scores for a game if needed.</li>
-                        <li>Make sure to double-check the entered scores before saving to ensure accuracy.</li>
+                        <li>Make sure to double-check the entered scores before saving to ensure accuracy.</li></b>
                     </ul>
                 </div>
             </div>
@@ -153,8 +209,17 @@
 
             <div id="collapseReports" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionReports">
                 <div class="card-body">
-                    <p>Access the "Report" section to generate reports based on game statistics, player performance, etc.</p>
-                    <p>View and download generated reports for analysis and sharing.</p>
+                    <p><b>Access the "Report" section to generate reports based on game statistics, player and team performance.</b></p>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/Report1.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>Navigate to the "COACH" section in the sidebar and select "Report" choice what stat do you want to view.</b></p>
+                    </div>
+                    <div class="accordion-img-container">
+                        <!-- Container for image -->
+                        <img src="images/ReportTeam.png" alt="Registration Process" class="img-fluid accordion-img">
+                        <p><b>You can select the player or team you want to download by selecting the check box and click download.</b></p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -173,8 +238,8 @@
 
             <div id="collapseTroubleshooting" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionTroubleshooting">
                 <div class="card-body">
-                    <p>If you encounter any error messages, refer to the documentation or contact support for assistance.</p>
-                    <p>Check your internet connection and ensure that your browser is up-to-date. Clearing browser cache may also resolve some issues.</p>
+                    <p><b>If you encounter any error messages, refer to the documentation or contact support for assistance.</b></p>
+                    <p><b>Check your internet connection and ensure that your browser is up-to-date. Clearing browser cache may also resolve some issues.</b></p>
                 </div>
             </div>
         </div>
@@ -192,7 +257,7 @@
             </div>
             <div id="collapseContactSupport" class="card-body collapse" aria-labelledby="headingReports" data-parent="#accordionContactSupport">
                 <div class="card-body">
-                    <p>If you need further assistance or have any questions, please don't hesitate to contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+                    <p><b>If you need further assistance or have any questions, please don't hesitate to contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</b></p>
                 </div>
             </div>
         </div>
