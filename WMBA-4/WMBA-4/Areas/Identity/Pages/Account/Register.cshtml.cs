@@ -161,7 +161,7 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                          "Thank you for registering an account with us. To activate your account, " +
                          "<ul>" +
                          $"<li> Please confirm your email address by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.<br/></li>" +
-                         "<li> Once your account is confirmed, our administrator will complete verification of your email.<br/><br/></li>" +
+                         "<li> Once your account is confirmed, our administrator will complete verification of your email.<br/></li>" +
                          "<li> After the above process is completed, you can use the website.<br/><br/></li>" +
                          "</ul>" +
                          $"If you have any questions or concerns, please contact us at <a href='mailto:admin@outlook.com'>admin@outlook.com</a>.<br/><br/>" +

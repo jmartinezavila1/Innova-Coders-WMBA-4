@@ -3422,7 +3422,7 @@ textarea.form-control-lg {
 }
 
 .btn-kelly {
-    --bs-btn-color: var(--bg-dark-blue);
+    --bs-btn-color: var(--ft-white);
     --bs-btn-bg: var(--bg-kelly);
     --bs-btn-border-color: var(--bg-kelly);
     --bs-btn-hover-color: #fff;

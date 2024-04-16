@@ -147,7 +147,8 @@ namespace WMBA_4.Controllers
             ViewData["DivisionID"] = new SelectList(_context.Divisions, "ID", "DivisionName");
             ViewData["GameTypeID"] = new SelectList(_context.GameTypes.OrderBy(gt => gt.Description), "ID", "Description");
             ViewData["LocationID"] = new SelectList(_context.Locations.OrderBy(l => l.LocationName), "ID", "LocationName");
-
+            int loginstaffID = _context.Staff.Where(s => s.Email == userEmail).Select(s => s.ID).FirstOrDefault();
+            ViewBag.CoachID = _context.TeamStaff.Where(ts => ts.StaffID == loginstaffID).Select(ts=>ts.TeamID).FirstOrDefault();
             // Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);

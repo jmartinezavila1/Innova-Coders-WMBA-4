@@ -71,9 +71,12 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                     protocol: Request.Scheme);
 
                 await _emailSender.SendEmailAsync(
-                    Input.Email,
-                    "Reset Password",
-                    $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>.");
+                Input.Email,
+                "Reset Password",
+                $"Please reset your password by <a href='{HtmlEncoder.Default.Encode(callbackUrl)}'>clicking here</a>. <br/><br/>" +
+                $"If you have any questions or concerns, please contact us at <a href='mailto:admin@outlook.com'>admin@outlook.com</a>.<br/><br/>" +
+                "Best regards,<br/>Welland Minor Baseball Association");
+
 
                 return RedirectToPage("./ForgotPasswordConfirmation");
             }

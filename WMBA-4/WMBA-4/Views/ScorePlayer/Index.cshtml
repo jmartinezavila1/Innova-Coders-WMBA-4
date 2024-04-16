@@ -149,9 +149,16 @@
                                         <div class="li-flex align-items-center p-1 @(i == teamGamesList.Count - 1 ? "" : "border-bottom")">
                                             <div class="mx-2">@teamGamesList[i].Team.Division.DivisionName</div>
                                             <div class="mx-2">
-                                                <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
-                                                    @teamGamesList[i].Team.Name
-                                                </a>
+                                                @if (teamGamesList[i].Team.ID == ViewBag.CoachID)
+                                                {
+                                                    <a href="@Url.Action("Details", "Team", new { id = teamGamesList[i].Team.ID })" class="ft-kelly text-bold text-hover text-underline">
+                                                        @teamGamesList[i].Team.Name
+                                                    </a>
+                                                }
+                                                else
+                                                {
+                                                    <span>@teamGamesList[i].Team.Name</span>
+                                                }
                                             </div>
                                             <div class="mx-2 text-bold">@teamGamesList[i].score</div>
                                         </div>
