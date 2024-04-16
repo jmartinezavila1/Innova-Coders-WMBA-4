@@ -11,7 +11,7 @@
         <h1 class="mb-3">@ViewData["Title"]</h1>
         <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
             <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
+            @* <div class="form-floating mb-3">
                 <input asp-for="Input.FirstName" class="form-control" aria-required="true" placeholder="First Name" />
                 <label asp-for="Input.FirstName">First Name</label>
                 <span asp-validation-for="Input.FirstName" class="text-danger"></span>
@@ -20,7 +20,7 @@
                 <input asp-for="Input.LastName" class="form-control" aria-required="true" placeholder="Last Name" />
                 <label asp-for="Input.LastName">Last Name</label>
                 <span asp-validation-for="Input.LastName" class="text-danger"></span>
-            </div>
+            </div> *@
             <div class="form-floating mb-3">
                 <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
                 <label asp-for="Input.Email">Email</label>

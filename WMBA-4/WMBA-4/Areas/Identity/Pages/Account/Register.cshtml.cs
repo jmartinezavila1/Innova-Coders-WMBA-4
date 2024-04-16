@@ -76,13 +76,13 @@ namespace WMBA_4.Areas.Identity.Pages.Account
         public class InputModel
         {
 
-            [Required]
-            [Display(Name = "First Name")]
-            public string FirstName { get; set; }
+            //[Required]
+            //[Display(Name = "First Name")]
+            //public string FirstName { get; set; }
 
-            [Required]
-            [Display(Name = "Last Name")]
-            public string LastName { get; set; }
+            //[Required]
+            //[Display(Name = "Last Name")]
+            //public string LastName { get; set; }
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
             ///     directly from your code. This API may change or be removed in future releases.
@@ -136,8 +136,8 @@ namespace WMBA_4.Areas.Identity.Pages.Account
                 {
                     //FirstName = userName,
                     Email = Input.Email,
-                    FirstName = Input.FirstName,
-                    LastName = Input.LastName
+                    //FirstName = Input.FirstName,
+                    //LastName = Input.LastName
                 };
 
                 if (result.Succeeded)
