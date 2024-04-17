@@ -11,7 +11,7 @@
     var user = await UserManager.GetUserAsync(User);
 
     // Check if the user is in the "Scorekeeper" role
-    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
+    // var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
 }
 @* page navigation *@
 <nav aria-label="breadcrumb">
@@ -766,9 +766,9 @@
                                 <td>
                                     <input type="checkbox" name="selectedPlayers" value="@item.ID" />
                                 </td>
-                                <td>
-                                    <input type="number" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
-                                </td>
+                                    <td>
+                                        <input type="number" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
+                                    </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Player)
                                 </td>

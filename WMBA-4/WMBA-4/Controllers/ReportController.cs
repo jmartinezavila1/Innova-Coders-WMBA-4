@@ -373,9 +373,7 @@ namespace WMBA_4.Controllers
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Team", "G", "H", "RBI", "1B", "2B", "3B", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
-
             //filter
-
             if (!String.IsNullOrEmpty(SearchString))
             {
                 teamStats = teamStats.Where(p => p.Team != null && p.Team.ToUpper().Contains(SearchString.ToUpper()));
@@ -680,7 +678,7 @@ namespace WMBA_4.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-
+       
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);
