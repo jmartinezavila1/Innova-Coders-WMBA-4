@@ -23,8 +23,11 @@ namespace WMBA_4.Controllers
 
         #region PlayerStats
         //Method to display the PlayerStats
-        public async Task<IActionResult> PlayerStats(string SearchString, int? page, int? pageSizeID, string actionButton, string sortDirection = "asc", string sortField = "Player", List<int> selectedPlayers = null, Dictionary<int, string> playerRankings = null, bool validateRankings = false, bool comparePlayers = false)
+        public async Task<IActionResult> PlayerStats(string SearchString, int? page, int? pageSizeID, string actionButton, 
+            string sortDirection = "asc", string sortField = "Player", List<int> selectedPlayers = null, 
+            Dictionary<int, string> playerRankings = null, bool validateRankings = false, bool comparePlayers = false)
         {
+
             IQueryable<PlayerStatsVM> playerStats = _context.PlayerStats;
 
             if (playerStats == null)
@@ -309,18 +312,18 @@ namespace WMBA_4.Controllers
                     var player = _context.Players.Find(playerRanking.Key);
                     if (player != null)
                     {
-                        if (int.TryParse(playerRanking.Value, out int ranking) && ranking != 0)
+                        if (int.TryParse(playerRanking.Value, out int ranking))
                         {
-                            var existingPlayerWithSameRanking = _context.Players.FirstOrDefault(p => p.Ranking == ranking);
-                            if (existingPlayerWithSameRanking != null)
-                            {
-                                errorMessages.Add($"Ranking {ranking} is already in use for player {existingPlayerWithSameRanking.FullName}. Please choose a different ranking.");
-                            }
-                            else
-                            {
-                                player.Ranking = ranking;
-                                _context.Update(player);
-                            }
+                            //var existingPlayerWithSameRanking = _context.Players.FirstOrDefault(p => p.Ranking == ranking);
+                            //if (existingPlayerWithSameRanking != null)
+                            //{
+                            //    errorMessages.Add($"Ranking {ranking} is already in use for player {existingPlayerWithSameRanking.FullName}. Please choose a different ranking.");
+                            //}
+                            //else
+                            //{
+                            player.Ranking = ranking;
+                            _context.Update(player);
+                            //}
                         }
                     }
                 }
@@ -335,8 +338,8 @@ namespace WMBA_4.Controllers
                 }
             }
 
-
             var playerStatsList = await playerStats.ToListAsync();
+            var playerList = await _context.Players.OrderBy(p => p.Ranking).ToListAsync();
 
             var playerRank = _context.Players
             .Where(p => p.Ranking != 0)
@@ -373,7 +376,9 @@ namespace WMBA_4.Controllers
 
             //sorting sortoption array
             string[] sortOptions = new[] { "Team", "G", "H", "RBI", "1B", "2B", "3B", "HR", "BB", "PA", "AB", "Run", "HBP", "SO", "Out", "AVG", "OBP", "SLG", "OPS" };
+
             //filter
+
             if (!String.IsNullOrEmpty(SearchString))
             {
                 teamStats = teamStats.Where(p => p.Team != null && p.Team.ToUpper().Contains(SearchString.ToUpper()));
@@ -642,18 +647,18 @@ namespace WMBA_4.Controllers
                     var team = _context.Teams.Find(teamRanking.Key);
                     if (team != null)
                     {
-                        if (int.TryParse(teamRanking.Value, out int ranking) && ranking != 0)
+                        if (int.TryParse(teamRanking.Value, out int ranking))
                         {
-                            var existingTeamWithSameRanking = _context.Teams.FirstOrDefault(p => p.Ranking == ranking);
-                            if (existingTeamWithSameRanking != null)
-                            {
-                                errorMessages.Add($"Ranking {ranking} is already in use for Team {existingTeamWithSameRanking.Name}. Please choose a different ranking.");
-                            }
-                            else
-                            {
-                                team.Ranking = ranking;
-                                _context.Update(team);
-                            }
+                            //var existingTeamWithSameRanking = _context.Teams.FirstOrDefault(p => p.Ranking == ranking);
+                            //if (existingTeamWithSameRanking != null)
+                            //{
+                            //    errorMessages.Add($"Ranking {ranking} is already in use for Team {existingTeamWithSameRanking.Name}. Please choose a different ranking.");
+                            //}
+                            //else
+                            //{
+                            team.Ranking = ranking;
+                            _context.Update(team);
+                            //}
                         }
                     }
                 }
@@ -678,7 +683,7 @@ namespace WMBA_4.Controllers
 
             ViewData["sortField"] = sortField;
             ViewData["sortDirection"] = sortDirection;
-       
+
             //Handle Paging
             int pageSize = PageSizeHelper.SetPageSize(HttpContext, pageSizeID);
             ViewData["pageSizeID"] = PageSizeHelper.PageSizeList(pageSize);

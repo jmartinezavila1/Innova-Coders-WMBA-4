@@ -27,13 +27,11 @@
     </ol>
 </nav>
 @* page navigation *@
-
 <form asp-action="TeamStats" method="get">
     @* All buttons *@
     <div class="m-in-flex justify-content-end">
-        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
-                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
-            Filter/Search @ViewData["numberFilters"]
+        <button class="btn btn-outline-dark me-1" asp-controller="Report" asp-action="TeamStats">
+            Clear
         </button>
         <input type="hidden" id="compareTeams" name="compareTeams" value="false" />
         <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareteams"
@@ -59,19 +57,26 @@
             </span>
             Download
         </button>
+
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
+                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
     </div>
+
     @* All buttons *@
     <div class="p-in-flex">
         <input type="hidden" name="sortDirection" value="@ViewData["sortDirection"]" />
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
             <div class="collapse" id="collapseFilter">
-                <div class="card card-body bg-light">
+                <div class="card card-body bg-light mb-5">
                     <div class="row">
                         <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the team's name you want to search for">
                             <label class="control-label">Search Team Name:</label>
                             @Html.TextBox("SearchString", null, new { @class = "form-control" })
                         </div>
+
                         <div class="form-group col-md-4 align-self-end" data-toggle="tooltip" data-placement="top" title="Click to apply the filter">
                             <input id="filter-button" type="submit" name="actionButton" value="Filter" class="btn btn-outline-primary" />
                             <a asp-action="TeamStats" class="btn btn-outline-dark" data-toggle="tooltip" data-placement="top" title="Click to clear filter">Clear</a>
@@ -82,6 +87,7 @@
                 </div>
             </div>
         </div>
+        
         <div>
             <div class="form-row">
                 <div class="form-group col-md-12">
@@ -104,8 +110,7 @@
             </div>
             <div class="table-responsive mt-3">
                 @* added from modal *@
-
-
+            
                 @if (ViewBag.ErrorMessages != null)
                 {
                     foreach (var errorMessage in ViewBag.ErrorMessages)
@@ -115,15 +120,19 @@
                         </div>
                     }
                 }
+             
                 <table class="table-four giro-table table-bordered">
                     <thead>
                         <tr>
                             <th>
                                 <input type="checkbox" id="selectAllPlayer" />
                             </th>
-                            <th>
-                                <div class="t-in-flex"><span>Rank </span></div>
-                            </th>
+                            @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                            {
+                                <th>
+                                    <div class="t-in-flex"><span>Rank </span></div>
+                                </th>
+                            }
                             <th style="width: 7rem;">
                                 <div class="d-flex justify-content-center">
                                     <input type="submit" name="actionButton" value="Team" class="text-column me-0" data-toggle="tooltip" data-placement="top" title="Click to sort Team" />
@@ -763,9 +772,17 @@
                                 <td>
                                     <input type="checkbox" name="selectedTeams" value="@item.ID" />
                                 </td>
-                                <td>
-                                    <input type="number" class="team-ranking" name="teamRankings[@item.ID]" value="@(ViewBag.TeamRankings.ContainsKey(item.ID) ? ViewBag.TeamRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
-                                </td>
+                                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                                {
+                                    <td>
+                                        <input type="number" class="team-ranking" name="teamRankings[@item.ID]" value="@(ViewBag.TeamRankings.ContainsKey(item.ID) ? ViewBag.TeamRankings[item.ID].ToString() : 0)" maxlength="2" min="0" max="99" style="width: 3em;" />
+                                    </td>
+                                }
+                                else
+                                {
+                                    <input type="hidden" class="team-ranking" name="teamRankings[@item.ID]" value="@(ViewBag.TeamRankings.ContainsKey(item.ID) ? ViewBag.TeamRankings[item.ID].ToString() : 0)" maxlength="2" min="0" max="99" style="width: 3em;"   />
+
+                                }
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Team)
                                 </td>
@@ -866,37 +883,30 @@
                 $('#compareTeams').val('true');
             });
 
-            // Handle the click event of the compare button
             $('#ranking-button').on('click', function (e) {
                 var seenValues = {};
                 var hasDuplicates = false;
 
-
-
-                // Iterate over each input in the form
                 $('.team-ranking').each(function () {
                     var value = $(this).val();
                     var name = $(this).attr('name');
 
-                    console.log('Checking input with name ' + name + ' and value ' + value);
-
                     $('#validateRankings').val('true');
-                    // If the input is empty, disable it
+                    $('#compareTeams').val('false');
+
                     if (value === '' && name !== 'sortDirection' && name !== 'SearchString' && name !== 'page' && name !== 'pageSizeID' && name !== 'actionButton' && name !== 'sortField') {
                         $(this).prop('disabled', true);
-                    } else if (value !== '') { // Only add non-empty values to seenValues
-                        // If we've seen this value before, set hasDuplicates to true
+                    } else if (value === '') { // If the input is empty, set it to zero
+                        value = '0';
+                        $(this).val('0'); // Set the input field to zero
+                    } else if (!isNaN(value) && value !== '0') { // If the value is a number and not zero
                         if (seenValues[value]) {
-                            console.log('Duplicate value found: ' + value);
                             hasDuplicates = true;
                         }
-
-                        // Record that we've seen this value
                         seenValues[value] = true;
                     }
                 });
 
-                // If there are duplicate values, prevent the form from being submitted
                 if (hasDuplicates) {
                     e.preventDefault();
                     alert('Please do not enter duplicate rankings.');

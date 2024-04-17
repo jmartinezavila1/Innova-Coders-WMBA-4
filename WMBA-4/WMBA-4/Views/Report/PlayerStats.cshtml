@@ -11,7 +11,7 @@
     var user = await UserManager.GetUserAsync(User);
 
     // Check if the user is in the "Scorekeeper" role
-    // var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
+    var isScorekeeper = await UserManager.IsInRoleAsync(user, "Scorekeeper");
 }
 @* page navigation *@
 <nav aria-label="breadcrumb">
@@ -31,9 +31,8 @@
 <form asp-action="PlayerStats" method="get">
     @* All buttons *@
     <div class="m-in-flex justify-content-end">
-        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
-                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
-            Filter/Search @ViewData["numberFilters"]
+        <button class="btn btn-outline-dark me-1" asp-controller="Report" asp-action="PlayerStats">
+            Clear
         </button>
         <input type="hidden" id="comparePlayers" name="comparePlayers" value="false" />
         <button id="compare-button" class="btn btn-outline-dark me-1" type="submit" value="compareplayers"
@@ -59,6 +58,10 @@
             </span>
             Download
         </button>
+        <button class="btn btn-outline-dark me-1 @ViewData["Filtering"]" type="button" data-bs-toggle="collapse" id="filterToggle" data-bs-target="#collapseFilter" aria-expanded="false"
+                aria-controls="collapseFilter" data-toggle="tooltip" data-placement="top" title="Click to toggle filter/search options">
+            Filter/Search @ViewData["numberFilters"]
+        </button>
     </div>
     @* All buttons *@
 
@@ -67,7 +70,7 @@
         <input type="hidden" name="sortField" value="@ViewData["sortField"]" />
         <div class="form-horizontal">
             <div class="collapse" id="collapseFilter">
-                <div class="card card-body bg-light">
+                <div class="card card-body bg-light mb-5">
                     <div class="row">
                         <div class="form-group col-md-4" data-toggle="tooltip" data-placement="top" title="Enter the player's name you want to search for">
                             <label class="control-label">Search Player Name:</label>
@@ -766,9 +769,16 @@
                                 <td>
                                     <input type="checkbox" name="selectedPlayers" value="@item.ID" />
                                 </td>
+                                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
+                                {
                                     <td>
-                                        <input type="number" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : string.Empty)" maxlength="2" min="0" max="99" style="width: 3em;" />
+                                        <input type="number" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : 0)" maxlength="2" min="0" max="99" style="width: 3em;" />
                                     </td>
+                                }
+                                else
+                                {
+                                    <input type="hidden" class="player-ranking text-center" name="playerRankings[@item.ID]" value="@(ViewBag.PlayerRankings.ContainsKey(item.ID) ? ViewBag.PlayerRankings[item.ID].ToString() : 0)" maxlength="2" min="0" max="99" style="width: 3em;"   />
+                                }
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Player)
                                 </td>
@@ -867,37 +877,33 @@
 
             $('#compare-button').on('click', function (e) {
                 $('#comparePlayers').val('true');
+                $('#validateRankings').val('false');
             });
 
-            // Handle the click event of the compare button
             $('#ranking-button').on('click', function (e) {
                 var seenValues = {};
                 var hasDuplicates = false;
 
-                // Iterate over each input in the form
                 $('.player-ranking').each(function () {
                     var value = $(this).val();
                     var name = $(this).attr('name');
 
-                    console.log('Checking input with name ' + name + ' and value ' + value);
-
                     $('#validateRankings').val('true');
-                    // If the input is empty, disable it
+                    $('#comparePlayers').val('false');
+
                     if (value === '' && name !== 'sortDirection' && name !== 'SearchString' && name !== 'page' && name !== 'pageSizeID' && name !== 'actionButton' && name !== 'sortField') {
                         $(this).prop('disabled', true);
-                    } else if (value !== '') { // Only add non-empty values to seenValues
-                        // If we've seen this value before, set hasDuplicates to true
+                    } else if (value === '') { // If the input is empty, set it to zero
+                        value = '0';
+                        $(this).val('0'); // Set the input field to zero
+                    } else if (!isNaN(value) && value !== '0') { // If the value is a number and not zero
                         if (seenValues[value]) {
-                            console.log('Duplicate value found: ' + value);
                             hasDuplicates = true;
                         }
-
-                        // Record that we've seen this value
                         seenValues[value] = true;
                     }
                 });
 
-                // If there are duplicate values, prevent the form from being submitted
                 if (hasDuplicates) {
                     e.preventDefault();
                     alert('Please do not enter duplicate rankings.');
