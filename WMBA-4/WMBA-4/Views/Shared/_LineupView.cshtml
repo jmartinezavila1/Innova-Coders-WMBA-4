@@ -3,6 +3,7 @@
 <div class="lineup-container">
     <h3>Lineup</h3>
     <button id="addPlayerButton" class="btn btn-primary">Choose a Temporary Player</button>
+    <button class="close-popup-btn">X</button>
     <table class="table">
         <thead>
             <tr>
@@ -24,9 +25,10 @@
             }
         </tbody>
     </table>
+    <select id="playerListBox" class="form-control" multiple></select>
+    <button id="addButton" class="btn btn-primary">Add</button>
 </div>
-<select id="playerListBox" class="form-control" multiple></select>
-<button id="addButton" class="btn btn-primary">Add</button>
+
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
@@ -146,6 +148,10 @@
                     alert("The player was already added to the lineup");
                 }
             });
+        });
+        
+        $(".close-popup-btn").click(function () {
+            $(".lineup-container").hide(); 
         });
     });
 </script>

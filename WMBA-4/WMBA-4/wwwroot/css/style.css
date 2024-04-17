@@ -674,3 +674,13 @@ div > .nav-hover:hover {
 
 /*///////////////////////////////////////////////collapse////////////////// /////////////////////////*/
 
+.lineup-container {
+    position: relative;
+    /* Other styles */
+}
+
+.close-popup-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    /* Adjust top and right values as needed */

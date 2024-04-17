@@ -1650,12 +1650,18 @@ namespace WMBA_4.Controllers
         // GET: First screen of ScorePlayer
         public async Task<IActionResult> ScoreKeeping(int GameID, int TeamID)
         {
-            var teams = await _context.GameLineUps
+            //var teams = await _context.GameLineUps
+            //    .Include(t => t.Team)
+            //    .Include(tg => tg.Game).ThenInclude(tm => tm.TeamGames)
+            //    .Where(t => t.GameID == GameID)
+            //    .Select(t => new { t.Team.ID, t.Team.Name })
+            //    .Distinct()
+            //    .ToListAsync();
+
+            var teams = await _context.TeamGame
                 .Include(t => t.Team)
-                .Include(tg => tg.Game).ThenInclude(tm => tm.TeamGames)
                 .Where(t => t.GameID == GameID)
                 .Select(t => new { t.Team.ID, t.Team.Name })
-                .Distinct()
                 .ToListAsync();
 
             var teamDivision = _context.TeamGame
