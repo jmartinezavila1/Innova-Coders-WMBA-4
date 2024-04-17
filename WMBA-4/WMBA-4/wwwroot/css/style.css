@@ -308,7 +308,10 @@ table tdoby tr td {
         margin-bottom:5px;
     }
     #viewRanking-button {
-        margin-top: 5px;
+        /*margin-top: 5px;*/
+        margin-bottom: 5px;
+    }
+    #download-button {
         margin-bottom: 5px;
     }
 }
@@ -473,7 +476,7 @@ table tdoby tr td {
 .m-in-flex {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     margin-top: 20px;
 }
 

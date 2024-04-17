@@ -9,45 +9,7 @@
         <div class="container-fluid">
             <h1 class="mb-2">Dashboard</h1>
             <h5 class="mb-4 ps-2">Season @ViewBag.Season</h5>
-            <div class="row" data-masonry='{"percentPosition": true }'>
-                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
-                {
-                    @if (ViewBag.playerList != null)
-                    {
-                        <div class="col-md-6 col-md-3">
-                            <div class="card text-black mb-4 card-hover shadow ">
-                                <div class="card-header">
-                                    <a class="small text-black stretched-link" asp-area="" asp-controller="Report" asp-action="PlayerStats">
-                                        <h5>
-                                            Player Ranking
-                                        </h5>
-                                    </a>
-                                </div>
-                                <div class="card-body d-flex justify-content-around align-items-center">
-                                    <partial name="_PlayerRanking" />
-                                </div>
-                            </div>
-                        </div>
-                    }
-                    @if (ViewBag.teamList != null)
-                    {
-                        <div class="col-md-6 col-md-3">
-                            <div class="card text-black mb-4 card-hover shadow ">
-                            <div class="card-header">
-                                <a class="small text-black stretched-link" asp-area="" asp-controller="Report" asp-action="PlayerStats">
-                                    <h5>
-                                        Team Ranking
-                                    </h5>
-                                </a>
-                            </div>
-                            <div class="card-body d-flex justify-content-around align-items-center">
-                                <partial name="_TeamRanking" />
-                            </div>
-                        </div>
-                    </div>
-                    }
-                }
-            </div>
+            
             @* Dashboard *@
             <div class="row" data-masonry='{"percentPosition": true }'>
                 @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
@@ -109,7 +71,45 @@
                 }
             </div>
             @* Dashboard *@
-
+            <div class="row" data-masonry='{"percentPosition": true }'>
+                @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor") || User.IsInRole("Coach"))
+                {
+                    @if (ViewBag.playerList != null)
+                    {
+                        <div class="col-md-6 col-md-3">
+                            <div class="card text-black mb-4 card-hover shadow ">
+                                <div class="card-header">
+                                    <a class="small text-black stretched-link" asp-area="" asp-controller="Report" asp-action="PlayerStats">
+                                        <h5>
+                                            Player Ranking
+                                        </h5>
+                                    </a>
+                                </div>
+                                <div class="card-body d-flex justify-content-around align-items-center">
+                                    <partial name="_PlayerRanking" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    @if (ViewBag.teamList != null)
+                    {
+                        <div class="col-md-6 col-md-3">
+                            <div class="card text-black mb-4 card-hover shadow ">
+                                <div class="card-header">
+                                    <a class="small text-black stretched-link" asp-area="" asp-controller="Report" asp-action="PlayerStats">
+                                        <h5>
+                                            Team Ranking
+                                        </h5>
+                                    </a>
+                                </div>
+                                <div class="card-body d-flex justify-content-around align-items-center">
+                                    <partial name="_TeamRanking" />
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
             <div class="row">
                 @if (User.IsInRole("Admin") || User.IsInRole("RookieConvenor") || User.IsInRole("IntermediateConvenor") || User.IsInRole("SeniorConvenor"))
                 {

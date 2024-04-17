@@ -853,7 +853,7 @@
     //    $('#alert').text(buttonText).fadeIn().delay(1800).fadeOut();
     //});
 
-    $('#ballsButton, #strikeButton, #foulButton, #outButton, #hbpButton, #opponentScoreButton, #opponentOutsButton').click(function (e) {
+    $('#ballsButton, #strikeButton, #foulButton, #outButton, #hbpButton, #opponentScoreButton, #opponentOutsButton,#singleButton,#doubleButton,#tripleButton,#homeRunButton').click(function (e) {
         e.preventDefault();
 
         // get id of each button
@@ -865,6 +865,18 @@
             buttonText = 'Run';
         } else if (buttonId === 'opponentOutsButton') {
             buttonText = 'Out';
+        }
+        else if (buttonId === 'singleButton') {
+            buttonText = 'Single';
+        }
+        else if (buttonId === 'doubleButton') {
+            buttonText = 'Double';
+        }
+        else if (buttonId === 'tripleButton') {
+            buttonText = 'Triple';
+        }
+        else if (buttonId === 'homeRunButton') {
+            buttonText = 'HomeRun';
         }
 
         //change the text and show the alert
